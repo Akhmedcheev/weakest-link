@@ -28,6 +28,43 @@
             <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
         </Style>
 
+        <!-- ═══ OBSIDIAN TextBox ═══ -->
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="{StaticResource ObsidianSurface}"/>
+            <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ObsidianBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CaretBrush" Value="{StaticResource ObsidianTextPrimary}"/>
+            <Setter Property="SelectionBrush" Value="#7C3AED"/>
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="3" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false"
+                                          HorizontalScrollBarVisibility="Hidden" 
+                                          VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#5c5c5c"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#4a4a4a"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- Discord Scrollbar: Thumb -->
         <Style x:Key="DiscordScrollThumb" TargetType="Thumb">
             <Setter Property="OverridesDefaultStyle" Value="True"/>
@@ -141,23 +178,23 @@
             </Setter>
         </Style>
         <Style TargetType="ComboBoxItem">
-            <Setter Property="Background" Value="#222"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{StaticResource ObsidianSurface}"/>
+            <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
             <Setter Property="Padding" Value="10,8"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBoxItem">
-                        <Border x:Name="Border" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" BorderBrush="#444" BorderThickness="0,0,0,1">
+                        <Border x:Name="Border" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,0,1">
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsHighlighted" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#0055AA"/>
+                                <Setter TargetName="Border" Property="Background" Value="#363636"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#004488"/>
+                                <Setter TargetName="Border" Property="Background" Value="#3E3E42"/>
                                 <Setter Property="Foreground" Value="White"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -167,9 +204,9 @@
         </Style>
 
         <Style TargetType="ComboBox">
-            <Setter Property="Background" Value="#222"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#444"/>
+            <Setter Property="Background" Value="{StaticResource ObsidianSurface}"/>
+            <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ObsidianBorder}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="5,0"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -182,16 +219,17 @@
                                           ClickMode="Press">
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
-                                        <Border x:Name="TkBorder" Background="#222" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
-                                            <Path x:Name="Arrow" Fill="#CCCCCC" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Data="M0,0 L4,4 L8,0 Z"/>
+                                        <Border x:Name="TkBorder" Background="{StaticResource ObsidianSurface}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
+                                            <Path x:Name="Arrow" Fill="#999" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Data="M0,0 L4,4 L8,0 Z"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#888"/>
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#5c5c5c"/>
+                                                <Setter TargetName="Arrow" Property="Fill" Value="#CCC"/>
                                             </Trigger>
                                             <Trigger Property="IsChecked" Value="True">
-                                                <Setter TargetName="TkBorder" Property="Background" Value="#333"/>
-                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#888"/>
+                                                <Setter TargetName="TkBorder" Property="Background" Value="#2A2A2A"/>
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#5c5c5c"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
@@ -214,9 +252,9 @@
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
                                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
                             
-                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
                                 <Grid x:Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                    <Border x:Name="DropDownBorder" Background="#222" BorderThickness="1" BorderBrush="#555" CornerRadius="0,0,3,3" />
+                                    <Border x:Name="DropDownBorder" Background="{StaticResource ObsidianSurface}" BorderThickness="1" BorderBrush="{StaticResource ObsidianBorder}" CornerRadius="0,0,3,3" />
                                     <ScrollViewer Margin="1" SnapsToDevicePixels="True">
                                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
                                     </ScrollViewer>
@@ -230,9 +268,9 @@
 
         <!-- Отдельный стиль для TestRoundSelector с исправленным цветом текста -->
         <Style x:Key="TestRoundSelectorStyle" TargetType="ComboBox">
-            <Setter Property="Background" Value="#222"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#444"/>
+            <Setter Property="Background" Value="{StaticResource ObsidianSurface}"/>
+            <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ObsidianBorder}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="5,0"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -245,16 +283,16 @@
                                           ClickMode="Press">
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
-                                        <Border x:Name="TkBorder" Background="#222" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
-                                            <Path x:Name="Arrow" Fill="#CCCCCC" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Data="M0,0 L4,4 L8,0 Z"/>
+                                        <Border x:Name="TkBorder" Background="{StaticResource ObsidianSurface}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
+                                            <Path x:Name="Arrow" Fill="#999" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Data="M0,0 L4,4 L8,0 Z"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#888"/>
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#5c5c5c"/>
                                             </Trigger>
                                             <Trigger Property="IsChecked" Value="True">
-                                                <Setter TargetName="TkBorder" Property="Background" Value="#333"/>
-                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#888"/>
+                                                <Setter TargetName="TkBorder" Property="Background" Value="#2A2A2A"/>
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#5c5c5c"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
@@ -274,11 +312,11 @@
                                       Margin="10,0,25,0" 
                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                      Foreground="White"/>
+                                      Foreground="{StaticResource ObsidianTextPrimary}"/>
                             
-                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
                                 <Grid x:Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                    <Border x:Name="DropDownBorder" Background="#222" BorderThickness="1" BorderBrush="#555" CornerRadius="0,0,3,3" />
+                                    <Border x:Name="DropDownBorder" Background="{StaticResource ObsidianSurface}" BorderThickness="1" BorderBrush="{StaticResource ObsidianBorder}" CornerRadius="0,0,3,3" />
                                     <ScrollViewer Margin="1" SnapsToDevicePixels="True">
                                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
                                     </ScrollViewer>
@@ -290,8 +328,13 @@
             </Setter>
         </Style>
 
-        <!-- Базовый стиль для ВСЕХ кнопок: при IsEnabled=False просто полупрозрачность, без белого фона -->
         <Style TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource ObsidianSurface}"/>
+            <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ObsidianBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -299,6 +342,10 @@
                             <ContentPresenter x:Name="content" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" TextBlock.Foreground="{TemplateBinding Foreground}"/>
                         </Border>
                         <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#363636"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#5c5c5c"/>
+                            </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="border" Property="Opacity" Value="0.4"/>
                             </Trigger>
