@@ -1,0 +1,80 @@
+# Ситуация по BroadcastScreen — для NotebookLM
+
+Краткий обзор последних отмен и откатов, чтобы NotebookLM был в курсе актуального состояния.
+
+---
+
+## Что такое BroadcastScreen (исторически)
+
+**BroadcastScreen** — это экран/окно для «трансляции» зрителям: показ вопроса, ответа, денежной цепочки, таймера, дуэли финалистов и т.д.
+
+- В коде предполагался отдельный тип `BroadcastScreen` (WPF `Window`), с методами вроде:
+  - конструктор с одним аргументом (например, `GameEngine`);
+  - `UpdateQuestion(question, answer, count)`;
+  - `SetDuelDisplay(p1, p2, s1, s2)` для финальной дуэли;
+  - а также API денежной цепочки: `SetLevel`, `NextLevel`, `SecondsRemaining`, `GetCurrentLevel`, `PreviousLevel`, `Dispose` (см. `files/EXAMPLES.md`).
+
+---
+
+## Что отменено и откачено
+
+1. **Удалён отдельный экран BroadcastScreen в проекте Weakest Link**
+   - Файлы `Views/BroadcastScreen.xaml` и `Views/BroadcastScreen.xaml.cs` в проекте **отсутствуют** (удалены).
+   - В папке `obj/` остались только артефакты старой сборки (например, `Views/BroadcastScreen.g.cs`) — это след прошлой версии, не актуальный исходный код.
+
+2. **В OperatorPanel отказ от _broadcastScreen**
+   - Раньше в `OperatorPanel` был поле `_broadcastScreen` и вызовы:
+     - создание: `new BroadcastScreen(_engine)` (конструктор с 1 аргументом);
+     - `_broadcastScreen.UpdateQuestion(...)`;
+     - `_broadcastScreen.SetDuelDisplay(...)`.
+   - **Сейчас**: эти вызовы убраны. Для экрана ведущего/транляции используется только **HostScreen**:
+     - создаётся `_hostScreen = new HostScreen(_engine)`;
+     - вызовы идут на `_hostScreen`: `_hostScreen?.UpdateQuestion(...)`, `_hostScreen?.SetDuelDisplay(...)`.
+
+3. **Демо «денежная цепочка» с BroadcastScreen отключено в сборке**
+   - `MainWindow.xaml` / `MainWindow.xaml.cs` содержат демо с контролом `BroadcastScreenControl` (уровни, таймер, кнопки).
+   - В `WeakestLink.csproj` эти файлы **исключены** из компиляции:
+     - `<Compile Remove="MainWindow.xaml.cs" />`
+     - `<Page Remove="MainWindow.xaml" />`
+   - То есть отдельное приложение/демо с BroadcastScreen в текущей сборке Weakest Link **не участвует**.
+
+4. **Ошибки сборки, связанные с BroadcastScreen (из логов)**
+   - Раньше сборка падала из‑за:
+     - `BroadcastScreen` не содержит конструктора с 1 аргументом;
+     - у `BroadcastScreen` нет методов `UpdateQuestion` и `SetDuelDisplay`;
+     - ненулевое поле `_broadcastScreen` в `OperatorPanel` не инициализировалось.
+   - После отката к использованию только HostScreen эти ошибки в актуальном коде OperatorPanel не должны воспроизводиться (если только не вернуть обратно ссылки на BroadcastScreen без восстановления самого типа).
+
+---
+
+## Текущее состояние (на чём всё держится сейчас)
+
+- **Единственный экран «трансляции» в игре Weakest Link — HostScreen.**
+  - HostScreen создаётся из OperatorPanel с `GameEngine`, подписывается на движок и сеть, получает вопросы и дуэль через:
+    - прямые вызовы: `UpdateQuestion`, `SetDuelDisplay`;
+    - и/или сообщения по TCP (QUESTION, DUEL_UPDATE и т.д.).
+  - Денежная цепочка и состояние игры отображаются на панели оператора (например, `BankChainList`) и на HostScreen через общий движок и сетевые сообщения.
+
+- **Отдельного класса/окна BroadcastScreen в решении Weakest Link сейчас нет.** Всё, что раньше планировалось для «broadcast»-экрана, реализовано в HostScreen.
+
+---
+
+## Документация (EXAMPLES.md)
+
+- В `files/EXAMPLES.md` описан API **BroadcastScreen** (SetLevel, NextLevel, SecondsRemaining, цепочка, таймер и т.д.).
+- В контексте **текущего** проекта Weakest Link этот текст можно считать устаревшим или относящимся к отдельному демо (MoneyChain / MainWindow), но не к активной сборке Weakest Link.
+- При ответах на вопросы про «broadcast» в Weakest Link корректно опираться на **HostScreen** и на то, что BroadcastScreen отменён/откатан.
+
+---
+
+## Краткая сводка для NotebookLM
+
+| Тема | Статус |
+|------|--------|
+| Отдельный экран BroadcastScreen в Weakest Link | **Отменён/удалён** |
+| Поле _broadcastScreen и вызовы в OperatorPanel | **Откат**: не используются, только _hostScreen |
+| Экран трансляции в игре | **HostScreen** |
+| MainWindow + BroadcastScreenControl (демо) | Исключены из сборки (.csproj) |
+| EXAMPLES.md про BroadcastScreen | Относится к старому/демо API, не к текущему HostScreen |
+
+Если в будущем снова введут отдельный BroadcastScreen, нужно будет заново добавить Views (XAML + code-behind), конструктор и методы UpdateQuestion/SetDuelDisplay и при необходимости снова завязать OperatorPanel на этот экран.

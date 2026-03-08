@@ -1,0 +1,17 @@
+  Определение проектов для восстановления...
+  Все проекты обновлены для восстановления.
+I:\WEAKEST LINK SOPFTWARE\Views\OperatorPanel.xaml.cs(62,58): error CS0246: Не удалось найти тип или имя пространства имен "StateChangedEventArgs" (возможно, отсутствует директива using или ссылка на сборку). [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+I:\WEAKEST LINK SOPFTWARE\Views\OperatorPanel.xaml.cs(88,57): error CS0246: Не удалось найти тип или имя пространства имен "BankChangedEventArgs" (возможно, отсутствует директива using или ссылка на сборку). [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+I:\WEAKEST LINK SOPFTWARE\Views\OperatorPanel.xaml.cs(293,41): error CS0246: Не удалось найти тип или имя пространства имен "GameState" (возможно, отсутствует директива using или ссылка на сборку). [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+I:\WEAKEST LINK SOPFTWARE\Views\OperatorPanel.xaml.cs(14,17): error CS0246: Не удалось найти тип или имя пространства имен "GameEngine" (возможно, отсутствует директива using или ссылка на сборку). [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+
+Ошибка сборки.
+
+I:\WEAKEST LINK SOPFTWARE\Views\OperatorPanel.xaml.cs(62,58): error CS0246: Не удалось найти тип или имя пространства имен "StateChangedEventArgs" (возможно, отсутствует директива using или ссылка на сборку). [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+I:\WEAKEST LINK SOPFTWARE\Views\OperatorPanel.xaml.cs(88,57): error CS0246: Не удалось найти тип или имя пространства имен "BankChangedEventArgs" (возможно, отсутствует директива using или ссылка на сборку). [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+I:\WEAKEST LINK SOPFTWARE\Views\OperatorPanel.xaml.cs(293,41): error CS0246: Не удалось найти тип или имя пространства имен "GameState" (возможно, отсутствует директива using или ссылка на сборку). [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+I:\WEAKEST LINK SOPFTWARE\Views\OperatorPanel.xaml.cs(14,17): error CS0246: Не удалось найти тип или имя пространства имен "GameEngine" (возможно, отсутствует директива using или ссылка на сборку). [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+    Предупреждений: 0
+    Ошибок: 4
+
+Прошло времени 00:00:00.90

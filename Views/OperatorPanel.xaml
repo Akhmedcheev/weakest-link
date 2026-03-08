@@ -1,0 +1,1316 @@
+<Window x:Class="WeakestLink.Views.OperatorPanel"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Weakest Link - Operator Panel" Height="1000" Width="1400"
+        Background="#1e1f22" Foreground="#dbdee1"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        KeyDown="Window_KeyDown">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32" ResizeBorderThickness="6" CornerRadius="0" GlassFrameThickness="0"/>
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#dbdee1"/>
+        </Style>
+
+        <!-- Discord Scrollbar: Thumb -->
+        <Style x:Key="DiscordScrollThumb" TargetType="Thumb">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border x:Name="thumbBorder" Background="#202225" CornerRadius="4"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="thumbBorder" Property="Background" Value="#4e5058"/>
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="thumbBorder" Property="Background" Value="#5e636b"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Discord Scrollbar: Vertical -->
+        <Style TargetType="ScrollBar">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="MinWidth" Value="8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid Background="Transparent">
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource DiscordScrollThumb}"/>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="Width" Value="Auto"/>
+                    <Setter Property="Height" Value="8"/>
+                    <Setter Property="MinHeight" Value="8"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ScrollBar">
+                                <Grid Background="Transparent">
+                                    <Track x:Name="PART_Track" IsDirectionReversed="False">
+                                        <Track.Thumb>
+                                            <Thumb Style="{StaticResource DiscordScrollThumb}"/>
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="DiscordButton" TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="btnBorder" 
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="4" 
+                                Padding="{TemplateBinding Padding}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <Grid>
+                                <!-- Overlay для hover-эффекта (осветление) -->
+                                <Border x:Name="hoverOverlay" Background="White" Opacity="0" CornerRadius="4"/>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                                  TextBlock.Foreground="{TemplateBinding Foreground}"
+                                                  TextBlock.FontSize="{TemplateBinding FontSize}"
+                                                  TextBlock.FontWeight="{TemplateBinding FontWeight}"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.1"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.0"/>
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.75"/>
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="0.98" ScaleY="0.97"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.45"/>
+                                <Setter TargetName="hoverOverlay" Property="Opacity" Value="0"/>
+                                <Setter Property="Foreground" Value="#666"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="#222"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Border" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" BorderBrush="#444" BorderThickness="0,0,0,1">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#0055AA"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#004488"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="#222"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#444"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5,0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false" 
+                                          IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}" 
+                                          ClickMode="Press">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="TkBorder" Background="#222" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
+                                            <Path x:Name="Arrow" Fill="#CCCCCC" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Data="M0,0 L4,4 L8,0 Z"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#888"/>
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="TkBorder" Property="Background" Value="#333"/>
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#888"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                                <ToggleButton.Background>
+                                    <TemplateBinding Property="Background"/>
+                                </ToggleButton.Background>
+                                <ToggleButton.BorderBrush>
+                                    <TemplateBinding Property="BorderBrush"/>
+                                </ToggleButton.BorderBrush>
+                                <ToggleButton.BorderThickness>
+                                    <TemplateBinding Property="BorderThickness"/>
+                                </ToggleButton.BorderThickness>
+                            </ToggleButton>
+                            <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" 
+                                              Content="{TemplateBinding SelectionBoxItem}" 
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" 
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" 
+                                              Margin="10,0,25,0" 
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
+                            
+                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                <Grid x:Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border x:Name="DropDownBorder" Background="#222" BorderThickness="1" BorderBrush="#555" CornerRadius="0,0,3,3" />
+                                    <ScrollViewer Margin="1" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Отдельный стиль для TestRoundSelector с исправленным цветом текста -->
+        <Style x:Key="TestRoundSelectorStyle" TargetType="ComboBox">
+            <Setter Property="Background" Value="#222"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#444"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5,0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false" 
+                                          IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}" 
+                                          ClickMode="Press">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="TkBorder" Background="#222" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
+                                            <Path x:Name="Arrow" Fill="#CCCCCC" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Data="M0,0 L4,4 L8,0 Z"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#888"/>
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="TkBorder" Property="Background" Value="#333"/>
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#888"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                                <ToggleButton.Background>
+                                    <TemplateBinding Property="Background"/>
+                                </ToggleButton.Background>
+                                <ToggleButton.BorderBrush>
+                                    <TemplateBinding Property="BorderBrush"/>
+                                </ToggleButton.BorderBrush>
+                                <ToggleButton.BorderThickness>
+                                    <TemplateBinding Property="BorderThickness"/>
+                                </ToggleButton.BorderThickness>
+                            </ToggleButton>
+                            <TextBlock x:Name="ContentSite" IsHitTestVisible="False" 
+                                      Text="{TemplateBinding Text}" 
+                                      Margin="10,0,25,0" 
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      Foreground="White"/>
+                            
+                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                <Grid x:Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border x:Name="DropDownBorder" Background="#222" BorderThickness="1" BorderBrush="#555" CornerRadius="0,0,3,3" />
+                                    <ScrollViewer Margin="1" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Базовый стиль для ВСЕХ кнопок: при IsEnabled=False просто полупрозрачность, без белого фона -->
+        <Style TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" CornerRadius="3">
+                            <ContentPresenter x:Name="content" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" TextBlock.Foreground="{TemplateBinding Foreground}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- Именованный алиас для обратной совместимости -->
+        <Style x:Key="NoWhiteWhenDisabledButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"/>
+
+        <!-- Стиль игровых кнопок с эффектом физического нажатия -->
+        <Style x:Key="GameButtonPressStyle" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="#222" BorderThickness="0,0,0,4" Padding="{TemplateBinding Padding}" CornerRadius="5">
+                            <ContentPresenter x:Name="content" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" HorizontalAlignment="Center" VerticalAlignment="Center" TextBlock.Foreground="{TemplateBinding Foreground}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="BorderThickness" Value="0,2,0,0"/>
+                                <Setter TargetName="border" Property="Margin" Value="0,3,0,-3"/>
+                                <Setter TargetName="border" Property="Opacity" Value="0.82"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.92"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.4"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Flat ToggleButton (без системных рамок) -->
+        <Style x:Key="FlatToggleStyle" TargetType="ToggleButton">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="tglBorder" 
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="4" 
+                                Padding="{TemplateBinding Padding}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                              TextBlock.Foreground="{TemplateBinding Foreground}"
+                                              TextBlock.FontSize="{TemplateBinding FontSize}"
+                                              TextBlock.FontWeight="{TemplateBinding FontWeight}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="tglBorder" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="tglBorder" Property="Opacity" Value="0.7"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="tglBorder" Property="BorderBrush" Value="#FFD700"/>
+                                <Setter TargetName="tglBorder" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="tglBorder" Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- FlatButton: ПОЛНОЕ переопределение ControlTemplate без ButtonChrome -->
+        <Style x:Key="FlatButton" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="RootBorder" 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              TextBlock.Foreground="{TemplateBinding Foreground}"
+                                              TextBlock.FontSize="{TemplateBinding FontSize}"
+                                              TextBlock.FontWeight="{TemplateBinding FontWeight}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="RootBorder" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="RootBorder" Property="Opacity" Value="0.65"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="RootBorder" Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+    
+    <!-- Outer wrapper: Title bar + Content -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Row 0: Custom Title Bar -->
+        <Border Grid.Row="0" Background="#111214" BorderThickness="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- App icon + title -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
+                    <TextBlock Text="⚡" FontSize="14" Foreground="#5865F2" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <TextBlock Text="Weakest Link — Operator Panel" FontSize="12" Foreground="#80848e" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Window control buttons -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Stretch">
+                    <Button x:Name="BtnTakeSelfie" Content="📸" ToolTip="Сделать скриншот (Ctrl + Q)"
+                            Width="46" Background="Transparent" BorderThickness="0" 
+                            Foreground="#80848e" FontSize="14" Cursor="Hand"
+                            WindowChrome.IsHitTestVisibleInChrome="True"
+                            Click="BtnTakeSelfie_Click" Style="{StaticResource FlatButton}"/>
+                    <Button x:Name="BtnTitleMinimize" Content="—" 
+                            Width="46" Background="Transparent" BorderThickness="0" 
+                            Foreground="#b5bac1" FontSize="13" Cursor="Hand"
+                            WindowChrome.IsHitTestVisibleInChrome="True"
+                            Click="BtnTitleMinimize_Click" Style="{StaticResource FlatButton}"/>
+                    <Button x:Name="BtnTitleMaximize" Content="◻" 
+                            Width="46" Background="Transparent" BorderThickness="0" 
+                            Foreground="#b5bac1" FontSize="13" Cursor="Hand"
+                            WindowChrome.IsHitTestVisibleInChrome="True"
+                            Click="BtnTitleMaximize_Click" Style="{StaticResource FlatButton}"/>
+                    <Button x:Name="BtnTitleClose" Content="✕" 
+                            Width="46" Background="Transparent" BorderThickness="0" 
+                            Foreground="#b5bac1" FontSize="13" Cursor="Hand"
+                            WindowChrome.IsHitTestVisibleInChrome="True"
+                            Click="BtnTitleClose_Click" Style="{StaticResource FlatButton}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Row 1: App Content -->
+        <Grid Grid.Row="1" x:Name="RootLayoutGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="70"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ЛЕВЫЙ SIDEBAR: Абсолютно на всю высоту -->
+        <Border Grid.Column="0" Background="#1e1f22" BorderThickness="0">
+            <StackPanel x:Name="LeftSidebarPanel" VerticalAlignment="Top" Margin="0,25,0,0">
+                <Button Content="🛠" FontSize="24" Background="Transparent" BorderThickness="0" Foreground="#a1a1aa" Margin="0,0,0,25" Cursor="Hand" HorizontalAlignment="Center"/>
+                <Button Content="📝" FontSize="24" Background="Transparent" BorderThickness="0" Foreground="#a1a1aa" Margin="0,0,0,25" Cursor="Hand" HorizontalAlignment="Center"/>
+                <Button Content="📊" FontSize="24" Background="Transparent" BorderThickness="0" Foreground="#a1a1aa" Margin="0,0,0,25" Cursor="Hand" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ПРАВАЯ ЧАСТЬ: Весь остальной интерфейс -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- 0: Верхнее меню (Debug) -->
+                <RowDefinition Height="Auto"/> <!-- 1: Панель статуса (Банк, Таймер) -->
+                <RowDefinition Height="Auto"/> <!-- 2: Статус действия (Вы сделали) -->
+                <RowDefinition Height="*"/>    <!-- 3: Рабочая область (Лево, Центр, Право) -->
+                <RowDefinition Height="Auto"/> <!-- 4: Лог и экстренные кнопки -->
+            </Grid.RowDefinitions>
+
+            <!-- 0. ВЕРХНЯЯ ШАПКА (DEBUG) -->
+            <Border Grid.Row="0" Background="#2b2d31" Height="38" BorderBrush="#1e1f22" BorderThickness="0,0,0,1">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,4">
+                    <Menu VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Margin="0,0,8,0">
+                        <MenuItem Header="🛠 DEBUG" Foreground="#dbdee1" Padding="5,0">
+                            <MenuItem StaysOpenOnClick="True">
+                                <MenuItem.Header>
+                                    <StackPanel Margin="5">
+                                        <TextBlock Text="Раунд теста:" Foreground="#888" FontSize="11" Margin="0,0,0,4"/>
+                                        <ComboBox x:Name="TestRoundSelector" Width="160" Height="25" FontSize="12" SelectedIndex="0" Style="{StaticResource TestRoundSelectorStyle}" VerticalContentAlignment="Center">
+                                            <ComboBoxItem Content="Раунд 1"/>
+                                            <ComboBoxItem Content="Раунд 2"/>
+                                            <ComboBoxItem Content="Раунд 3"/>
+                                            <ComboBoxItem Content="Раунд 4"/>
+                                            <ComboBoxItem Content="Раунд 5"/>
+                                            <ComboBoxItem Content="Раунд 6"/>
+                                            <ComboBoxItem Content="Раунд 7"/>
+                                            <ComboBoxItem Content="ФИНАЛ"/>
+                                        </ComboBox>
+                                        <CheckBox x:Name="ChkTestLast30Sec" Content="30 сек раунд" Foreground="#888" FontSize="11" Margin="0,8,0,8"/>
+                                        <Button Content="БЫСТРЫЙ СТАРТ" x:Name="BtnQuickStart" Height="25" MinWidth="90" FontSize="12" Background="#5865F2" Foreground="White" Padding="8,0" Click="BtnQuickStart_Click" Style="{StaticResource FlatButton}"/>
+                                        <Button Content="ЗАПОЛНИТЬ СЛУЧАЙНЫМИ" x:Name="BtnFillRandom" Height="25" MinWidth="90" FontSize="12" Background="#4e5058" Foreground="White" Padding="8,0" Margin="0,6,0,0" Click="BtnFillRandom_Click" Style="{StaticResource FlatButton}"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
+                    <Button Content="✎ РЕДАКТОР ВОПРОСОВ" x:Name="BtnOpenQuestionEditor" Height="25" MinWidth="140" FontSize="12" Background="Transparent" Foreground="#dbdee1" BorderThickness="0" Margin="0,0,8,0" Click="BtnOpenQuestionEditor_Click" Style="{StaticResource FlatButton}"/>
+                    <Button Content="✓ VALIDATE JSON" x:Name="BtnValidateJson" Height="25" MinWidth="120" FontSize="12" Background="Transparent" Foreground="#dbdee1" BorderThickness="0" Margin="0,0,8,0" Click="BtnValidateJson_Click" Style="{StaticResource FlatButton}"/>
+                    
+                    <Menu VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Margin="0,0,4,0">
+                        <MenuItem Header="ТЕСТОВАЯ ИГРА С БОТАМИ" FontWeight="Bold" Foreground="#dbdee1">
+                             <MenuItem Header="Загрузить команду..." Click="BtnTestTeam1_Click"/>
+                             <MenuItem Header="AI Gemini Test" Click="BtnStartGeminiTest_Click"/>
+                        </MenuItem>
+                    </Menu>
+
+                    <Border x:Name="TestModeBadge" Background="#331a00" BorderBrush="#FF9800" BorderThickness="1" CornerRadius="4" Padding="10,4" Margin="15,0,0,0" Visibility="Collapsed">
+                        <TextBlock x:Name="TxtTestModeLabel" Text="ТЕСТ: —" Foreground="#FF9800" FontSize="12" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </Border>
+                    
+                    <Menu VerticalAlignment="Center" Background="#2b2d31" BorderThickness="0">
+                        <MenuItem Foreground="#CCC" FontSize="12" StaysOpenOnClick="True">
+                             <MenuItem.Header>
+                                 <StackPanel Orientation="Horizontal">
+                                     <TextBlock Text="📱 QR-КОД" VerticalAlignment="Center"/>
+                                     <Image x:Name="QrCodeImage" Width="20" Height="20" Margin="5,0,0,0"/>
+                                 </StackPanel>
+                             </MenuItem.Header>
+                        </MenuItem>
+                    </Menu>
+                </StackPanel>
+            </Border>
+
+            <!-- 1. ПАНЕЛЬ СТАТУСА (Банк, Таймер) -->
+            <Border Grid.Row="1" Background="#1E1E1E" Margin="10" CornerRadius="10" BorderBrush="#333" BorderThickness="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="10,0">
+                        <TextBlock Text="ТЕКУЩИЙ БАНК" Foreground="#888" FontSize="12" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="TxtCurrentBank" Text="0" Foreground="Yellow" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0">
+                        <TextBlock Text="ОБЩИЙ БАНК" Foreground="#888" FontSize="12" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="TxtTotalBank" Text="0" Foreground="#00FF00" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="10,0">
+                        <TextBlock Text="ОСТАЛОСЬ ВРЕМЕНИ" Foreground="#888" FontSize="12" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="TxtTimer" Text="00:00" Foreground="White" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="10,0">
+                        <TextBlock Text="РАУНД" Foreground="#888" FontSize="12" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="TxtRoundNumber" Text="1" Foreground="Cyan" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="4" VerticalAlignment="Center" Margin="10,0">
+                        <TextBlock Text="ВОПРОС" Foreground="#888" FontSize="12" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="TxtQuestionCount" Text="0/0" Foreground="Orange" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 2. СЕЙЧАС / ШАГ / ХИНТ -->
+            <Border x:Name="YouMadeBorder" Grid.Row="2" Background="#330000" Margin="10,0,10,10" CornerRadius="5" Padding="5" Visibility="Collapsed">
+                <TextBlock x:Name="TxtYouMade" Text="ВЫ СДЕЛАЛИ: —" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+            </Border>
+
+            <!-- 3. ОСНОВНАЯ РАБОЧАЯ ОБЛАСТЬ -->
+            <Grid Grid.Row="3">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="GameFlowStates">
+                        <VisualState x:Name="SetupState">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SetupPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridGameControls" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GamePlayPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeadToHeadPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="WinnerPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnBotTurn" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TglAutoBot" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnToFinal" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RevealProgressPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TxtQuickEditQuestion" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TxtQuickEditAnswer" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="PlayingState">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SetupPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridGameControls" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GamePlayPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeadToHeadPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="WinnerPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnBotTurn" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TglAutoBot" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnToFinal" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TxtQuickEditQuestion" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TxtQuickEditAnswer" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="GamePlayState">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SetupPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridGameControls" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GamePlayPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeadToHeadPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="WinnerPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnBotTurn" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TglAutoBot" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnToFinal" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RevealProgressPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TxtQuickEditQuestion" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TxtQuickEditAnswer" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="HeadToHeadState">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SetupPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridGameControls" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GamePlayPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeadToHeadPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="WinnerPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnBotTurn" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TglAutoBot" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnToFinal" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RevealProgressPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TxtQuickEditQuestion" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TxtQuickEditAnswer" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="WinnerState">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SetupPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridGameControls" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GamePlayPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeadToHeadPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="WinnerPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnBotTurn" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TglAutoBot" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnToFinal" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RevealProgressPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TxtQuickEditQuestion" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TxtQuickEditAnswer" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="RevealState">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SetupPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridGameControls" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GamePlayPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeadToHeadPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="WinnerPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnBotTurn" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TglAutoBot" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnToFinal" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RevealProgressPanel" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TxtQuickEditQuestion" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TxtQuickEditAnswer" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="QuestionZoomState">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="QuestionBlockRow" Storyboard.TargetProperty="Height">
+                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <GridLength>1*</GridLength>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlayersGridRow" Storyboard.TargetProperty="Height">
+                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <GridLength>0</GridLength>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
+                                <DoubleAnimation Storyboard.TargetName="TxtCurrentQuestion" 
+                                                 Storyboard.TargetProperty="FontSize" To="20" Duration="0:0:0.3"/>
+                                <DoubleAnimation Storyboard.TargetName="TxtCurrentAnswer" 
+                                                 Storyboard.TargetProperty="FontSize" To="20" Duration="0:0:0.3"/>
+
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnPlay" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ColorAnimation Storyboard.TargetName="TxtTimer" 
+                                                Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" 
+                                                To="#FFFF00" Duration="0:0:0.5"/>
+                            </Storyboard>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="280"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="400"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- ЛЕВО: Chain -->
+                <Border Grid.Column="0" x:Name="BankChainColumn" Background="#2b2d31" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="ЦЕПОЧКА БАНКА" Foreground="#888" FontSize="14" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                        <ItemsControl x:Name="BankChainList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{Binding Background}" Margin="0,1" Padding="10,5" CornerRadius="3">
+                                        <TextBlock Text="{Binding ValueDisplay}" Foreground="{Binding TextColor}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- ЦЕНТР: Вопрос / Настройка -->
+                <Grid Grid.Column="1" ClipToBounds="True">
+                    <!-- Setup Panel -->
+                    <Border x:Name="SetupPanel" Background="#313338" Padding="20" Visibility="Visible">
+                        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Width="850">
+                            <!-- Expander: только список пультов -->
+                            <Expander x:Name="RosterExpander" Header="СФОРМИРОВАТЬ КОМАНДУ" IsExpanded="True"
+                                      Foreground="#b5bac1" FontSize="14" FontWeight="Bold" Margin="0,0,0,8">
+                                <StackPanel Margin="0,8,0,0">
+                                    <!-- Smart Roster: 8 фиксированных слотов пультов -->
+                                    <ItemsControl x:Name="LstPlayers" ItemsSource="{Binding}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#1e1f22" CornerRadius="3" Margin="0,2" Padding="5,4"
+                                                        BorderBrush="#555" BorderThickness="1">
+                                                    <Grid MinHeight="50" Margin="0,0,0,4" HorizontalAlignment="Stretch">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="70"/>
+                                                            <ColumnDefinition Width="1*"/>
+                                                            <ColumnDefinition Width="1*"/>
+                                                            <ColumnDefinition Width="2.5*"/>
+                                                            <ColumnDefinition Width="44"/>
+                                                            <ColumnDefinition Width="44"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <!-- Статический адрес пульта -->
+                                                        <TextBlock Grid.Column="0" 
+                                                                   Text="{Binding ConsoleNumber, StringFormat=Пульт \{0\}}" 
+                                                                   Foreground="#5865F2" FontWeight="Bold" FontSize="14" 
+                                                                   VerticalAlignment="Center" HorizontalAlignment="Left"
+                                                                   Margin="5,0,10,0"/>
+                                                        <!-- ★ Игровое имя (→ движок) -->
+                                                        <TextBox Grid.Column="1" Text="{Binding GameName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                                 ToolTip="{Binding GameName}"
+                                                                 Background="#2b2d31" Foreground="#FFFFFF" 
+                                                                 BorderBrush="#555" BorderThickness="1" 
+                                                                 FontSize="16" FontWeight="Bold" VerticalAlignment="Center" 
+                                                                 Padding="10,8" Margin="0,0,6,0"/>
+                                                        <!-- ФИО (→ суфлёр) -->
+                                                        <TextBox Grid.Column="2" Text="{Binding FullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                                 ToolTip="{Binding FullName}"
+                                                                 Background="#2b2d31" Foreground="#b0b0b0" 
+                                                                 BorderBrush="#555" BorderThickness="1" 
+                                                                 FontSize="16" VerticalAlignment="Center" 
+                                                                 Padding="10,8" Margin="0,0,6,0"/>
+                                                        <!-- Город / Профессия (→ суфлёр) -->
+                                                        <TextBox Grid.Column="3" Text="{Binding CityDesc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                                 ToolTip="{Binding CityDesc}"
+                                                                 Background="#2b2d31" Foreground="#888" 
+                                                                 BorderBrush="#555" BorderThickness="1" 
+                                                                 FontSize="16" VerticalAlignment="Center" 
+                                                                 Padding="10,8" Margin="0,0,6,0"/>
+                                                        <!-- Кнопки перемещения -->
+                                                        <Button Grid.Column="4" Content="↑" Tag="{Binding}" 
+                                                                Width="40" Height="40"
+                                                                Background="#3a3c42" Foreground="#dbdee1" 
+                                                                BorderBrush="#555" BorderThickness="1"
+                                                                FontSize="18" FontWeight="Bold"
+                                                                Click="BtnRosterMoveUp_Click" Style="{StaticResource FlatButton}" 
+                                                                Padding="0" Margin="2,0"/>
+                                                        <Button Grid.Column="5" Content="↓" Tag="{Binding}" 
+                                                                Width="40" Height="40"
+                                                                Background="#3a3c42" Foreground="#dbdee1" 
+                                                                BorderBrush="#555" BorderThickness="1"
+                                                                FontSize="18" FontWeight="Bold"
+                                                                Click="BtnRosterMoveDown_Click" Style="{StaticResource FlatButton}" 
+                                                                Padding="0" Margin="2,0"/>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Expander>
+
+                            <!-- Кнопки управления — всегда видны -->
+                            <Button Content="ГОТОВО" Background="#248046" Foreground="White" 
+                                    FontSize="18" FontWeight="Bold" Padding="0,15" Margin="0,8,0,0" 
+                                    Click="BtnRosterDone_Click" Style="{StaticResource FlatButton}"/>
+
+                            <Button x:Name="BtnStartSession" Content="START SESSION" 
+                                    MinHeight="50" Height="55" 
+                                    Background="#5865F2" Foreground="White" 
+                                    FontSize="18" FontWeight="Bold" 
+                                    Margin="0,10,0,0" Padding="20,10" 
+                                    Click="BtnStartSession_Click"
+                                    Style="{StaticResource FlatButton}"/>
+
+                            <CheckBox x:Name="ChkFastTrack" Content="Пропустить вступление" 
+                                      Foreground="#b5bac1" FontSize="13" Margin="0,10,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Game Controls -->
+                    <Grid x:Name="GridGameControls" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="200"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Row 0: Вопрос и ответ (MinHeight не даёт схлопнуться) -->
+                        <Border Grid.Row="0" Background="#313338" CornerRadius="8" Padding="30" Margin="10" MinHeight="200">
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock x:Name="TxtCurrentQuestion" Text="Ожидание вопроса..." 
+                                           Foreground="White" FontSize="28" FontWeight="Bold" 
+                                           TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,20"
+                                           MinHeight="40"/>
+                                <TextBlock x:Name="TxtCurrentAnswer" Text="ОТВЕТ: —" 
+                                           Foreground="#aaa" FontSize="20" FontWeight="Normal" 
+                                           TextAlignment="Center" TextWrapping="Wrap"
+                                           MinHeight="28"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Row 1: Stream Deck — квадратные кнопки 140×140 -->
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,30">
+
+                            <Button x:Name="BtnCorrect" Width="140" Height="140" Margin="10"
+                                    Background="#23a559" BorderThickness="0" Cursor="Hand"
+                                    Click="BtnCorrect_Click" Style="{StaticResource GameButtonPressStyle}">
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="ВЕРНО" FontSize="24" FontWeight="Bold" Foreground="White" TextAlignment="Center"/>
+                                    <TextBlock Text="[ ENTER ]" FontSize="14" Foreground="#D0FFFFFF" TextAlignment="Center" Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button x:Name="BtnBank" Width="140" Height="140" Margin="10,10,30,10"
+                                    Background="#FFD700" BorderThickness="0" Cursor="Hand"
+                                    Click="BtnBank_Click" Style="{StaticResource GameButtonPressStyle}">
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="БАНК" FontSize="24" FontWeight="Bold" Foreground="#1a1a1a" TextAlignment="Center"/>
+                                    <TextBlock Text="[ SPACE ]" FontSize="14" Foreground="#80000000" TextAlignment="Center" Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button x:Name="BtnIncorrect" Width="140" Height="140" Margin="10"
+                                    Background="#da373c" BorderThickness="0" Cursor="Hand"
+                                    Click="BtnWrong_Click" Style="{StaticResource GameButtonPressStyle}">
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="НЕВЕРНО" FontSize="24" FontWeight="Bold" Foreground="White" TextAlignment="Center"/>
+                                    <TextBlock Text="[ DEL ]" FontSize="14" Foreground="#D0FFFFFF" TextAlignment="Center" Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Width="140" Height="140" Margin="10"
+                                    Background="#4e5058" BorderThickness="0" Cursor="Hand"
+                                    Click="BtnPass_Click" Style="{StaticResource GameButtonPressStyle}">
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="ПАСС" FontSize="24" FontWeight="Bold" Foreground="#dbdee1" TextAlignment="Center"/>
+                                    <TextBlock Text="[ BACK ]" FontSize="14" Foreground="#80FFFFFF" TextAlignment="Center" Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </Button>
+
+                        </StackPanel>
+                    </Grid>
+                    
+                    <Grid x:Name="GamePlayPanel" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="130"/>
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0" Background="#2A2A2A" CornerRadius="10" Padding="20" Margin="10" MinHeight="200">
+                            <TextBlock x:Name="TxtGamePlayQuestion" Text="Ожидание вопроса..." Foreground="White" FontSize="36" FontWeight="Bold" 
+                                       TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       MinHeight="50"/>
+                        </Border>
+                        <Button Grid.Row="1" x:Name="BtnGamePlayPlay" Content="START O'CLOCK" 
+                                MinHeight="80" MaxHeight="120"
+                                FontSize="40" FontWeight="ExtraBold" 
+                                Background="#004400" Foreground="#00FF00" 
+                                BorderBrush="#00CC00" BorderThickness="3" 
+                                Margin="15" 
+                                Click="BtnPlay_Click" Style="{StaticResource GameButtonPressStyle}"/>
+                    </Grid>
+
+                    <Grid x:Name="HeadToHeadPanel" Visibility="Collapsed" Background="#111" Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0" Margin="10">
+                            <Grid.ColumnDefinitions> <ColumnDefinition Width="*"/> <ColumnDefinition Width="*"/> </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="TxtFinalist1" Text="ФИНАЛИСТ 1" FontSize="26" Foreground="Cyan" FontWeight="Black" HorizontalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
+                                    <Ellipse x:Name="P1_C1" Width="20" Height="20" Margin="3" Stroke="White" Fill="Transparent"/>
+                                    <Ellipse x:Name="P1_C2" Width="20" Height="20" Margin="3" Stroke="White" Fill="Transparent"/>
+                                    <Ellipse x:Name="P1_C3" Width="20" Height="20" Margin="3" Stroke="White" Fill="Transparent"/>
+                                    <Ellipse x:Name="P1_C4" Width="20" Height="20" Margin="3" Stroke="White" Fill="Transparent"/>
+                                    <Ellipse x:Name="P1_C5" Width="20" Height="20" Margin="3" Stroke="White" Fill="Transparent"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock x:Name="TxtFinalist2" Text="ФИНАЛИСТ 2" FontSize="26" Foreground="Cyan" FontWeight="Black" HorizontalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
+                                    <Ellipse x:Name="P2_C1" Width="20" Height="20" Margin="3" Stroke="White" Fill="Transparent"/>
+                                    <Ellipse x:Name="P2_C2" Width="20" Height="20" Margin="3" Stroke="White" Fill="Transparent"/>
+                                    <Ellipse x:Name="P2_C3" Width="20" Height="20" Margin="3" Stroke="White" Fill="Transparent"/>
+                                    <Ellipse x:Name="P2_C4" Width="20" Height="20" Margin="3" Stroke="White" Fill="Transparent"/>
+                                    <Ellipse x:Name="P2_C5" Width="20" Height="20" Margin="3" Stroke="White" Fill="Transparent"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <Border x:Name="FinalPrestartBorder" Background="#1A2A1A" Margin="10,5" Padding="12" CornerRadius="5" BorderBrush="#444" BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock Text="Кто отвечает первым?" Foreground="#AAA" FontSize="14" Margin="0,0,0,8"/>
+                                    <ComboBox x:Name="CmbFirstResponder" Height="36" FontSize="16" Margin="0,0,0,10"/>
+                                    <Button x:Name="BtnApplyDuel" Content="ПРИМЕНИТЬ" Background="#00AA00" Foreground="White" Height="50" FontWeight="Bold" Click="BtnApplyDuel_Click" Style="{StaticResource NoWhiteWhenDisabledButtonStyle}"/>
+                                </StackPanel>
+                            </Border>
+                            <Button x:Name="BtnStartDuel" Content="СТАРТ ДУЭЛИ" Background="#00AA00" Foreground="White" Height="50" FontWeight="Bold" Margin="10,5" VerticalAlignment="Top" Visibility="Collapsed" Click="BtnStartDuel_Click" Style="{StaticResource NoWhiteWhenDisabledButtonStyle}"/>
+                        </Grid>
+                        <Border Grid.Row="2" Background="#222" Margin="10,5" Padding="15" CornerRadius="10" MinHeight="150">
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock x:Name="TurnTextBlock" Text="ОЧЕРЕДЬ: ИГРОК 1" Foreground="Yellow" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="FinalQuestionTextBlock" Text="ВОПРОС ФИНАЛА" Foreground="White" FontSize="24" FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" Margin="0,5"/>
+                                <TextBlock x:Name="TxtDuelAnswer" Text="ОТВЕТ: —" Foreground="#00FFCC" FontSize="22" FontWeight="ExtraBold" TextAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        <UniformGrid Grid.Row="3" Columns="2" Margin="10">
+                            <Button x:Name="BtnDuelCorrect" Content="ВЕРНО" Background="#006600" Foreground="White" Height="70" FontSize="24" FontWeight="Bold" Margin="5" Click="BtnDuelCorrect_Click" Style="{StaticResource NoWhiteWhenDisabledButtonStyle}"/>
+                            <Button x:Name="BtnDuelWrong" Content="НЕВЕРНО" Background="#AA0000" Foreground="White" Height="70" FontSize="24" FontWeight="Bold" Margin="5" Click="BtnDuelWrong_Click" Style="{StaticResource NoWhiteWhenDisabledButtonStyle}"/>
+                        </UniformGrid>
+                    </Grid>
+
+                    <!-- 4. ПОБЕДА -->
+                    <Grid x:Name="WinnerPanel" Grid.Row="0" Grid.RowSpan="3" Visibility="Collapsed" Background="#000">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="ПОБЕДИТЕЛЬ" Foreground="Gold" FontSize="36" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="TxtFinalWinnerName" Text="ИМЯ" Foreground="White" FontSize="80" FontWeight="ExtraBold" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="TxtFinalWinnings" Text="0 ₽" Foreground="#00FFCC" FontSize="60" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,20"/>
+                            <Button x:Name="BtnEndShow" Content="ЗАВЕРШИТЬ ИГРУ" Background="Transparent" BorderBrush="Gold" BorderThickness="2" Foreground="Gold" FontSize="24" Padding="30,15" Click="BtnEndShow_Click" Style="{StaticResource NoWhiteWhenDisabledButtonStyle}"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+
+                <!-- ПРАВАЯ КОЛОНКА: Панель управления -->
+                <Border Grid.Column="2" Background="#313338" Margin="0" CornerRadius="0" BorderThickness="0" Padding="15,20,15,20" Panel.ZIndex="10">
+                    <DockPanel LastChildFill="True">
+                        <!-- Низ правой панели: Паника + Терминал -->
+                        <StackPanel DockPanel.Dock="Bottom">
+                            <Button x:Name="BtnPanic" Content="! ПАНИКА !" Background="#da373c" Foreground="White" Height="45" FontWeight="Black" Margin="2,8" Click="BtnPanic_Click" Style="{StaticResource FlatButton}"/>
+                            <Button x:Name="BtnToggleLogs" Content="👁 ТЕРМИНАЛ ЛОГОВ" Background="#2b2d31" Foreground="#a1a1aa" MinHeight="40" Margin="0,4,0,0" Click="BtnToggleLogs_Click" Style="{StaticResource FlatButton}"/>
+                        </StackPanel>
+
+                        <!-- Основное содержимое правой панели (без скролла) -->
+                        <StackPanel Margin="0">
+                        <TextBlock Text="УПРАВЛЕНИЕ ЭФИРОМ" Foreground="#888" FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+                        <!-- PRE-GAME: Студийное вступление -->
+                        <Border x:Name="PreGameButtons" Background="#2b2d31" CornerRadius="5" Padding="8" Margin="0,0,0,10" Visibility="Collapsed">
+                            <StackPanel>
+                                <TextBlock Text="PRE-GAME" Foreground="#5865F2" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                                <UniformGrid Columns="2">
+                                    <Button x:Name="BtnOpeningUI" Content="OPENING" Background="#5865F2" Foreground="White" Height="34" Margin="2" FontWeight="Bold" Click="BtnOpening_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnIntro1UI" Content="INTRO 1" Background="#4752C4" Foreground="White" Height="34" Margin="2" FontWeight="Bold" IsEnabled="False" Click="BtnIntro1_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnIntro2UI" Content="INTRO 2" Background="#4752C4" Foreground="White" Height="34" Margin="2" FontWeight="Bold" IsEnabled="False" Click="BtnIntro2_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnRulesUI" Content="RULES" Background="#4752C4" Foreground="White" Height="34" Margin="2" FontWeight="Bold" IsEnabled="False" Click="BtnRulesIntro_Click" Style="{StaticResource FlatButton}"/>
+                                </UniformGrid>
+                            </StackPanel>
+                        </Border>
+
+                        <Button x:Name="BtnBotTurn" Content="🤖 ХОД БОТА (F5)" Visibility="Collapsed" Background="#4CAF50" Foreground="White" FontWeight="Bold" Height="40" Margin="0,5" Click="BtnBotTurn_Click" Style="{StaticResource FlatButton}"/>
+                        <ToggleButton x:Name="TglAutoBot" Content="🤖 АВТОПИЛОТ" Visibility="Collapsed" Background="#2196F3" Foreground="White" FontWeight="Bold" Height="40" Margin="0,5" Click="TglAutoBot_Click" Style="{StaticResource FlatToggleStyle}"/>
+                        <UniformGrid Columns="2">
+                            <Button Content="HOST CLASSIC" Background="#4e5058" Foreground="#dbdee1" Height="40" Margin="2" Click="BtnOpenHost_Click" Style="{StaticResource FlatButton}"/>
+                            <Button Content="HOST MODERN" Background="#4e5058" Foreground="#dbdee1" Height="40" Margin="2" Click="BtnOpenHostModern_Click" Style="{StaticResource FlatButton}"/>
+                            <Button Content="ANALYTICS" Background="#4e5058" Foreground="#dbdee1" Height="40" Margin="2" Click="BtnAnalytics_Click" Style="{StaticResource FlatButton}"/>
+                            <Button Content="READY" x:Name="BtnStartRound" Background="#23a559" Foreground="White" Height="40" Margin="2" Click="BtnReady_Click" Style="{StaticResource FlatButton}"/>
+                            <Button Content="START O'CLOCK" x:Name="BtnPlay" Background="#5865F2" Foreground="White" FontWeight="Bold" Height="40" Margin="2" Click="BtnPlay_Click" Style="{StaticResource FlatButton}"/>
+                            <Button Content="CLOSE ROUND" x:Name="BtnNextRound" Background="#4e5058" Foreground="#dbdee1" Height="40" Margin="2" Click="BtnNextRound_Click" Style="{StaticResource FlatButton}"/>
+                        </UniformGrid>
+                        
+                        <Button x:Name="BtnStartVoting" Content="VOTE START" Background="#4e5058" Foreground="#dbdee1" FontWeight="Bold" Height="50" Margin="0,10,0,0" IsEnabled="False" Click="BtnStartVoting_Click" Style="{StaticResource FlatButton}"/>
+
+                        <Button x:Name="BtnReveal" Content="REVEAL" Background="#4e5058" Foreground="#dbdee1" FontWeight="Bold" Height="50" Margin="0,5,0,0" IsEnabled="False" Click="BtnReveal_Click" Style="{StaticResource FlatButton}"/>
+
+                        <Border x:Name="RevealProgressPanel" Background="#1A1A2E" CornerRadius="5" Margin="0,5,0,0" Padding="8" Visibility="Collapsed">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="TxtRevealPhase" Text="ИНТРО ВЕДУЩЕЙ" Foreground="#FFD700" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    <ProgressBar x:Name="RevealProgress" Grid.Column="1" Height="16" Margin="10,0" Minimum="0" Maximum="100" Value="0" Background="#333" Foreground="#FFD700"/>
+                                    <TextBlock x:Name="TxtRevealTime" Text="0:00 / 0:00" Foreground="#AAA" FontSize="12" Grid.Column="2" VerticalAlignment="Center"/>
+                                </Grid>
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                    <Border Background="#2A1A00" CornerRadius="3" Padding="6,2" Margin="0,0,6,0">
+                                        <TextBlock Text="0:01–0:05 ИНТРО" Foreground="#FFD700" FontSize="11"/>
+                                    </Border>
+                                    <Border x:Name="RevealCueMarker" Background="#002A00" CornerRadius="3" Padding="6,2">
+                                        <TextBlock Text="0:06 ▶ ВСКРЫТИЕ КАРТОЧЕК" Foreground="#00FF00" FontSize="11" FontWeight="Bold"/>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Button x:Name="BtnHotDiscussion" Content="VERDICT" Background="#4e5058" Foreground="#dbdee1" FontWeight="Bold" Height="50" Margin="0,5,0,0" IsEnabled="False" Click="BtnHotDiscussion_Click" Style="{StaticResource FlatButton}"/>
+
+                        <Border x:Name="VotingBorder" Background="#2b2d31" CornerRadius="4" Margin="0,10" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="ИСКЛЮЧЕНИЕ:" Foreground="#888" FontSize="12" Margin="0,0,0,5"/>
+                                <ComboBox x:Name="EliminationComboBox" Height="36" FontSize="16" Background="#1e1f22" Foreground="#dbdee1" BorderThickness="0" Margin="0,0,0,5"/>
+                                <Button x:Name="BtnEliminate" Content="ELIMINATE" Background="#da373c" Foreground="White" FontWeight="Bold" Height="40" Click="BtnEliminate_Click" Style="{StaticResource FlatButton}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Button x:Name="BtnToFinal" Content="ПЕРЕЙТИ К ФИНАЛУ" Background="#00AA00" Foreground="White" Height="50" FontWeight="Bold" Visibility="Collapsed" Margin="0,0,0,10" Click="BtnToFinal_Click" Style="{StaticResource FlatButton}"/>
+                        
+                        <Button x:Name="BtnReset" Content="RESET IDLE" Background="#4e5058" Foreground="#dbdee1" Height="36" Margin="2" Click="BtnState_Click" Tag="Idle" Style="{StaticResource FlatButton}" HorizontalAlignment="Left"/>
+
+                        <Expander Header="✏️ БЫСТРАЯ ПРАВКА ТЕКУЩЕГО ВОПРОСА" Foreground="#888" Margin="0,10,0,0" IsExpanded="False">
+                            <StackPanel Margin="0,5,0,0">
+                                <TextBlock Text="Текст вопроса:" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
+                                <TextBox x:Name="TxtQuickEditQuestion" TextWrapping="Wrap" AcceptsReturn="True" Height="60" 
+                                         Background="#111" Foreground="White" BorderBrush="#555" Padding="5" VerticalScrollBarVisibility="Auto"/>
+                                <TextBlock Text="Ответ:" Foreground="#888" FontSize="11" Margin="0,5,0,2"/>
+                                <TextBox x:Name="TxtQuickEditAnswer" Height="28" Background="#111" Foreground="White" BorderBrush="#555" Padding="5"/>
+                                <Button x:Name="BtnQuickEditSave" Content="СОХРАНИТЬ И ОБНОВИТЬ" Background="#006688" Foreground="White" Height="36" Margin="0,8,0,0" Click="BtnQuickEditSave_Click" Style="{StaticResource FlatButton}"/>
+                            </StackPanel>
+                        </Expander>
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+            </Grid>
+
+            <!-- Hidden stubs for code-behind references -->
+            <Grid Visibility="Collapsed">
+                <Button x:Name="BtnIntro1"/><Button x:Name="BtnIntro2"/><Button x:Name="BtnNextQuestion"/>
+                <Button x:Name="BtnOpening"/><Button x:Name="BtnPass"/><Button x:Name="BtnRulesIntro"/>
+                <Button x:Name="BtnWrong"/><ComboBox x:Name="CmbBotMode"/>
+                <Grid x:Name="MainContentGrid"/>
+                <DataGrid x:Name="PlayersGrid"><DataGrid.Columns><DataGridTextColumn x:Name="VotedForColumn"/></DataGrid.Columns></DataGrid>
+                <StackPanel x:Name="PreGamePanel"/><TextBlock x:Name="RemoteLinkText"/>
+                <Border x:Name="RoundBankPanel"/><TextBlock x:Name="StartingPlayerTextBlock"/>
+                <Border x:Name="StatusBarBorder"/><StackPanel x:Name="TimerPanel"/>
+                <TextBlock x:Name="TxtGameState"/><TextBlock x:Name="TxtRound"/>
+                <TextBlock x:Name="TxtRoundBank"/><TextBlock x:Name="TxtStatusAction"/>
+                <TextBlock x:Name="TxtStatusHint"/><TextBlock x:Name="TxtStatusProcess"/>
+                <TextBlock x:Name="TxtTimerLabel"/>
+            </Grid>
+
+            <!-- Нижняя строка: лог событий + экстренные кнопки -->
+            <Border x:Name="LogContainer" Grid.Row="4" Background="#1E1E1E" Margin="10" CornerRadius="10" BorderBrush="#333" BorderThickness="1" Visibility="Collapsed">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="ЛОГ СОБЫТИЙ" Foreground="#5a6" FontSize="13" FontFamily="Consolas" FontWeight="Bold" Margin="10,5,0,0"/>
+                        <ListBox Grid.Row="1" x:Name="LstLog" 
+                                 Background="#0c0c0d" Foreground="#a1a1aa" 
+                                 BorderThickness="0" Padding="10" Margin="0"
+                                 FontFamily="Consolas" FontSize="11"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListBox.Resources>
+                                <Style TargetType="ScrollBar">
+                                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                    <Setter Property="Width" Value="8"/>
+                                    <Setter Property="MinWidth" Value="8"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ScrollBar">
+                                                <Grid Background="Transparent">
+                                                    <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                                        <Track.Thumb>
+                                                            <Thumb>
+                                                                <Thumb.Template>
+                                                                    <ControlTemplate TargetType="Thumb">
+                                                                        <Border x:Name="tb" Background="#2b2d31" CornerRadius="4"/>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter TargetName="tb" Property="Background" Value="#4e5058"/>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Thumb.Template>
+                                                            </Thumb>
+                                                        </Track.Thumb>
+                                                    </Track>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="Orientation" Value="Horizontal">
+                                            <Setter Property="Width" Value="Auto"/>
+                                            <Setter Property="Height" Value="8"/>
+                                            <Setter Property="MinHeight" Value="8"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ScrollBar">
+                                                        <Grid Background="Transparent">
+                                                            <Track x:Name="PART_Track" IsDirectionReversed="False">
+                                                                <Track.Thumb>
+                                                                    <Thumb>
+                                                                        <Thumb.Template>
+                                                                            <ControlTemplate TargetType="Thumb">
+                                                                                <Border x:Name="tb" Background="#2b2d31" CornerRadius="4"/>
+                                                                                <ControlTemplate.Triggers>
+                                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                                        <Setter TargetName="tb" Property="Background" Value="#4e5058"/>
+                                                                                    </Trigger>
+                                                                                </ControlTemplate.Triggers>
+                                                                            </ControlTemplate>
+                                                                        </Thumb.Template>
+                                                                    </Thumb>
+                                                                </Track.Thumb>
+                                                            </Track>
+                                                        </Grid>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.Resources>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Padding" Value="2,1"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                    </Grid>
+
+                    <!-- Служебные кнопки управления эфиром -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10" VerticalAlignment="Center">
+                        <Button Content="LOGO" x:Name="BtnLogo" Background="#444444" Foreground="White" Width="75" Height="40" Margin="3" FontWeight="Bold" FontSize="11" Click="BtnLogo_Click" Style="{StaticResource FlatButton}"/>
+                        <Button Content="STOP AUDIO" x:Name="BtnStopAudio" Background="#444444" Foreground="White" Width="75" Height="40" Margin="3" FontWeight="Bold" FontSize="11" Click="BtnStopAudio_Click" Style="{StaticResource FlatButton}"/>
+                        <Button Content="RESTART ROUND" x:Name="BtnRestartRound" Background="#FF8C00" Foreground="White" Width="90" Height="40" Margin="3" FontWeight="Bold" FontSize="11" Click="BtnRestartRound_Click" Style="{StaticResource FlatButton}"/>
+                        <Button Content="BREAK GAME" x:Name="BtnBreakGame" Background="#FF0000" Foreground="White" Width="90" Height="40" Margin="3" FontWeight="Black" FontSize="11" BorderBrush="Yellow" BorderThickness="2" Click="BtnBreakGame_Click" Style="{StaticResource FlatButton}">
+                            <Button.Effect>
+                                <DropShadowEffect BlurRadius="10" Color="Red" Opacity="0.8"/>
+                            </Button.Effect>
+                        </Button>
+                        <Button Content="CLOSE SESSION" x:Name="BtnCloseSession" Background="#8B0000" Foreground="White" Width="95" Height="40" Margin="3" FontWeight="Bold" FontSize="11" Click="BtnCloseSession_Click" Style="{StaticResource FlatButton}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+    </Grid>
+</Window>

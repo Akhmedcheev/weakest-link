@@ -1,0 +1,8 @@
+[06.03.2026 9:58:49] HANDLE ERROR: Bytes to be written to the stream exceed the Content-Length bytes size specified.
+   at System.Net.HttpResponseStream.BeginWriteCore(Byte[] buffer, Int32 offset, Int32 size, AsyncCallback callback, Object state)
+   at System.Net.HttpResponseStream.BeginWrite(Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state)
+   at System.IO.Stream.<>c.<BeginEndWriteAsync>b__63_0(Stream stream, ReadWriteParameters args, AsyncCallback callback, Object state)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncTrim[TInstance,TArgs](TInstance thisRef, TArgs args, Func`5 beginMethod, Func`3 endMethod)
+   at System.IO.Stream.BeginEndWriteAsync(Byte[] buffer, Int32 offset, Int32 count)
+   at System.IO.Stream.WriteAsync(Byte[] buffer, Int32 offset, Int32 count)
+   at WeakestLink.Network.WebRemoteController.HandleRequest(HttpListenerContext context) in i:\WEAKEST LINK SOPFTWARE\Network\WebRemoteController.cs:line 112

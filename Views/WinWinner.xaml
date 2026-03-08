@@ -1,0 +1,89 @@
+<Window x:Class="WeakestLink.Views.WinWinner"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="BROADCAST_RESULT" 
+        WindowState="Maximized" WindowStyle="None" AllowsTransparency="True" Background="#CC000000"
+        WindowStartupLocation="CenterScreen" Topmost="True" MouseLeftButtonDown="Window_MouseLeftButtonDown">
+    
+    <Grid>
+        <!-- Background Glow -->
+        <Ellipse Width="1000" Height="600" Fill="Gold" Opacity="0.1">
+            <Ellipse.Effect>
+                <BlurEffect Radius="100"/>
+            </Ellipse.Effect>
+        </Ellipse>
+
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <!-- Header Ornament -->
+            <Rectangle Height="4" Fill="Gold" Width="600" Margin="0,0,0,30" Opacity="0.8">
+                <Rectangle.Effect>
+                    <DropShadowEffect BlurRadius="15" Color="Gold" ShadowDepth="0"/>
+                </Rectangle.Effect>
+            </Rectangle>
+
+            <TextBlock Text="ПОБЕДИТЕЛЬ ПРОГРАММЫ" 
+                       Foreground="Gold" 
+                       FontSize="24" 
+                       FontWeight="Light" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,10">
+                <TextBlock.Effect>
+                    <DropShadowEffect BlurRadius="5" Color="Black" ShadowDepth="2"/>
+                </TextBlock.Effect>
+            </TextBlock>
+            
+            <TextBlock x:Name="TxtWinnerName" 
+                       Text="АЛЕКСЕЙ" 
+                       Foreground="White" 
+                       FontSize="120" 
+                       FontWeight="ExtraBold" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,10">
+                <TextBlock.Effect>
+                    <DropShadowEffect BlurRadius="20" Color="Gold" Opacity="0.4" ShadowDepth="0"/>
+                </TextBlock.Effect>
+            </TextBlock>
+            
+            <Border Background="Gold" Height="2" Width="800" Margin="0,20" Opacity="0.6"/>
+            
+            <TextBlock x:Name="TxtWinnings" 
+                       Text="150 000 ₽" 
+                       Foreground="White" 
+                       FontSize="80" 
+                       FontWeight="Bold" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,50">
+                <TextBlock.Effect>
+                    <DropShadowEffect BlurRadius="10" Color="Gold" Opacity="0.5" ShadowDepth="0"/>
+                </TextBlock.Effect>
+            </TextBlock>
+
+            <!-- Bottom Control (Almost invisible or styled as a TV safe area element) -->
+            <Button x:Name="BtnClose"
+                    Content="ВЫХОД В ПУЛЬТ [ESC]" 
+                    Click="BtnClose_Click" 
+                    Background="Transparent" 
+                    Foreground="#444" 
+                    BorderThickness="0" 
+                    FontSize="12" 
+                    HorizontalAlignment="Center"
+                    Cursor="Hand"
+                    Margin="0,100,0,0">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="Gold"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
+
+        <!-- TV Corner Logo Placeholder/Decoration -->
+        <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="50">
+            <TextBlock Text="THE WEAKEST LINK" Foreground="Gold" FontSize="18" Opacity="0.3" FontWeight="Bold"/>
+        </Border>
+    </Grid>
+</Window>

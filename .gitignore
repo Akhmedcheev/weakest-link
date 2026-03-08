@@ -1,0 +1,61 @@
+## ── Build output ──
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+bld/
+[Ll]og/
+[Ll]ogs/
+
+## ── Visual Studio / IDE ──
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+## ── NuGet ──
+**/packages/*
+!**/packages/build/
+*.nupkg
+**/[Pp]ackages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## ── Rider / JetBrains ──
+.idea/
+*.sln.iml
+
+## ── Build results ──
+[Dd]ebugPublic/
+[Rr]eleases/
+*.appx
+*.appxbundle
+*.appxupload
+*.msi
+*.msix
+*.msixbundle
+*.msixupload
+
+## ── Test results ──
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+TestResult.xml
+
+## ── OS junk ──
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+*.swp
+*~
+
+## ── User-specific / local ──
+launchSettings.json
+*.DotSettings.user

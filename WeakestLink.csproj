@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <Compile Remove="MainWindow.xaml.cs" />
+    <Page Remove="MainWindow.xaml" />
+    <Compile Remove="QuestionEditor\**\*" />
+    <Page Remove="QuestionEditor\**\*" />
+    <Compile Remove="OLDIES\**\*" />
+    <Page Remove="OLDIES\**\*" />
+    <None Remove="OLDIES\**\*" />
+    <Compile Remove="WLINK AI TESTER\**\*" />
+    <Page Remove="WLINK AI TESTER\**\*" />
+    <Compile Remove="WLINK AI TESTER 2\**\*" />
+    <Page Remove="WLINK AI TESTER 2\**\*" />
+    <Compile Remove="WEAKEST_LINK_BUILD_NEW\**\*" />
+    <Page Remove="WEAKEST_LINK_BUILD_NEW\**\*" />
+    <Compile Remove="Assets — копия\**\*" />
+    <Compile Remove=".snapshots\**\*" />
+  </ItemGroup>
+  <PropertyGroup>
+    <OutputPath>$(MSBuildProjectDirectory)\Build\$(Configuration)\$(TargetFramework)\</OutputPath>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <Target Name="BuildQuestionEditor" AfterTargets="Build" Condition="Exists('$(ProjectDir)QuestionEditor\WeakestLink.QuestionEditor.csproj')">
+    <Exec Command="dotnet build &quot;$(ProjectDir)QuestionEditor\WeakestLink.QuestionEditor.csproj&quot; -c $(Configuration)" IgnoreExitCode="true" />
+    <Copy SourceFiles="$(ProjectDir)QuestionEditor\bin\$(Configuration)\net10.0-windows\WeakestLink.QuestionEditor.exe" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" Condition="Exists('$(ProjectDir)QuestionEditor\bin\$(Configuration)\net10.0-windows\WeakestLink.QuestionEditor.exe')" />
+  </Target>
+  <ItemGroup>
+    <None Update="questions.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="final_questions.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Images\logotipka.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="QRCoder" Version="1.7.0" />
+  </ItemGroup>
+
+</Project>

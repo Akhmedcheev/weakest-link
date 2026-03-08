@@ -1,0 +1,15 @@
+  Определение проектов для восстановления...
+  Все проекты обновлены для восстановления.
+I:\WEAKEST LINK SOPFTWARE\Views\OperatorPanel.xaml.cs(49,17): error CS0246: Не удалось найти тип или имя пространства имен "ObservableCollection<>" (возможно, отсутствует директива using или ссылка на сборку). [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+I:\WEAKEST LINK SOPFTWARE\Views\OperatorPanel.xaml.cs(50,17): error CS0246: Не удалось найти тип или имя пространства имен "ObservableCollection<>" (возможно, отсутствует директива using или ссылка на сборку). [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+I:\WEAKEST LINK SOPFTWARE\Views\OperatorPanel.xaml.cs(45,76): warning CS8612: Допустимость значений NULL для ссылочных типов в типе объекта "event PropertyChangedEventHandler DuelMarker.PropertyChanged" не совпадает с явно реализованным членом "event PropertyChangedEventHandler? INotifyPropertyChanged.PropertyChanged". [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+
+Ошибка сборки.
+
+I:\WEAKEST LINK SOPFTWARE\Views\OperatorPanel.xaml.cs(45,76): warning CS8612: Допустимость значений NULL для ссылочных типов в типе объекта "event PropertyChangedEventHandler DuelMarker.PropertyChanged" не совпадает с явно реализованным членом "event PropertyChangedEventHandler? INotifyPropertyChanged.PropertyChanged". [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+I:\WEAKEST LINK SOPFTWARE\Views\OperatorPanel.xaml.cs(49,17): error CS0246: Не удалось найти тип или имя пространства имен "ObservableCollection<>" (возможно, отсутствует директива using или ссылка на сборку). [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+I:\WEAKEST LINK SOPFTWARE\Views\OperatorPanel.xaml.cs(50,17): error CS0246: Не удалось найти тип или имя пространства имен "ObservableCollection<>" (возможно, отсутствует директива using или ссылка на сборку). [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+    Предупреждений: 1
+    Ошибок: 2
+
+Прошло времени 00:00:00.92

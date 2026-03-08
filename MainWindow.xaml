@@ -1,0 +1,66 @@
+<Window x:Class="MoneyChain.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:MoneyChain"
+        Title="Денежная цепочка - Демонстрация" 
+        Height="800" 
+        Width="1400"
+        Background="#1a1a1a">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="150"/>
+        </Grid.RowDefinitions>
+
+        <!-- Основной экран трансляции -->
+        <local:BroadcastScreen Grid.Row="0" Name="BroadcastScreenControl"/>
+
+        <!-- Панель управления -->
+        <Grid Grid.Row="1" Background="#2a2a2a" Margin="10">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                
+                <!-- Управление уровнями -->
+                <StackPanel Orientation="Vertical" Margin="0,0,20,0">
+                    <TextBlock Text="Уровни" Foreground="White" FontSize="14" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Name="PrevLevelBtn" Margin="0,0,10,0" Content="← Пред" Click="PrevLevel_Click" 
+                                Width="100" Height="40" Background="#4CAF50" Foreground="White" FontWeight="Bold"/>
+                        <TextBlock Name="CurrentLevelText" Text="Уровень: 0" Foreground="White" Margin="0,0,10,0"
+                                   VerticalAlignment="Center" Width="150" TextAlignment="Center"/>
+                        <Button Name="NextLevelBtn" Content="След →" Click="NextLevel_Click" 
+                                Width="100" Height="40" Background="#2196F3" Foreground="White" FontWeight="Bold"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Быстрая навигация по уровням -->
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Перейти на уровень" Foreground="White" FontSize="14" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="0" Click="JumpToLevel_Click" Tag="0" Margin="0,0,5,0" 
+                                Width="35" Height="40" Background="#666" Foreground="White"/>
+                        <Button Content="3" Click="JumpToLevel_Click" Tag="3" Margin="0,0,5,0"
+                                Width="35" Height="40" Background="#666" Foreground="White"/>
+                        <Button Content="6" Click="JumpToLevel_Click" Tag="6" Margin="0,0,5,0"
+                                Width="35" Height="40" Background="#666" Foreground="White"/>
+                        <Button Content="9" Click="JumpToLevel_Click" Tag="9" Margin="0,0,5,0"
+                                Width="35" Height="40" Background="#666" Foreground="White"/>
+                        <Button Content="12" Click="JumpToLevel_Click" Tag="12"
+                                Width="35" Height="40" Background="#666" Foreground="White"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Управление таймером -->
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Таймер (секунды)" Foreground="White" FontSize="14" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Сброс" Click="ResetTimer_Click" Margin="0,0,5,0" 
+                                Width="70" Height="40" Background="#FF9800" Foreground="White"/>
+                        <TextBlock Name="TimerStatusText" Text="30 сек" Foreground="White" 
+                                   VerticalAlignment="Center" Width="80" TextAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

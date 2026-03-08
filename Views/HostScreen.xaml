@@ -1,0 +1,202 @@
+<Window x:Class="WeakestLink.Views.HostScreen"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Weakest Link - Host Screen" Height="1080" Width="1920"
+        Background="Black" Foreground="White"
+        WindowStartupLocation="CenterScreen">
+    
+    <Viewbox Stretch="Uniform">
+        <Grid Width="1920" Height="1080" Background="#050510">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="MoneyTreeColumn" Width="280"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ЛЕВАЯ КОЛОНКА: ДЕНЕЖНОЕ ДЕРЕВО -->
+            <Border x:Name="MoneyTreeBorder" Grid.Column="0" Background="#020208" BorderBrush="#111" BorderThickness="0,0,1,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="ЦЕПОЧКА" FontSize="18" FontWeight="SemiBold" Foreground="#444" 
+                               HorizontalAlignment="Center" Margin="0,20,0,10"/>
+
+                    <ItemsControl Grid.Row="1" x:Name="HostBankChainList" VerticalAlignment="Stretch">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="1"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid x:Name="HostChainGrid" Width="160" Height="58" VerticalAlignment="Center">
+                                    <Ellipse x:Name="BgEllipse" Fill="#001530" Stroke="#222" StrokeThickness="1"/>
+                                    <TextBlock x:Name="HostChainText" 
+                                               Text="{Binding Value, StringFormat={}{0:N0}}" 
+                                               FontSize="28" FontWeight="ExtraBold" 
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                               Foreground="#888">
+                                    </TextBlock>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                        <Setter TargetName="BgEllipse" Property="Fill" Value="#C10000"/>
+                                        <Setter TargetName="BgEllipse" Property="Stroke" Value="White"/>
+                                        <Setter TargetName="BgEllipse" Property="StrokeThickness" Value="2"/>
+                                        <Setter TargetName="HostChainText" Property="Foreground" Value="White"/>
+                                        <Setter TargetName="HostChainText" Property="FontSize" Value="32"/>
+                                        <Setter TargetName="HostChainGrid" Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect BlurRadius="25" ShadowDepth="0" Color="Red" Opacity="0.7"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    
+                    <StackPanel Grid.Row="2" VerticalAlignment="Top" Margin="0,10,0,40">
+                        <Grid Width="150" Height="55">
+                            <Ellipse Fill="#C10000" Stroke="White" StrokeThickness="2"/>
+                            <TextBlock Text="0" FontSize="32" FontWeight="Black" Foreground="White" 
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <TextBlock Text="BANK" FontSize="18" FontWeight="Black" Foreground="#555" 
+                                   HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ПРАВАЯ КОЛОНКА: ИГРОВОЙ КОНТЕНТ (ТВ-СУФЛЕР) -->
+            <Grid x:Name="MainContentGrid" Grid.Column="1" Margin="40">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="280"/>
+                </Grid.RowDefinitions>
+
+                <!-- 1. Верхняя строка: Инфо-блок -->
+                <TextBlock x:Name="TxtHostQuestionInfo" Grid.Row="0" 
+                           Text="1000 ВОПРОС : 1" 
+                           FontSize="48" FontWeight="ExtraBold" Foreground="#FFFF00" Margin="0,0,0,15"
+                           FontFamily="Segoe UI Semibold"/>
+
+                <!-- 2. Основной блок вопроса (AUTHENTIC TELEPROMPTER LOOK) -->
+                <Border Grid.Row="1" Background="#0A1128" BorderBrush="#1A2850" BorderThickness="2" Padding="40">
+                    <TextBlock x:Name="TxtQuestion" 
+                               Text="ОЖИДАНИЕ ВОПРОСА ДЛЯ ВЕДУЩЕГО..." 
+                               FontSize="88" FontWeight="Bold" Foreground="White" 
+                               TextWrapping="Wrap" VerticalAlignment="Center"
+                               FontFamily="Segoe UI" LineHeight="105"/>
+                </Border>
+
+                <!-- 3. Блок ответа (Строго красный фон #C10000) -->
+                <Border x:Name="AnswerBorder" Grid.Row="2" Background="#C10000" Padding="40,20" Margin="0,10,0,0">
+                    <TextBlock x:Name="TxtAnswer" 
+                               Text="ПРАВИЛЬНЫЙ ОТВЕТ" 
+                               FontSize="78" FontWeight="Bold" Foreground="White" 
+                               TextWrapping="Wrap" FontFamily="Segoe UI"/>
+                </Border>
+
+                <!-- 4. Нижняя информационная панель (Grid 2x4) -->
+                <Grid x:Name="BottomInfoPanel" Grid.Row="3" Margin="0,40,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- СТРОКА 1 -->
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="В БАНК" FontSize="36" FontWeight="SemiBold" Foreground="#888" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                    <Border Grid.Row="0" Grid.Column="1" Background="#0000B8" Margin="5">
+                        <TextBlock x:Name="TxtToBank" Text="1000" FontSize="72" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="ИЛИ ИГРАЕМ" FontSize="36" FontWeight="SemiBold" Foreground="#888" VerticalAlignment="Center" Margin="50,0,20,0"/>
+                    <Border Grid.Row="0" Grid.Column="3" Background="#800080" Margin="5">
+                        <TextBlock x:Name="TxtNextSum" Text="2000" FontSize="72" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <!-- СТРОКА 2 -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="ТАЙМЕР" FontSize="36" FontWeight="SemiBold" Foreground="#888" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                    <Border Grid.Row="1" Grid.Column="1" Background="#006400" Margin="5">
+                        <Viewbox MaxWidth="280" MaxHeight="100" StretchDirection="DownOnly" Margin="10">
+                            <TextBlock x:Name="TxtHostTimer" Text="2:30" FontSize="72" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Viewbox>
+                    </Border>
+
+                    <TextBlock Grid.Row="1" Grid.Column="2" Text="В БАНКЕ" FontSize="36" FontWeight="SemiBold" Foreground="#888" VerticalAlignment="Center" Margin="50,0,20,0"/>
+                    <Border Grid.Row="1" Grid.Column="3" Background="#4A0020" Margin="5">
+                        <TextBlock x:Name="TxtHostBanked" Text="0" FontSize="72" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </Grid>
+
+                <!-- ПАНЕЛЬ ФИНАЛЬНОЙ ДУЭЛИ (ИНТЕГРИРОВАННАЯ В Row 3) -->
+                <Grid x:Name="FinalDuelPanel" Grid.Row="3" Background="#050510" Visibility="Collapsed" Margin="0,20,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock x:Name="TxtFinalist1Name" Text="ФИНАЛИСТ 1" FontSize="50" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                        <StackPanel x:Name="StackP1Indicators" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Ellipse x:Name="P1_I1" Width="35" Height="35" Fill="#222" Stroke="#444" Margin="8"/>
+                            <Ellipse x:Name="P1_I2" Width="35" Height="35" Fill="#222" Stroke="#444" Margin="8"/>
+                            <Ellipse x:Name="P1_I3" Width="35" Height="35" Fill="#222" Stroke="#444" Margin="8"/>
+                            <Ellipse x:Name="P1_I4" Width="35" Height="35" Fill="#222" Stroke="#444" Margin="8"/>
+                            <Ellipse x:Name="P1_I5" Width="35" Height="35" Fill="#222" Stroke="#444" Margin="8"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <TextBlock Grid.Column="1" Text="VS" FontSize="60" FontWeight="Black" Foreground="#444" VerticalAlignment="Center" Margin="40,0"/>
+
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                        <TextBlock x:Name="TxtFinalist2Name" Text="ФИНАЛИСТ 2" FontSize="50" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                        <StackPanel x:Name="StackP2Indicators" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Ellipse x:Name="P2_I1" Width="35" Height="35" Fill="#222" Stroke="#444" Margin="8"/>
+                            <Ellipse x:Name="P2_I2" Width="35" Height="35" Fill="#222" Stroke="#444" Margin="8"/>
+                            <Ellipse x:Name="P2_I3" Width="35" Height="35" Fill="#222" Stroke="#444" Margin="8"/>
+                            <Ellipse x:Name="P2_I4" Width="35" Height="35" Fill="#222" Stroke="#444" Margin="8"/>
+                            <Ellipse x:Name="P2_I5" Width="35" Height="35" Fill="#222" Stroke="#444" Margin="8"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+
+            <!-- СУФЛЁР / ПРАВИЛА — полупрозрачная подложка с крупным текстом по центру -->
+            <Grid x:Name="HostRulesOverlay" Grid.ColumnSpan="2" Background="#CC000000" Visibility="Collapsed">
+                <Border Background="#BB0A0A1A" Margin="80" CornerRadius="30" Padding="60" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="1600">
+                    <TextBlock x:Name="TxtHostRules" Text="" FontSize="52" LineHeight="78" Foreground="White" TextWrapping="Wrap" TextAlignment="Center" FontFamily="Segoe UI" FontWeight="SemiBold"/>
+                </Border>
+            </Grid>
+
+            <!-- Оверлей с логотипом (LOGO) -->
+            <Grid x:Name="LogoOverlay" Grid.ColumnSpan="2" Background="Black" Visibility="Collapsed">
+                <Image x:Name="ImgLogo" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="1200" MaxHeight="800"/>
+            </Grid>
+
+            <Grid x:Name="EliminationOverlay" Grid.ColumnSpan="2" Background="Black" Visibility="Collapsed">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="ВЫБЫВАЕТ" FontSize="80" Foreground="#C10000" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,40"/>
+                    <TextBlock x:Name="TxtEliminatedName" Text="PLAYER" FontSize="220" Foreground="White" FontWeight="ExtraBold" HorizontalAlignment="Center"/>
+                    <TextBlock Text="ВЫ САМОЕ СЛАБОЕ ЗВЕНО. ПРОЩАЙТЕ!" FontSize="46" Foreground="#444" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,80,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Viewbox>
+</Window>

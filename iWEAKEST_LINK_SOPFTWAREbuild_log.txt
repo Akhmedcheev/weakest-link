@@ -1,0 +1,11 @@
+  Определение проектов для восстановления...
+  Все проекты обновлены для восстановления.
+I:\WEAKEST LINK SOPFTWARE\files\MainWindow.xaml(20,106): error MC3072: свойство "Spacing" не существует в пространстве имен XML "http://schemas.microsoft.com/winfx/2006/xaml/presentation". Строка 20 позиция 106. [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+
+Ошибка сборки.
+
+I:\WEAKEST LINK SOPFTWARE\files\MainWindow.xaml(20,106): error MC3072: свойство "Spacing" не существует в пространстве имен XML "http://schemas.microsoft.com/winfx/2006/xaml/presentation". Строка 20 позиция 106. [I:\WEAKEST LINK SOPFTWARE\WeakestLink.csproj]
+    Предупреждений: 0
+    Ошибок: 1
+
+Прошло времени 00:00:01.11

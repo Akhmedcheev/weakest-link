@@ -1,0 +1,180 @@
+<Window x:Class="WeakestLink.Views.HostScreenModern"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Weakest Link - Host Screen (Modern)" Height="1080" Width="1920"
+        Background="#000000" Foreground="White"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <Style x:Key="TopBarLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#888888"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+        </Style>
+        <Style x:Key="TopBarValue" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+        </Style>
+    </Window.Resources>
+
+    <Viewbox Stretch="Uniform">
+        <Grid Width="1920" Height="1080" Background="#000000">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- ===== ВЕРХНЯЯ ПАНЕЛЬ (TopBar) ===== -->
+            <Grid Grid.Row="0" Background="#0A0A0A" Margin="0,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Левая часть: Имя игрока + Таймер -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="30,0,0,0">
+                    <TextBlock x:Name="TxtCurrentPlayerName" Text="ARG" Style="{StaticResource TopBarValue}" 
+                               Foreground="#00CCCC" Margin="0,0,20,0"/>
+                    <Border Background="#1A1A1A" CornerRadius="4" Padding="12,4">
+                        <TextBlock x:Name="TxtHostTimer" Text="0:00" Style="{StaticResource TopBarValue}" Foreground="#FFFFFF"/>
+                    </Border>
+                </StackPanel>
+
+                <!-- Центр: Банк раунда -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="БАНК" Style="{StaticResource TopBarLabel}" Margin="0,0,10,0"/>
+                    <TextBlock x:Name="TxtHostBanked" Text="0" Style="{StaticResource TopBarValue}" Foreground="#FFAA00"/>
+                </StackPanel>
+
+                <!-- Правая часть: Playing for / Общий банк -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,30,0">
+                    <TextBlock Text="ИГРАЕМ НА" Style="{StaticResource TopBarLabel}" Margin="0,0,10,0"/>
+                    <TextBlock x:Name="TxtPlayingFor" Text="₽1 000" Style="{StaticResource TopBarValue}" Foreground="#00CC00"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- ===== ЦЕНТРАЛЬНАЯ ЗОНА (Вопрос) ===== -->
+            <Grid Grid.Row="1" Margin="80,40,80,20">
+                <!-- Вопрос -->
+                <TextBlock x:Name="TxtQuestion" 
+                           Text="ОЖИДАНИЕ ВОПРОСА ДЛЯ ВЕДУЩЕГО..." 
+                           FontSize="52" FontWeight="Normal" Foreground="#EEEEEE" 
+                           TextWrapping="Wrap" VerticalAlignment="Center"
+                           FontFamily="Georgia" LineHeight="72"
+                           Padding="20"/>
+
+                <!-- Оверлей: Информация о раунде (при подготовке) -->
+                <TextBlock x:Name="TxtHostQuestionInfo" 
+                           Text="" 
+                           FontSize="36" FontWeight="SemiBold" Foreground="#666666" 
+                           VerticalAlignment="Top" HorizontalAlignment="Left"
+                           FontFamily="Segoe UI" Margin="20,0,0,0"/>
+            </Grid>
+
+            <!-- ===== НИЖНИЙ СВЕТОФОР (BottomBar) ===== -->
+            <StackPanel Grid.Row="2">
+                <!-- Зеленая полоса: Основной ответ -->
+                <Border x:Name="GreenBar" Background="#00CC00" MinHeight="52">
+                    <TextBlock x:Name="TxtAnswer" 
+                               Text="" 
+                               FontSize="32" FontWeight="Bold" Foreground="White" 
+                               TextWrapping="Wrap" VerticalAlignment="Center"
+                               FontFamily="Segoe UI" Margin="30,8,30,8"/>
+                </Border>
+
+                <!-- Желтая полоса: Допустимые варианты / уточнения -->
+                <Border x:Name="YellowBar" Background="#CCCC00" MinHeight="44">
+                    <TextBlock x:Name="TxtAnswerAlt" 
+                               Text="" 
+                               FontSize="26" FontWeight="SemiBold" Foreground="#1A1A00" 
+                               TextWrapping="Wrap" VerticalAlignment="Center"
+                               FontFamily="Segoe UI" Margin="30,6,30,6"/>
+                </Border>
+
+                <!-- Красная полоса: Системное / Финал -->
+                <Border x:Name="RedBar" Background="#CC0000" MinHeight="40">
+                    <TextBlock x:Name="TxtSystemLine" 
+                               Text="" 
+                               FontSize="24" FontWeight="Bold" Foreground="White" 
+                               TextWrapping="Wrap" VerticalAlignment="Center"
+                               FontFamily="Segoe UI" Margin="30,6,30,6"/>
+                </Border>
+            </StackPanel>
+
+            <!-- ===== ПАНЕЛЬ ФИНАЛЬНОЙ ДУЭЛИ (оверлей поверх MainArea) ===== -->
+            <Grid x:Name="FinalDuelPanel" Grid.Row="1" Background="#000000" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock x:Name="TxtFinalist1Name" Text="ФИНАЛИСТ 1" FontSize="48" FontWeight="Bold" 
+                               Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"
+                               FontFamily="Segoe UI"/>
+                    <StackPanel x:Name="StackP1Indicators" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Ellipse x:Name="P1_I1" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P1_I2" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P1_I3" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P1_I4" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P1_I5" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <TextBlock Grid.Column="1" Text="VS" FontSize="56" FontWeight="Black" Foreground="#333333" 
+                           VerticalAlignment="Center" Margin="60,0" FontFamily="Segoe UI"/>
+
+                <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock x:Name="TxtFinalist2Name" Text="ФИНАЛИСТ 2" FontSize="48" FontWeight="Bold" 
+                               Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"
+                               FontFamily="Segoe UI"/>
+                    <StackPanel x:Name="StackP2Indicators" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Ellipse x:Name="P2_I1" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P2_I2" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P2_I3" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P2_I4" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P2_I5" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+
+            <!-- ===== СУФЛЁР / ПРАВИЛА — полупрозрачная подложка ===== -->
+            <Grid x:Name="HostRulesOverlay" Grid.RowSpan="3" Background="#CC000000" Visibility="Collapsed">
+                <Border Background="#BB0A0A1A" Margin="80,40" CornerRadius="24" Padding="50" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="1400">
+                    <TextBlock x:Name="TxtHostRules" Text="" FontSize="46" LineHeight="70" 
+                               Foreground="White" TextWrapping="Wrap" TextAlignment="Center" 
+                               FontFamily="Segoe UI" FontWeight="SemiBold"/>
+                </Border>
+            </Grid>
+
+            <!-- ===== ОВЕРЛЕЙ ЛОГОТИПА ===== -->
+            <Grid x:Name="LogoOverlay" Grid.RowSpan="3" Background="Black" Visibility="Collapsed">
+                <Image x:Name="ImgLogo" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                       MaxWidth="1200" MaxHeight="800"/>
+            </Grid>
+
+            <!-- ===== ОВЕРЛЕЙ ВЫБЫВАНИЯ ===== -->
+            <Grid x:Name="EliminationOverlay" Grid.RowSpan="3" Background="#000000" Visibility="Collapsed">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="ВЫБЫВАЕТ" FontSize="64" Foreground="#CC0000" FontWeight="Bold" 
+                               HorizontalAlignment="Center" Margin="0,0,0,30" FontFamily="Segoe UI"/>
+                    <TextBlock x:Name="TxtEliminatedName" Text="PLAYER" FontSize="180" Foreground="White" 
+                               FontWeight="ExtraBold" HorizontalAlignment="Center" FontFamily="Segoe UI"/>
+                    <TextBlock Text="ВЫ САМОЕ СЛАБОЕ ЗВЕНО. ПРОЩАЙТЕ!" FontSize="38" Foreground="#444444" 
+                               FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,60,0,0" FontFamily="Segoe UI"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Viewbox>
+</Window>
