@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Weakest Link - Operator Panel" Height="1000" Width="1400"
-        Background="#1e1f22" Foreground="#dbdee1"
+        Background="{DynamicResource ObsidianBg}" Foreground="{DynamicResource ObsidianTextPrimary}"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         WindowStyle="None"
@@ -17,8 +17,15 @@
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
+        <!-- ═══ OBSIDIAN PALETTE ═══ -->
+        <SolidColorBrush x:Key="ObsidianBg"            Color="#1E1E1E"/>
+        <SolidColorBrush x:Key="ObsidianSurface"       Color="#252525"/>
+        <SolidColorBrush x:Key="ObsidianBorder"        Color="#363636"/>
+        <SolidColorBrush x:Key="ObsidianTextPrimary"   Color="#DADCDE"/>
+        <SolidColorBrush x:Key="ObsidianTextSecondary" Color="#8B8BA7"/>
+
         <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#dbdee1"/>
+            <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
         </Style>
 
         <!-- Discord Scrollbar: Thumb -->
@@ -544,7 +551,7 @@
         </Grid.RowDefinitions>
 
         <!-- Row 0: Custom Title Bar -->
-        <Border Grid.Row="0" Background="#111214" BorderThickness="0">
+        <Border Grid.Row="0" Background="#111214" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,0,1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -592,7 +599,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- ЛЕВЫЙ SIDEBAR: Абсолютно на всю высоту -->
-        <Border Grid.Column="0" Background="#1e1f22" BorderThickness="0">
+        <Border Grid.Column="0" Background="{StaticResource ObsidianBg}" BorderThickness="0">
             <StackPanel x:Name="LeftSidebarPanel" VerticalAlignment="Top" Margin="0,25,0,0">
                 <Button Content="🛠" FontSize="24" Background="Transparent" BorderThickness="0" Foreground="#a1a1aa" Margin="0,0,0,25" Cursor="Hand" HorizontalAlignment="Center"/>
                 <Button Content="📝" FontSize="24" Background="Transparent" BorderThickness="0" Foreground="#a1a1aa" Margin="0,0,0,25" Cursor="Hand" HorizontalAlignment="Center"/>
@@ -611,7 +618,7 @@
             </Grid.RowDefinitions>
 
             <!-- 0. ВЕРХНЯЯ ШАПКА (DEBUG) -->
-            <Border Grid.Row="0" Background="#2b2d31" Height="38" BorderBrush="#1e1f22" BorderThickness="0,0,0,1">
+            <Border Grid.Row="0" Background="{StaticResource ObsidianSurface}" Height="38" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,0,1">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,4">
                     <Menu VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Margin="0,0,8,0">
                         <MenuItem Header="🛠 DEBUG" Foreground="#dbdee1" Padding="5,0">
@@ -665,7 +672,7 @@
             </Border>
 
             <!-- 1. ПАНЕЛЬ СТАТУСА (Банк, Таймер) -->
-            <Border Grid.Row="1" Background="#1E1E1E" Margin="10" CornerRadius="10" BorderBrush="#333" BorderThickness="1">
+            <Border Grid.Row="1" Background="{StaticResource ObsidianBg}" Margin="10" CornerRadius="10" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -964,7 +971,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- ЛЕВО: Chain -->
-                <Border Grid.Column="0" x:Name="BankChainColumn" Background="#2b2d31" Padding="15">
+                <Border Grid.Column="0" x:Name="BankChainColumn" Background="{StaticResource ObsidianSurface}" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,1,0" Padding="15">
                     <StackPanel>
                         <TextBlock Text="ЦЕПОЧКА БАНКА" Foreground="#888" FontSize="14" HorizontalAlignment="Center" Margin="0,0,0,15"/>
                         <ItemsControl x:Name="BankChainList">
@@ -982,7 +989,7 @@
                 <!-- ЦЕНТР: Вопрос / Настройка -->
                 <Grid Grid.Column="1" ClipToBounds="True">
                     <!-- Setup Panel -->
-                    <Border x:Name="SetupPanel" Background="#313338" Padding="20" Visibility="Visible">
+                    <Border x:Name="SetupPanel" Background="{StaticResource ObsidianBg}" Padding="20" Visibility="Visible">
                         <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Width="850">
                             <!-- Expander: только список пультов -->
                             <Expander x:Name="RosterExpander" Header="СФОРМИРОВАТЬ КОМАНДУ" IsExpanded="True"
@@ -1218,7 +1225,7 @@
                 </Grid>
 
                 <!-- ПРАВАЯ КОЛОНКА: Панель управления -->
-                <Border Grid.Column="2" Background="#313338" Margin="0" CornerRadius="0" BorderThickness="0" Padding="15,20,15,20" Panel.ZIndex="10">
+                <Border Grid.Column="2" Background="{StaticResource ObsidianSurface}" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1,0,0,0" Margin="0" CornerRadius="0" Padding="15,20,15,20" Panel.ZIndex="10">
                     <DockPanel LastChildFill="True">
                         <!-- Низ правой панели: Паника + Терминал -->
                         <StackPanel DockPanel.Dock="Bottom">
@@ -1327,7 +1334,7 @@
             </Grid>
 
             <!-- Нижняя строка: лог событий + экстренные кнопки -->
-            <Border x:Name="LogContainer" Grid.Row="4" Background="#1E1E1E" Margin="10" CornerRadius="10" BorderBrush="#333" BorderThickness="1" Visibility="Collapsed">
+            <Border x:Name="LogContainer" Grid.Row="4" Background="{StaticResource ObsidianBg}" Margin="10" CornerRadius="10" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" Visibility="Collapsed">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
