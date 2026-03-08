@@ -1194,67 +1194,142 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Game Controls -->
+                    <!-- Game Controls — Command Palette Style -->
                     <Grid x:Name="GridGameControls" Visibility="Collapsed">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="200"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- Row 0: Вопрос и ответ (MinHeight не даёт схлопнуться) -->
-                        <Border Grid.Row="0" Background="#313338" CornerRadius="8" Padding="30" Margin="10" MinHeight="200">
-                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <!-- Центрированная парящая карточка -->
+                        <Border HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                MaxWidth="800" MinWidth="500"
+                                Background="{DynamicResource ObsidianSurface}" 
+                                BorderBrush="{DynamicResource ObsidianBorder}" BorderThickness="1"
+                                CornerRadius="8" Padding="30" Margin="20">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="20" ShadowDepth="10" Opacity="0.6" Color="Black"/>
+                            </Border.Effect>
+                            <StackPanel>
+                                <!-- Вопрос -->
                                 <TextBlock x:Name="TxtCurrentQuestion" Text="Ожидание вопроса..." 
-                                           Foreground="White" FontSize="28" FontWeight="Bold" 
-                                           TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,20"
-                                           MinHeight="40"/>
+                                           Foreground="{DynamicResource ObsidianTextPrimary}" FontSize="26" FontWeight="Bold" 
+                                           TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,12"
+                                           MinHeight="36"/>
+                                <!-- Ответ -->
                                 <TextBlock x:Name="TxtCurrentAnswer" Text="ОТВЕТ: —" 
-                                           Foreground="#aaa" FontSize="20" FontWeight="Normal" 
-                                           TextAlignment="Center" TextWrapping="Wrap"
-                                           MinHeight="28"/>
+                                           Foreground="{DynamicResource ObsidianTextSecondary}" FontSize="18" FontWeight="Normal" 
+                                           TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,24"
+                                           MinHeight="24"/>
+                                <!-- Разделитель -->
+                                <Border Height="1" Background="{DynamicResource ObsidianBorder}" Margin="0,0,0,20"/>
+                                <!-- Кнопки Stream Deck — плоские, скруглённые -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button x:Name="BtnCorrect" Width="130" Height="120" Margin="6"
+                                            Background="#23a559" BorderThickness="0" Cursor="Hand"
+                                            Click="BtnCorrect_Click" Style="{StaticResource GameButtonPressStyle}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="4">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="bd" Property="Background" Value="#2db86b"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter TargetName="bd" Property="Background" Value="#1a8a44"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter TargetName="bd" Property="Opacity" Value="0.4"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="ВЕРНО" FontSize="22" FontWeight="Bold" Foreground="White" TextAlignment="Center"/>
+                                            <TextBlock Text="[ ENTER ]" FontSize="12" Foreground="#C0FFFFFF" TextAlignment="Center" Margin="0,4,0,0"/>
+                                        </StackPanel>
+                                    </Button>
+
+                                    <Button x:Name="BtnBank" Width="130" Height="120" Margin="6,6,20,6"
+                                            Background="#FFD700" BorderThickness="0" Cursor="Hand"
+                                            Click="BtnBank_Click" Style="{StaticResource GameButtonPressStyle}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="4">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="bd" Property="Background" Value="#FFE033"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter TargetName="bd" Property="Background" Value="#D4B400"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter TargetName="bd" Property="Opacity" Value="0.4"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="БАНК" FontSize="22" FontWeight="Bold" Foreground="#1a1a1a" TextAlignment="Center"/>
+                                            <TextBlock Text="[ SPACE ]" FontSize="12" Foreground="#60000000" TextAlignment="Center" Margin="0,4,0,0"/>
+                                        </StackPanel>
+                                    </Button>
+
+                                    <Button x:Name="BtnWrong" Width="130" Height="120" Margin="6"
+                                            Background="#da373c" BorderThickness="0" Cursor="Hand"
+                                            Click="BtnWrong_Click" Style="{StaticResource GameButtonPressStyle}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="4">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="bd" Property="Background" Value="#e54e52"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter TargetName="bd" Property="Background" Value="#b82d31"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter TargetName="bd" Property="Opacity" Value="0.4"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="НЕВЕРНО" FontSize="22" FontWeight="Bold" Foreground="White" TextAlignment="Center"/>
+                                            <TextBlock Text="[ DEL ]" FontSize="12" Foreground="#C0FFFFFF" TextAlignment="Center" Margin="0,4,0,0"/>
+                                        </StackPanel>
+                                    </Button>
+
+                                    <Button x:Name="BtnPass" Width="130" Height="120" Margin="6"
+                                            Background="#4e5058" BorderThickness="0" Cursor="Hand"
+                                            Click="BtnPass_Click" Style="{StaticResource GameButtonPressStyle}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="4">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="bd" Property="Background" Value="#5c5e66"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter TargetName="bd" Property="Background" Value="#3e4046"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter TargetName="bd" Property="Opacity" Value="0.4"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="ПАСС" FontSize="22" FontWeight="Bold" Foreground="#dbdee1" TextAlignment="Center"/>
+                                            <TextBlock Text="[ BACK ]" FontSize="12" Foreground="#80FFFFFF" TextAlignment="Center" Margin="0,4,0,0"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
                             </StackPanel>
                         </Border>
-
-                        <!-- Row 1: Stream Deck — квадратные кнопки 140×140 -->
-                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,30">
-
-                            <Button x:Name="BtnCorrect" Width="140" Height="140" Margin="10"
-                                    Background="#23a559" BorderThickness="0" Cursor="Hand"
-                                    Click="BtnCorrect_Click" Style="{StaticResource GameButtonPressStyle}">
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="ВЕРНО" FontSize="24" FontWeight="Bold" Foreground="White" TextAlignment="Center"/>
-                                    <TextBlock Text="[ ENTER ]" FontSize="14" Foreground="#D0FFFFFF" TextAlignment="Center" Margin="0,5,0,0"/>
-                                </StackPanel>
-                            </Button>
-
-                            <Button x:Name="BtnBank" Width="140" Height="140" Margin="10,10,30,10"
-                                    Background="#FFD700" BorderThickness="0" Cursor="Hand"
-                                    Click="BtnBank_Click" Style="{StaticResource GameButtonPressStyle}">
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="БАНК" FontSize="24" FontWeight="Bold" Foreground="#1a1a1a" TextAlignment="Center"/>
-                                    <TextBlock Text="[ SPACE ]" FontSize="14" Foreground="#80000000" TextAlignment="Center" Margin="0,5,0,0"/>
-                                </StackPanel>
-                            </Button>
-
-                            <Button x:Name="BtnWrong" Width="140" Height="140" Margin="10"
-                                    Background="#da373c" BorderThickness="0" Cursor="Hand"
-                                    Click="BtnWrong_Click" Style="{StaticResource GameButtonPressStyle}">
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="НЕВЕРНО" FontSize="24" FontWeight="Bold" Foreground="White" TextAlignment="Center"/>
-                                    <TextBlock Text="[ DEL ]" FontSize="14" Foreground="#D0FFFFFF" TextAlignment="Center" Margin="0,5,0,0"/>
-                                </StackPanel>
-                            </Button>
-
-                            <Button x:Name="BtnPass" Width="140" Height="140" Margin="10"
-                                    Background="#4e5058" BorderThickness="0" Cursor="Hand"
-                                    Click="BtnPass_Click" Style="{StaticResource GameButtonPressStyle}">
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="ПАСС" FontSize="24" FontWeight="Bold" Foreground="#dbdee1" TextAlignment="Center"/>
-                                    <TextBlock Text="[ BACK ]" FontSize="14" Foreground="#80FFFFFF" TextAlignment="Center" Margin="0,5,0,0"/>
-                                </StackPanel>
-                            </Button>
-
-                        </StackPanel>
                     </Grid>
                     
                     <Grid x:Name="GamePlayPanel" Visibility="Collapsed">
