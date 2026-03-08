@@ -1182,7 +1182,7 @@
                     <!-- Game Controls — Боевой кокпит (Command Palette + BankChain) -->
                     <Grid x:Name="GridGameControls" Visibility="Collapsed">
                         <Border HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                MaxWidth="900" MinWidth="600"
+                                Width="750" Height="420"
                                 Background="{DynamicResource ObsidianSurface}" 
                                 BorderBrush="{DynamicResource ObsidianBorder}" BorderThickness="1"
                                 CornerRadius="8" Padding="20" Margin="20"
@@ -1225,12 +1225,10 @@
                                 <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="20,10">
                                     <TextBlock x:Name="TxtCurrentQuestion" Text="Ожидание вопроса..." 
                                                Foreground="{DynamicResource ObsidianTextPrimary}" FontSize="24" FontWeight="Bold" 
-                                               TextAlignment="Left" TextWrapping="Wrap" Margin="0,0,0,12"
-                                               MinHeight="32"/>
+                                               TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,12"/>
                                     <TextBlock x:Name="TxtCurrentAnswer" Text="ОТВЕТ: —" 
                                                Foreground="{DynamicResource ObsidianTextSecondary}" FontSize="17" FontWeight="Normal" 
-                                               TextAlignment="Left" TextWrapping="Wrap"
-                                               MinHeight="22"/>
+                                               TextAlignment="Center" TextWrapping="Wrap"/>
                                 </StackPanel>
 
                                 <!-- Row 1: Кнопки (ColumnSpan=2) -->
