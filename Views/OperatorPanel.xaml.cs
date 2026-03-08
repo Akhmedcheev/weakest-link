@@ -3923,6 +3923,14 @@ namespace WeakestLink.Views
             }
         }
 
+        private void TglServicePanel_Changed(object sender, RoutedEventArgs e)
+        {
+            if (ServiceSidePanel == null) return;
+            ServiceSidePanel.Visibility = TglServicePanel.IsChecked == true
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
         #endregion
     }
 }

@@ -646,12 +646,32 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- ЛЕВЫЙ SIDEBAR: Абсолютно на всю высоту -->
-        <Border Grid.Column="0" Background="{StaticResource ObsidianBg}" BorderThickness="0">
-            <StackPanel x:Name="LeftSidebarPanel" VerticalAlignment="Top" Margin="0,25,0,0">
-                <Button Content="🛠" FontSize="24" Background="Transparent" BorderThickness="0" Foreground="#a1a1aa" Margin="0,0,0,25" Cursor="Hand" HorizontalAlignment="Center"/>
-                <Button Content="📝" FontSize="24" Background="Transparent" BorderThickness="0" Foreground="#a1a1aa" Margin="0,0,0,25" Cursor="Hand" HorizontalAlignment="Center"/>
-                <Button Content="📊" FontSize="24" Background="Transparent" BorderThickness="0" Foreground="#a1a1aa" Margin="0,0,0,25" Cursor="Hand" HorizontalAlignment="Center"/>
+        <!-- ЛЕВЫЙ SIDEBAR: Иконки -->
+        <Border Grid.Column="0" Background="{StaticResource ObsidianBg}" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,1,0">
+            <StackPanel x:Name="LeftSidebarPanel" VerticalAlignment="Top" Margin="0,15,0,0">
+                <ToggleButton x:Name="TglServicePanel" ToolTip="Сервисная панель"
+                              Background="Transparent" BorderThickness="0" Cursor="Hand" 
+                              HorizontalAlignment="Center" Margin="0,0,0,20"
+                              IsChecked="False" Checked="TglServicePanel_Changed" Unchecked="TglServicePanel_Changed">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border x:Name="bd" Background="Transparent" CornerRadius="5" Padding="8,6">
+                                <TextBlock Text="☰" FontSize="22" Foreground="{StaticResource ObsidianTextSecondary}" HorizontalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bd" Property="Background" Value="#2A2A2A"/>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="bd" Property="Background" Value="{StaticResource ObsidianSurface}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+                <Button Content="🛠" FontSize="22" Background="Transparent" BorderThickness="0" Foreground="{StaticResource ObsidianTextSecondary}" Margin="0,0,0,20" Cursor="Hand" HorizontalAlignment="Center"/>
+                <Button Content="📝" FontSize="22" Background="Transparent" BorderThickness="0" Foreground="{StaticResource ObsidianTextSecondary}" Margin="0,0,0,20" Cursor="Hand" HorizontalAlignment="Center"/>
+                <Button Content="📊" FontSize="22" Background="Transparent" BorderThickness="0" Foreground="{StaticResource ObsidianTextSecondary}" Margin="0,0,0,20" Cursor="Hand" HorizontalAlignment="Center"/>
             </StackPanel>
         </Border>
 
@@ -662,8 +682,52 @@
                 <RowDefinition Height="Auto"/> <!-- 1: Панель статуса (Банк, Таймер) -->
                 <RowDefinition Height="Auto"/> <!-- 2: Статус действия (Вы сделали) -->
                 <RowDefinition Height="*"/>    <!-- 3: Рабочая область (Лево, Центр, Право) -->
-                <RowDefinition Height="Auto"/> <!-- 4: Лог и экстренные кнопки -->
             </Grid.RowDefinitions>
+
+            <!-- Скрываемая левая сервисная панель (overlay) -->
+            <Border x:Name="ServiceSidePanel" Width="210" HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                    Background="{StaticResource ObsidianSurface}" 
+                    BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,1,0"
+                    Panel.ZIndex="50" Visibility="Collapsed">
+                <DockPanel Margin="12">
+                    <TextBlock DockPanel.Dock="Top" Text="СЕРВИС" 
+                               Foreground="{StaticResource ObsidianTextSecondary}" FontSize="11" FontWeight="Bold" 
+                               HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                    <StackPanel>
+                        <Button x:Name="BtnLogo" Height="36" Margin="0,0,0,4" Click="BtnLogo_Click" Style="{StaticResource FlatButton}"
+                                Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" FontWeight="Bold" FontSize="11"
+                                HorizontalContentAlignment="Center">
+                            <TextBlock Text="🎬  LOGO" TextWrapping="Wrap" TextAlignment="Center"/>
+                        </Button>
+                        <Button x:Name="BtnStopAudio" Height="36" Margin="0,0,0,4" Click="BtnStopAudio_Click" Style="{StaticResource FlatButton}"
+                                Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" FontWeight="Bold" FontSize="11"
+                                HorizontalContentAlignment="Center">
+                            <TextBlock Text="🔇  STOP AUDIO" TextWrapping="Wrap" TextAlignment="Center"/>
+                        </Button>
+                        <Button x:Name="BtnRestartRound" Height="36" Margin="0,0,0,4" Click="BtnRestartRound_Click" Style="{StaticResource FlatButton}"
+                                Background="#5B1A1A" Foreground="#FF9999" 
+                                BorderBrush="#7B3333" BorderThickness="1" FontWeight="Bold" FontSize="11"
+                                HorizontalContentAlignment="Center">
+                            <TextBlock Text="🔄  RESTART ROUND" TextWrapping="Wrap" TextAlignment="Center"/>
+                        </Button>
+                        <Button x:Name="BtnCloseSession" Height="36" Margin="0,0,0,8" Click="BtnCloseSession_Click" Style="{StaticResource FlatButton}"
+                                Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" FontWeight="Bold" FontSize="11"
+                                HorizontalContentAlignment="Center">
+                            <TextBlock Text="🚪  CLOSE SESSION" TextWrapping="Wrap" TextAlignment="Center"/>
+                        </Button>
+                        <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,4,0,8"/>
+                        <Button x:Name="BtnBreakGame" Height="40" Click="BtnBreakGame_Click" Style="{StaticResource FlatButton}"
+                                Background="#8B0000" Foreground="White" 
+                                BorderBrush="#AA3333" BorderThickness="1" FontWeight="Black" FontSize="12"
+                                HorizontalContentAlignment="Center">
+                            <TextBlock Text="⚠  BREAK GAME" TextWrapping="Wrap" TextAlignment="Center"/>
+                        </Button>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
 
             <!-- 0. ВЕРХНЯЯ ШАПКА (DEBUG) -->
             <Border Grid.Row="0" Background="{StaticResource ObsidianSurface}" Height="38" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,0,1">
@@ -1275,33 +1339,8 @@
                 <!-- ПРАВАЯ КОЛОНКА: Панель управления -->
                 <Border Grid.Column="2" Background="{StaticResource ObsidianSurface}" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1,0,0,0" Margin="0" CornerRadius="0" Padding="15,20,15,20" Panel.ZIndex="10">
                     <DockPanel LastChildFill="True">
-                        <!-- Низ правой панели: Сервис + Паника + Терминал -->
+                        <!-- Низ правой панели: Паника -->
                         <StackPanel DockPanel.Dock="Bottom">
-                            <!-- Cервисные кнопки -->
-                            <TextBlock Text="СЕРВИС" Foreground="{StaticResource ObsidianTextSecondary}" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,4"/>
-                            <UniformGrid Columns="2" Margin="0,0,0,6">
-                                <Button x:Name="BtnLogo" Height="38" Margin="2" Click="BtnLogo_Click" Style="{StaticResource FlatButton}"
-                                        Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                        BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" FontWeight="Bold" FontSize="11">
-                                    <TextBlock Text="LOGO" TextWrapping="Wrap" TextAlignment="Center"/>
-                                </Button>
-                                <Button x:Name="BtnStopAudio" Height="38" Margin="2" Click="BtnStopAudio_Click" Style="{StaticResource FlatButton}"
-                                        Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                        BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" FontWeight="Bold" FontSize="11">
-                                    <TextBlock Text="STOP AUDIO" TextWrapping="Wrap" TextAlignment="Center"/>
-                                </Button>
-                                <Button x:Name="BtnRestartRound" Height="38" Margin="2" Click="BtnRestartRound_Click" Style="{StaticResource FlatButton}"
-                                        Background="#5B1A1A" Foreground="#FF9999" 
-                                        BorderBrush="#7B3333" BorderThickness="1" FontWeight="Bold" FontSize="11">
-                                    <TextBlock Text="RESTART ROUND" TextWrapping="Wrap" TextAlignment="Center"/>
-                                </Button>
-                                <Button x:Name="BtnCloseSession" Height="38" Margin="2" Click="BtnCloseSession_Click" Style="{StaticResource FlatButton}"
-                                        Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                        BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" FontWeight="Bold" FontSize="11">
-                                    <TextBlock Text="CLOSE SESSION" TextWrapping="Wrap" TextAlignment="Center"/>
-                                </Button>
-                            </UniformGrid>
-                            <Button x:Name="BtnBreakGame" Content="⚠ BREAK GAME" Background="#8B0000" Foreground="White" Height="38" FontWeight="Black" FontSize="12" Margin="2,0,2,4" Click="BtnBreakGame_Click" Style="{StaticResource FlatButton}" BorderBrush="#AA3333" BorderThickness="1"/>
                             <Button x:Name="BtnPanic" Content="! ПАНИКА !" Background="#da373c" Foreground="White" Height="45" FontWeight="Black" Margin="2,4" Click="BtnPanic_Click" Style="{StaticResource FlatButton}"/>
                         </StackPanel>
 
