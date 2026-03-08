@@ -16,7 +16,7 @@ public partial class App : Application
             string logMsg = $"[{DateTime.Now}] CRASH: {e.Exception.Message}\n{e.Exception.StackTrace}\n";
             System.IO.File.AppendAllText("error_log.txt", logMsg);
 
-            MessageBox.Show(
+            WeakestLink.Views.DarkMessageBox.Show(
                 $"КРИТИЧЕСКАЯ ОШИБКА:\n{e.Exception.Message}\n\nСтек:\n{e.Exception.StackTrace}",
                 "Чёрный ящик", MessageBoxButton.OK, MessageBoxImage.Error);
 

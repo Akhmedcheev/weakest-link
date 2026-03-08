@@ -112,7 +112,7 @@ namespace WeakestLink.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при загрузке аналитики: {ex.Message}", "Ошибка", 
+                WeakestLink.Views.DarkMessageBox.Show($"Ошибка при загрузке аналитики: {ex.Message}", "Ошибка", 
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -166,7 +166,7 @@ namespace WeakestLink.Views
                 var players = PlayersDataGrid.ItemsSource as IEnumerable<StatsAnalyzer.PlayerRoundStats>;
                 if (players == null || !players.Any())
                 {
-                    MessageBox.Show("Нет данных для экспорта.", "Экспорт", MessageBoxButton.OK, MessageBoxImage.Information);
+                    WeakestLink.Views.DarkMessageBox.Show("Нет данных для экспорта.", "Экспорт", MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
 
@@ -204,12 +204,12 @@ namespace WeakestLink.Views
                 if (dialog.ShowDialog() == true)
                 {
                     File.WriteAllText(dialog.FileName, sb.ToString(), new UTF8Encoding(true));
-                    MessageBox.Show("Статистика успешно выгружена!", "Экспорт", MessageBoxButton.OK, MessageBoxImage.Information);
+                    WeakestLink.Views.DarkMessageBox.Show("Статистика успешно выгружена!", "Экспорт", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при экспорте: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                WeakestLink.Views.DarkMessageBox.Show($"Ошибка при экспорте: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

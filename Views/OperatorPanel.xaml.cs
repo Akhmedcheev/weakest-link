@@ -185,7 +185,7 @@ namespace WeakestLink.Views
             catch (Exception ex)
             {
                 Log($"КРИТИЧЕСКАЯ ОШИБКА: {ex.Message}");
-                MessageBox.Show($"Ошибка при загрузке базы вопросов:\n{ex.Message}", "Ошибка инициализации");
+                DarkMessageBox.Show($"Ошибка при загрузке базы вопросов:\n{ex.Message}", "Ошибка инициализации");
             }
 
             _autoBotTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
@@ -1272,7 +1272,9 @@ namespace WeakestLink.Views
                 // Кнопки ещё неактивны — ждём START O'CLOCK
                 BtnCorrect.IsEnabled = false;
                 BtnIncorrect.IsEnabled = false;
+                BtnWrong.IsEnabled = false;
                 BtnBank.IsEnabled = false;
+                BtnPass.IsEnabled = false;
 
                 BtnPlay.IsEnabled = true;
                 BtnGamePlayPlay.IsEnabled = true;
@@ -1340,7 +1342,7 @@ namespace WeakestLink.Views
             catch (Exception ex)
             {
                 Log($"ОШИБКА ЗАПУСКА РАУНДА: {ex.Message}");
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                DarkMessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -1367,7 +1369,7 @@ namespace WeakestLink.Views
                     catch (Exception ex)
                     {
                         Log("ОШИБКА ПЕРЕХОДА: " + ex.Message);
-                        MessageBox.Show(ex.Message, "Ошибка состояния", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        DarkMessageBox.Show(ex.Message, "Ошибка состояния", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
             }
@@ -1378,7 +1380,7 @@ namespace WeakestLink.Views
             SetOperatorAction("Переход к финалу");
             if (_engine.ActivePlayers.Count != 2)
             {
-                MessageBox.Show("Для финала должно остаться ровно 2 игрока!", "Ошибка");
+                DarkMessageBox.Show("Для финала должно остаться ровно 2 игрока!", "Ошибка");
                 return;
             }
 
@@ -1774,7 +1776,7 @@ namespace WeakestLink.Views
             catch (Exception ex)
             {
                 Log($"ОШИБКА NEXT ROUND: {ex.Message}");
-                MessageBox.Show($"Ошибка при подготовке нового раунда: {ex.Message}", "Ошибка", 
+                DarkMessageBox.Show($"Ошибка при подготовке нового раунда: {ex.Message}", "Ошибка", 
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -2151,7 +2153,7 @@ namespace WeakestLink.Views
         private void BtnPanic_Click(object sender, RoutedEventArgs e)
         {
             SetOperatorAction("ЭКСТРЕННАЯ ОСТАНОВКА!");
-            var result = MessageBox.Show("ВЫ ПОДТВЕРЖДАЕТЕ ЭКСТРЕННУЮ ОСТАНОВКУ ИГРЫ (PANIC)?\n\nЭто остановит таймер, музыку и сбросит текущую цепочку!", 
+            var result = DarkMessageBox.Show("ВЫ ПОДТВЕРЖДАЕТЕ ЭКСТРЕННУЮ ОСТАНОВКУ ИГРЫ (PANIC)?\n\nЭто остановит таймер, музыку и сбросит текущую цепочку!", 
                 "ЭКСТРЕННАЯ СИТУАЦИЯ", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
             if (result == MessageBoxResult.Yes)
@@ -2166,7 +2168,7 @@ namespace WeakestLink.Views
                 _server.Broadcast("PANIC|EMERGENCY_STOP");
                 _server.Broadcast("CLEAR_ELIMINATION");
                 
-                MessageBox.Show("Игра остановлена. Состояние сброшено в IDLE.", "PANIC STOPPED");
+                DarkMessageBox.Show("Игра остановлена. Состояние сброшено в IDLE.", "PANIC STOPPED");
             }
         }
 
@@ -2187,7 +2189,7 @@ namespace WeakestLink.Views
 
         private void BtnRestartRound_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(
+            var result = DarkMessageBox.Show(
                 "Сбросить текущий раунд и перейти в режим ожидания (Idle)?\nТекущая цепочка будет обнулена.",
                 "Перезапуск раунда",
                 MessageBoxButton.YesNo,
@@ -2204,7 +2206,7 @@ namespace WeakestLink.Views
 
         private void BtnBreakGame_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(
+            var result = DarkMessageBox.Show(
                 "Экстренно остановить игру?\n\nБудет остановлена музыка, сброшена цепочка, состояние переведено в Idle, экран ведущего очищен.",
                 "Экстренная остановка",
                 MessageBoxButton.YesNo,
@@ -2225,7 +2227,7 @@ namespace WeakestLink.Views
 
         private void BtnCloseSession_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(
+            var result = DarkMessageBox.Show(
                 "Вы уверены, что хотите закрыть текущую сессию игроков и сбросить игру?",
                 "Закрытие сессии",
                 MessageBoxButton.YesNo,
@@ -2384,14 +2386,14 @@ namespace WeakestLink.Views
                 SetOperatorAction("Сессия запущена");
                 if (_rosterItems.Count < 2)
                 {
-                    MessageBox.Show("Добавьте хотя бы двух игроков для начала сессии!", "Недостаточно игроков", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    DarkMessageBox.Show("Добавьте хотя бы двух игроков для начала сессии!", "Недостаточно игроков", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
                 // Проверка базы вопросов
                 if (_questionProvider.LoadedCount == 0)
                 {
-                    MessageBox.Show("БАЗА ВОПРОСОВ ПУСТА!\nНевозможно начать реальную игру.\nПроверьте файл вопросов в папке bin.", 
+                    DarkMessageBox.Show("БАЗА ВОПРОСОВ ПУСТА!\nНевозможно начать реальную игру.\nПроверьте файл вопросов в папке bin.", 
                         "Ошибка базы данных", MessageBoxButton.OK, MessageBoxImage.Error);
                     Log("❌ START SESSION прервана: база вопросов не загружена.");
                     return;
@@ -2437,7 +2439,7 @@ namespace WeakestLink.Views
             catch (Exception ex)
             {
                 Log($"❌ ОШИБКА в BtnStartSession_Click: {ex.Message}");
-                MessageBox.Show($"ОШИБКА ЗАПУСКА СЕССИИ:\n{ex.Message}\n\nСтек:\n{ex.StackTrace}", 
+                DarkMessageBox.Show($"ОШИБКА ЗАПУСКА СЕССИИ:\n{ex.Message}\n\nСтек:\n{ex.StackTrace}", 
                     "Диагностика", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -2589,6 +2591,13 @@ namespace WeakestLink.Views
             _server.Broadcast("CLEAR_ELIMINATION");
             SetupPanel.Visibility = Visibility.Collapsed;
             GridGameControls.Visibility = Visibility.Visible;
+
+            // Кнопки неактивны до START O'CLOCK
+            BtnCorrect.IsEnabled = false;
+            BtnIncorrect.IsEnabled = false;
+            BtnWrong.IsEnabled = false;
+            BtnBank.IsEnabled = false;
+            BtnPass.IsEnabled = false;
 
             if (selectedIndex == 7) // ФИНАЛ
             {
@@ -3137,7 +3146,7 @@ namespace WeakestLink.Views
                 else
                 {
                     Log("ВОПРОСЫ ЗАКОНЧИЛИСЬ!");
-                    MessageBox.Show("Все вопросы в базе использованы.", "Внимание");
+                    DarkMessageBox.Show("Все вопросы в базе использованы.", "Внимание");
                 }
             }
             catch (Exception ex)
@@ -3538,7 +3547,7 @@ namespace WeakestLink.Views
             catch (Exception ex)
             {
                 Log($"Ошибка открытия редактора: {ex.Message}");
-                MessageBox.Show($"Не удалось открыть редактор: {ex.Message}", "Ошибка");
+                DarkMessageBox.Show($"Не удалось открыть редактор: {ex.Message}", "Ошибка");
             }
         }
 
@@ -3547,7 +3556,7 @@ namespace WeakestLink.Views
             var errors = _questionProvider.ValidateDatabase();
             if (errors.Count == 0)
             {
-                MessageBox.Show(
+                DarkMessageBox.Show(
                     "База вопросов полностью корректна. К эфиру готовы!",
                     "Валидация базы вопросов",
                     MessageBoxButton.OK,
@@ -3557,7 +3566,7 @@ namespace WeakestLink.Views
             else
             {
                 string report = string.Join("\n", errors);
-                MessageBox.Show(
+                DarkMessageBox.Show(
                     report,
                     "Ошибки в базе вопросов",
                     MessageBoxButton.OK,
@@ -3720,7 +3729,7 @@ namespace WeakestLink.Views
             catch (Exception ex)
             {
                 Log($"Ошибка открытия аналитики: {ex.Message}");
-                MessageBox.Show($"Не удалось открыть аналитику раунда: {ex.Message}", "Ошибка", 
+                DarkMessageBox.Show($"Не удалось открыть аналитику раунда: {ex.Message}", "Ошибка", 
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

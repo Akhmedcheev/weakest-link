@@ -412,6 +412,128 @@
             </Setter>
         </Style>
 
+        <!-- ═══ Dark Menu: корневое меню ═══ -->
+        <Style TargetType="Menu">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#dbdee1"/>
+        </Style>
+
+        <!-- ═══ Dark MenuItem: полный шаблон ═══ -->
+        <Style TargetType="MenuItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#EEEEEE"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <Grid>
+                            <!-- Корневой бордер элемента -->
+                            <Border x:Name="Border" 
+                                    Background="{TemplateBinding Background}" 
+                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIconColumnGroup"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIGTColumnGroup"/>
+                                        <ColumnDefinition Width="14"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Иконка / чекмарк -->
+                                    <ContentPresenter x:Name="Icon" Grid.Column="0" 
+                                                      ContentSource="Icon" 
+                                                      VerticalAlignment="Center" Margin="0,0,6,0"
+                                                      Width="16" Height="16"/>
+
+                                    <!-- Текст -->
+                                    <ContentPresenter Grid.Column="1" ContentSource="Header" 
+                                                      RecognizesAccessKey="True" 
+                                                      VerticalAlignment="Center"
+                                                      TextBlock.Foreground="{TemplateBinding Foreground}"/>
+
+                                    <!-- Горячие клавиши -->
+                                    <TextBlock x:Name="IGTHost" Grid.Column="2" 
+                                               Text="{TemplateBinding InputGestureText}" 
+                                               Foreground="#888" FontSize="11"
+                                               Margin="20,0,0,0" VerticalAlignment="Center"/>
+
+                                    <!-- Стрелка подменю -->
+                                    <Path x:Name="SubMenuArrow" Grid.Column="3" 
+                                          Fill="#888" VerticalAlignment="Center" 
+                                          Data="M0,0 L4,3.5 L0,7 Z" Visibility="Collapsed"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Выпадающее подменю (popup) -->
+                            <Popup x:Name="PART_Popup" 
+                                   IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" 
+                                   Placement="Bottom" AllowsTransparency="True" Focusable="False" 
+                                   PopupAnimation="Fade" HorizontalOffset="-2">
+                                <Border Background="#252526" BorderBrush="#555" BorderThickness="1" 
+                                        CornerRadius="2" Padding="0,4" SnapsToDevicePixels="True">
+                                    <ScrollViewer CanContentScroll="True" 
+                                                  VerticalScrollBarVisibility="Auto"
+                                                  Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
+                                        <StackPanel IsItemsHost="True" 
+                                                    KeyboardNavigation.DirectionalNavigation="Cycle"
+                                                    Grid.IsSharedSizeScope="True"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <!-- Подменю: стрелка видна -->
+                            <Trigger Property="Role" Value="SubmenuHeader">
+                                <Setter TargetName="SubMenuArrow" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="PART_Popup" Property="Placement" Value="Right"/>
+                            </Trigger>
+                            <!-- Элемент подменю (без вложенных) -->
+                            <Trigger Property="Role" Value="SubmenuItem">
+                                <Setter TargetName="SubMenuArrow" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                            <!-- Hover -->
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#3E3E42"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <!-- Нажатие (открытие подменю из TopLevel) -->
+                            <Trigger Property="IsSubmenuOpen" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#333337"/>
+                            </Trigger>
+                            <!-- Disabled -->
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="#666"/>
+                            </Trigger>
+                            <!-- Скрыть иконку если нет -->
+                            <Trigger Property="Icon" Value="{x:Null}">
+                                <Setter TargetName="Icon" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ═══ Dark Separator в меню ═══ -->
+        <Style TargetType="Separator">
+            <Setter Property="Height" Value="1"/>
+            <Setter Property="Background" Value="#444"/>
+            <Setter Property="Margin" Value="8,4"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Separator">
+                        <Border Background="{TemplateBinding Background}" 
+                                Height="{TemplateBinding Height}" 
+                                Margin="{TemplateBinding Margin}" 
+                                SnapsToDevicePixels="True"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Window.Resources>
     
     <!-- Outer wrapper: Title bar + Content -->
@@ -991,7 +1113,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button x:Name="BtnIncorrect" Width="140" Height="140" Margin="10"
+                            <Button x:Name="BtnWrong" Width="140" Height="140" Margin="10"
                                     Background="#da373c" BorderThickness="0" Cursor="Hand"
                                     Click="BtnWrong_Click" Style="{StaticResource GameButtonPressStyle}">
                                 <StackPanel VerticalAlignment="Center">
@@ -1000,7 +1122,7 @@
                                 </StackPanel>
                             </Button>
 
-                            <Button Width="140" Height="140" Margin="10"
+                            <Button x:Name="BtnPass" Width="140" Height="140" Margin="10"
                                     Background="#4e5058" BorderThickness="0" Cursor="Hand"
                                     Click="BtnPass_Click" Style="{StaticResource GameButtonPressStyle}">
                                 <StackPanel VerticalAlignment="Center">
@@ -1191,8 +1313,8 @@
             <!-- Hidden stubs for code-behind references -->
             <Grid Visibility="Collapsed">
                 <Button x:Name="BtnIntro1"/><Button x:Name="BtnIntro2"/><Button x:Name="BtnNextQuestion"/>
-                <Button x:Name="BtnOpening"/><Button x:Name="BtnPass"/><Button x:Name="BtnRulesIntro"/>
-                <Button x:Name="BtnWrong"/><ComboBox x:Name="CmbBotMode"/>
+                <Button x:Name="BtnOpening"/><Button x:Name="BtnIncorrect"/><Button x:Name="BtnRulesIntro"/>
+                <ComboBox x:Name="CmbBotMode"/>
                 <Grid x:Name="MainContentGrid"/>
                 <DataGrid x:Name="PlayersGrid"><DataGrid.Columns><DataGridTextColumn x:Name="VotedForColumn"/></DataGrid.Columns></DataGrid>
                 <StackPanel x:Name="PreGamePanel"/><TextBlock x:Name="RemoteLinkText"/>
