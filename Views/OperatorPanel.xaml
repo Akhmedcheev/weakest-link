@@ -595,6 +595,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="24"/>
         </Grid.RowDefinitions>
 
         <!-- Row 0: Custom Title Bar -->
@@ -1302,7 +1303,6 @@
                             </UniformGrid>
                             <Button x:Name="BtnBreakGame" Content="⚠ BREAK GAME" Background="#8B0000" Foreground="White" Height="38" FontWeight="Black" FontSize="12" Margin="2,0,2,4" Click="BtnBreakGame_Click" Style="{StaticResource FlatButton}" BorderBrush="#AA3333" BorderThickness="1"/>
                             <Button x:Name="BtnPanic" Content="! ПАНИКА !" Background="#da373c" Foreground="White" Height="45" FontWeight="Black" Margin="2,4" Click="BtnPanic_Click" Style="{StaticResource FlatButton}"/>
-                            <Button x:Name="BtnToggleLogs" Content="👁 ТЕРМИНАЛ ЛОГОВ" Background="{StaticResource ObsidianBg}" Foreground="{StaticResource ObsidianTextSecondary}" MinHeight="34" Margin="0,4,0,0" Click="BtnToggleLogs_Click" Style="{StaticResource FlatButton}" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1"/>
                         </StackPanel>
 
                         <!-- Основное содержимое правой панели (без скролла) -->
@@ -1497,6 +1497,36 @@
             </Border>
         </Grid>
     </Grid>
+
+        <!-- Row 2: Obsidian Status Bar -->
+        <Border Grid.Row="2" Background="#191919" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,1,0,0">
+            <Grid>
+                <!-- Левая часть статус-бара -->
+                <TextBlock x:Name="TxtStatusBarInfo" Text="Weakest Link — Operator" 
+                           Foreground="{StaticResource ObsidianTextSecondary}" FontSize="11" 
+                           VerticalAlignment="Center" Margin="10,0,0,0" HorizontalAlignment="Left"/>
+                <!-- Правая часть: кнопка логов -->
+                <Button x:Name="BtnToggleLogs" Click="BtnToggleLogs_Click"
+                        HorizontalAlignment="Right" VerticalAlignment="Stretch"
+                        Background="Transparent" BorderThickness="0" Cursor="Hand"
+                        Padding="12,0">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="bd" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bd" Property="Background" Value="#2A2A2A"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <TextBlock x:Name="TxtLogToggleLabel" Text="[&gt;_] Логи" 
+                               Foreground="{StaticResource ObsidianTextSecondary}" FontSize="11" FontFamily="Consolas"/>
+                </Button>
+            </Grid>
+        </Border>
     </Grid>
 
 </Window>

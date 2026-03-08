@@ -3912,14 +3912,14 @@ namespace WeakestLink.Views
             if (LogContainer.Visibility == Visibility.Visible)
             {
                 LogContainer.Visibility = Visibility.Collapsed;
-                BtnToggleLogs.Content = "👁 ТЕРМИНАЛ ЛОГОВ";
-                BtnToggleLogs.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a1a1aa"));
+                TxtLogToggleLabel.Text = "[>_] Логи";
+                TxtLogToggleLabel.Foreground = (Brush)FindResource("ObsidianTextSecondary");
             }
             else
             {
                 LogContainer.Visibility = Visibility.Visible;
-                BtnToggleLogs.Content = "👁 СКРЫТЬ ЛОГИ";
-                BtnToggleLogs.Foreground = new SolidColorBrush(Colors.White);
+                TxtLogToggleLabel.Text = "[>_] Скрыть";
+                TxtLogToggleLabel.Foreground = new SolidColorBrush(Colors.White);
             }
         }
 
