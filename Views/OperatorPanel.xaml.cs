@@ -4983,17 +4983,16 @@ namespace WeakestLink.Views
 
             foreach (var player in activePlayers)
             {
-                var row = new Grid { Margin = new Thickness(0, 2, 0, 2) };
-                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(14, GridUnitType.Pixel) });
+                var row = new Grid { Margin = new Thickness(0, 1, 0, 1) };
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100, GridUnitType.Pixel) });
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(16, GridUnitType.Pixel) });
                 row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
                 var nameBlock = new TextBlock
                 {
                     Text = player,
                     Foreground = System.Windows.Media.Brushes.White,
-                    FontSize = 12,
-                    FontWeight = FontWeights.SemiBold,
+                    FontSize = 11,
                     VerticalAlignment = VerticalAlignment.Center
                 };
                 Grid.SetColumn(nameBlock, 0);
@@ -5003,7 +5002,7 @@ namespace WeakestLink.Views
                     Text = "→",
                     Foreground = new System.Windows.Media.SolidColorBrush(
                         (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#64748B")),
-                    FontSize = 12,
+                    FontSize = 10,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
@@ -5011,8 +5010,8 @@ namespace WeakestLink.Views
 
                 var combo = new ComboBox
                 {
-                    Height = 26,
-                    FontSize = 11,
+                    Height = 22,
+                    FontSize = 10,
                     Background = System.Windows.Media.Brushes.Transparent,
                     Foreground = new System.Windows.Media.SolidColorBrush(
                         (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#E2E8F0")),
