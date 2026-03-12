@@ -2173,9 +2173,18 @@
                             </StackPanel>
                         </Border>
                         
-                        <!-- Decision Hub кнопки перенесены в AnalyticsContext -->
-                        
-                        <!-- УДалена кнопка RESET IDLE - она дублирует функционал CLOSE ROUND и ломает логику финалов -->
+                        <!-- PRE-GAME: Студийное вступление -->
+                        <Border x:Name="PreGameButtons" Background="#1D2129" CornerRadius="10" Padding="10" Margin="0,0,0,8" Visibility="Collapsed">
+                            <StackPanel>
+                                <TextBlock Text="PRE-GAME" Foreground="#5865F2" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                <UniformGrid Columns="2">
+                                    <Button x:Name="BtnOpeningUI" Content="OPENING" Background="#5865F2" Foreground="White" Height="34" Margin="2" FontWeight="Bold" Click="BtnOpening_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnIntro1UI" Content="INTRO 1" Background="#4752C4" Foreground="White" Height="34" Margin="2" FontWeight="Bold" IsEnabled="False" Click="BtnIntro1_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnIntro2UI" Content="INTRO 2" Background="#4752C4" Foreground="White" Height="34" Margin="2" FontWeight="Bold" IsEnabled="False" Click="BtnIntro2_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnRulesUI" Content="RULES" Background="#4752C4" Foreground="White" Height="34" Margin="2" FontWeight="Bold" IsEnabled="False" Click="BtnRulesIntro_Click" Style="{StaticResource FlatButton}"/>
+                                </UniformGrid>
+                            </StackPanel>
+                        </Border>
 
                         <!-- 📺 ГРАФИКА БРОДКАСТА -->
                         <Border Background="#1D2129" CornerRadius="10" Padding="10" Margin="0,0,0,0">
@@ -2301,7 +2310,6 @@
                 <TextBlock x:Name="TxtTimerLabel"/><TextBlock x:Name="TxtRoundNumber"/>
                 <Button x:Name="BtnBotTurn"/><ToggleButton x:Name="TglAutoBot"/>
                 <Button x:Name="BtnBotGameSemiAuto"/><Button x:Name="BtnBotGameAuto"/>
-                <Border x:Name="PreGameButtons"/><Button x:Name="BtnOpeningUI"/><Button x:Name="BtnIntro1UI"/><Button x:Name="BtnIntro2UI"/><Button x:Name="BtnRulesUI"/>
              </Grid>
 
             <!-- ОВЕРЛЕЙ: Терминал логов (перекрывает, не сдвигает) -->
