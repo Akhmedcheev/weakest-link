@@ -2439,7 +2439,7 @@
                     <!-- 4. SETTINGS CONTEXT - Настройки -->
                     <Grid x:Name="SettingsContext" Visibility="Collapsed">
                         <Border Background="Transparent" Padding="24">
-                            <StackPanel MaxWidth="500" HorizontalAlignment="Left">
+                            <StackPanel>
                                 <TextBlock Text="Настройки" Foreground="#E2E8F0" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
 
                                 <!-- Язык / Language -->
@@ -2450,9 +2450,9 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <StackPanel Grid.Column="0">
+                                        <StackPanel Grid.Column="0" Margin="0,0,12,0">
                                             <TextBlock Text="Язык интерфейса" Foreground="#E2E8F0" FontSize="14" FontWeight="SemiBold"/>
-                                            <TextBlock Text="Переключение языка вопросов и интерфейса" Foreground="#64748B" FontSize="11" Margin="0,4,0,0"/>
+                                            <TextBlock Text="Переключение языка вопросов и интерфейса" Foreground="#64748B" FontSize="11" Margin="0,4,0,0" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                                             <Button x:Name="BtnSettingsLangRU" Content="RU" Width="44" Height="30"
@@ -2475,9 +2475,9 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <StackPanel Grid.Column="0">
+                                        <StackPanel Grid.Column="0" Margin="0,0,12,0">
                                             <TextBlock Text="Пропустить вступление" Foreground="#E2E8F0" FontSize="14" FontWeight="SemiBold"/>
-                                            <TextBlock Text="Перейти сразу к первому вопросу, минуя представление" Foreground="#64748B" FontSize="11" Margin="0,4,0,0"/>
+                                            <TextBlock Text="Перейти сразу к первому вопросу, минуя представление" Foreground="#64748B" FontSize="11" Margin="0,4,0,0" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <CheckBox x:Name="ChkFastTrack" Grid.Column="1" VerticalAlignment="Center"
                                                   Style="{StaticResource ObsidianCheckBox}"/>
@@ -2489,7 +2489,7 @@
                                         BorderBrush="#2E333D" BorderThickness="1">
                                     <StackPanel>
                                         <TextBlock Text="Сенсорные пульты" Foreground="#E2E8F0" FontSize="14" FontWeight="SemiBold"/>
-                                        <TextBlock Text="Номера пультов назначаются в досье каждого участника" Foreground="#64748B" FontSize="11" Margin="0,4,0,0"/>
+                                        <TextBlock Text="Номера пультов назначаются в досье каждого участника" Foreground="#64748B" FontSize="11" Margin="0,4,0,0" TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </Border>
 
