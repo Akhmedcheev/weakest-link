@@ -5096,10 +5096,12 @@ namespace WeakestLink.Views
             _currentLanguage = lang;
 
             // Update button visuals
-            BtnLangRU.Background = lang == "RU" ? new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3B82F6")) : System.Windows.Media.Brushes.Transparent;
-            BtnLangRU.Foreground = lang == "RU" ? System.Windows.Media.Brushes.White : new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#64748B"));
-            BtnLangEN.Background = lang == "EN" ? new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3B82F6")) : System.Windows.Media.Brushes.Transparent;
-            BtnLangEN.Foreground = lang == "EN" ? System.Windows.Media.Brushes.White : new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#64748B"));
+            var accentBrush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3B82F6"));
+            var mutedBrush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#64748B"));
+            BtnLangRU.Background = lang == "RU" ? accentBrush : System.Windows.Media.Brushes.Transparent;
+            BtnLangRU.Foreground = lang == "RU" ? System.Windows.Media.Brushes.White : mutedBrush;
+            BtnLangEN.Background = lang == "EN" ? accentBrush : System.Windows.Media.Brushes.Transparent;
+            BtnLangEN.Foreground = lang == "EN" ? System.Windows.Media.Brushes.White : mutedBrush;
 
             // Reload questions
             string questionsFile = lang == "EN" ? "questions_en.json" : "questions.json";
@@ -5108,9 +5110,8 @@ namespace WeakestLink.Views
             try
             {
                 _questionProvider.LoadQuestions(questionsFile);
-                Log($"[{lang}] Загружено вопросов: {_questionProvider.LoadedCount}");
+                Log($"[{lang}] Loaded questions: {_questionProvider.LoadedCount}");
 
-                // Reload final questions
                 if (System.IO.File.Exists(finalFile))
                 {
                     var finalJson = System.IO.File.ReadAllText(finalFile);
@@ -5119,14 +5120,77 @@ namespace WeakestLink.Views
                     if (loaded != null)
                     {
                         _engine.LoadFinalQuestions(loaded);
-                        Log($"[{lang}] Загружено финальных: {loaded.Count}");
+                        Log($"[{lang}] Loaded final: {loaded.Count}");
                     }
                 }
             }
             catch (Exception ex)
             {
-                Log($"Ошибка загрузки [{lang}]: {ex.Message}");
+                Log($"Error loading [{lang}]: {ex.Message}");
             }
+
+            // Translate UI
+            ApplyLanguageUI(lang);
+        }
+
+        private void ApplyLanguageUI(string lang)
+        {
+            bool en = lang == "EN";
+
+            // === TITLE BAR ===
+            TxtTitleBarMode.Text = en ? "Operator" : "Оператор";
+            TxtTitleSession.Text = en ? "SESSION ACTIVE" : "СЕССИЯ ЗАПУЩЕНА";
+
+            // === LEFT SIDEBAR ===
+            TxtBankLabel.Text = en ? "BANK" : "БАНК";
+            TxtTotalLabel.Text = en ? "TOTAL" : "ОБЩИЙ";
+            TxtTimeLabel.Text = en ? "TIME" : "ВРЕМЯ";
+            TxtRoundLabel.Text = en ? "ROUND" : "РАУНД";
+            TxtQuestionLabel.Text = en ? "QUESTION" : "ВОПРОС";
+            TxtLangLabel.Text = en ? "LANG" : "ЯЗЫК";
+
+            // === SETUP CONTEXT (Lobby) ===
+            try
+            {
+                BtnRosterConfirm.Content = en ? "✓  ACCEPT ROSTER" : "✓  ПРИНЯТЬ СОСТАВ";
+                BtnStartSession.Content = en ? "▶  START SESSION" : "▶  НАЧАТЬ СЕССИЮ";
+                ChkFastTrack.Content = en ? "Skip introduction" : "Пропустить вступление";
+            }
+            catch { }
+
+            // === PLAY CONTEXT — Round controls ===
+            try
+            {
+                BtnStartRound.Content = "READY";
+                BtnPlay.Content = "START O'CLOCK";
+                BtnNextRound.Content = en ? "CLOSE ROUND" : "CLOSE ROUND";
+                BtnPanic.Content = en ? "! PANIC !" : "! ПАНИКА !";
+            }
+            catch { }
+
+            // === RIGHT PANEL ===
+            try
+            {
+                // Debug buttons
+                BtnQuickStart.Content = en ? "QUICK START" : "БЫСТРЫЙ СТАРТ";
+                BtnFillRandom.Content = en ? "FILL RANDOM" : "ЗАПОЛНИТЬ СЛУЧАЙНЫМИ";
+                BtnDebugTestFinal.Content = en ? "🎬 TEST FINAL" : "🎬 ТЕСТ ФИНАЛА";
+
+                // Checkboxes
+                ChkTestLast30Sec.Content = en ? "30 sec round" : "30 сек раунд";
+                ChkDebugEndRoundButton.Content = en ? "End Round button" : "кнопка Раунд Завершен";
+            }
+            catch { }
+
+            // === Status bar ===
+            try
+            {
+                // The title
+                Title = en ? "Weakest Link — Operator" : "Weakest Link — Оператор";
+            }
+            catch { }
+
+            Log(en ? "[EN] UI language applied" : "[RU] Язык интерфейса применён");
         }
 
         private void TakeScreenshot()

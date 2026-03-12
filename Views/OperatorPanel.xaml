@@ -817,7 +817,7 @@
             <DockPanel LastChildFill="True">
                 <!-- Низ: Переключатель языка RU/EN -->
                 <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" Margin="0,0,0,10">
-                    <TextBlock Text="ЯЗЫК" Foreground="#64748B" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="TxtLangLabel" Text="ЯЗЫК" Foreground="#64748B" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold" Margin="0,0,0,4"/>
                     <Border CornerRadius="8" Background="#1D2129" Padding="2">
                         <StackPanel Orientation="Horizontal">
                             <Button x:Name="BtnLangRU" Content="RU" Width="28" Height="22" FontSize="9" FontWeight="Bold"
@@ -833,27 +833,27 @@
                 <!-- Верх: Статистика -->
                 <StackPanel x:Name="LeftSidebarPanel" VerticalAlignment="Top" Margin="0,10,0,0">
                 <StackPanel HorizontalAlignment="Center" Margin="0,0,0,8">
-                    <TextBlock Text="БАНК" Foreground="#64748B" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtBankLabel" Text="БАНК" Foreground="#64748B" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
                     <TextBlock x:Name="TxtCurrentBank_Side" Text="0" Foreground="Yellow" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                 </StackPanel>
                 <Border Height="1" Background="#2E333D" Margin="8,0"/>
                 <StackPanel HorizontalAlignment="Center" Margin="0,8,0,8">
-                    <TextBlock Text="ОБЩИЙ" Foreground="#64748B" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtTotalLabel" Text="ОБЩИЙ" Foreground="#64748B" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
                     <TextBlock x:Name="TxtTotalBank_Side" Text="0" Foreground="#00FF00" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                 </StackPanel>
                 <Border Height="1" Background="#2E333D" Margin="8,0"/>
                 <StackPanel HorizontalAlignment="Center" Margin="0,8,0,8">
-                    <TextBlock Text="ВРЕМЯ" Foreground="#64748B" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtTimeLabel" Text="ВРЕМЯ" Foreground="#64748B" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
                     <TextBlock x:Name="TxtTimer_Side" Text="00:00" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                 </StackPanel>
                 <Border Height="1" Background="#2E333D" Margin="8,0"/>
                 <StackPanel HorizontalAlignment="Center" Margin="0,8,0,8">
-                    <TextBlock Text="РАУНД" Foreground="#64748B" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtRoundLabel" Text="РАУНД" Foreground="#64748B" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
                     <TextBlock x:Name="TxtRoundNumber_Side" Text="—" Foreground="Cyan" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                 </StackPanel>
                 <Border Height="1" Background="#2E333D" Margin="8,0"/>
                 <StackPanel HorizontalAlignment="Center" Margin="0,8,0,8">
-                    <TextBlock Text="ВОПРОС" Foreground="#64748B" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtQuestionLabel" Text="ВОПРОС" Foreground="#64748B" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
                     <TextBlock x:Name="TxtQuestionCount_Side" Text="0/0" Foreground="Orange" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
                 </StackPanel>
             </StackPanel>
