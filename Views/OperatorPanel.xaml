@@ -770,6 +770,110 @@
                 <RowDefinition Height="*"/>    <!-- 3: Рабочая область (Лево, Центр, Право) -->
             </Grid.RowDefinitions>
 
+            <!-- Парящая панель инструментов (overlay слева) -->
+            <Border x:Name="ServiceSidePanel" Grid.RowSpan="4" Width="250" 
+                        HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                        Background="{StaticResource ObsidianSurface}" 
+                        BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,1,0"
+                        Panel.ZIndex="100" Visibility="Collapsed">
+                    <DockPanel Margin="12,8">
+                        <TextBlock DockPanel.Dock="Top" Text="ИНСТРУМЕНТЫ" 
+                                   Foreground="{StaticResource ObsidianTextMuted}" FontSize="10" FontWeight="Bold" 
+                                   HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
+                            <!-- === ИНСТРУМЕНТЫ (перенесены из верхней панели) === -->
+                            <Button Content="✎ РЕДАКТОР ВОПРОСОВ" x:Name="BtnToggleQuestionEditor" Height="32" Margin="0,0,0,3" 
+                                    Click="BtnToggleQuestionEditor_Click" Style="{StaticResource FlatButton}"
+                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                    BorderBrush="#2E333D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
+                            <Button Content="📊 АНАЛИТИКА" x:Name="BtnToggleAnalytics" Height="32" Margin="0,0,0,3" 
+                                    Click="BtnToggleAnalytics_Click" Style="{StaticResource FlatButton}"
+                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                    BorderBrush="#2E333D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
+                            <Button Content="✓ VALIDATE JSON" x:Name="BtnValidateJson" Height="32" Margin="0,0,0,3" 
+                                    Click="BtnValidateJson_Click" Style="{StaticResource FlatButton}"
+                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                    BorderBrush="#2E333D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
+                            <Button Content="🧪 SELF-TEST" x:Name="BtnSelfTest" Height="32" Margin="0,0,0,3" 
+                                    Click="BtnSelfTest_Click" Style="{StaticResource FlatButton}"
+                                    Background="#1D2129" Foreground="#FF9800" 
+                                    BorderBrush="#2E333D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
+
+                            <!-- Разделитель -->
+                            <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
+
+                            <!-- === DEBUG СЕКЦИЯ === -->
+                            <TextBlock Text="DEBUG" Foreground="{StaticResource ObsidianAccentTeal}" FontSize="10" FontWeight="Bold" Margin="0,0,0,4"/>
+                            <TextBlock Text="Раунд теста:" Foreground="#94A3B8" FontSize="10" Margin="0,0,0,3"/>
+                            <ComboBox x:Name="TestRoundSelector" Height="25" FontSize="11" SelectedIndex="0" Style="{StaticResource TestRoundSelectorStyle}" VerticalContentAlignment="Center" Margin="0,0,0,4">
+                                <ComboBoxItem Content="Раунд 1"/>
+                                <ComboBoxItem Content="Раунд 2"/>
+                                <ComboBoxItem Content="Раунд 3"/>
+                                <ComboBoxItem Content="Раунд 4"/>
+                                <ComboBoxItem Content="Раунд 5"/>
+                                <ComboBoxItem Content="Раунд 6"/>
+                                <ComboBoxItem Content="Раунд 7"/>
+                                <ComboBoxItem Content="ФИНАЛ"/>
+                            </ComboBox>
+                            <CheckBox x:Name="ChkTestLast30Sec" Content="30 сек раунд" Foreground="#94A3B8" FontSize="10" Margin="0,3,0,0"/>
+                            <CheckBox x:Name="ChkDebugEndRoundButton" Content="кнопка Раунд Завершен" Foreground="#94A3B8" FontSize="10" Margin="0,3,0,4" Click="ChkDebugEndRoundButton_Click"/>
+                            <Button Content="БЫСТРЫЙ СТАРТ" x:Name="BtnQuickStart" Height="26" FontSize="10" 
+                                    Background="#3B82F6" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
+                                    Click="BtnQuickStart_Click" Style="{StaticResource FlatButton}"/>
+                            <Button Content="ЗАПОЛНИТЬ СЛУЧАЙНЫМИ" x:Name="BtnFillRandom" Height="26" FontSize="10" 
+                                    Background="#2E333D" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
+                                    Click="BtnFillRandom_Click" Style="{StaticResource FlatButton}"/>
+                            <Button Content="🎬 ТЕСТ ФИНАЛА" x:Name="BtnDebugTestFinal" Height="26" FontSize="10" 
+                                    Background="#EF4444" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
+                                    Click="BtnDebugTestFinal_Click" Style="{StaticResource FlatButton}"/>
+                            
+                            <!-- === ТЕСТОВАЯ ИГРА === -->
+                            <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
+                            <TextBlock Text="ТЕСТОВАЯ ИГРА" Foreground="{StaticResource ObsidianTextMuted}" FontSize="10" FontWeight="Bold" Margin="0,0,0,4"/>
+                            <Button Content="Загрузить команду..." Height="26" FontSize="10" Margin="0,0,0,3"
+                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                    BorderBrush="#2E333D" BorderThickness="1"
+                                    Click="BtnTestTeam1_Click" Style="{StaticResource FlatButton}"/>
+                            <Button Content="AI Gemini Test" Height="26" FontSize="10" Margin="0,0,0,3"
+                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                    BorderBrush="#2E333D" BorderThickness="1"
+                                    Click="BtnStartGeminiTest_Click" Style="{StaticResource FlatButton}"/>
+
+                            <!-- === СЕРВИС === -->
+                            <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
+                            <TextBlock Text="СЕРВИС" Foreground="{StaticResource ObsidianTextMuted}" FontSize="10" FontWeight="Bold" Margin="0,0,0,4"/>
+                            <Button x:Name="BtnStopAudio" Height="32" Margin="0,0,0,3" Click="BtnStopAudio_Click" Style="{StaticResource FlatButton}"
+                                    Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                    BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" FontWeight="Bold" FontSize="11"
+                                    HorizontalContentAlignment="Center">
+                                <TextBlock Text="🔇 STOP AUDIO" TextAlignment="Center"/>
+                            </Button>
+                            <Button x:Name="BtnRestartRound" Height="32" Margin="0,0,0,3" Click="BtnRestartRound_Click" Style="{StaticResource FlatButton}"
+                                    Background="#5B1A1A" Foreground="#FF9999" 
+                                    BorderBrush="#7B3333" BorderThickness="1" FontWeight="Bold" FontSize="11"
+                                    HorizontalContentAlignment="Center">
+                                <TextBlock Text="🔄 RESTART ROUND" TextAlignment="Center"/>
+                            </Button>
+                            <Button x:Name="BtnCloseSession" Height="32" Margin="0,0,0,3" Click="BtnCloseSession_Click" Style="{StaticResource FlatButton}"
+                                    Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                    BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" FontWeight="Bold" FontSize="11"
+                                    HorizontalContentAlignment="Center">
+                                <TextBlock Text="🚪 CLOSE SESSION" TextAlignment="Center"/>
+                            </Button>
+                            <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
+                            <Button x:Name="BtnBreakGame" Height="36" Click="BtnBreakGame_Click" Style="{StaticResource FlatButton}"
+                                    Background="#991B1B" Foreground="White" 
+                                    BorderBrush="#AA3333" BorderThickness="1" FontWeight="Black" FontSize="11"
+                                    HorizontalContentAlignment="Center">
+                                <TextBlock Text="⚠ BREAK GAME" TextAlignment="Center"/>
+                            </Button>
+                        </StackPanel>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+
+
             <!-- 0. ВЕРХНЯЯ ШАПКА (Минималистичная) -->
             <Border Grid.Row="0" Background="{StaticResource ObsidianSurface}" Height="38" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,0,1">
                 <Grid>
@@ -1163,108 +1267,6 @@
                     <ColumnDefinition Width="400"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Парящая панель инструментов (overlay слева) -->
-                <Border x:Name="ServiceSidePanel" Grid.ColumnSpan="3" Width="250" 
-                        HorizontalAlignment="Left" VerticalAlignment="Stretch"
-                        Background="{StaticResource ObsidianSurface}" 
-                        BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,1,0"
-                        Panel.ZIndex="100" Visibility="Collapsed">
-                    <DockPanel Margin="12,8">
-                        <TextBlock DockPanel.Dock="Top" Text="ИНСТРУМЕНТЫ" 
-                                   Foreground="{StaticResource ObsidianTextMuted}" FontSize="10" FontWeight="Bold" 
-                                   HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <StackPanel>
-                            <!-- === ИНСТРУМЕНТЫ (перенесены из верхней панели) === -->
-                            <Button Content="✎ РЕДАКТОР ВОПРОСОВ" x:Name="BtnToggleQuestionEditor" Height="32" Margin="0,0,0,3" 
-                                    Click="BtnToggleQuestionEditor_Click" Style="{StaticResource FlatButton}"
-                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="#2E333D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
-                            <Button Content="📊 АНАЛИТИКА" x:Name="BtnToggleAnalytics" Height="32" Margin="0,0,0,3" 
-                                    Click="BtnToggleAnalytics_Click" Style="{StaticResource FlatButton}"
-                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="#2E333D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
-                            <Button Content="✓ VALIDATE JSON" x:Name="BtnValidateJson" Height="32" Margin="0,0,0,3" 
-                                    Click="BtnValidateJson_Click" Style="{StaticResource FlatButton}"
-                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="#2E333D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
-                            <Button Content="🧪 SELF-TEST" x:Name="BtnSelfTest" Height="32" Margin="0,0,0,3" 
-                                    Click="BtnSelfTest_Click" Style="{StaticResource FlatButton}"
-                                    Background="#1D2129" Foreground="#FF9800" 
-                                    BorderBrush="#2E333D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
-
-                            <!-- Разделитель -->
-                            <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
-
-                            <!-- === DEBUG СЕКЦИЯ === -->
-                            <TextBlock Text="DEBUG" Foreground="{StaticResource ObsidianAccentTeal}" FontSize="10" FontWeight="Bold" Margin="0,0,0,4"/>
-                            <TextBlock Text="Раунд теста:" Foreground="#94A3B8" FontSize="10" Margin="0,0,0,3"/>
-                            <ComboBox x:Name="TestRoundSelector" Height="25" FontSize="11" SelectedIndex="0" Style="{StaticResource TestRoundSelectorStyle}" VerticalContentAlignment="Center" Margin="0,0,0,4">
-                                <ComboBoxItem Content="Раунд 1"/>
-                                <ComboBoxItem Content="Раунд 2"/>
-                                <ComboBoxItem Content="Раунд 3"/>
-                                <ComboBoxItem Content="Раунд 4"/>
-                                <ComboBoxItem Content="Раунд 5"/>
-                                <ComboBoxItem Content="Раунд 6"/>
-                                <ComboBoxItem Content="Раунд 7"/>
-                                <ComboBoxItem Content="ФИНАЛ"/>
-                            </ComboBox>
-                            <CheckBox x:Name="ChkTestLast30Sec" Content="30 сек раунд" Foreground="#94A3B8" FontSize="10" Margin="0,3,0,0"/>
-                            <CheckBox x:Name="ChkDebugEndRoundButton" Content="кнопка Раунд Завершен" Foreground="#94A3B8" FontSize="10" Margin="0,3,0,4" Click="ChkDebugEndRoundButton_Click"/>
-                            <Button Content="БЫСТРЫЙ СТАРТ" x:Name="BtnQuickStart" Height="26" FontSize="10" 
-                                    Background="#3B82F6" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
-                                    Click="BtnQuickStart_Click" Style="{StaticResource FlatButton}"/>
-                            <Button Content="ЗАПОЛНИТЬ СЛУЧАЙНЫМИ" x:Name="BtnFillRandom" Height="26" FontSize="10" 
-                                    Background="#2E333D" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
-                                    Click="BtnFillRandom_Click" Style="{StaticResource FlatButton}"/>
-                            <Button Content="🎬 ТЕСТ ФИНАЛА" x:Name="BtnDebugTestFinal" Height="26" FontSize="10" 
-                                    Background="#EF4444" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
-                                    Click="BtnDebugTestFinal_Click" Style="{StaticResource FlatButton}"/>
-                            
-                            <!-- === ТЕСТОВАЯ ИГРА === -->
-                            <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
-                            <TextBlock Text="ТЕСТОВАЯ ИГРА" Foreground="{StaticResource ObsidianTextMuted}" FontSize="10" FontWeight="Bold" Margin="0,0,0,4"/>
-                            <Button Content="Загрузить команду..." Height="26" FontSize="10" Margin="0,0,0,3"
-                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="#2E333D" BorderThickness="1"
-                                    Click="BtnTestTeam1_Click" Style="{StaticResource FlatButton}"/>
-                            <Button Content="AI Gemini Test" Height="26" FontSize="10" Margin="0,0,0,3"
-                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="#2E333D" BorderThickness="1"
-                                    Click="BtnStartGeminiTest_Click" Style="{StaticResource FlatButton}"/>
-
-                            <!-- === СЕРВИС === -->
-                            <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
-                            <TextBlock Text="СЕРВИС" Foreground="{StaticResource ObsidianTextMuted}" FontSize="10" FontWeight="Bold" Margin="0,0,0,4"/>
-                            <Button x:Name="BtnStopAudio" Height="32" Margin="0,0,0,3" Click="BtnStopAudio_Click" Style="{StaticResource FlatButton}"
-                                    Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" FontWeight="Bold" FontSize="11"
-                                    HorizontalContentAlignment="Center">
-                                <TextBlock Text="🔇 STOP AUDIO" TextAlignment="Center"/>
-                            </Button>
-                            <Button x:Name="BtnRestartRound" Height="32" Margin="0,0,0,3" Click="BtnRestartRound_Click" Style="{StaticResource FlatButton}"
-                                    Background="#5B1A1A" Foreground="#FF9999" 
-                                    BorderBrush="#7B3333" BorderThickness="1" FontWeight="Bold" FontSize="11"
-                                    HorizontalContentAlignment="Center">
-                                <TextBlock Text="🔄 RESTART ROUND" TextAlignment="Center"/>
-                            </Button>
-                            <Button x:Name="BtnCloseSession" Height="32" Margin="0,0,0,3" Click="BtnCloseSession_Click" Style="{StaticResource FlatButton}"
-                                    Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" FontWeight="Bold" FontSize="11"
-                                    HorizontalContentAlignment="Center">
-                                <TextBlock Text="🚪 CLOSE SESSION" TextAlignment="Center"/>
-                            </Button>
-                            <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
-                            <Button x:Name="BtnBreakGame" Height="36" Click="BtnBreakGame_Click" Style="{StaticResource FlatButton}"
-                                    Background="#991B1B" Foreground="White" 
-                                    BorderBrush="#AA3333" BorderThickness="1" FontWeight="Black" FontSize="11"
-                                    HorizontalContentAlignment="Center">
-                                <TextBlock Text="⚠ BREAK GAME" TextAlignment="Center"/>
-                            </Button>
-                        </StackPanel>
-                        </ScrollViewer>
-                    </DockPanel>
-                </Border>
 
 
                 <!-- ЦЕНТР: Парящая карточка Mission Control -->
