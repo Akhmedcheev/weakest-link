@@ -1456,15 +1456,19 @@
                                 </ScrollViewer>
                                 
                                 <!-- Таймер под цепочкой -->
-                                <Border Grid.Row="2" Background="#1D2129" CornerRadius="6" 
-                                        BorderBrush="#2E333D" BorderThickness="1"
+                                <Border Grid.Row="2" Background="#1D2129" CornerRadius="10" 
+                                        BorderBrush="#2DD4BF" BorderThickness="1"
                                         Margin="10,8,10,15" Padding="8,6">
                                     <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="ВРЕМЯ" Foreground="#64748B" FontSize="9" FontWeight="Bold" 
+                                        <TextBlock Text="⏱ ВРЕМЯ" Foreground="#2DD4BF" FontSize="9" FontWeight="Bold" 
                                                    HorizontalAlignment="Center" Margin="0,0,0,2"/>
-                                        <TextBlock x:Name="TxtTimer" Text="0:00" Foreground="White" 
-                                                   FontSize="32" FontWeight="Bold" FontFamily="Segoe UI, Consolas"
-                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock x:Name="TxtTimer" Text="0:00" Foreground="#2DD4BF" 
+                                                   FontSize="36" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas"
+                                                   HorizontalAlignment="Center">
+                                            <TextBlock.Effect>
+                                                <DropShadowEffect Color="#2DD4BF" BlurRadius="12" ShadowDepth="0" Opacity="0.5"/>
+                                            </TextBlock.Effect>
+                                        </TextBlock>
                                     </StackPanel>
                                 </Border>
                             </Grid>
@@ -1485,7 +1489,8 @@
                                 </StackPanel>
 
                                 <!-- Область вопроса -->
-                                <Border x:Name="QuestionCard" Grid.Row="0" Background="Transparent" Padding="24,10" Margin="0">
+                                <Border x:Name="QuestionCard" Grid.Row="0" Background="#242830" Padding="24,16" Margin="10,10,10,5"
+                                        CornerRadius="12" BorderBrush="#2E333D" BorderThickness="1">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*"/>
@@ -1493,29 +1498,45 @@
                                         </Grid.RowDefinitions>
                                         
                                         <TextBlock x:Name="TxtCurrentQuestion" Grid.Row="0" Text="Ожидание вопроса..." 
-                                                   Foreground="White" FontSize="28" FontWeight="Bold" 
+                                                   Foreground="#E2E8F0" FontSize="28" FontWeight="Bold" 
                                                    TextWrapping="Wrap" TextAlignment="Center" 
                                                    VerticalAlignment="Center" HorizontalAlignment="Center"
                                                    Margin="20,0"/>
                                         <TextBlock x:Name="TxtCurrentAnswer" Grid.Row="1" Text="ОТВЕТ: —" 
-                                                   Foreground="#da373c" FontSize="20" FontWeight="ExtraBold"
-                                                   HorizontalAlignment="Center" Margin="0,10,0,5"/>
+                                                   Foreground="#EF4444" FontSize="20" FontWeight="ExtraBold"
+                                                   HorizontalAlignment="Center" Margin="0,12,0,5">
+                                            <TextBlock.Effect>
+                                                <DropShadowEffect Color="#EF4444" BlurRadius="6" ShadowDepth="0" Opacity="0.3"/>
+                                            </TextBlock.Effect>
+                                        </TextBlock>
                                     </Grid>
                                 </Border>
 
                                 <!-- Кнопки действий 2x2 -->
                                 <UniformGrid Grid.Row="1" Columns="2" Margin="10,5,10,10">
                                     <Button x:Name="BtnCorrect" Content="✓ ВЕРНО" Height="65" Margin="4" FontSize="22" FontWeight="ExtraBold"
-                                            Background="#4CAF50" Foreground="White"
-                                            Click="BtnCorrect_Click" Style="{StaticResource GameButtonPressStyle}"/>
+                                            Background="#22C55E" Foreground="White"
+                                            Click="BtnCorrect_Click" Style="{StaticResource GameButtonPressStyle}">
+                                        <Button.Effect>
+                                            <DropShadowEffect Color="#22C55E" BlurRadius="8" ShadowDepth="0" Opacity="0.3"/>
+                                        </Button.Effect>
+                                    </Button>
                                     <Button x:Name="BtnBank" Content="₽ БАНК" Height="65" Margin="4" FontSize="22" FontWeight="ExtraBold"
-                                            Background="#F59E0B" Foreground="#111"
-                                            Click="BtnBank_Click" Style="{StaticResource GameButtonPressStyle}"/>
+                                            Background="#F59E0B" Foreground="#111318"
+                                            Click="BtnBank_Click" Style="{StaticResource GameButtonPressStyle}">
+                                        <Button.Effect>
+                                            <DropShadowEffect Color="#F59E0B" BlurRadius="8" ShadowDepth="0" Opacity="0.3"/>
+                                        </Button.Effect>
+                                    </Button>
                                     <Button x:Name="BtnWrong" Content="✗ НЕВЕРНО" Height="65" Margin="4" FontSize="22" FontWeight="ExtraBold"
                                             Background="#EF4444" Foreground="White"
-                                            Click="BtnWrong_Click" Style="{StaticResource GameButtonPressStyle}"/>
+                                            Click="BtnWrong_Click" Style="{StaticResource GameButtonPressStyle}">
+                                        <Button.Effect>
+                                            <DropShadowEffect Color="#EF4444" BlurRadius="8" ShadowDepth="0" Opacity="0.3"/>
+                                        </Button.Effect>
+                                    </Button>
                                     <Button x:Name="BtnPass" Content="» ПАСС" Height="65" Margin="4" FontSize="22" FontWeight="ExtraBold"
-                                            Background="#607D8B" Foreground="White"
+                                            Background="#64748B" Foreground="White"
                                             Click="BtnPass_Click" Style="{StaticResource GameButtonPressStyle}"/>
                                 </UniformGrid>
 
