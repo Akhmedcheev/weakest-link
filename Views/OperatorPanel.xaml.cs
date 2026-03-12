@@ -4998,6 +4998,13 @@ namespace WeakestLink.Views
                 : Visibility.Collapsed;
         }
 
+        private void BtnCloseToolbar_Click(object sender, RoutedEventArgs e)
+        {
+            if (ServiceSidePanel == null) return;
+            ServiceSidePanel.Visibility = Visibility.Collapsed;
+            if (TglServicePanel != null) TglServicePanel.IsChecked = false;
+        }
+
         private void ChkDebugEndRoundButton_Click(object sender, RoutedEventArgs e)
         {
             if (BtnDebugEndRoundTimer == null) return;

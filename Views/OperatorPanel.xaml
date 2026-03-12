@@ -777,9 +777,28 @@
                         BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,1,0"
                         Panel.ZIndex="100" Visibility="Collapsed">
                     <DockPanel Margin="12,8">
-                        <TextBlock DockPanel.Dock="Top" Text="ИНСТРУМЕНТЫ" 
-                                   Foreground="{StaticResource ObsidianTextMuted}" FontSize="10" FontWeight="Bold" 
-                                   HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                        <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
+                            <TextBlock Text="☰ ИНСТРУМЕНТЫ" 
+                                       Foreground="{StaticResource ObsidianTextMuted}" FontSize="10" FontWeight="Bold" 
+                                       HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <Button Content="✕" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                    Background="Transparent" Foreground="{StaticResource ObsidianTextMuted}" 
+                                    BorderThickness="0" FontSize="14" Cursor="Hand" Padding="4,0"
+                                    Click="BtnCloseToolbar_Click" ToolTip="Закрыть панель">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bd" Background="Transparent" CornerRadius="4" Padding="6,2">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="#242830"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </Grid>
                         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel>
                             <!-- === ИНСТРУМЕНТЫ (перенесены из верхней панели) === -->
