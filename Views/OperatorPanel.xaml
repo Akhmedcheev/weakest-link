@@ -2477,6 +2477,7 @@
                                             <TextBlock Text="Перейти сразу к первому вопросу, минуя представление" Foreground="#64748B" FontSize="11" Margin="0,4,0,0" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <CheckBox x:Name="ChkFastTrack" Grid.Column="1" VerticalAlignment="Center"
+                                                  Checked="ChkFastTrack_Changed" Unchecked="ChkFastTrack_Changed"
                                                   Style="{StaticResource ObsidianCheckBox}"/>
                                     </Grid>
                                 </Border>
@@ -2512,6 +2513,13 @@
                                         <TextBlock Text="Номера пультов назначаются в досье каждого участника" Foreground="#64748B" FontSize="11" Margin="0,4,0,0" TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </Border>
+
+                                <!-- Сброс по умолчанию -->
+                                <Button x:Name="BtnResetSettings" Content="⟲  Сбросить по умолчанию" 
+                                        Height="36" Margin="0,12,0,0"
+                                        Background="#242830" Foreground="#94A3B8" FontSize="12" FontWeight="SemiBold"
+                                        Cursor="Hand" HorizontalAlignment="Left" Padding="16,0"
+                                        Click="BtnResetSettings_Click" Style="{StaticResource FlatButton}"/>
 
                             </StackPanel>
                         </Border>

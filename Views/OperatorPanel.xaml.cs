@@ -265,6 +265,7 @@ namespace WeakestLink.Views
         {
             InitializeComponent();
             SourceInitialized += OnSourceInitialized;
+            LoadSettings();
             
             _engine = new GameEngine();
             _questionProvider = new QuestionProvider();
@@ -4961,6 +4962,72 @@ namespace WeakestLink.Views
                   "Игроки поднимают таблички с именами.\n" +
                   "Ведущая опрашивает участников → объявляет слабое звено → выбывание.";
             Log($"📋 Режим голосования: {(express ? "ЭКСПРЕСС" : "ПОЛНЫЙ")}");
+            SaveSettings();
+        }
+
+        // === SETTINGS PERSISTENCE ===
+        private const string SettingsFilePath = "app_settings.json";
+
+        private void SaveSettings()
+        {
+            try
+            {
+                var settings = new Dictionary<string, object>
+                {
+                    { "language", _currentLanguage },
+                    { "expressVoting", _isExpressVoting },
+                    { "skipIntro", ChkFastTrack?.IsChecked == true }
+                };
+                var json = System.Text.Json.JsonSerializer.Serialize(settings, 
+                    new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+                System.IO.File.WriteAllText(SettingsFilePath, json);
+            }
+            catch (Exception ex)
+            {
+                Log($"⚠ Ошибка сохранения настроек: {ex.Message}");
+            }
+        }
+
+        private void LoadSettings()
+        {
+            try
+            {
+                if (!System.IO.File.Exists(SettingsFilePath)) return;
+                var json = System.IO.File.ReadAllText(SettingsFilePath);
+                var doc = System.Text.Json.JsonDocument.Parse(json);
+                var root = doc.RootElement;
+
+                if (root.TryGetProperty("language", out var langEl))
+                {
+                    var lang = langEl.GetString() ?? "RU";
+                    if (lang != _currentLanguage) SwitchLanguage(lang);
+                }
+                if (root.TryGetProperty("expressVoting", out var voteEl))
+                    SetVoteMode(voteEl.GetBoolean());
+                if (root.TryGetProperty("skipIntro", out var skipEl) && ChkFastTrack != null)
+                    ChkFastTrack.IsChecked = skipEl.GetBoolean();
+
+                Log("✅ Настройки загружены");
+            }
+            catch (Exception ex)
+            {
+                Log($"⚠ Ошибка загрузки настроек: {ex.Message}");
+            }
+        }
+
+        private void BtnResetSettings_Click(object sender, RoutedEventArgs e)
+        {
+            // Defaults
+            SwitchLanguage("RU");
+            SetVoteMode(true); // Express
+            if (ChkFastTrack != null) ChkFastTrack.IsChecked = false;
+            SaveSettings();
+            Log("🔄 Настройки сброшены по умолчанию");
+        }
+
+        private void ChkFastTrack_Changed(object sender, RoutedEventArgs e)
+        {
+            SaveSettings();
         }
 
         private void SyncSettingsLangButtons()
@@ -5194,6 +5261,7 @@ namespace WeakestLink.Views
         {
             if (_currentLanguage == lang) return;
             _currentLanguage = lang;
+            SaveSettings();
 
             // Update button visuals
             var accentBrush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3B82F6"));
