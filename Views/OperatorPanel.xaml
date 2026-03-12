@@ -960,8 +960,8 @@
                                 <ComboBoxItem Content="Раунд 7"/>
                                 <ComboBoxItem Content="ФИНАЛ"/>
                             </ComboBox>
-                            <CheckBox x:Name="ChkTestLast30Sec" Content="30 сек раунд" Foreground="#94A3B8" FontSize="10" Margin="0,3,0,0"/>
-                            <CheckBox x:Name="ChkDebugEndRoundButton" Content="кнопка Раунд Завершен" Foreground="#94A3B8" FontSize="10" Margin="0,3,0,4" Click="ChkDebugEndRoundButton_Click"/>
+                            <CheckBox x:Name="ChkTestLast30Sec" Content="30 сек раунд" Margin="0,3,0,0" Style="{StaticResource ObsidianCheckBox}"/>
+                            <CheckBox x:Name="ChkDebugEndRoundButton" Content="кнопка Раунд Завершен" Margin="0,3,0,4" Click="ChkDebugEndRoundButton_Click" Style="{StaticResource ObsidianCheckBox}"/>
                             <Button Content="БЫСТРЫЙ СТАРТ" x:Name="BtnQuickStart" Height="26" FontSize="10" 
                                     Background="#3B82F6" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
                                     Click="BtnQuickStart_Click" Style="{StaticResource FlatButton}"/>
