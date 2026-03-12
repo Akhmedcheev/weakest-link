@@ -5115,7 +5115,8 @@ namespace WeakestLink.Views
         }
 
         // === SETTINGS PERSISTENCE ===
-        private const string SettingsFilePath = "app_settings.json";
+        private static readonly string SettingsFilePath = System.IO.Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "app_settings.json");
         private bool _isLoadingSettings = false;
 
         private void SaveSettings()
