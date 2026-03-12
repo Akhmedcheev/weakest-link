@@ -2261,30 +2261,25 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" Text="🎵" Foreground="#6264A7" FontSize="12" VerticalAlignment="Center" Margin="2,0,4,0"/>
-                                        <Button x:Name="BtnMusicVoting" Grid.Column="1" Content="ГОЛОС." Height="24" Margin="0,0,2,0"
-                                                Background="#1a1a2e" BorderBrush="#3D3D3D" BorderThickness="1"
-                                                Foreground="#F59E0B" FontWeight="Bold" FontSize="8"
-                                                Click="BtnMusicVoting_Click" Style="{StaticResource FlatButton}"/>
-                                        <Button x:Name="BtnMusicReveal" Grid.Column="2" Content="ВСКРЫТ." Height="24" Margin="0,0,2,0"
+                                        <Button x:Name="BtnMusicReveal" Grid.Column="1" Content="ВСКРЫТ." Height="24" Margin="0,0,2,0"
                                                 Background="#1a1a2e" BorderBrush="#3D3D3D" BorderThickness="1"
                                                 Foreground="#2ecc71" FontWeight="Bold" FontSize="8"
                                                 Click="BtnMusicReveal_Click" Style="{StaticResource FlatButton}"/>
-                                        <Button x:Name="BtnMusicVerdict" Grid.Column="3" Content="VERDICT" Height="24" Margin="0,0,2,0"
+                                        <Button x:Name="BtnMusicVerdict" Grid.Column="2" Content="VERDICT" Height="24" Margin="0,0,2,0"
                                                 Background="#1a1a2e" BorderBrush="#3D3D3D" BorderThickness="1"
                                                 Foreground="#FB923C" FontWeight="Bold" FontSize="8"
                                                 Click="BtnMusicVerdict_Click" Style="{StaticResource FlatButton}"/>
-                                        <Button x:Name="BtnMusicGeneralBed" Grid.Column="4" Content="BED" Height="24" Margin="0,0,2,0"
+                                        <Button x:Name="BtnMusicGeneralBed" Grid.Column="3" Content="BED" Height="24" Margin="0,0,2,0"
                                                 Background="#1a1a2e" BorderBrush="#3D3D3D" BorderThickness="1"
                                                 Foreground="#8B8B8B" FontWeight="Bold" FontSize="8"
                                                 Click="BtnGeneralBed_Click" Style="{StaticResource FlatButton}"/>
-                                        <Button x:Name="BtnMusicAfterShame" Grid.Column="5" Content="SHAME" Height="24" Margin="0,0,2,0"
+                                        <Button x:Name="BtnMusicAfterShame" Grid.Column="4" Content="SHAME" Height="24" Margin="0,0,2,0"
                                                 Background="#1a1a2e" BorderBrush="#3D3D3D" BorderThickness="1"
                                                 Foreground="#8B8B8B" FontWeight="Bold" FontSize="8"
                                                 Click="BtnAfterInterviewBed_Click" Style="{StaticResource FlatButton}"/>
-                                        <Button x:Name="BtnMusicStop" Grid.Column="6" Content="STOP" Height="24"
+                                        <Button x:Name="BtnMusicStop" Grid.Column="5" Content="STOP" Height="24"
                                                 Background="#2a1515" BorderBrush="#4a2020" BorderThickness="1"
                                                 Foreground="#EF4444" FontWeight="Bold" FontSize="8"
                                                 Click="BtnStopAudio_Click" Style="{StaticResource FlatButton}"/>
