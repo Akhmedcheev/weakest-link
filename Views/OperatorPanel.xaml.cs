@@ -5084,6 +5084,51 @@ namespace WeakestLink.Views
             TakeScreenshot();
         }
 
+        // === LANGUAGE SWITCHER ===
+        private string _currentLanguage = "RU";
+
+        private void BtnLangRU_Click(object sender, RoutedEventArgs e) => SwitchLanguage("RU");
+        private void BtnLangEN_Click(object sender, RoutedEventArgs e) => SwitchLanguage("EN");
+
+        private void SwitchLanguage(string lang)
+        {
+            if (_currentLanguage == lang) return;
+            _currentLanguage = lang;
+
+            // Update button visuals
+            BtnLangRU.Background = lang == "RU" ? new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3B82F6")) : System.Windows.Media.Brushes.Transparent;
+            BtnLangRU.Foreground = lang == "RU" ? System.Windows.Media.Brushes.White : new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#64748B"));
+            BtnLangEN.Background = lang == "EN" ? new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3B82F6")) : System.Windows.Media.Brushes.Transparent;
+            BtnLangEN.Foreground = lang == "EN" ? System.Windows.Media.Brushes.White : new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#64748B"));
+
+            // Reload questions
+            string questionsFile = lang == "EN" ? "questions_en.json" : "questions.json";
+            string finalFile = lang == "EN" ? "final_questions_en.json" : "final_questions.json";
+
+            try
+            {
+                _questionProvider.LoadQuestions(questionsFile);
+                Log($"[{lang}] Загружено вопросов: {_questionProvider.LoadedCount}");
+
+                // Reload final questions
+                if (System.IO.File.Exists(finalFile))
+                {
+                    var finalJson = System.IO.File.ReadAllText(finalFile);
+                    var loaded = System.Text.Json.JsonSerializer.Deserialize<List<QuestionData>>(finalJson,
+                        new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    if (loaded != null)
+                    {
+                        _engine.LoadFinalQuestions(loaded);
+                        Log($"[{lang}] Загружено финальных: {loaded.Count}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Ошибка загрузки [{lang}]: {ex.Message}");
+            }
+        }
+
         private void TakeScreenshot()
         {
             try
