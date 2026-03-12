@@ -3805,7 +3805,9 @@ namespace WeakestLink.Views
             }
             else
             {
-                _hostScreen.Focus();
+                _hostScreen.Close();
+                _hostScreen = null;
+                Log("Экран ведущего закрыт.");
             }
         }
 
@@ -3830,7 +3832,9 @@ namespace WeakestLink.Views
             }
             else
             {
-                _hostModernScreen.Focus();
+                _hostModernScreen.Close();
+                _hostModernScreen = null;
+                Log("Экран ведущего (Modern) закрыт.");
             }
         }
 
@@ -3855,7 +3859,9 @@ namespace WeakestLink.Views
             }
             else
             {
-                _hostPremiumScreen.Focus();
+                _hostPremiumScreen.Close();
+                _hostPremiumScreen = null;
+                Log("Экран PREMIUM закрыт.");
             }
         }
 
@@ -3880,7 +3886,9 @@ namespace WeakestLink.Views
             }
             else
             {
-                _hostModernPremiumScreen.Focus();
+                _hostModernPremiumScreen.Close();
+                _hostModernPremiumScreen = null;
+                Log("Экран MODERN PREMIUM закрыт.");
             }
         }
 
@@ -3898,7 +3906,9 @@ namespace WeakestLink.Views
             }
             else
             {
-                _broadcastWindow.Focus();
+                _broadcastWindow.Close();
+                _broadcastWindow = null;
+                Log("Экран BROADCAST закрыт.");
             }
         }
 
@@ -3916,7 +3926,9 @@ namespace WeakestLink.Views
             }
             else
             {
-                _audienceScreen.Focus();
+                _audienceScreen.Close();
+                _audienceScreen = null;
+                Log("Экран AUDIENCE закрыт.");
             }
         }
 
