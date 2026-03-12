@@ -2411,17 +2411,33 @@
                                 Background="Transparent" Foreground="#94A3B8" BorderThickness="0" Cursor="Hand"
                                 Click="BtnCloseDossier_Click" Style="{StaticResource FlatButton}"/>
                     </Grid>
-                    <!-- Фото (большое) -->
-                    <Border x:Name="DossierPhotoBorder" Height="180" CornerRadius="12" 
-                            Background="#242830" BorderBrush="#3A4050" BorderThickness="1"
-                            ClipToBounds="True" Margin="0,0,0,16" Cursor="Hand"
-                            MouseLeftButtonDown="DossierPhoto_Click"
-                            ToolTip="Нажмите для загрузки фото">
+                    <!-- Crop-редактор фото -->
+                    <Border Height="250" CornerRadius="12" 
+                            Background="#0D1117" BorderBrush="#3A4050" BorderThickness="1"
+                            ClipToBounds="True" Margin="0,0,0,4" Cursor="Move"
+                            MouseLeftButtonDown="CropPhoto_MouseDown"
+                            MouseMove="CropPhoto_MouseMove"
+                            MouseLeftButtonUp="CropPhoto_MouseUp">
                         <Grid>
-                            <TextBlock Text="📷" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#4A5568"/>
-                            <Image x:Name="DossierPhotoImage" Stretch="UniformToFill"/>
+                            <TextBlock x:Name="CropHintText" Text="📷 Нажмите кнопку ниже для загрузки фото" 
+                                       FontSize="13" HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center" Foreground="#4A5568"/>
+                            <Image x:Name="DossierPhotoImage" Stretch="UniformToFill"
+                                   RenderOptions.BitmapScalingMode="HighQuality">
+                                <Image.RenderTransform>
+                                    <TranslateTransform x:Name="CropTransform" X="0" Y="0"/>
+                                </Image.RenderTransform>
+                            </Image>
                         </Grid>
                     </Border>
+                    <Grid Margin="0,0,0,12">
+                        <TextBlock Text="↕ Перетащите фото для подгонки" Foreground="#64748B" FontSize="10" 
+                                   VerticalAlignment="Center"/>
+                        <Button Content="📂 Загрузить фото" HorizontalAlignment="Right"
+                                Background="#242830" Foreground="#94A3B8" FontSize="11"
+                                BorderBrush="#3A4050" BorderThickness="1" Padding="10,4" Cursor="Hand"
+                                Click="BtnDossierUploadPhoto_Click" Style="{StaticResource FlatButton}"/>
+                    </Grid>
                     <!-- Поля анкеты -->
                     <TextBlock Text="Игровое имя" Foreground="#64748B" FontSize="10" Margin="0,0,0,3"/>
                     <TextBox x:Name="DossierGameName" 

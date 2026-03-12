@@ -146,10 +146,25 @@ namespace WeakestLink.Views
             public string PhotoPath
             {
                 get => _photoPath;
-                set { _photoPath = value; OnPropertyChanged(nameof(PhotoPath)); OnPropertyChanged(nameof(PhotoSource)); }
+                set { _photoPath = value; OnPropertyChanged(nameof(PhotoPath)); OnPropertyChanged(nameof(PhotoSource)); OnPropertyChanged(nameof(FullPhotoSource)); }
             }
 
-            public System.Windows.Media.ImageSource? PhotoSource
+            private double _cropX = 0.5;
+            public double CropX
+            {
+                get => _cropX;
+                set { _cropX = Math.Max(0, Math.Min(1, value)); OnPropertyChanged(nameof(CropX)); OnPropertyChanged(nameof(PhotoSource)); }
+            }
+
+            private double _cropY = 0.5;
+            public double CropY
+            {
+                get => _cropY;
+                set { _cropY = Math.Max(0, Math.Min(1, value)); OnPropertyChanged(nameof(CropY)); OnPropertyChanged(nameof(PhotoSource)); }
+            }
+
+            // Полное фото (без crop, для редактора)
+            public System.Windows.Media.Imaging.BitmapImage? FullPhotoSource
             {
                 get
                 {
@@ -162,15 +177,29 @@ namespace WeakestLink.Views
                         bi.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
                         bi.EndInit();
                         bi.Freeze();
+                        return bi;
+                    }
+                    catch { return null; }
+                }
+            }
 
-                        // Auto-crop к квадрату по центру
+            // Квадратное кропнутое фото (для карточек)
+            public System.Windows.Media.ImageSource? PhotoSource
+            {
+                get
+                {
+                    var bi = FullPhotoSource;
+                    if (bi == null) return null;
+                    try
+                    {
                         int w = bi.PixelWidth, h = bi.PixelHeight;
-                        if (w == h) return bi; // уже квадрат
+                        if (w == h) return bi;
 
                         int side = Math.Min(w, h);
-                        int x = (w - side) / 2;
-                        int y = (h - side) / 2;
-                        var cropped = new System.Windows.Media.Imaging.CroppedBitmap(bi, 
+                        int maxX = w - side, maxY = h - side;
+                        int x = (int)(maxX * _cropX);
+                        int y = (int)(maxY * _cropY);
+                        var cropped = new System.Windows.Media.Imaging.CroppedBitmap(bi,
                             new System.Windows.Int32Rect(x, y, side, side));
                         cropped.Freeze();
                         return cropped;
@@ -5164,6 +5193,10 @@ namespace WeakestLink.Views
         }
 
         // ═══ ДОСЬЕ УЧАСТНИКА ═══
+        private bool _cropDragging;
+        private System.Windows.Point _cropDragStart;
+        private double _cropDragStartTX, _cropDragStartTY;
+
         private void PlayerCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (sender is FrameworkElement fe && fe.DataContext is PlayerSetupItem player)
@@ -5174,9 +5207,38 @@ namespace WeakestLink.Views
                 DossierCityDesc.Text = player.CityDesc;
                 DossierAge.Text = player.Age > 0 ? player.Age.ToString() : "";
                 DossierBio.Text = player.Bio;
-                DossierPhotoImage.Source = player.PhotoSource;
+
+                // Load full (uncropped) photo for crop editor
+                DossierPhotoImage.Source = player.FullPhotoSource;
+                CropHintText.Visibility = player.FullPhotoSource == null ? Visibility.Visible : Visibility.Collapsed;
+
+                // Init crop transform from stored offsets
+                InitCropTransform(player);
+
                 DossierOverlay.Visibility = Visibility.Visible;
             }
+        }
+
+        private void InitCropTransform(PlayerSetupItem player)
+        {
+            var src = player.FullPhotoSource;
+            if (src == null) { CropTransform.X = 0; CropTransform.Y = 0; return; }
+
+            // The image renders at 250px height (UniformToFill in 370x250 area)
+            // Calculate rendered size
+            double containerW = 370, containerH = 250;
+            double scaleX = containerW / src.PixelWidth;
+            double scaleY = containerH / src.PixelHeight;
+            double scale = Math.Max(scaleX, scaleY);
+            double renderedW = src.PixelWidth * scale;
+            double renderedH = src.PixelHeight * scale;
+
+            double maxOffsetX = renderedW - containerW;
+            double maxOffsetY = renderedH - containerH;
+
+            // CropX/Y 0.5 = center = offset 0; CropX 0 = shift right; CropX 1 = shift left
+            CropTransform.X = -(player.CropX - 0.5) * maxOffsetX;
+            CropTransform.Y = -(player.CropY - 0.5) * maxOffsetY;
         }
 
         private void BtnSaveDossier_Click(object sender, RoutedEventArgs e)
@@ -5187,8 +5249,32 @@ namespace WeakestLink.Views
             _currentDossierPlayer.CityDesc = DossierCityDesc.Text;
             if (int.TryParse(DossierAge.Text, out int age)) _currentDossierPlayer.Age = age;
             _currentDossierPlayer.Bio = DossierBio.Text;
+
+            // Save crop position from transform
+            SaveCropPosition();
+
             DossierOverlay.Visibility = Visibility.Collapsed;
             Log($"📋 Досье обновлено: {_currentDossierPlayer.GameName}");
+        }
+
+        private void SaveCropPosition()
+        {
+            if (_currentDossierPlayer == null) return;
+            var src = _currentDossierPlayer.FullPhotoSource;
+            if (src == null) return;
+
+            double containerW = 370, containerH = 250;
+            double scaleX = containerW / src.PixelWidth;
+            double scaleY = containerH / src.PixelHeight;
+            double scale = Math.Max(scaleX, scaleY);
+            double renderedW = src.PixelWidth * scale;
+            double renderedH = src.PixelHeight * scale;
+
+            double maxOffsetX = renderedW - containerW;
+            double maxOffsetY = renderedH - containerH;
+
+            _currentDossierPlayer.CropX = maxOffsetX > 0 ? 0.5 - CropTransform.X / maxOffsetX : 0.5;
+            _currentDossierPlayer.CropY = maxOffsetY > 0 ? 0.5 - CropTransform.Y / maxOffsetY : 0.5;
         }
 
         private void BtnCloseDossier_Click(object sender, RoutedEventArgs e)
@@ -5206,9 +5292,43 @@ namespace WeakestLink.Views
             e.Handled = true;
         }
 
-        private void DossierPhoto_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        // Crop drag handlers
+        private void CropPhoto_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (_currentDossierPlayer?.FullPhotoSource == null) return;
             e.Handled = true;
+            _cropDragging = true;
+            _cropDragStart = e.GetPosition((IInputElement)sender);
+            _cropDragStartTX = CropTransform.X;
+            _cropDragStartTY = CropTransform.Y;
+            ((UIElement)sender).CaptureMouse();
+        }
+
+        private void CropPhoto_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (!_cropDragging || _currentDossierPlayer?.FullPhotoSource == null) return;
+            var pos = e.GetPosition((IInputElement)sender);
+            double dx = pos.X - _cropDragStart.X;
+            double dy = pos.Y - _cropDragStart.Y;
+
+            var src = _currentDossierPlayer.FullPhotoSource;
+            double containerW = 370, containerH = 250;
+            double scale = Math.Max(containerW / src.PixelWidth, containerH / src.PixelHeight);
+            double maxX = (src.PixelWidth * scale - containerW) / 2;
+            double maxY = (src.PixelHeight * scale - containerH) / 2;
+
+            CropTransform.X = Math.Max(-maxX, Math.Min(maxX, _cropDragStartTX + dx));
+            CropTransform.Y = Math.Max(-maxY, Math.Min(maxY, _cropDragStartTY + dy));
+        }
+
+        private void CropPhoto_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            _cropDragging = false;
+            ((UIElement)sender).ReleaseMouseCapture();
+        }
+
+        private void BtnDossierUploadPhoto_Click(object sender, RoutedEventArgs e)
+        {
             if (_currentDossierPlayer == null) return;
             var dlg = new Microsoft.Win32.OpenFileDialog
             {
@@ -5217,8 +5337,12 @@ namespace WeakestLink.Views
             };
             if (dlg.ShowDialog() == true)
             {
+                _currentDossierPlayer.CropX = 0.5;
+                _currentDossierPlayer.CropY = 0.5;
                 _currentDossierPlayer.PhotoPath = dlg.FileName;
-                DossierPhotoImage.Source = _currentDossierPlayer.PhotoSource;
+                DossierPhotoImage.Source = _currentDossierPlayer.FullPhotoSource;
+                CropHintText.Visibility = Visibility.Collapsed;
+                InitCropTransform(_currentDossierPlayer);
                 Log($"📷 Фото загружено: {System.IO.Path.GetFileName(dlg.FileName)}");
             }
         }
