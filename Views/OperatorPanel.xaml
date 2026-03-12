@@ -1168,7 +1168,6 @@
                         HorizontalAlignment="Left" VerticalAlignment="Stretch"
                         Background="{StaticResource ObsidianSurface}" 
                         BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,1,0"
-                        CornerRadius="0,0,12,0"
                         Panel.ZIndex="100" Visibility="Collapsed">
                     <DockPanel Margin="12,8">
                         <TextBlock DockPanel.Dock="Top" Text="ИНСТРУМЕНТЫ" 
