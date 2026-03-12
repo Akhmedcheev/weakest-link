@@ -5065,7 +5065,7 @@ namespace WeakestLink.Views
                 }
             }
 
-            if (!allFilled)
+            if (!allFilled || votes.Count == 0)
             {
                 Log("⚠ Не все голоса заполнены!");
                 return;
@@ -5084,13 +5084,16 @@ namespace WeakestLink.Views
                 voteCounts[kv.Value]++;
             }
 
-            var sorted = voteCounts.OrderByDescending(x => x.Value);
+            var sorted = voteCounts.OrderByDescending(x => x.Value).ToList();
             Log("📊 Итог:");
             foreach (var kv in sorted)
                 Log($"  {kv.Key}: {kv.Value} голос(ов)");
 
-            var topVoted = sorted.First();
-            Log($"👎 Больше всего голосов: {topVoted.Key} ({topVoted.Value})");
+            if (sorted.Count > 0)
+            {
+                var topVoted = sorted[0];
+                Log($"👎 Больше всего голосов: {topVoted.Key} ({topVoted.Value})");
+            }
         }
 
         // === SETTINGS PERSISTENCE ===
