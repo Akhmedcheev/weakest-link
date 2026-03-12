@@ -2695,7 +2695,7 @@
 
     <!-- ═══ ОВЕРЛЕЙ: ДОСЬЕ УЧАСТНИКА (root level) ═══ -->
     <Border x:Name="DossierOverlay" Grid.RowSpan="3" Panel.ZIndex="300"
-            Background="#CC0D1117" Visibility="Collapsed"
+            Background="#E6050911" Visibility="Collapsed"
             MouseLeftButtonDown="DossierOverlay_BackgroundClick">
         <Border Background="#1A1D24" CornerRadius="16" BorderBrush="#2E333D" BorderThickness="1"
                 Width="500" HorizontalAlignment="Center" VerticalAlignment="Center"
