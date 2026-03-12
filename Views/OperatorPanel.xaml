@@ -807,119 +807,137 @@
         <!-- Row 1: App Content -->
         <Grid Grid.Row="1" x:Name="RootLayoutGrid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="70"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="220"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
-        <!-- COLUMN 0: Icon Sidebar (Icons) -->
-        <Border Grid.Column="0" Background="{StaticResource ObsidianBg}" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,1,0">
+        <!-- COLUMN 0: Unified Navigation Sidebar (MarketVista style) -->
+        <Border Grid.Column="0" Background="{StaticResource ObsidianBg}" 
+                BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,1,0">
             <DockPanel LastChildFill="True">
-                <!-- Низ: Переключатель языка RU/EN -->
-                <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" Margin="0,0,0,10">
-                    <TextBlock x:Name="TxtLangLabel" Text="ЯЗЫК" Foreground="#64748B" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold" Margin="0,0,0,4"/>
-                    <Border CornerRadius="8" Background="#1D2129" Padding="2">
+                <!-- BOTTOM: Language Toggle -->
+                <StackPanel DockPanel.Dock="Bottom" Margin="12,0,12,10">
+                    <Border Height="1" Background="#2E333D" Margin="0,0,0,8"/>
+                    <TextBlock x:Name="TxtLangLabel" Text="ЯЗЫК" Foreground="#3D4450" FontSize="8" 
+                               HorizontalAlignment="Center" FontWeight="Bold" Margin="0,0,0,4"/>
+                    <Border CornerRadius="8" Background="#1D2129" Padding="2" HorizontalAlignment="Center">
                         <StackPanel Orientation="Horizontal">
-                            <Button x:Name="BtnLangRU" Content="RU" Width="28" Height="22" FontSize="9" FontWeight="Bold"
+                            <Button x:Name="BtnLangRU" Content="RU" Width="36" Height="24" FontSize="10" FontWeight="Bold"
                                     Background="#3B82F6" Foreground="White" BorderThickness="0" Cursor="Hand"
                                     Click="BtnLangRU_Click" Style="{StaticResource FlatButton}"/>
-                            <Button x:Name="BtnLangEN" Content="EN" Width="28" Height="22" FontSize="9" FontWeight="Bold"
+                            <Button x:Name="BtnLangEN" Content="EN" Width="36" Height="24" FontSize="10" FontWeight="Bold"
                                     Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
                                     Click="BtnLangEN_Click" Style="{StaticResource FlatButton}"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
 
-                <!-- Верх: Статистика -->
-                <StackPanel x:Name="LeftSidebarPanel" VerticalAlignment="Top" Margin="0,10,0,0">
-                <StackPanel HorizontalAlignment="Center" Margin="0,0,0,8">
-                    <TextBlock x:Name="TxtBankLabel" Text="БАНК" Foreground="#64748B" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
-                    <TextBlock x:Name="TxtCurrentBank_Side" Text="0" Foreground="Yellow" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                </StackPanel>
-                <Border Height="1" Background="#2E333D" Margin="8,0"/>
-                <StackPanel HorizontalAlignment="Center" Margin="0,8,0,8">
-                    <TextBlock x:Name="TxtTotalLabel" Text="ОБЩИЙ" Foreground="#64748B" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
-                    <TextBlock x:Name="TxtTotalBank_Side" Text="0" Foreground="#00FF00" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                </StackPanel>
-                <Border Height="1" Background="#2E333D" Margin="8,0"/>
-                <StackPanel HorizontalAlignment="Center" Margin="0,8,0,8">
-                    <TextBlock x:Name="TxtTimeLabel" Text="ВРЕМЯ" Foreground="#64748B" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
-                    <TextBlock x:Name="TxtTimer_Side" Text="00:00" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                </StackPanel>
-                <Border Height="1" Background="#2E333D" Margin="8,0"/>
-                <StackPanel HorizontalAlignment="Center" Margin="0,8,0,8">
-                    <TextBlock x:Name="TxtRoundLabel" Text="РАУНД" Foreground="#64748B" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
-                    <TextBlock x:Name="TxtRoundNumber_Side" Text="—" Foreground="Cyan" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                </StackPanel>
-                <Border Height="1" Background="#2E333D" Margin="8,0"/>
-                <StackPanel HorizontalAlignment="Center" Margin="0,8,0,8">
-                    <TextBlock x:Name="TxtQuestionLabel" Text="ВОПРОС" Foreground="#64748B" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
-                    <TextBlock x:Name="TxtQuestionCount_Side" Text="0/0" Foreground="Orange" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
-                </StackPanel>
-            </StackPanel>
-            </DockPanel>
-        </Border>
+                <!-- SCROLLABLE CONTENT -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                              Padding="0" Margin="0">
+                <StackPanel Margin="0">
 
-        <!-- COLUMN 1: Player List + Round Status Panel (collapsible) -->
-        <Border x:Name="PlayerListPanel" Grid.Column="1" Width="200" 
-                Background="{StaticResource ObsidianBg}" 
-                BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,1,0"
-                Visibility="Visible">
-            <DockPanel LastChildFill="True">
-                <!-- Top: Round Status Icons -->
-                <Border DockPanel.Dock="Top" Background="#111318" Padding="8,8" BorderBrush="#2E333D" BorderThickness="0,0,0,1">
-                    <StackPanel>
-                        <TextBlock x:Name="TxtRoundStatusLabel" Text="РАУНДЫ" Foreground="#64748B" FontSize="9" FontWeight="Bold" 
-                                   HorizontalAlignment="Center" Margin="0,0,0,6"/>
-                        <StackPanel x:Name="RoundStatusIcons" Orientation="Horizontal" HorizontalAlignment="Center">
-                            <!-- R1-R7 circles generated dynamically, but we add static template -->
-                            <Border x:Name="RoundIcon1" Width="22" Height="22" CornerRadius="11" Background="#1D2129" 
-                                    BorderBrush="#3B82F6" BorderThickness="2" Margin="2,0">
-                                <TextBlock Text="1" Foreground="#64748B" FontSize="9" FontWeight="Bold" 
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <Border x:Name="RoundIcon2" Width="22" Height="22" CornerRadius="11" Background="#1D2129" 
-                                    BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
-                                <TextBlock Text="2" Foreground="#64748B" FontSize="9" FontWeight="Bold" 
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <Border x:Name="RoundIcon3" Width="22" Height="22" CornerRadius="11" Background="#1D2129" 
-                                    BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
-                                <TextBlock Text="3" Foreground="#64748B" FontSize="9" FontWeight="Bold" 
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <Border x:Name="RoundIcon4" Width="22" Height="22" CornerRadius="11" Background="#1D2129" 
-                                    BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
-                                <TextBlock Text="4" Foreground="#64748B" FontSize="9" FontWeight="Bold" 
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <Border x:Name="RoundIcon5" Width="22" Height="22" CornerRadius="11" Background="#1D2129" 
-                                    BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
-                                <TextBlock Text="5" Foreground="#64748B" FontSize="9" FontWeight="Bold" 
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <Border x:Name="RoundIcon6" Width="22" Height="22" CornerRadius="11" Background="#1D2129" 
-                                    BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
-                                <TextBlock Text="6" Foreground="#64748B" FontSize="9" FontWeight="Bold" 
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <Border x:Name="RoundIcon7" Width="22" Height="22" CornerRadius="11" Background="#1D2129" 
-                                    BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
-                                <TextBlock Text="7" Foreground="#64748B" FontSize="9" FontWeight="Bold" 
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
+                    <!-- === NAVIGATION SECTION === -->
+                    <TextBlock x:Name="TxtNavLabel" Text="НАВИГАЦИЯ" Foreground="#3D4450" FontSize="9" FontWeight="Bold" 
+                               Margin="16,14,0,6"/>
+
+                    <Button x:Name="NavBtnSetup" Content="📋  Лобби" Tag="SETUP" Height="34" FontSize="12" FontWeight="SemiBold"
+                            Background="#1A1F2B" Foreground="{StaticResource ObsidianTextPrimary}" HorizontalContentAlignment="Left"
+                            Padding="16,0,0,0" Margin="8,1" BorderThickness="0" Cursor="Hand"
+                            Click="NavBtn_Click" Style="{StaticResource FlatButton}"/>
+                    <Button x:Name="NavBtnPlay" Content="🎮  Игра" Tag="PLAY" Height="34" FontSize="12" FontWeight="SemiBold"
+                            Background="Transparent" Foreground="#8B949E" HorizontalContentAlignment="Left"
+                            Padding="16,0,0,0" Margin="8,1" BorderThickness="0" Cursor="Hand"
+                            Click="NavBtn_Click" Style="{StaticResource FlatButton}"/>
+                    <Button x:Name="NavBtnStats" Content="📊  Аналитика" Tag="STATS" Height="34" FontSize="12" FontWeight="SemiBold"
+                            Background="Transparent" Foreground="#8B949E" HorizontalContentAlignment="Left"
+                            Padding="16,0,0,0" Margin="8,1" BorderThickness="0" Cursor="Hand"
+                            Click="NavBtn_Click" Style="{StaticResource FlatButton}"/>
+                    <Button x:Name="NavBtnEditor" Content="✏️  Редактор" Tag="EDIT" Height="34" FontSize="12" FontWeight="SemiBold"
+                            Background="Transparent" Foreground="#8B949E" HorizontalContentAlignment="Left"
+                            Padding="16,0,0,0" Margin="8,1" BorderThickness="0" Cursor="Hand"
+                            Click="NavBtn_Click" Style="{StaticResource FlatButton}"/>
+
+                    <!-- === GAME STATS (compact row) === -->
+                    <Border Height="1" Background="#2E333D" Margin="12,10,12,6"/>
+                    <TextBlock x:Name="TxtStatsLabel" Text="СТАТИСТИКА" Foreground="#3D4450" FontSize="9" FontWeight="Bold" 
+                               Margin="16,0,0,6"/>
+
+                    <UniformGrid Columns="3" Margin="8,0,8,4">
+                        <StackPanel HorizontalAlignment="Center" Margin="0,2">
+                            <TextBlock x:Name="TxtBankLabel" Text="БАНК" Foreground="#3D4450" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                            <TextBlock x:Name="TxtCurrentBank_Side" Text="0" Foreground="#FFA657" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
                         </StackPanel>
-                    </StackPanel>
-                </Border>
+                        <StackPanel HorizontalAlignment="Center" Margin="0,2">
+                            <TextBlock x:Name="TxtTotalLabel" Text="ОБЩИЙ" Foreground="#3D4450" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                            <TextBlock x:Name="TxtTotalBank_Side" Text="0" Foreground="#3FB950" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel HorizontalAlignment="Center" Margin="0,2">
+                            <TextBlock x:Name="TxtTimeLabel" Text="ВРЕМЯ" Foreground="#3D4450" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                            <TextBlock x:Name="TxtTimer_Side" Text="00:00" Foreground="White" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </UniformGrid>
+                    <UniformGrid Columns="2" Margin="8,0,8,2">
+                        <StackPanel HorizontalAlignment="Center" Margin="0,2">
+                            <TextBlock x:Name="TxtRoundLabel" Text="РАУНД" Foreground="#3D4450" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                            <TextBlock x:Name="TxtRoundNumber_Side" Text="—" Foreground="#58A6FF" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel HorizontalAlignment="Center" Margin="0,2">
+                            <TextBlock x:Name="TxtQuestionLabel" Text="ВОПРОС" Foreground="#3D4450" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                            <TextBlock x:Name="TxtQuestionCount_Side" Text="0/0" Foreground="#FFA657" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </UniformGrid>
 
-                <!-- Middle: Player List -->
-                <StackPanel>
-                    <TextBlock x:Name="TxtPlayerListLabel" Text="ИГРОКИ" Foreground="#64748B" FontSize="9" FontWeight="Bold" 
-                               HorizontalAlignment="Center" Margin="0,8,0,4"/>
+                    <!-- === ROUND STATUS ICONS === -->
+                    <Border Height="1" Background="#2E333D" Margin="12,8,12,6"/>
+                    <TextBlock x:Name="TxtRoundStatusLabel" Text="РАУНДЫ" Foreground="#3D4450" FontSize="9" FontWeight="Bold" 
+                               Margin="16,0,0,6"/>
+                    <StackPanel x:Name="RoundStatusIcons" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
+                        <Border x:Name="RoundIcon1" Width="24" Height="24" CornerRadius="12" Background="#1D2129" 
+                                BorderBrush="#3B82F6" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="1" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <Border x:Name="RoundIcon2" Width="24" Height="24" CornerRadius="12" Background="#1D2129" 
+                                BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="2" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <Border x:Name="RoundIcon3" Width="24" Height="24" CornerRadius="12" Background="#1D2129" 
+                                BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="3" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <Border x:Name="RoundIcon4" Width="24" Height="24" CornerRadius="12" Background="#1D2129" 
+                                BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="4" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <Border x:Name="RoundIcon5" Width="24" Height="24" CornerRadius="12" Background="#1D2129" 
+                                BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="5" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <Border x:Name="RoundIcon6" Width="24" Height="24" CornerRadius="12" Background="#1D2129" 
+                                BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="6" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <Border x:Name="RoundIcon7" Width="24" Height="24" CornerRadius="12" Background="#1D2129" 
+                                BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="7" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- === PLAYERS LIST === -->
+                    <Border Height="1" Background="#2E333D" Margin="12,8,12,6"/>
+                    <TextBlock x:Name="TxtPlayerListLabel" Text="ИГРОКИ" Foreground="#3D4450" FontSize="9" FontWeight="Bold" 
+                               Margin="16,0,0,4"/>
                     <ItemsControl x:Name="PlayerListItems">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Margin="4,1" Padding="8,5" CornerRadius="6" Background="#161B22" 
+                                <Border Margin="6,1" Padding="8,4" CornerRadius="6" Background="#161B22" 
                                         BorderBrush="#2E333D" BorderThickness="1">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -927,30 +945,29 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <!-- Status dot -->
                                         <Ellipse Grid.Column="0" Width="8" Height="8" Margin="0,0,6,0"
                                                  Fill="{Binding StatusColor}" VerticalAlignment="Center"/>
-                                        <!-- Name -->
                                         <TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="{Binding NameColor}" 
-                                                   FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"
-                                                   TextDecorations="{Binding NameDecoration}"/>
-                                        <!-- Status pill -->
+                                                   FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"
+                                                   TextDecorations="{Binding NameDecoration}" TextTrimming="CharacterEllipsis"/>
                                         <Border Grid.Column="2" CornerRadius="4" Padding="4,1" 
                                                 Background="{Binding PillBackground}" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding StatusText}" Foreground="{Binding PillForeground}" 
-                                                       FontSize="8" FontWeight="Bold"/>
+                                                       FontSize="7" FontWeight="Bold"/>
                                         </Border>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+
                 </StackPanel>
+                </ScrollViewer>
             </DockPanel>
         </Border>
 
-        <!-- COLUMN 2: ПРАВАЯ ЧАСТЬ (Now Grid.Column="2") -->
-        <Grid Grid.Column="2">
+        <!-- COLUMN 1: ОСНОВНОЙ КОНТЕНТ -->
+        <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/> <!-- 0: Верхнее меню (Debug) -->
                 <RowDefinition Height="Auto"/> <!-- 1: Панель статуса (Банк, Таймер) -->

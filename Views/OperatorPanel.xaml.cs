@@ -5208,6 +5208,12 @@ namespace WeakestLink.Views
                 TxtPlayerListLabel.Text = en ? "PLAYERS" : "ИГРОКИ";
                 TxtRoundFilterLabel.Text = en ? "ROUND:" : "РАУНД:";
                 TxtPredictionLabel.Text = en ? "ELIMINATION FORECAST" : "ПРОГНОЗ ВЫБЫВАНИЯ";
+                TxtNavLabel.Text = en ? "NAVIGATION" : "НАВИГАЦИЯ";
+                TxtStatsLabel.Text = en ? "STATISTICS" : "СТАТИСТИКА";
+                NavBtnSetup.Content = en ? "📋  Lobby" : "📋  Лобби";
+                NavBtnPlay.Content = en ? "🎮  Play" : "🎮  Игра";
+                NavBtnStats.Content = en ? "📊  Analytics" : "📊  Аналитика";
+                NavBtnEditor.Content = en ? "✏️  Editor" : "✏️  Редактор";
             }
             catch { }
 
@@ -5558,11 +5564,41 @@ namespace WeakestLink.Views
 
         #region Central Context Management
 
+        private void NavBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is string mode)
+                SetCentralContext(mode);
+        }
+
+        private void UpdateNavButtonStates(string activeMode)
+        {
+            try
+            {
+                var activeBg = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#1A1F2B"));
+                var activeFg = (System.Windows.Media.Brush)FindResource("ObsidianTextPrimary");
+                var inactiveFg = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#8B949E"));
+
+                var navButtons = new[] { NavBtnSetup, NavBtnPlay, NavBtnStats, NavBtnEditor };
+                var tags = new[] { "SETUP", "PLAY", "STATS", "EDIT" };
+
+                for (int i = 0; i < navButtons.Length; i++)
+                {
+                    bool isActive = tags[i] == activeMode.ToUpper();
+                    navButtons[i].Background = isActive ? activeBg : System.Windows.Media.Brushes.Transparent;
+                    navButtons[i].Foreground = isActive ? activeFg : inactiveFg;
+                }
+            }
+            catch { }
+        }
+
         /// <summary>
         /// Переключает центральный контекст между SETUP, PLAY, STATS, EDIT
         /// </summary>
         private void SetCentralContext(string mode)
         {
+            UpdateNavButtonStates(mode);
             try
             {
                 SetupContext.Visibility = Visibility.Collapsed;
