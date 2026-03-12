@@ -804,23 +804,29 @@
                             <!-- === ЭКРАНЫ (перенесены из правой панели) === -->
                             <TextBlock Text="ЭКРАНЫ" Foreground="{StaticResource ObsidianAccentTeal}" FontSize="10" FontWeight="Bold" Margin="0,0,0,4"/>
                             <UniformGrid Columns="2">
-                                <Button Content="HOST CLASSIC" Height="26" Margin="0,0,2,3" FontSize="9"
+                                <Button x:Name="BtnScreenHost" Content="HOST CLASSIC" Height="26" Margin="0,0,2,3" FontSize="9"
                                         Background="#2E333D" Foreground="#E2E8F0" 
+                                        BorderBrush="Transparent" BorderThickness="2"
                                         Click="BtnOpenHost_Click" Style="{StaticResource FlatButton}"/>
-                                <Button Content="HOST MODERN" Height="26" Margin="2,0,0,3" FontSize="9"
+                                <Button x:Name="BtnScreenModern" Content="HOST MODERN" Height="26" Margin="2,0,0,3" FontSize="9"
                                         Background="#2E333D" Foreground="#E2E8F0" 
+                                        BorderBrush="Transparent" BorderThickness="2"
                                         Click="BtnOpenHostModern_Click" Style="{StaticResource FlatButton}"/>
-                                <Button Content="PREMIUM" Height="26" Margin="0,0,2,3" FontSize="9"
+                                <Button x:Name="BtnScreenPremium" Content="PREMIUM" Height="26" Margin="0,0,2,3" FontSize="9"
                                         Background="#3B82F6" Foreground="White" 
+                                        BorderBrush="Transparent" BorderThickness="2"
                                         Click="BtnOpenHostPremium_Click" Style="{StaticResource FlatButton}"/>
-                                <Button Content="MOD. PREMIUM" Height="26" Margin="2,0,0,3" FontSize="9"
+                                <Button x:Name="BtnScreenModPremium" Content="MOD. PREMIUM" Height="26" Margin="2,0,0,3" FontSize="9"
                                         Background="#3B82F6" Foreground="White" 
+                                        BorderBrush="Transparent" BorderThickness="2"
                                         Click="BtnOpenHostModernPremium_Click" Style="{StaticResource FlatButton}"/>
-                                <Button Content="📡 BROADCAST" Height="26" Margin="0,0,2,3" FontSize="9"
+                                <Button x:Name="BtnScreenBroadcast" Content="📡 BROADCAST" Height="26" Margin="0,0,2,3" FontSize="9"
                                         Background="#DC2626" Foreground="White" FontWeight="Bold"
+                                        BorderBrush="Transparent" BorderThickness="2"
                                         Click="BtnOpenBroadcast_Click" Style="{StaticResource FlatButton}"/>
-                                <Button Content="🎭 AUDIENCE" Height="26" Margin="2,0,0,3" FontSize="9"
+                                <Button x:Name="BtnScreenAudience" Content="🎭 AUDIENCE" Height="26" Margin="2,0,0,3" FontSize="9"
                                         Background="#1565C0" Foreground="White" FontWeight="Bold"
+                                        BorderBrush="Transparent" BorderThickness="2"
                                         Click="BtnOpenAudience_Click" Style="{StaticResource FlatButton}"/>
                             </UniformGrid>
                             <Button Content="ANALYTICS" Height="24" Margin="0,0,0,3" FontSize="9"
@@ -978,62 +984,67 @@
                     </Storyboard>
                 </Grid.Resources>
 
-                <!-- 1A: BLACK STATS BAR (Monolithic Base) -->
-                <Border Background="#111318" CornerRadius="4" BorderBrush="#1A1A1A" BorderThickness="1" 
-                        Height="46" VerticalAlignment="Bottom">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                <!-- 1A: STAT CARDS BAR -->
+                <Grid VerticalAlignment="Bottom" Height="60">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                        <!-- Col 0: ТЕКУЩИЙ БАНК -->
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="16,0,10,0">
-                            <TextBlock Text="ТЕКУЩИЙ БАНК" Foreground="#64748B" FontSize="9" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                            <TextBlock x:Name="TxtCurrentBank" Text="0" Foreground="#D4AA40" FontSize="26" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
+                    <!-- Card 0: ТЕКУЩИЙ БАНК -->
+                    <Border Grid.Column="0" Background="#1D2129" CornerRadius="10" BorderBrush="#2E333D" BorderThickness="1" Margin="2,0" Padding="6,4">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="💰 ТЕКУЩИЙ БАНК" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="TxtCurrentBank" Text="0" Foreground="#D4AA40" FontSize="24" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
                                 <TextBlock.Effect>
-                                    <DropShadowEffect Color="#D4AA40" BlurRadius="5" ShadowDepth="0" Opacity="0.3"/>
+                                    <DropShadowEffect Color="#D4AA40" BlurRadius="8" ShadowDepth="0" Opacity="0.4"/>
                                 </TextBlock.Effect>
                             </TextBlock>
                         </StackPanel>
+                    </Border>
 
-                        <!-- Col 1: ОБЩИЙ БАНК -->
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="4,0,8,0">
-                            <TextBlock Text="ОБЩИЙ БАНК" Foreground="#64748B" FontSize="9" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                            <TextBlock x:Name="TxtTotalBank" Text="0" Foreground="#2E9E5E" FontSize="26" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
+                    <!-- Card 1: ОБЩИЙ БАНК -->
+                    <Border Grid.Column="1" Background="#1D2129" CornerRadius="10" BorderBrush="#2E333D" BorderThickness="1" Margin="2,0" Padding="6,4">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="🏦 ОБЩИЙ БАНК" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="TxtTotalBank" Text="0" Foreground="#22C55E" FontSize="24" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
                                 <TextBlock.Effect>
-                                    <DropShadowEffect Color="#2E9E5E" BlurRadius="5" ShadowDepth="0" Opacity="0.3"/>
+                                    <DropShadowEffect Color="#22C55E" BlurRadius="8" ShadowDepth="0" Opacity="0.4"/>
                                 </TextBlock.Effect>
                             </TextBlock>
                         </StackPanel>
+                    </Border>
 
-                        <!-- Col 2: Empty Spacer for the Ring that floats above -->
-                        <Grid Grid.Column="2" />
+                    <!-- Col 2: Spacer for floating ring -->
+                    <Grid Grid.Column="2"/>
 
-                        <!-- Col 3: РАУНД -->
-                        <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="8,0,4,0">
-                            <TextBlock Text="РАУНД" Foreground="#64748B" FontSize="9" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                            <TextBlock x:Name="TxtRoundNumber" Text="1" Foreground="#3CA8B8" FontSize="26" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
+                    <!-- Card 3: РАУНД -->
+                    <Border Grid.Column="3" Background="#1D2129" CornerRadius="10" BorderBrush="#2E333D" BorderThickness="1" Margin="2,0" Padding="6,4">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="🔄 РАУНД" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="TxtRoundNumber" Text="1" Foreground="#3B82F6" FontSize="24" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
                                 <TextBlock.Effect>
-                                    <DropShadowEffect Color="#3CA8B8" BlurRadius="5" ShadowDepth="0" Opacity="0.3"/>
+                                    <DropShadowEffect Color="#3B82F6" BlurRadius="8" ShadowDepth="0" Opacity="0.4"/>
                                 </TextBlock.Effect>
                             </TextBlock>
                         </StackPanel>
+                    </Border>
 
-                        <!-- Col 4: ВОПРОС -->
-                        <StackPanel Grid.Column="4" VerticalAlignment="Center" Margin="4,0,16,0">
-                            <TextBlock Text="ВОПРОС" Foreground="#64748B" FontSize="9" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                            <TextBlock x:Name="TxtQuestionCount" Text="0/0" Foreground="#C87A20" FontSize="26" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
+                    <!-- Card 4: ВОПРОС -->
+                    <Border Grid.Column="4" Background="#1D2129" CornerRadius="10" BorderBrush="#2E333D" BorderThickness="1" Margin="2,0" Padding="6,4">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="❓ ВОПРОС" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="TxtQuestionCount" Text="0/0" Foreground="#F59E0B" FontSize="24" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
                                 <TextBlock.Effect>
-                                    <DropShadowEffect Color="#C87A20" BlurRadius="5" ShadowDepth="0" Opacity="0.3"/>
+                                    <DropShadowEffect Color="#F59E0B" BlurRadius="8" ShadowDepth="0" Opacity="0.4"/>
                                 </TextBlock.Effect>
                             </TextBlock>
                         </StackPanel>
-                    </Grid>
-                </Border>
+                    </Border>
+                </Grid>
 
                 <!-- 1B: Round Number (top center) -->
                 <Border x:Name="TimerArchBorder" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,-20"

@@ -3790,6 +3790,7 @@ namespace WeakestLink.Views
                 _hostScreen = new HostScreen(_engine);
                 _hostScreen.Show();
                 Log("Экран ведущего открыт.");
+                SetScreenToggle(BtnScreenHost, true);
                 
                 if (_currentQuestion != null)
                 {
@@ -3808,6 +3809,7 @@ namespace WeakestLink.Views
                 _hostScreen.Close();
                 _hostScreen = null;
                 Log("Экран ведущего закрыт.");
+                SetScreenToggle(BtnScreenHost, false);
             }
         }
 
@@ -3818,6 +3820,7 @@ namespace WeakestLink.Views
                 _hostModernScreen = new HostScreenModern(_engine);
                 _hostModernScreen.Show();
                 Log("Экран ведущего (Modern) открыт.");
+                SetScreenToggle(BtnScreenModern, true);
 
                 if (_currentQuestion != null)
                 {
@@ -3835,6 +3838,7 @@ namespace WeakestLink.Views
                 _hostModernScreen.Close();
                 _hostModernScreen = null;
                 Log("Экран ведущего (Modern) закрыт.");
+                SetScreenToggle(BtnScreenModern, false);
             }
         }
 
@@ -3845,6 +3849,7 @@ namespace WeakestLink.Views
                 _hostPremiumScreen = new HostScreenPremium(_engine);
                 _hostPremiumScreen.Show();
                 Log("Экран PREMIUM открыт.");
+                SetScreenToggle(BtnScreenPremium, true);
 
                 if (_currentQuestion != null)
                 {
@@ -3862,6 +3867,7 @@ namespace WeakestLink.Views
                 _hostPremiumScreen.Close();
                 _hostPremiumScreen = null;
                 Log("Экран PREMIUM закрыт.");
+                SetScreenToggle(BtnScreenPremium, false);
             }
         }
 
@@ -3872,6 +3878,7 @@ namespace WeakestLink.Views
                 _hostModernPremiumScreen = new HostScreenModernPremium(_engine);
                 _hostModernPremiumScreen.Show();
                 Log("Экран MODERN PREMIUM открыт.");
+                SetScreenToggle(BtnScreenModPremium, true);
 
                 if (_currentQuestion != null)
                 {
@@ -3889,6 +3896,7 @@ namespace WeakestLink.Views
                 _hostModernPremiumScreen.Close();
                 _hostModernPremiumScreen = null;
                 Log("Экран MODERN PREMIUM закрыт.");
+                SetScreenToggle(BtnScreenModPremium, false);
             }
         }
 
@@ -3899,6 +3907,7 @@ namespace WeakestLink.Views
                 _broadcastWindow = new BroadcastWindow(_engine);
                 _broadcastWindow.Show();
                 Log("Экран BROADCAST открыт.");
+                SetScreenToggle(BtnScreenBroadcast, true);
                 // Синхронизация текущего таймера и банка
                 _broadcastWindow.UpdateBank(_engine.CurrentChainIndex, _engine.RoundBank);
                 int m = _timeLeftSeconds / 60, s = _timeLeftSeconds % 60;
@@ -3909,6 +3918,7 @@ namespace WeakestLink.Views
                 _broadcastWindow.Close();
                 _broadcastWindow = null;
                 Log("Экран BROADCAST закрыт.");
+                SetScreenToggle(BtnScreenBroadcast, false);
             }
         }
 
@@ -3919,6 +3929,7 @@ namespace WeakestLink.Views
                 _audienceScreen = new AudienceScreen(_engine);
                 _audienceScreen.Show();
                 Log("Экран AUDIENCE открыт.");
+                SetScreenToggle(BtnScreenAudience, true);
                 _audienceScreen.UpdateBank(_engine.CurrentChainIndex, _engine.RoundBank);
                 _audienceScreen.UpdateRound(_engine.CurrentRound);
                 int m = _timeLeftSeconds / 60, s = _timeLeftSeconds % 60;
@@ -3929,6 +3940,7 @@ namespace WeakestLink.Views
                 _audienceScreen.Close();
                 _audienceScreen = null;
                 Log("Экран AUDIENCE закрыт.");
+                SetScreenToggle(BtnScreenAudience, false);
             }
         }
 
@@ -5015,6 +5027,14 @@ namespace WeakestLink.Views
             if (ServiceSidePanel == null) return;
             ServiceSidePanel.Visibility = Visibility.Collapsed;
             if (TglServicePanel != null) TglServicePanel.IsChecked = false;
+        }
+
+        private void SetScreenToggle(System.Windows.Controls.Button btn, bool isOpen)
+        {
+            if (btn == null) return;
+            btn.BorderBrush = isOpen 
+                ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x22, 0xC5, 0x5E))
+                : System.Windows.Media.Brushes.Transparent;
         }
 
         private void ChkDebugEndRoundButton_Click(object sender, RoutedEventArgs e)
