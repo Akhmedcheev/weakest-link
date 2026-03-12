@@ -2622,6 +2622,27 @@ namespace WeakestLink.Views
             }
         }
 
+        private void BtnMusicVoting_Click(object sender, RoutedEventArgs e)
+        {
+            _audioManager.Stop();
+            _audioManager.Play("Assets/Audio/new_voting_system v3START.mp3", loop: false);
+            Log("🎵 Ручной запуск: new_voting_system v3START.mp3");
+        }
+
+        private void BtnMusicReveal_Click(object sender, RoutedEventArgs e)
+        {
+            _audioManager.Stop();
+            _audioManager.Play("Assets/Audio/new_voting_system_revealing.mp3", loop: false);
+            Log("🎵 Ручной запуск: new_voting_system_revealing.mp3");
+        }
+
+        private void BtnMusicVerdict_Click(object sender, RoutedEventArgs e)
+        {
+            _audioManager.Stop();
+            _audioManager.Play("Assets/Audio/new_voting_system_before_walkshame.mp3", loop: false);
+            Log("🎵 Ручной запуск: new_voting_system_before_walkshame.mp3");
+        }
+
         private void BtnGeneralBed_Click(object sender, RoutedEventArgs e)
         {
             _audioManager.Play("Assets/Audio/general_bed.mp3", loop: true);
