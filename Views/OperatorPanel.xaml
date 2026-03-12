@@ -1658,16 +1658,16 @@
                                 
                                 <!-- Таймер под цепочкой -->
                                 <Border Grid.Row="2" Background="#1D2129" CornerRadius="10" 
-                                        BorderBrush="#2DD4BF" BorderThickness="1"
+                                        BorderBrush="#2E333D" BorderThickness="1"
                                         Margin="10,8,10,15" Padding="8,6">
                                     <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="⏱ ВРЕМЯ" Foreground="#2DD4BF" FontSize="9" FontWeight="Bold" 
+                                        <TextBlock Text="⏱ ВРЕМЯ" Foreground="#64748B" FontSize="9" FontWeight="Bold" 
                                                    HorizontalAlignment="Center" Margin="0,0,0,2"/>
-                                        <TextBlock x:Name="TxtTimer" Text="0:00" Foreground="#2DD4BF" 
+                                        <TextBlock x:Name="TxtTimer" Text="0:00" Foreground="White" 
                                                    FontSize="36" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas"
                                                    HorizontalAlignment="Center">
                                             <TextBlock.Effect>
-                                                <DropShadowEffect Color="#2DD4BF" BlurRadius="12" ShadowDepth="0" Opacity="0.5"/>
+                                                <DropShadowEffect Color="White" BlurRadius="8" ShadowDepth="0" Opacity="0.2"/>
                                             </TextBlock.Effect>
                                         </TextBlock>
                                     </StackPanel>
