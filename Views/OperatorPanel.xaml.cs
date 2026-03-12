@@ -160,10 +160,20 @@ namespace WeakestLink.Views
                         bi.BeginInit();
                         bi.UriSource = new Uri(_photoPath, UriKind.Absolute);
                         bi.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
-                        bi.DecodePixelWidth = 300;
                         bi.EndInit();
                         bi.Freeze();
-                        return bi;
+
+                        // Auto-crop к квадрату по центру
+                        int w = bi.PixelWidth, h = bi.PixelHeight;
+                        if (w == h) return bi; // уже квадрат
+
+                        int side = Math.Min(w, h);
+                        int x = (w - side) / 2;
+                        int y = (h - side) / 2;
+                        var cropped = new System.Windows.Media.Imaging.CroppedBitmap(bi, 
+                            new System.Windows.Int32Rect(x, y, side, side));
+                        cropped.Freeze();
+                        return cropped;
                     }
                     catch { return null; }
                 }
