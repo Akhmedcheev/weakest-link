@@ -996,6 +996,50 @@ namespace WeakestLink.Views
             StatusBarBorder.Background = bg;
             TxtStatusProcess.Text = status;
             TxtStatusHint.Text = hint;
+            UpdateStateBadge(state);
+        }
+
+        private void UpdateStateBadge(GameState state)
+        {
+            if (GameStateBadge == null || TxtGameStateBadge == null) return;
+            string text;
+            string bgHex;
+            string fgHex;
+            switch (state)
+            {
+                case GameState.Idle:
+                    text = "⏸ ОЖИДАНИЕ"; bgHex = "#1E293B"; fgHex = "#94A3B8"; break;
+                case GameState.IntroOpening:
+                    text = "🎬 ВСТУПЛЕНИЕ"; bgHex = "#2D1B4E"; fgHex = "#A78BFA"; break;
+                case GameState.IntroNarrative:
+                    text = "🎤 РАССКАЗ"; bgHex = "#2D1B4E"; fgHex = "#A78BFA"; break;
+                case GameState.PlayerIntro:
+                    text = "👥 ПРЕДСТАВЛЕНИЕ"; bgHex = "#1E3A5F"; fgHex = "#60A5FA"; break;
+                case GameState.RulesExplanation:
+                    text = "📋 ПРАВИЛА"; bgHex = "#1E3A5F"; fgHex = "#60A5FA"; break;
+                case GameState.RoundReady:
+                    text = "⏳ ГОТОВНОСТЬ"; bgHex = "#1A3320"; fgHex = "#4ADE80"; break;
+                case GameState.Playing:
+                    text = "🔥 ИДЁТ РАУНД"; bgHex = "#14532D"; fgHex = "#22C55E"; break;
+                case GameState.RoundSummary:
+                    text = "📊 ИТОГИ"; bgHex = "#1C1917"; fgHex = "#D4AA40"; break;
+                case GameState.Voting:
+                    text = "🗳 ГОЛОСОВАНИЕ"; bgHex = "#422006"; fgHex = "#F59E0B"; break;
+                case GameState.Discussion:
+                    text = "💬 ОБСУЖДЕНИЕ"; bgHex = "#422006"; fgHex = "#FB923C"; break;
+                case GameState.Reveal:
+                    text = "🔓 ВСКРЫТИЕ"; bgHex = "#422006"; fgHex = "#FB923C"; break;
+                case GameState.Elimination:
+                    text = "❌ ВЫБЫВАНИЕ"; bgHex = "#450A0A"; fgHex = "#EF4444"; break;
+                case GameState.FinalDuel:
+                    text = "⚔ ФИНАЛЬНАЯ ДУЭЛЬ"; bgHex = "#450A0A"; fgHex = "#F87171"; break;
+                default:
+                    text = state.ToString(); bgHex = "#1E293B"; fgHex = "#94A3B8"; break;
+            }
+            var converter = new System.Windows.Media.BrushConverter();
+            GameStateBadge.Background = (System.Windows.Media.Brush)converter.ConvertFromString(bgHex);
+            TxtGameStateBadge.Foreground = (System.Windows.Media.Brush)converter.ConvertFromString(fgHex);
+            TxtGameStateBadge.Text = text;
         }
 
         private void OnEngineBankChanged(object sender, BankChangedEventArgs e)

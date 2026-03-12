@@ -958,6 +958,9 @@
                         <Border x:Name="TestModeBadge" Background="#331a00" BorderBrush="#FF9800" BorderThickness="1" CornerRadius="6" Padding="10,4" Visibility="Collapsed">
                             <TextBlock x:Name="TxtTestModeLabel" Text="ТЕСТ: —" Foreground="#FF9800" FontSize="12" FontWeight="Bold" VerticalAlignment="Center"/>
                         </Border>
+                        <Border x:Name="GameStateBadge" Background="#1E293B" CornerRadius="12" Padding="12,4" Margin="8,0,0,0">
+                            <TextBlock x:Name="TxtGameStateBadge" Text="⏸ ОЖИДАНИЕ" Foreground="#94A3B8" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                        </Border>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
                         <Menu VerticalAlignment="Center" Background="Transparent" BorderThickness="0">
