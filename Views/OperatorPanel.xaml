@@ -1037,15 +1037,19 @@
                     </Grid>
                 </Border>
 
-                <!-- 1B: Round Number (top center) -->
+                <!-- 1B: Round Number (floating center badge) -->
                 <Border x:Name="TimerArchBorder" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,-20"
-                        CornerRadius="8" Background="#1D2129" BorderBrush="#3A4050" BorderThickness="1"
-                        Padding="16,4" Panel.ZIndex="10" Visibility="Collapsed">
+                        CornerRadius="10" Background="#171B22" BorderBrush="#2E333D" BorderThickness="1"
+                        Padding="20,4" Panel.ZIndex="10">
                     <StackPanel HorizontalAlignment="Center">
-                        <TextBlock x:Name="TxtRoundNumberCenter" Text="1" Foreground="White" 
-                                   FontSize="28" FontWeight="Bold" FontFamily="Segoe UI"
-                                   HorizontalAlignment="Center"/>
-                        <TextBlock Text="РАУНД" Foreground="#94A3B8" FontSize="10" FontWeight="Bold" 
+                        <TextBlock x:Name="TxtRoundNumberCenter" Text="1" Foreground="#3B82F6" 
+                                   FontSize="32" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas"
+                                   HorizontalAlignment="Center">
+                            <TextBlock.Effect>
+                                <DropShadowEffect Color="#3B82F6" BlurRadius="8" ShadowDepth="0" Opacity="0.4"/>
+                            </TextBlock.Effect>
+                        </TextBlock>
+                        <TextBlock Text="РАУНД" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
                                    HorizontalAlignment="Center" Margin="0,-2,0,2"/>
                     </StackPanel>
                 </Border>
