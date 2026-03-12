@@ -5893,6 +5893,7 @@ namespace WeakestLink.Views
                     case "STATS":
                         AnalyticsContext.Visibility = Visibility.Visible;
                         UpdateAnalyticsData();
+                        if (!_isExpressVoting) PopulateVoteTable();
                         UpdatePlayerList();
                         UpdateRoundIcons();
                         break;
