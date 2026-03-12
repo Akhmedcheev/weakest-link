@@ -5214,7 +5214,6 @@ namespace WeakestLink.Views
             TxtTimeLabel.Text = en ? "TIME" : "ВРЕМЯ";
             TxtRoundLabel.Text = en ? "ROUND" : "РАУНД";
             TxtQuestionLabel.Text = en ? "QUESTION" : "ВОПРОС";
-            TxtLangLabel.Text = en ? "LANG" : "ЯЗЫК";
 
             // === SETUP CONTEXT (Lobby) ===
             try

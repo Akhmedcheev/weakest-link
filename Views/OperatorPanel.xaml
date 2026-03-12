@@ -819,20 +819,10 @@
                 BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,1,0">
             <DockPanel LastChildFill="True">
                 <!-- BOTTOM: Language Toggle -->
-                <StackPanel DockPanel.Dock="Bottom" Margin="12,0,12,10">
-                    <Border Height="1" Background="#2E333D" Margin="0,0,0,8"/>
-                    <TextBlock x:Name="TxtLangLabel" Text="ЯЗЫК" Foreground="#3D4450" FontSize="8" 
-                               HorizontalAlignment="Center" FontWeight="Bold" Margin="0,0,0,4"/>
-                    <Border CornerRadius="8" Background="#1D2129" Padding="2" HorizontalAlignment="Center">
-                        <StackPanel Orientation="Horizontal">
-                            <Button x:Name="BtnLangRU" Content="RU" Width="36" Height="24" FontSize="10" FontWeight="Bold"
-                                    Background="#3B82F6" Foreground="White" BorderThickness="0" Cursor="Hand"
-                                    Click="BtnLangRU_Click" Style="{StaticResource FlatButton}"/>
-                            <Button x:Name="BtnLangEN" Content="EN" Width="36" Height="24" FontSize="10" FontWeight="Bold"
-                                    Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
-                                    Click="BtnLangEN_Click" Style="{StaticResource FlatButton}"/>
-                        </StackPanel>
-                    </Border>
+                <!-- Language buttons (hidden, used by code-behind; UI moved to Settings) -->
+                <StackPanel DockPanel.Dock="Bottom" Visibility="Collapsed">
+                    <Button x:Name="BtnLangRU" Click="BtnLangRU_Click"/>
+                    <Button x:Name="BtnLangEN" Click="BtnLangEN_Click"/>
                 </StackPanel>
 
                 <!-- SCROLLABLE CONTENT -->
