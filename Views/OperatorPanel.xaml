@@ -2698,48 +2698,114 @@
             Background="#CC0D1117" Visibility="Collapsed"
             MouseLeftButtonDown="DossierOverlay_BackgroundClick">
         <Border Background="#1A1D24" CornerRadius="16" BorderBrush="#2E333D" BorderThickness="1"
-                Width="420" HorizontalAlignment="Center" VerticalAlignment="Center"
-                Padding="24" MouseLeftButtonDown="DossierOverlay_CardClick">
-            <StackPanel>
-                <Grid Margin="0,0,0,16">
-                    <TextBlock Text="📋 Досье участника" Foreground="#E2E8F0" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                Width="500" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Padding="28" MouseLeftButtonDown="DossierOverlay_CardClick">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Row 0: Title + Close -->
+                <Grid Grid.Row="0" Margin="0,0,0,20">
+                    <TextBlock Text="Досье участника" Foreground="#E2E8F0" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
                     <Button Content="✕" HorizontalAlignment="Right" Width="32" Height="32" FontSize="14"
                             Background="Transparent" Foreground="#94A3B8" BorderThickness="0" Cursor="Hand"
                             Click="BtnCloseDossier_Click" Style="{StaticResource FlatButton}"/>
                 </Grid>
-                <Border Height="250" CornerRadius="12" Background="#0D1117" BorderBrush="#3A4050" BorderThickness="1"
-                        ClipToBounds="True" Margin="0,0,0,4" Cursor="SizeAll"
-                        MouseLeftButtonDown="CropPhoto_MouseDown" MouseMove="CropPhoto_MouseMove" MouseLeftButtonUp="CropPhoto_MouseUp">
-                    <Grid>
-                        <TextBlock x:Name="CropHintText" Text="📷 Нажмите кнопку ниже для загрузки фото" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#4A5568"/>
-                        <Image x:Name="DossierPhotoImage" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality">
-                            <Image.RenderTransform><TranslateTransform x:Name="CropTransform" X="0" Y="0"/></Image.RenderTransform>
-                        </Image>
-                    </Grid>
-                </Border>
-                <Grid Margin="0,0,0,12">
-                    <TextBlock Text="↕ Перетащите фото для подгонки" Foreground="#64748B" FontSize="10" VerticalAlignment="Center"/>
-                    <Button Content="📂 Загрузить фото" HorizontalAlignment="Right" Background="#242830" Foreground="#94A3B8" FontSize="11" BorderBrush="#3A4050" BorderThickness="1" Padding="10,4" Cursor="Hand" Click="BtnDossierUploadPhoto_Click" Style="{StaticResource FlatButton}"/>
+
+                <!-- Row 1: Photo (left) + Name (right) — Teams style -->
+                <Grid Grid.Row="1" Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Photo square with "Изменить" overlay -->
+                    <Border Grid.Column="0" Width="130" Height="130" CornerRadius="12" 
+                            Background="#242830" BorderBrush="#3A4050" BorderThickness="1"
+                            ClipToBounds="True" Margin="0,0,16,0" Cursor="Hand"
+                            MouseLeftButtonDown="PlayerPhoto_Click"
+                            ToolTip="Нажмите для загрузки фото">
+                        <Grid>
+                            <TextBlock x:Name="CropHintText" Text="📷" FontSize="32" HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center" Foreground="#4A5568"/>
+                            <Image x:Name="DossierPhotoImage" Stretch="UniformToFill"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   RenderOptions.BitmapScalingMode="HighQuality">
+                                <Image.RenderTransform><TranslateTransform x:Name="CropTransform" X="0" Y="0"/></Image.RenderTransform>
+                            </Image>
+                            <!-- "Изменить" button overlay at bottom -->
+                            <Border VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                                    Background="#3B82F6" CornerRadius="4" Padding="10,3" Margin="0,0,0,6"
+                                    Cursor="Hand" MouseLeftButtonDown="BtnDossierUploadPhoto_Click">
+                                <TextBlock Text="Изменить" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <!-- Name field with accent underline -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Игровое имя" Foreground="#64748B" FontSize="11" Margin="0,0,0,4"/>
+                        <TextBox x:Name="DossierGameName" Background="Transparent" Foreground="White" 
+                                 BorderThickness="0" FontSize="22" FontWeight="Bold" Padding="0,4"
+                                 Style="{StaticResource ObsidianTextBox}"/>
+                        <Border Height="2" Background="#6366F1" CornerRadius="1" Margin="0,2,0,0"/>
+                        <TextBlock Text="ФИО" Foreground="#64748B" FontSize="11" Margin="0,14,0,4"/>
+                        <TextBox x:Name="DossierFullName" Background="Transparent" Foreground="#ccc" 
+                                 BorderThickness="0" FontSize="14" Padding="0,4"
+                                 Style="{StaticResource ObsidianTextBox}"/>
+                        <Border Height="1" Background="#2E333D" Margin="0,4,0,0"/>
+                    </StackPanel>
                 </Grid>
-                <TextBlock Text="Игровое имя" Foreground="#64748B" FontSize="10" Margin="0,0,0,3"/>
-                <TextBox x:Name="DossierGameName" Background="#242830" Foreground="White" BorderBrush="#2E333D" BorderThickness="1" FontSize="14" FontWeight="SemiBold" Padding="8,6" Margin="0,0,0,10" Style="{StaticResource ObsidianTextBox}"/>
-                <TextBlock Text="ФИО" Foreground="#64748B" FontSize="10" Margin="0,0,0,3"/>
-                <TextBox x:Name="DossierFullName" Background="#242830" Foreground="#ccc" BorderBrush="#2E333D" BorderThickness="1" FontSize="13" Padding="8,6" Margin="0,0,0,10" Style="{StaticResource ObsidianTextBox}"/>
-                <Grid>
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                        <TextBlock Text="Город / Профессия" Foreground="#64748B" FontSize="10" Margin="0,0,0,3"/>
-                        <TextBox x:Name="DossierCityDesc" Background="#242830" Foreground="#94A3B8" BorderBrush="#2E333D" BorderThickness="1" FontSize="13" Padding="8,6" Margin="0,0,0,10" Style="{StaticResource ObsidianTextBox}"/>
+
+                <!-- Row 2: City + Age side by side -->
+                <Grid Grid.Row="2" Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                        <TextBlock Text="Город / Профессия" Foreground="#64748B" FontSize="11" Margin="0,0,0,4"/>
+                        <TextBox x:Name="DossierCityDesc" Background="#242830" Foreground="#94A3B8" 
+                                 BorderBrush="#2E333D" BorderThickness="1" FontSize="13" Padding="10,8" 
+                                 Style="{StaticResource ObsidianTextBox}"/>
                     </StackPanel>
                     <StackPanel Grid.Column="1">
-                        <TextBlock Text="Возраст" Foreground="#64748B" FontSize="10" Margin="0,0,0,3"/>
-                        <TextBox x:Name="DossierAge" Background="#242830" Foreground="#94A3B8" BorderBrush="#2E333D" BorderThickness="1" FontSize="13" Padding="8,6" Margin="0,0,0,10" TextAlignment="Center" Style="{StaticResource ObsidianTextBox}"/>
+                        <TextBlock Text="Возраст" Foreground="#64748B" FontSize="11" Margin="0,0,0,4"/>
+                        <TextBox x:Name="DossierAge" Background="#242830" Foreground="#94A3B8" 
+                                 BorderBrush="#2E333D" BorderThickness="1" FontSize="13" Padding="10,8"
+                                 TextAlignment="Center" Style="{StaticResource ObsidianTextBox}"/>
                     </StackPanel>
                 </Grid>
-                <TextBlock Text="Био / Интересный факт" Foreground="#64748B" FontSize="10" Margin="0,0,0,3"/>
-                <TextBox x:Name="DossierBio" Background="#242830" Foreground="#94A3B8" BorderBrush="#2E333D" BorderThickness="1" FontSize="12" Padding="8,6" Height="60" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Style="{StaticResource ObsidianTextBox}"/>
-                <Button Content="✓ СОХРАНИТЬ" Height="36" Margin="0,16,0,0" Background="#16A34A" Foreground="White" FontSize="13" FontWeight="Bold" Click="BtnSaveDossier_Click" Style="{StaticResource FlatButton}"/>
-            </StackPanel>
+
+                <!-- Row 3: Bio -->
+                <StackPanel Grid.Row="3" Margin="0,0,0,10">
+                    <TextBlock Text="Био / Интересный факт" Foreground="#64748B" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox x:Name="DossierBio" Background="#242830" Foreground="#94A3B8" 
+                             BorderBrush="#2E333D" BorderThickness="1" FontSize="12" 
+                             Padding="10,8" Height="70" TextWrapping="Wrap" AcceptsReturn="True" 
+                             VerticalScrollBarVisibility="Auto" Style="{StaticResource ObsidianTextBox}"/>
+                </StackPanel>
+
+                <!-- Row 7: Bottom buttons — Teams style -->
+                <Grid Grid.Row="7" Margin="0,12,0,0">
+                    <Button Content="‹  Назад" HorizontalAlignment="Left" 
+                            Background="Transparent" Foreground="#94A3B8" FontSize="13" 
+                            BorderThickness="0" Cursor="Hand" Padding="0"
+                            Click="BtnCloseDossier_Click" Style="{StaticResource FlatButton}"/>
+                    <Button Content="✓  Сохранить" HorizontalAlignment="Right" 
+                            Background="#6366F1" Foreground="White" FontSize="13" FontWeight="Bold"
+                            Padding="20,8" Cursor="Hand"
+                            Click="BtnSaveDossier_Click" Style="{StaticResource FlatButton}"/>
+                </Grid>
+            </Grid>
         </Border>
     </Border>
 
