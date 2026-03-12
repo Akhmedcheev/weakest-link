@@ -13,7 +13,7 @@
         KeyDown="Window_KeyDown">
 
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="32" ResizeBorderThickness="6" CornerRadius="0" GlassFrameThickness="0"/>
+        <WindowChrome CaptionHeight="42" ResizeBorderThickness="6" CornerRadius="0" GlassFrameThickness="0"/>
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
@@ -676,48 +676,105 @@
     <!-- Outer wrapper: Title bar + Content -->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="32"/>
+            <RowDefinition Height="42"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="24"/>
         </Grid.RowDefinitions>
 
-        <!-- Row 0: Custom Title Bar -->
-        <Border Grid.Row="0" Background="#111318" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,0,1">
+        <!-- Row 0: HI DOG-Style Premium Title Bar -->
+        <Border Grid.Row="0" BorderBrush="#1A2E333D" BorderThickness="0,0,0,1">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                    <GradientStop Color="#0D1520" Offset="0"/>
+                    <GradientStop Color="#111318" Offset="0.15"/>
+                    <GradientStop Color="#111318" Offset="0.85"/>
+                    <GradientStop Color="#0D1520" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- App icon + title -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
-                    <TextBlock Text="⚡" FontSize="14" Foreground="#3B82F6" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                    <TextBlock Text="Weakest Link — Operator Panel" FontSize="12" Foreground="#80848e" VerticalAlignment="Center"/>
+                <!-- LEFT: Logo + Brand -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,20,0">
+                    <Border Width="28" Height="28" CornerRadius="6" Background="#1A3B82F6" Margin="0,0,10,0">
+                        <Image Source="/Assets/Images/logotipka.png" Width="20" Height="20" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Border>
+                    <TextBlock Text="WEAKEST LINK" FontSize="13" FontWeight="ExtraBold" Foreground="#E2E8F0" 
+                               VerticalAlignment="Center"/>
+                    <Border Width="1" Height="16" Background="#2E333D" Margin="14,0,14,0" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="TxtTitleBarMode" Text="Operator" FontSize="12" Foreground="#64748B" 
+                               VerticalAlignment="Center" FontWeight="SemiBold"/>
                 </StackPanel>
 
-                <!-- Window control buttons -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Stretch">
-                    <Button x:Name="BtnTakeSelfie" Content="📸" ToolTip="Сделать скриншот (Ctrl + Q)"
-                            Width="46" Background="Transparent" BorderThickness="0" 
-                            Foreground="#80848e" FontSize="14" Cursor="Hand"
+                <!-- CENTER: Session Status Pill -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Border x:Name="TitleSessionPill" CornerRadius="12" Padding="12,4" Background="#0A22C55E">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="7" Height="7" Margin="0,0,6,0" VerticalAlignment="Center">
+                                <Ellipse.Fill>
+                                    <SolidColorBrush x:Name="TitleSessionDot" Color="#22C55E"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <TextBlock x:Name="TxtTitleSession" Text="СЕССИЯ ЗАПУЩЕНА" FontSize="10" 
+                                       Foreground="#22C55E" FontWeight="Bold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- RIGHT: Utility Icons -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,6,0">
+                    <!-- QR Code -->
+                    <Button x:Name="BtnTitleQR" ToolTip="QR-код для подключения"
+                            Width="32" Height="32" Background="#1A2E333D" BorderThickness="0" Cursor="Hand"
+                            WindowChrome.IsHitTestVisibleInChrome="True" Style="{StaticResource FlatButton}">
+                        <TextBlock Text="📱" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                    <!-- Screenshot -->
+                    <Button x:Name="BtnTakeSelfie" ToolTip="Скриншот (Ctrl+Q)"
+                            Width="32" Height="32" Margin="4,0,0,0"
+                            Background="#1A2E333D" BorderThickness="0" Cursor="Hand"
                             WindowChrome.IsHitTestVisibleInChrome="True"
-                            Click="BtnTakeSelfie_Click" Style="{StaticResource FlatButton}"/>
-                    <Button x:Name="BtnTitleMinimize" Content="—" 
-                            Width="46" Background="Transparent" BorderThickness="0" 
-                            Foreground="#b5bac1" FontSize="13" Cursor="Hand"
+                            Click="BtnTakeSelfie_Click" Style="{StaticResource FlatButton}">
+                        <TextBlock Text="📸" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                    <!-- Settings -->
+                    <Button x:Name="BtnTitleSettings" ToolTip="Настройки"
+                            Width="32" Height="32" Margin="4,0,0,0"
+                            Background="#1A2E333D" BorderThickness="0" Cursor="Hand"
+                            WindowChrome.IsHitTestVisibleInChrome="True" Style="{StaticResource FlatButton}">
+                        <TextBlock Text="⚙" FontSize="15" Foreground="#80848e" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                </StackPanel>
+
+                <!-- RIGHT: Window Controls (HI DOG style — compact, dark circles) -->
+                <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,10,0">
+                    <Border Width="1" Height="18" Background="#1E2530" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <Button x:Name="BtnTitleMinimize" ToolTip="Свернуть"
+                            Width="30" Height="30" Margin="0,0,4,0"
+                            Background="Transparent" BorderThickness="0" Cursor="Hand"
                             WindowChrome.IsHitTestVisibleInChrome="True"
-                            Click="BtnTitleMinimize_Click" Style="{StaticResource FlatButton}"/>
-                    <Button x:Name="BtnTitleMaximize" Content="◻" 
-                            Width="46" Background="Transparent" BorderThickness="0" 
-                            Foreground="#b5bac1" FontSize="13" Cursor="Hand"
+                            Click="BtnTitleMinimize_Click" Style="{StaticResource FlatButton}">
+                        <TextBlock Text="—" FontSize="13" Foreground="#80848e" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                    </Button>
+                    <Button x:Name="BtnTitleMaximize" ToolTip="Развернуть"
+                            Width="30" Height="30" Margin="0,0,4,0"
+                            Background="Transparent" BorderThickness="0" Cursor="Hand"
                             WindowChrome.IsHitTestVisibleInChrome="True"
-                            Click="BtnTitleMaximize_Click" Style="{StaticResource FlatButton}"/>
-                    <Button x:Name="BtnTitleClose" Content="✕" 
-                            Width="46" Background="Transparent" BorderThickness="0" 
-                            Foreground="#b5bac1" FontSize="13" Cursor="Hand"
+                            Click="BtnTitleMaximize_Click" Style="{StaticResource FlatButton}">
+                        <TextBlock Text="◻" FontSize="12" Foreground="#80848e" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                    <Button x:Name="BtnTitleClose" ToolTip="Закрыть"
+                            Width="30" Height="30"
+                            Background="Transparent" BorderThickness="0" Cursor="Hand"
                             WindowChrome.IsHitTestVisibleInChrome="True"
-                            Click="BtnTitleClose_Click" Style="{StaticResource FlatButton}"/>
+                            Click="BtnTitleClose_Click" Style="{StaticResource FlatButton}">
+                        <TextBlock Text="✕" FontSize="12" Foreground="#80848e" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
                 </StackPanel>
             </Grid>
         </Border>
