@@ -1092,7 +1092,7 @@ namespace WeakestLink.Views
             switch (state)
             {
                 case GameState.Idle:
-                    text = "⏸ ОЖИДАНИЕ"; bgHex = "#1E293B"; fgHex = "#94A3B8"; break;
+                    text = "⏸ ОЖИДАНИЕ"; bgHex = "#1E293B"; fgHex = "#999999"; break;
                 case GameState.IntroOpening:
                     text = "🎬 ВСТУПЛЕНИЕ"; bgHex = "#2D1B4E"; fgHex = "#A78BFA"; break;
                 case GameState.IntroNarrative:
@@ -1118,7 +1118,7 @@ namespace WeakestLink.Views
                 case GameState.FinalDuel:
                     text = "⚔ ФИНАЛЬНАЯ ДУЭЛЬ"; bgHex = "#450A0A"; fgHex = "#F87171"; break;
                 default:
-                    text = state.ToString(); bgHex = "#1E293B"; fgHex = "#94A3B8"; break;
+                    text = state.ToString(); bgHex = "#1E293B"; fgHex = "#999999"; break;
             }
             var converter = new System.Windows.Media.BrushConverter();
             GameStateBadge.Background = (System.Windows.Media.Brush)converter.ConvertFromString(bgHex);
@@ -4940,12 +4940,12 @@ namespace WeakestLink.Views
         {
             _isExpressVoting = express;
             var activeBg = new System.Windows.Media.SolidColorBrush(
-                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#6366F1"));
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#6264A7"));
             var inactiveBg = new System.Windows.Media.SolidColorBrush(
-                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#242830"));
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#333333"));
             var activeFg = System.Windows.Media.Brushes.White;
             var inactiveFg = new System.Windows.Media.SolidColorBrush(
-                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#94A3B8"));
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#999999"));
 
             BtnVoteModeExpress.Background = express ? activeBg : inactiveBg;
             BtnVoteModeExpress.Foreground = express ? activeFg : inactiveFg;
@@ -5001,7 +5001,7 @@ namespace WeakestLink.Views
                 {
                     Text = "→",
                     Foreground = new System.Windows.Media.SolidColorBrush(
-                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#64748B")),
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#717171")),
                     FontSize = 10,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
@@ -5014,10 +5014,10 @@ namespace WeakestLink.Views
                     FontSize = 10,
                     Background = System.Windows.Media.Brushes.Transparent,
                     Foreground = new System.Windows.Media.SolidColorBrush(
-                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#E2E8F0")),
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#E8E8E8")),
                     BorderThickness = new Thickness(1),
                     BorderBrush = new System.Windows.Media.SolidColorBrush(
-                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#2E333D")),
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3D3D3D")),
                     Tag = player
                 };
 
@@ -5190,12 +5190,12 @@ namespace WeakestLink.Views
             try
             {
                 var activeBg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#6366F1"));
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#6264A7"));
                 var inactiveBg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#242830"));
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#333333"));
                 var activeFg = System.Windows.Media.Brushes.White;
                 var inactiveFg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#94A3B8"));
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#999999"));
 
                 bool isEn = _currentLanguage == "EN";
                 BtnSettingsLangRU.Background = !isEn ? activeBg : inactiveBg;
@@ -5419,8 +5419,8 @@ namespace WeakestLink.Views
             SaveSettings();
 
             // Update button visuals
-            var accentBrush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3B82F6"));
-            var mutedBrush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#64748B"));
+            var accentBrush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#4F6BED"));
+            var mutedBrush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#717171"));
             BtnLangRU.Background = lang == "RU" ? accentBrush : System.Windows.Media.Brushes.Transparent;
             BtnLangRU.Foreground = lang == "RU" ? System.Windows.Media.Brushes.White : mutedBrush;
             BtnLangEN.Background = lang == "EN" ? accentBrush : System.Windows.Media.Brushes.Transparent;
@@ -5863,7 +5863,7 @@ namespace WeakestLink.Views
             try
             {
                 var pillBg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3B82F6"));
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#4F6BED"));
                 var activeFg = System.Windows.Media.Brushes.White;
                 var inactiveFg = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#8B949E"));
@@ -5958,9 +5958,9 @@ namespace WeakestLink.Views
 
                 // Update pills visual
                 var accentBrush = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3B82F6"));
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#4F6BED"));
                 var mutedBrush = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#64748B"));
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#717171"));
 
                 foreach (var child in RoundFilterButtons.Children)
                 {
@@ -6107,7 +6107,7 @@ namespace WeakestLink.Views
                 var redBrush = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#F85149"));
                 var mutedBrush = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#64748B"));
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#717171"));
                 var darkGreenBg = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0D2818"));
                 var darkRedBg = new System.Windows.Media.SolidColorBrush(
@@ -6142,15 +6142,15 @@ namespace WeakestLink.Views
                     _roundIcons = new[] { RoundIcon1, RoundIcon2, RoundIcon3, RoundIcon4, RoundIcon5, RoundIcon6, RoundIcon7 };
 
                 var currentBrush = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3B82F6"));
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#4F6BED"));
                 var doneBrush = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3FB950"));
                 var doneBg = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0D2818"));
                 var futureBrush = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#2E333D"));
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3D3D3D"));
                 var defaultBg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#1D2129"));
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#2D2D2D"));
                 var currentBg = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0D1B2A"));
 

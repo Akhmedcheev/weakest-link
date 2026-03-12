@@ -523,7 +523,7 @@
                     <ControlTemplate TargetType="CheckBox">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Border x:Name="CheckBorder" Width="18" Height="18" CornerRadius="4"
-                                    Background="#242830" BorderBrush="#3A4050" BorderThickness="1.5"
+                                    Background="#333333" BorderBrush="#4D4D4D" BorderThickness="1.5"
                                     VerticalAlignment="Center" Margin="0,0,8,0">
                                 <TextBlock x:Name="CheckMark" Text="&#xE73E;" 
                                            FontFamily="Segoe MDL2 Assets" FontSize="12"
@@ -635,7 +635,7 @@
                                     <!-- Горячие клавиши -->
                                     <TextBlock x:Name="IGTHost" Grid.Column="2" 
                                                Text="{TemplateBinding InputGestureText}" 
-                                               Foreground="#94A3B8" FontSize="11"
+                                               Foreground="#999999" FontSize="11"
                                                Margin="20,0,0,0" VerticalAlignment="Center"/>
 
                                     <!-- Стрелка подменю -->
@@ -650,7 +650,7 @@
                                    IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" 
                                    Placement="Bottom" AllowsTransparency="True" Focusable="False" 
                                    PopupAnimation="Fade" HorizontalOffset="-2">
-                                <Border Background="#1D2129" BorderBrush="#555" BorderThickness="1" 
+                                <Border Background="#2D2D2D" BorderBrush="#555" BorderThickness="1" 
                                         CornerRadius="2" Padding="0,4" SnapsToDevicePixels="True">
                                     <ScrollViewer CanContentScroll="True" 
                                                   VerticalScrollBarVisibility="Auto"
@@ -827,11 +827,11 @@
                 <StackPanel Margin="0">
 
                     <!-- === NAVIGATION SECTION === -->
-                    <TextBlock x:Name="TxtNavLabel" Text="НАВИГАЦИЯ" Foreground="#3D4450" FontSize="9" FontWeight="Bold" 
+                    <TextBlock x:Name="TxtNavLabel" Text="НАВИГАЦИЯ" Foreground="#555555" FontSize="9" FontWeight="Bold" 
                                Margin="16,14,0,6"/>
 
                     <Button x:Name="NavBtnSetup" Tag="SETUP" Height="38"
-                            Background="#3B82F6" Foreground="White" HorizontalContentAlignment="Left"
+                            Background="#4F6BED" Foreground="White" HorizontalContentAlignment="Left"
                             Padding="14,0,0,0" Margin="10,2" BorderThickness="0" Cursor="Hand"
                             Click="NavBtn_Click" Style="{StaticResource FlatButton}">
                         <StackPanel Orientation="Horizontal">
@@ -840,7 +840,7 @@
                         </StackPanel>
                     </Button>
                     <Button x:Name="NavBtnPlay" Tag="PLAY" Height="38"
-                            Background="Transparent" Foreground="#8B949E" HorizontalContentAlignment="Left"
+                            Background="Transparent" Foreground="#999999" HorizontalContentAlignment="Left"
                             Padding="14,0,0,0" Margin="10,2" BorderThickness="0" Cursor="Hand"
                             Click="NavBtn_Click" Style="{StaticResource FlatButton}">
                         <StackPanel Orientation="Horizontal">
@@ -849,7 +849,7 @@
                         </StackPanel>
                     </Button>
                     <Button x:Name="NavBtnStats" Tag="STATS" Height="38"
-                            Background="Transparent" Foreground="#8B949E" HorizontalContentAlignment="Left"
+                            Background="Transparent" Foreground="#999999" HorizontalContentAlignment="Left"
                             Padding="14,0,0,0" Margin="10,2" BorderThickness="0" Cursor="Hand"
                             Click="NavBtn_Click" Style="{StaticResource FlatButton}">
                         <StackPanel Orientation="Horizontal">
@@ -858,7 +858,7 @@
                         </StackPanel>
                     </Button>
                     <Button x:Name="NavBtnEditor" Tag="EDIT" Height="38"
-                            Background="Transparent" Foreground="#8B949E" HorizontalContentAlignment="Left"
+                            Background="Transparent" Foreground="#999999" HorizontalContentAlignment="Left"
                             Padding="14,0,0,0" Margin="10,2" BorderThickness="0" Cursor="Hand"
                             Click="NavBtn_Click" Style="{StaticResource FlatButton}">
                         <StackPanel Orientation="Horizontal">
@@ -868,11 +868,11 @@
                     </Button>
 
                     <!-- === GAME STATS (compact row) === -->
-                    <Border Height="1" Background="#2E333D" Margin="12,10,12,6"/>
-                    <TextBlock x:Name="TxtStatsLabel" Text="СТАТИСТИКА" Foreground="#3D4450" FontSize="9" FontWeight="Bold" 
+                    <Border Height="1" Background="#3D3D3D" Margin="12,10,12,6"/>
+                    <TextBlock x:Name="TxtStatsLabel" Text="СТАТИСТИКА" Foreground="#555555" FontSize="9" FontWeight="Bold" 
                                Margin="16,0,0,6"/>
 
-                    <Border Background="#1D2129" CornerRadius="8" Padding="10,8" Margin="10,0,10,4" BorderBrush="#2E333D" BorderThickness="1">
+                    <Border Background="#2D2D2D" CornerRadius="8" Padding="10,8" Margin="10,0,10,4" BorderBrush="#3D3D3D" BorderThickness="1">
                         <StackPanel>
                             <!-- Row 1: Bank / Total / Time -->
                             <Grid Margin="0,0,0,6">
@@ -882,19 +882,19 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                                    <TextBlock x:Name="TxtBankLabel" Text="БАНК" Foreground="#4A5568" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtBankLabel" Text="БАНК" Foreground="#555555" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
                                     <TextBlock x:Name="TxtCurrentBank_Side" Text="0" Foreground="#FFA657" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                                    <TextBlock x:Name="TxtTotalLabel" Text="ОБЩИЙ" Foreground="#4A5568" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtTotalLabel" Text="ОБЩИЙ" Foreground="#555555" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
                                     <TextBlock x:Name="TxtTotalBank_Side" Text="0" Foreground="#3FB950" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="2" HorizontalAlignment="Center">
-                                    <TextBlock x:Name="TxtTimeLabel" Text="ВРЕМЯ" Foreground="#4A5568" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtTimeLabel" Text="ВРЕМЯ" Foreground="#555555" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
                                     <TextBlock x:Name="TxtTimer_Side" Text="00:00" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Grid>
-                            <Border Height="1" Background="#2E333D" Margin="4,0,4,6"/>
+                            <Border Height="1" Background="#3D3D3D" Margin="4,0,4,6"/>
                             <!-- Row 2: Round / Question -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -902,11 +902,11 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                                    <TextBlock x:Name="TxtRoundLabel" Text="РАУНД" Foreground="#4A5568" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtRoundLabel" Text="РАУНД" Foreground="#555555" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
                                     <TextBlock x:Name="TxtRoundNumber_Side" Text="—" Foreground="#58A6FF" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                                    <TextBlock x:Name="TxtQuestionLabel" Text="ВОПРОС" Foreground="#4A5568" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtQuestionLabel" Text="ВОПРОС" Foreground="#555555" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
                                     <TextBlock x:Name="TxtQuestionCount_Side" Text="0/0" Foreground="#FFA657" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Grid>
@@ -914,56 +914,56 @@
                     </Border>
 
                     <!-- === ROUND STATUS ICONS === -->
-                    <Border Height="1" Background="#2E333D" Margin="12,8,12,6"/>
-                    <TextBlock x:Name="TxtRoundStatusLabel" Text="РАУНДЫ" Foreground="#3D4450" FontSize="9" FontWeight="Bold" 
+                    <Border Height="1" Background="#3D3D3D" Margin="12,8,12,6"/>
+                    <TextBlock x:Name="TxtRoundStatusLabel" Text="РАУНДЫ" Foreground="#555555" FontSize="9" FontWeight="Bold" 
                                Margin="16,0,0,6"/>
                     <StackPanel x:Name="RoundStatusIcons" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
-                        <Border x:Name="RoundIcon1" Width="24" Height="24" CornerRadius="12" Background="#1D2129" 
+                        <Border x:Name="RoundIcon1" Width="24" Height="24" CornerRadius="12" Background="#2D2D2D" 
                                 BorderBrush="#3B82F6" BorderThickness="2" Margin="2,0">
-                            <TextBlock Text="1" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                            <TextBlock Text="1" Foreground="#717171" FontSize="10" FontWeight="Bold" 
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <Border x:Name="RoundIcon2" Width="24" Height="24" CornerRadius="12" Background="#1D2129" 
-                                BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
-                            <TextBlock Text="2" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                        <Border x:Name="RoundIcon2" Width="24" Height="24" CornerRadius="12" Background="#2D2D2D" 
+                                BorderBrush="#3D3D3D" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="2" Foreground="#717171" FontSize="10" FontWeight="Bold" 
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <Border x:Name="RoundIcon3" Width="24" Height="24" CornerRadius="12" Background="#1D2129" 
-                                BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
-                            <TextBlock Text="3" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                        <Border x:Name="RoundIcon3" Width="24" Height="24" CornerRadius="12" Background="#2D2D2D" 
+                                BorderBrush="#3D3D3D" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="3" Foreground="#717171" FontSize="10" FontWeight="Bold" 
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <Border x:Name="RoundIcon4" Width="24" Height="24" CornerRadius="12" Background="#1D2129" 
-                                BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
-                            <TextBlock Text="4" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                        <Border x:Name="RoundIcon4" Width="24" Height="24" CornerRadius="12" Background="#2D2D2D" 
+                                BorderBrush="#3D3D3D" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="4" Foreground="#717171" FontSize="10" FontWeight="Bold" 
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <Border x:Name="RoundIcon5" Width="24" Height="24" CornerRadius="12" Background="#1D2129" 
-                                BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
-                            <TextBlock Text="5" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                        <Border x:Name="RoundIcon5" Width="24" Height="24" CornerRadius="12" Background="#2D2D2D" 
+                                BorderBrush="#3D3D3D" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="5" Foreground="#717171" FontSize="10" FontWeight="Bold" 
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <Border x:Name="RoundIcon6" Width="24" Height="24" CornerRadius="12" Background="#1D2129" 
-                                BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
-                            <TextBlock Text="6" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                        <Border x:Name="RoundIcon6" Width="24" Height="24" CornerRadius="12" Background="#2D2D2D" 
+                                BorderBrush="#3D3D3D" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="6" Foreground="#717171" FontSize="10" FontWeight="Bold" 
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <Border x:Name="RoundIcon7" Width="24" Height="24" CornerRadius="12" Background="#1D2129" 
-                                BorderBrush="#2E333D" BorderThickness="2" Margin="2,0">
-                            <TextBlock Text="7" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                        <Border x:Name="RoundIcon7" Width="24" Height="24" CornerRadius="12" Background="#2D2D2D" 
+                                BorderBrush="#3D3D3D" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="7" Foreground="#717171" FontSize="10" FontWeight="Bold" 
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </StackPanel>
 
                     <!-- === PLAYERS LIST === -->
-                    <Border Height="1" Background="#2E333D" Margin="12,8,12,6"/>
-                    <TextBlock x:Name="TxtPlayerListLabel" Text="ИГРОКИ" Foreground="#3D4450" FontSize="9" FontWeight="Bold" 
+                    <Border Height="1" Background="#3D3D3D" Margin="12,8,12,6"/>
+                    <TextBlock x:Name="TxtPlayerListLabel" Text="ИГРОКИ" Foreground="#555555" FontSize="9" FontWeight="Bold" 
                                Margin="16,0,0,4"/>
                     <ItemsControl x:Name="PlayerListItems">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border Margin="8,2" Padding="8,6" CornerRadius="8" 
-                                        Background="#161B22" BorderBrush="#2E333D" BorderThickness="1">
+                                        Background="#161B22" BorderBrush="#3D3D3D" BorderThickness="1">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
@@ -1049,19 +1049,19 @@
                             <TextBlock Text="ЭКРАНЫ" Foreground="{StaticResource ObsidianAccentTeal}" FontSize="10" FontWeight="Bold" Margin="0,0,0,4"/>
                             <UniformGrid Columns="2">
                                 <Button x:Name="BtnScreenHost" Content="HOST CLASSIC" Height="26" Margin="0,0,2,3" FontSize="9"
-                                        Background="#2E333D" Foreground="#E2E8F0" 
+                                        Background="#3D3D3D" Foreground="#E8E8E8" 
                                         BorderBrush="Transparent" BorderThickness="2"
                                         Click="BtnOpenHost_Click" Style="{StaticResource FlatButton}"/>
                                 <Button x:Name="BtnScreenModern" Content="HOST MODERN" Height="26" Margin="2,0,0,3" FontSize="9"
-                                        Background="#2E333D" Foreground="#E2E8F0" 
+                                        Background="#3D3D3D" Foreground="#E8E8E8" 
                                         BorderBrush="Transparent" BorderThickness="2"
                                         Click="BtnOpenHostModern_Click" Style="{StaticResource FlatButton}"/>
                                 <Button x:Name="BtnScreenPremium" Content="PREMIUM" Height="26" Margin="0,0,2,3" FontSize="9"
-                                        Background="#3B82F6" Foreground="White" 
+                                        Background="#4F6BED" Foreground="White" 
                                         BorderBrush="Transparent" BorderThickness="2"
                                         Click="BtnOpenHostPremium_Click" Style="{StaticResource FlatButton}"/>
                                 <Button x:Name="BtnScreenModPremium" Content="MOD. PREMIUM" Height="26" Margin="2,0,0,3" FontSize="9"
-                                        Background="#3B82F6" Foreground="White" 
+                                        Background="#4F6BED" Foreground="White" 
                                         BorderBrush="Transparent" BorderThickness="2"
                                         Click="BtnOpenHostModernPremium_Click" Style="{StaticResource FlatButton}"/>
                                 <Button x:Name="BtnScreenBroadcast" Content="📡 BROADCAST" Height="26" Margin="0,0,2,3" FontSize="9"
@@ -1074,7 +1074,7 @@
                                         Click="BtnOpenAudience_Click" Style="{StaticResource FlatButton}"/>
                             </UniformGrid>
                             <Button Content="ANALYTICS" Height="24" Margin="0,0,0,3" FontSize="9"
-                                    Background="#2E333D" Foreground="#E2E8F0" 
+                                    Background="#3D3D3D" Foreground="#E8E8E8" 
                                     Click="BtnAnalytics_Click" Style="{StaticResource FlatButton}"/>
 
                             <!-- Разделитель -->
@@ -1083,35 +1083,35 @@
                             <!-- === УЧАСТНИКИ === -->
                             <Button Content="👥 УЧАСТНИКИ" x:Name="BtnShowParticipants" Height="32" Margin="0,0,0,3" 
                                     Click="BtnShowParticipants_Click" Style="{StaticResource FlatButton}"
-                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="#2E333D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
+                                    Background="#2D2D2D" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                    BorderBrush="#3D3D3D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
 
                             <!-- Разделитель -->
 
                             <!-- === ИНСТРУМЕНТЫ === -->
                             <Button Content="✎ РЕДАКТОР ВОПРОСОВ" x:Name="BtnToggleQuestionEditor" Height="32" Margin="0,0,0,3" 
                                     Click="BtnToggleQuestionEditor_Click" Style="{StaticResource FlatButton}"
-                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="#2E333D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
+                                    Background="#2D2D2D" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                    BorderBrush="#3D3D3D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
                             <Button Content="📊 АНАЛИТИКА" x:Name="BtnToggleAnalytics" Height="32" Margin="0,0,0,3" 
                                     Click="BtnToggleAnalytics_Click" Style="{StaticResource FlatButton}"
-                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="#2E333D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
+                                    Background="#2D2D2D" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                    BorderBrush="#3D3D3D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
                             <Button Content="✓ VALIDATE JSON" x:Name="BtnValidateJson" Height="32" Margin="0,0,0,3" 
                                     Click="BtnValidateJson_Click" Style="{StaticResource FlatButton}"
-                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="#2E333D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
+                                    Background="#2D2D2D" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                    BorderBrush="#3D3D3D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
                             <Button Content="🧪 SELF-TEST" x:Name="BtnSelfTest" Height="32" Margin="0,0,0,3" 
                                     Click="BtnSelfTest_Click" Style="{StaticResource FlatButton}"
-                                    Background="#1D2129" Foreground="#FF9800" 
-                                    BorderBrush="#2E333D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
+                                    Background="#2D2D2D" Foreground="#FF9800" 
+                                    BorderBrush="#3D3D3D" BorderThickness="1" FontSize="11" FontWeight="Bold"/>
 
                             <!-- Разделитель -->
                             <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
 
                             <!-- === DEBUG СЕКЦИЯ === -->
                             <TextBlock Text="DEBUG" Foreground="{StaticResource ObsidianAccentTeal}" FontSize="10" FontWeight="Bold" Margin="0,0,0,4"/>
-                            <TextBlock Text="Раунд теста:" Foreground="#94A3B8" FontSize="10" Margin="0,0,0,3"/>
+                            <TextBlock Text="Раунд теста:" Foreground="#999999" FontSize="10" Margin="0,0,0,3"/>
                             <ComboBox x:Name="TestRoundSelector" Height="25" FontSize="11" SelectedIndex="0" Style="{StaticResource TestRoundSelectorStyle}" VerticalContentAlignment="Center" Margin="0,0,0,4">
                                 <ComboBoxItem Content="Раунд 1"/>
                                 <ComboBoxItem Content="Раунд 2"/>
@@ -1125,10 +1125,10 @@
                             <CheckBox x:Name="ChkTestLast30Sec" Content="30 сек раунд" Margin="0,3,0,0" Style="{StaticResource ObsidianCheckBox}"/>
                             <CheckBox x:Name="ChkDebugEndRoundButton" Content="кнопка Раунд Завершен" Margin="0,3,0,4" Click="ChkDebugEndRoundButton_Click" Style="{StaticResource ObsidianCheckBox}"/>
                             <Button Content="БЫСТРЫЙ СТАРТ" x:Name="BtnQuickStart" Height="26" FontSize="10" 
-                                    Background="#3B82F6" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
+                                    Background="#4F6BED" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
                                     Click="BtnQuickStart_Click" Style="{StaticResource FlatButton}"/>
                             <Button Content="ЗАПОЛНИТЬ СЛУЧАЙНЫМИ" x:Name="BtnFillRandom" Height="26" FontSize="10" 
-                                    Background="#2E333D" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
+                                    Background="#3D3D3D" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
                                     Click="BtnFillRandom_Click" Style="{StaticResource FlatButton}"/>
                             <Button Content="🎬 ТЕСТ ФИНАЛА" x:Name="BtnDebugTestFinal" Height="26" FontSize="10" 
                                     Background="#EF4444" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
@@ -1138,12 +1138,12 @@
                             <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
                             <TextBlock Text="ТЕСТОВАЯ ИГРА" Foreground="{StaticResource ObsidianTextMuted}" FontSize="10" FontWeight="Bold" Margin="0,0,0,4"/>
                             <Button Content="Загрузить команду..." Height="26" FontSize="10" Margin="0,0,0,3"
-                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="#2E333D" BorderThickness="1"
+                                    Background="#2D2D2D" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                    BorderBrush="#3D3D3D" BorderThickness="1"
                                     Click="BtnTestTeam1_Click" Style="{StaticResource FlatButton}"/>
                             <Button Content="AI Gemini Test" Height="26" FontSize="10" Margin="0,0,0,3"
-                                    Background="#1D2129" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="#2E333D" BorderThickness="1"
+                                    Background="#2D2D2D" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                    BorderBrush="#3D3D3D" BorderThickness="1"
                                     Click="BtnStartGeminiTest_Click" Style="{StaticResource FlatButton}"/>
 
                             <!-- === СЕРВИС === -->
@@ -1178,8 +1178,8 @@
                         </ScrollViewer>
                     </DockPanel>
                 </Border>
-
-
+
+
             <!-- 0. ВЕРХНЯЯ ШАПКА (Минималистичная) -->
             <Border Grid.Row="0" Background="{StaticResource ObsidianSurface}" Height="38" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,0,1">
                 <Grid>
@@ -1213,7 +1213,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
                         <Menu VerticalAlignment="Center" Background="Transparent" BorderThickness="0">
-                            <MenuItem Foreground="#94A3B8" FontSize="12" StaysOpenOnClick="True">
+                            <MenuItem Foreground="#999999" FontSize="12" StaysOpenOnClick="True">
                                 <MenuItem.Header>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="QR" VerticalAlignment="Center"/>
@@ -1237,7 +1237,7 @@
                 </Grid.Resources>
 
                 <!-- 1A: STATS BAR (Monolithic) -->
-                <Border Background="#171B22" CornerRadius="10" BorderBrush="#2E333D" BorderThickness="1" 
+                <Border Background="#292929" CornerRadius="10" BorderBrush="#3D3D3D" BorderThickness="1" 
                         Height="52" VerticalAlignment="Bottom">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -1250,7 +1250,7 @@
 
                         <!-- Col 0: ТЕКУЩИЙ БАНК -->
                         <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="16,0,10,0">
-                            <TextBlock Text="💰 ТЕКУЩИЙ БАНК" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Text="💰 ТЕКУЩИЙ БАНК" Foreground="#717171" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
                             <TextBlock x:Name="TxtCurrentBank" Text="0" Foreground="#D4AA40" FontSize="26" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
                                 <TextBlock.Effect>
                                     <DropShadowEffect Color="#D4AA40" BlurRadius="8" ShadowDepth="0" Opacity="0.4"/>
@@ -1260,7 +1260,7 @@
 
                         <!-- Col 1: ОБЩИЙ БАНК -->
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="4,0,8,0">
-                            <TextBlock Text="🏦 ОБЩИЙ БАНК" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Text="🏦 ОБЩИЙ БАНК" Foreground="#717171" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
                             <TextBlock x:Name="TxtTotalBank" Text="0" Foreground="#22C55E" FontSize="26" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
                                 <TextBlock.Effect>
                                     <DropShadowEffect Color="#22C55E" BlurRadius="8" ShadowDepth="0" Opacity="0.4"/>
@@ -1270,7 +1270,7 @@
 
                         <!-- Col 2: Game State Badge -->
                         <Border x:Name="GameStateBadge" Grid.Column="2" Background="#1E293B" CornerRadius="12" Padding="12,4" Margin="8,0,0,0" VerticalAlignment="Center">
-                            <TextBlock x:Name="TxtGameStateBadge" Text="⏸ ОЖИДАНИЕ" Foreground="#94A3B8" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtGameStateBadge" Text="⏸ ОЖИДАНИЕ" Foreground="#999999" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
                         </Border>
 
                         <!-- Col 3: Spacer for floating badge -->
@@ -1278,7 +1278,7 @@
 
                         <!-- Col 4: ВОПРОС -->
                         <StackPanel Grid.Column="4" VerticalAlignment="Center" Margin="4,0,16,0">
-                            <TextBlock Text="❓ ВОПРОС" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Text="❓ ВОПРОС" Foreground="#717171" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
                             <TextBlock x:Name="TxtQuestionCount" Text="0/0" Foreground="#F59E0B" FontSize="26" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
                                 <TextBlock.Effect>
                                     <DropShadowEffect Color="#F59E0B" BlurRadius="8" ShadowDepth="0" Opacity="0.4"/>
@@ -1290,17 +1290,17 @@
 
                 <!-- 1B: Round Number (floating center badge) -->
                 <Border x:Name="TimerArchBorder" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,-20"
-                        CornerRadius="10" Background="#171B22" BorderBrush="#2E333D" BorderThickness="1"
+                        CornerRadius="10" Background="#292929" BorderBrush="#3D3D3D" BorderThickness="1"
                         Padding="20,4" Panel.ZIndex="10">
                     <StackPanel HorizontalAlignment="Center">
-                        <TextBlock x:Name="TxtRoundNumberCenter" Text="1" Foreground="#3B82F6" 
+                        <TextBlock x:Name="TxtRoundNumberCenter" Text="1" Foreground="#4F6BED" 
                                    FontSize="32" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas"
                                    HorizontalAlignment="Center">
                             <TextBlock.Effect>
                                 <DropShadowEffect Color="#3B82F6" BlurRadius="8" ShadowDepth="0" Opacity="0.4"/>
                             </TextBlock.Effect>
                         </TextBlock>
-                        <TextBlock Text="РАУНД" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                        <TextBlock Text="РАУНД" Foreground="#717171" FontSize="10" FontWeight="Bold" 
                                    HorizontalAlignment="Center" Margin="0,-2,0,2"/>
                     </StackPanel>
                 </Border>
@@ -1578,8 +1578,8 @@
                 <Grid Grid.Column="1" ClipToBounds="True">
                     <Border x:Name="CentralSlot" Width="800" Height="500" 
                             VerticalAlignment="Center" HorizontalAlignment="Center"
-                            Background="#171B22" CornerRadius="12" 
-                            BorderBrush="#2E333D" BorderThickness="1">
+                            Background="#292929" CornerRadius="12" 
+                            BorderBrush="#3D3D3D" BorderThickness="1">
                         <Grid ClipToBounds="True">
                     <!-- 0. SETUP CONTEXT - Лобби / формирование команды -->
                     <Grid x:Name="SetupContext" Visibility="Visible">
@@ -1607,20 +1607,20 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Background="#1D2129" CornerRadius="10" Padding="6" Margin="3" 
-                                                    BorderBrush="#2E333D" BorderThickness="1" Cursor="Hand"
+                                            <Border Background="#2D2D2D" CornerRadius="10" Padding="6" Margin="3" 
+                                                    BorderBrush="#3D3D3D" BorderThickness="1" Cursor="Hand"
                                                     MouseLeftButtonDown="PlayerCard_Click">
                                                 <Grid>
                                                     <StackPanel>
                                                         <!-- Фото (компактное) -->
                                                         <Border Height="90" CornerRadius="8" 
-                                                                Background="#242830" BorderBrush="#3A4050" BorderThickness="1"
+                                                                Background="#333333" BorderBrush="#4D4D4D" BorderThickness="1"
                                                                 ClipToBounds="True" Margin="0,0,0,6" Cursor="Hand"
                                                                 MouseLeftButtonDown="PlayerPhoto_Click"
                                                                 ToolTip="Нажмите для загрузки фото">
                                                             <Grid>
                                                                 <TextBlock Text="📷" FontSize="24" HorizontalAlignment="Center" 
-                                                                           VerticalAlignment="Center" Foreground="#4A5568"/>
+                                                                           VerticalAlignment="Center" Foreground="#555555"/>
                                                                 <Image Source="{Binding PhotoSource}" Stretch="UniformToFill"
                                                                        HorizontalAlignment="Center" VerticalAlignment="Center"
                                                                        RenderOptions.BitmapScalingMode="HighQuality"/>
@@ -1636,7 +1636,7 @@
                                                     </StackPanel>
                                                     <!-- Номер пульта (badge top-right) -->
                                                     <Border HorizontalAlignment="Right" VerticalAlignment="Top"
-                                                            Background="#6366F1" CornerRadius="0,10,0,6" Padding="6,2"
+                                                            Background="#6264A7" CornerRadius="0,10,0,6" Padding="6,2"
                                                             Margin="0,-6,-6,0">
                                                         <TextBlock Text="{Binding ConsoleDisplay}" Foreground="White" 
                                                                    FontSize="9" FontWeight="Bold"/>
@@ -1674,8 +1674,8 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- LEFT: Цепочка банка + Раунд -->
-                        <Border x:Name="BankChainColumn" Grid.Column="0" Background="#111318" 
-                                CornerRadius="8,0,0,8" BorderBrush="#242830" BorderThickness="1,1,0,1">
+                        <Border x:Name="BankChainColumn" Grid.Column="0" Background="#1F1F1F" 
+                                CornerRadius="8,0,0,8" BorderBrush="#333333" BorderThickness="1,1,0,1">
                             <Grid Margin="0" VerticalAlignment="Stretch">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -1683,7 +1683,7 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 
-                                <TextBlock Grid.Row="0" Text="ЦЕПОЧКА" Foreground="#64748B" FontSize="10" FontWeight="Bold" 
+                                <TextBlock Grid.Row="0" Text="ЦЕПОЧКА" Foreground="#717171" FontSize="10" FontWeight="Bold" 
                                            HorizontalAlignment="Center" Margin="0,15,0,5"/>
                                            
                                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
@@ -1691,7 +1691,7 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Border Background="{Binding Background}" CornerRadius="4" Margin="0,3" Padding="0,8"
-                                                        BorderBrush="#2E333D" BorderThickness="1">
+                                                        BorderBrush="#3D3D3D" BorderThickness="1">
                                                     <TextBlock Text="{Binding ValueDisplay}" Foreground="{Binding TextColor}" FontSize="14" FontWeight="Bold" 
                                                                HorizontalAlignment="Center" TextAlignment="Center"/>
                                                 </Border>
@@ -1701,11 +1701,11 @@
                                 </ScrollViewer>
                                 
                                 <!-- Таймер под цепочкой -->
-                                <Border Grid.Row="2" Background="#1D2129" CornerRadius="10" 
-                                        BorderBrush="#2E333D" BorderThickness="1"
+                                <Border Grid.Row="2" Background="#2D2D2D" CornerRadius="10" 
+                                        BorderBrush="#3D3D3D" BorderThickness="1"
                                         Margin="10,8,10,15" Padding="8,6">
                                     <StackPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="⏱ ВРЕМЯ" Foreground="#64748B" FontSize="9" FontWeight="Bold" 
+                                        <TextBlock Text="⏱ ВРЕМЯ" Foreground="#717171" FontSize="9" FontWeight="Bold" 
                                                    HorizontalAlignment="Center" Margin="0,0,0,2"/>
                                         <TextBlock x:Name="TxtTimer" Text="0:00" Foreground="White" 
                                                    FontSize="36" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas"
@@ -1720,7 +1720,7 @@
                         </Border>
 
                         <!-- RIGHT: Вопрос + кнопки действий -->
-                        <Border Grid.Column="1" Background="#171B22" CornerRadius="0,8,8,0" BorderBrush="#242830" BorderThickness="0,1,1,1">
+                        <Border Grid.Column="1" Background="#292929" CornerRadius="0,8,8,0" BorderBrush="#333333" BorderThickness="0,1,1,1">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
@@ -1734,8 +1734,8 @@
                                 </StackPanel>
 
                                 <!-- Область вопроса -->
-                                <Border x:Name="QuestionCard" Grid.Row="0" Background="#242830" Padding="24,16" Margin="10,10,10,5"
-                                        CornerRadius="12" BorderBrush="#2E333D" BorderThickness="1">
+                                <Border x:Name="QuestionCard" Grid.Row="0" Background="#333333" Padding="24,16" Margin="10,10,10,5"
+                                        CornerRadius="12" BorderBrush="#3D3D3D" BorderThickness="1">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*"/>
@@ -1743,7 +1743,7 @@
                                         </Grid.RowDefinitions>
                                         
                                         <TextBlock x:Name="TxtCurrentQuestion" Grid.Row="0" Text="Ожидание вопроса..." 
-                                                   Foreground="#E2E8F0" FontSize="28" FontWeight="Bold" 
+                                                   Foreground="#E8E8E8" FontSize="28" FontWeight="Bold" 
                                                    TextWrapping="Wrap" TextAlignment="Center" 
                                                    VerticalAlignment="Center" HorizontalAlignment="Center"
                                                    Margin="20,0"/>
@@ -1788,7 +1788,7 @@
                                 <!-- START O'CLOCK -->
                                 <Button Grid.Row="2" x:Name="BtnGamePlayPlay" Content="► START O'CLOCK" 
                                         Height="46" FontSize="20" FontWeight="ExtraBold" 
-                                        Background="#171B22" Foreground="#333" 
+                                        Background="#292929" Foreground="#333" 
                                         BorderBrush="Transparent" BorderThickness="0" 
                                         Margin="14,0,14,14" 
                                         Click="BtnPlay_Click" Style="{StaticResource GameButtonPressStyle}"/>
@@ -1796,7 +1796,7 @@
                         </Border>
                     </Grid>
 
-                    <Grid x:Name="HeadToHeadPanel" Visibility="Collapsed" Background="#111318" Margin="5">
+                    <Grid x:Name="HeadToHeadPanel" Visibility="Collapsed" Background="#1F1F1F" Margin="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -1827,7 +1827,7 @@
                             </StackPanel>
                         </Grid>
                         <Grid Grid.Row="1">
-                            <Border x:Name="FinalPrestartBorder" Background="#1A2A1A" Margin="10,5" Padding="12" CornerRadius="5" BorderBrush="#3A4050" BorderThickness="1">
+                            <Border x:Name="FinalPrestartBorder" Background="#1A2A1A" Margin="10,5" Padding="12" CornerRadius="5" BorderBrush="#4D4D4D" BorderThickness="1">
                                 <StackPanel>
                                     <TextBlock Text="Кто отвечает первым?" Foreground="#AAA" FontSize="14" Margin="0,0,0,8"/>
                                     <ComboBox x:Name="CmbFirstResponder" Height="36" FontSize="16" Margin="0,0,0,10"/>
@@ -1836,7 +1836,7 @@
                             </Border>
                             <Button x:Name="BtnStartDuel" Content="СТАРТ ДУЭЛИ" Background="#00AA00" Foreground="White" Height="50" FontWeight="Bold" Margin="10,5" VerticalAlignment="Top" Visibility="Collapsed" Click="BtnStartDuel_Click" Style="{StaticResource NoWhiteWhenDisabledButtonStyle}"/>
                         </Grid>
-                        <Border Grid.Row="2" Background="#1D2129" Margin="10,5" Padding="15" CornerRadius="10" MinHeight="150">
+                        <Border Grid.Row="2" Background="#2D2D2D" Margin="10,5" Padding="15" CornerRadius="10" MinHeight="150">
                             <StackPanel VerticalAlignment="Center">
                                 <TextBlock x:Name="TurnTextBlock" Text="ОЧЕРЕДЬ: ИГРОК 1" Foreground="Yellow" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 <TextBlock x:Name="FinalQuestionTextBlock" Text="ВОПРОС ФИНАЛА" Foreground="White" FontSize="24" FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" Margin="0,5"/>
@@ -1850,22 +1850,22 @@
                     </Grid>
 
                     <!-- 4. ПОБЕДА -->
-                    <Grid x:Name="WinnerPanel" Grid.Row="0" Grid.RowSpan="3" Visibility="Collapsed" Background="#171B22">
-                        <Border Background="#242830" CornerRadius="12" Padding="48,36" 
+                    <Grid x:Name="WinnerPanel" Grid.Row="0" Grid.RowSpan="3" Visibility="Collapsed" Background="#292929">
+                        <Border Background="#333333" CornerRadius="12" Padding="48,36" 
                                 HorizontalAlignment="Center" VerticalAlignment="Center"
-                                MaxWidth="500" BorderBrush="#3a3c42" BorderThickness="1">
+                                MaxWidth="500" BorderBrush="#444444" BorderThickness="1">
                             <StackPanel HorizontalAlignment="Center">
                                 <TextBlock Text="ПОБЕДИТЕЛЬ" Foreground="#949BA4" FontSize="12" FontWeight="Bold" 
                                            HorizontalAlignment="Center" Margin="0,0,0,8" FontFamily="Segoe UI"/>
                                 <TextBlock x:Name="TxtFinalWinnerName" Text="ИМЯ" Foreground="#F2F3F5" 
                                            FontSize="56" FontWeight="ExtraBold" HorizontalAlignment="Center" 
                                            FontFamily="Segoe UI" Margin="0,0,0,8"/>
-                                <Border Height="1" Background="#242830" Margin="20,8,20,12"/>
-                                <TextBlock x:Name="TxtFinalWinnings" Text="0 ₽" Foreground="#3B82F6" 
+                                <Border Height="1" Background="#333333" Margin="20,8,20,12"/>
+                                <TextBlock x:Name="TxtFinalWinnings" Text="0 ₽" Foreground="#4F6BED" 
                                            FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" 
                                            Margin="0,0,0,20" FontFamily="Segoe UI"/>
                                 <Button x:Name="BtnEndShow" Content="ЗАВЕРШИТЬ ИГРУ" 
-                                        Background="#3B82F6" BorderThickness="0" 
+                                        Background="#4F6BED" BorderThickness="0" 
                                         Foreground="White" FontSize="15" FontFamily="Segoe UI" FontWeight="SemiBold"
                                         Padding="40,12" HorizontalAlignment="Center"
                                         Click="BtnEndShow_Click" Style="{StaticResource NoWhiteWhenDisabledButtonStyle}"/>
@@ -1875,13 +1875,13 @@
                     </Grid>
                     
                     <!-- TRANSITION OVERLAY -->
-                    <Grid x:Name="TransitionOverlay" Visibility="Collapsed" Background="#111318">
+                    <Grid x:Name="TransitionOverlay" Visibility="Collapsed" Background="#1F1F1F">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock x:Name="TxtTransitionTitle" Text="ИТОГИ РАУНДА" 
-                                       Foreground="#3B82F6" FontSize="28" FontWeight="ExtraBold" 
+                                       Foreground="#4F6BED" FontSize="28" FontWeight="ExtraBold" 
                                        HorizontalAlignment="Center"/>
                             <TextBlock x:Name="TxtTransitionSub" Text="Переход к аналитике..." 
-                                       Foreground="#64748B" FontSize="14" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                       Foreground="#717171" FontSize="14" HorizontalAlignment="Center" Margin="0,8,0,0"/>
                         </StackPanel>
                     </Grid>
 
@@ -1896,7 +1896,7 @@
                         </Grid.RowDefinitions>
 
                         <!-- Заголовок -->
-                        <Border Grid.Row="0" Background="Transparent" Padding="15,12" BorderBrush="#2E333D" BorderThickness="0,0,0,1">
+                        <Border Grid.Row="0" Background="Transparent" Padding="15,12" BorderBrush="#3D3D3D" BorderThickness="0,0,0,1">
                             <Grid>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="📊" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
@@ -1909,35 +1909,35 @@
                         </Border>
 
                         <!-- Фильтр по раундам -->
-                        <Border Grid.Row="1" Background="#111318" Padding="8,6" BorderBrush="#2E333D" BorderThickness="0,0,0,1">
+                        <Border Grid.Row="1" Background="#1F1F1F" Padding="8,6" BorderBrush="#3D3D3D" BorderThickness="0,0,0,1">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBlock x:Name="TxtRoundFilterLabel" Text="РАУНД:" Foreground="#64748B" FontSize="9" FontWeight="Bold" 
+                                <TextBlock x:Name="TxtRoundFilterLabel" Text="РАУНД:" Foreground="#717171" FontSize="9" FontWeight="Bold" 
                                            VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                <Border x:Name="RoundFilterContainer" CornerRadius="6" Background="#1D2129" Padding="2">
+                                <Border x:Name="RoundFilterContainer" CornerRadius="6" Background="#2D2D2D" Padding="2">
                                     <StackPanel x:Name="RoundFilterButtons" Orientation="Horizontal">
                                         <Button Content="ALL" Tag="0" Width="36" Height="22" FontSize="9" FontWeight="Bold"
-                                                Background="#3B82F6" Foreground="White" BorderThickness="0" Cursor="Hand"
+                                                Background="#4F6BED" Foreground="White" BorderThickness="0" Cursor="Hand"
                                                 Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
                                         <Button Content="R1" Tag="1" Width="28" Height="22" FontSize="9" FontWeight="Bold"
-                                                Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
+                                                Background="Transparent" Foreground="#717171" BorderThickness="0" Cursor="Hand"
                                                 Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
                                         <Button Content="R2" Tag="2" Width="28" Height="22" FontSize="9" FontWeight="Bold"
-                                                Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
+                                                Background="Transparent" Foreground="#717171" BorderThickness="0" Cursor="Hand"
                                                 Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
                                         <Button Content="R3" Tag="3" Width="28" Height="22" FontSize="9" FontWeight="Bold"
-                                                Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
+                                                Background="Transparent" Foreground="#717171" BorderThickness="0" Cursor="Hand"
                                                 Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
                                         <Button Content="R4" Tag="4" Width="28" Height="22" FontSize="9" FontWeight="Bold"
-                                                Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
+                                                Background="Transparent" Foreground="#717171" BorderThickness="0" Cursor="Hand"
                                                 Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
                                         <Button Content="R5" Tag="5" Width="28" Height="22" FontSize="9" FontWeight="Bold"
-                                                Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
+                                                Background="Transparent" Foreground="#717171" BorderThickness="0" Cursor="Hand"
                                                 Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
                                         <Button Content="R6" Tag="6" Width="28" Height="22" FontSize="9" FontWeight="Bold"
-                                                Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
+                                                Background="Transparent" Foreground="#717171" BorderThickness="0" Cursor="Hand"
                                                 Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
                                         <Button Content="R7" Tag="7" Width="28" Height="22" FontSize="9" FontWeight="Bold"
-                                                Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
+                                                Background="Transparent" Foreground="#717171" BorderThickness="0" Cursor="Hand"
                                                 Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
                                     </StackPanel>
                                 </Border>
@@ -1946,27 +1946,27 @@
 
                         <!-- Ключевые метрики (компактные) -->
                         <UniformGrid Grid.Row="2" Columns="4" Margin="8,8,8,4">
-                            <Border Background="#171B22" CornerRadius="6" Padding="8,6" Margin="3">
+                            <Border Background="#292929" CornerRadius="6" Padding="8,6" Margin="3">
                                 <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock Text="ИГРЫ" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
-                                    <TextBlock x:Name="TxtAnalyticsTotalGames" Text="0" Foreground="#3B82F6" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="ИГРЫ" Foreground="#717171" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="TxtAnalyticsTotalGames" Text="0" Foreground="#4F6BED" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Border>
-                            <Border Background="#171B22" CornerRadius="6" Padding="8,6" Margin="3">
+                            <Border Background="#292929" CornerRadius="6" Padding="8,6" Margin="3">
                                 <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock Text="СР. БАНК" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="СР. БАНК" Foreground="#717171" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
                                     <TextBlock x:Name="TxtAnalyticsAvgBank" Text="0 ₽" Foreground="#00FF00" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Border>
-                            <Border Background="#171B22" CornerRadius="6" Padding="8,6" Margin="3">
+                            <Border Background="#292929" CornerRadius="6" Padding="8,6" Margin="3">
                                 <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock Text="MVP" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="MVP" Foreground="#717171" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
                                     <TextBlock x:Name="TxtAnalyticsBestPlayer" Text="—" Foreground="#FFD700" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Border>
-                            <Border Background="#171B22" CornerRadius="6" Padding="8,6" Margin="3">
+                            <Border Background="#292929" CornerRadius="6" Padding="8,6" Margin="3">
                                 <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock Text="ВРЕМЯ" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="ВРЕМЯ" Foreground="#717171" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
                                     <TextBlock x:Name="TxtAnalyticsPlayTime" Text="00:00" Foreground="#FF6B6B" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Border>
@@ -2086,7 +2086,7 @@
                         </Border>
 
                         <!-- Decision Hub -->
-                        <Border Grid.Row="4" Background="#111318" BorderBrush="#2E333D" BorderThickness="0,1,0,0" Padding="10,6">
+                        <Border Grid.Row="4" Background="#1F1F1F" BorderBrush="#3D3D3D" BorderThickness="0,1,0,0" Padding="10,6">
                             <StackPanel>
                                 <!-- === EXPRESS VOTING PANEL === -->
                                 <StackPanel x:Name="ExpressVotingPanel">
@@ -2096,10 +2096,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="ТАЙМЕР ГОЛОСОВАНИЯ" Foreground="#444" FontSize="10" FontWeight="Bold" 
+                                    <TextBlock Text="ТАЙМЕР ГОЛОСОВАНИЯ" Foreground="#555555" FontSize="10" FontWeight="Bold" 
                                                VerticalAlignment="Center" Margin="0,0,8,0"/>
                                     <ComboBox x:Name="CmbVotingDuration" Grid.Column="1" Height="24" FontSize="11" 
-                                              Background="#171B22" Foreground="#E2E8F0" BorderThickness="0" SelectedIndex="0">
+                                              Background="#292929" Foreground="#E8E8E8" BorderThickness="0" SelectedIndex="0">
                                         <ComboBoxItem Content="0:45 (стандарт)" Tag="45"/>
                                         <ComboBoxItem Content="1:00" Tag="60"/>
                                         <ComboBoxItem Content="1:30" Tag="90"/>
@@ -2116,20 +2116,20 @@
                                         <ColumnDefinition Width="1.3*"/>
                                     </Grid.ColumnDefinitions>
                                     <Button x:Name="BtnStartVoting" Grid.Column="0" Content="① VOTE" Height="36" Margin="0,0,2,0"
-                                            Background="Transparent" BorderBrush="#2E333D" BorderThickness="1"
-                                            Foreground="#444" FontWeight="Bold" FontSize="11" Opacity="0.4"
+                                            Background="Transparent" BorderBrush="#3D3D3D" BorderThickness="1"
+                                            Foreground="#555555" FontWeight="Bold" FontSize="11" Opacity="0.4"
                                             IsEnabled="False" Click="BtnStartVoting_Click" Style="{StaticResource FlatButton}"/>
                                     <Button x:Name="BtnEndVoting" Grid.Column="1" Content="② END" Height="36" Margin="2,0"
-                                            Background="Transparent" BorderBrush="#2E333D" BorderThickness="1"
-                                            Foreground="#444" FontWeight="Bold" FontSize="11" Opacity="0.4"
+                                            Background="Transparent" BorderBrush="#3D3D3D" BorderThickness="1"
+                                            Foreground="#555555" FontWeight="Bold" FontSize="11" Opacity="0.4"
                                             IsEnabled="False" Click="BtnEndVoting_Click" Style="{StaticResource FlatButton}"/>
                                     <Button x:Name="BtnReveal" Grid.Column="2" Content="③ REVEAL" Height="36" Margin="2,0"
-                                            Background="Transparent" BorderBrush="#2E333D" BorderThickness="1"
-                                            Foreground="#444" FontWeight="Bold" FontSize="11" Opacity="0.4"
+                                            Background="Transparent" BorderBrush="#3D3D3D" BorderThickness="1"
+                                            Foreground="#555555" FontWeight="Bold" FontSize="11" Opacity="0.4"
                                             IsEnabled="False" Click="BtnReveal_Click" Style="{StaticResource FlatButton}"/>
                                     <Button x:Name="BtnHotDiscussion" Grid.Column="3" Content="④ VERDICT" Height="36" Margin="2,0,0,0"
-                                            BorderBrush="#2E333D" BorderThickness="1"
-                                            Foreground="#444" FontWeight="Bold" FontSize="12" Opacity="0.4"
+                                            BorderBrush="#3D3D3D" BorderThickness="1"
+                                            Foreground="#555555" FontWeight="Bold" FontSize="12" Opacity="0.4"
                                             IsEnabled="False" Click="BtnHotDiscussion_Click" Style="{StaticResource FlatButton}">
                                         <Button.Background>
                                             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -2154,7 +2154,7 @@
                                             <TextBlock Text="⏸ КТО ЗА КОГО" Foreground="#C084FC" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
                                             <Button x:Name="BtnConfirmVotes" Grid.Column="1" Content="✓ Подтвердить" 
                                                     Height="24" Padding="10,0"
-                                                    Background="#6366F1" Foreground="White" FontSize="10" FontWeight="Bold"
+                                                    Background="#6264A7" Foreground="White" FontSize="10" FontWeight="Bold"
                                                     Cursor="Hand" Click="BtnConfirmVotes_Click" Style="{StaticResource FlatButton}"/>
                                         </Grid>
                                         <StackPanel x:Name="VoteTableRows"/>
@@ -2192,7 +2192,7 @@
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
                                             <Border Grid.Column="0" Background="#141428" CornerRadius="3" Padding="4,2" Margin="0,0,2,0">
-                                                <TextBlock Text="ИНТРО" Foreground="#3B82F6" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="ИНТРО" Foreground="#4F6BED" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
                                             </Border>
                                             <Border x:Name="RevealCueMarker" Grid.Column="1" Background="#0a1e0a" CornerRadius="3" Padding="4,2" Margin="2,0,0,0">
                                                 <TextBlock Text="▶ ВСКРЫТИЕ" Foreground="#2ecc71" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
@@ -2213,7 +2213,7 @@
                                         <TextBlock Text="ИСКЛЮЧИТЬ:" Foreground="#aa4444" FontSize="11" FontWeight="Bold" 
                                                    VerticalAlignment="Center" Margin="0,0,8,0"/>
                                         <ComboBox x:Name="EliminationComboBox" Grid.Column="1" Height="30" FontSize="13" 
-                                                  Background="#111318" Foreground="#E2E8F0" BorderThickness="0" Margin="0,0,6,0"
+                                                  Background="#1F1F1F" Foreground="#E8E8E8" BorderThickness="0" Margin="0,0,6,0"
                                                   SelectionChanged="EliminationComboBox_SelectionChanged">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate>
@@ -2257,8 +2257,8 @@
 
                                 <!-- Close round -->
                                 <Button x:Name="BtnCloseRoundFromAnalytics" Content="CLOSE ROUND" Height="32" Margin="0,4,0,0"
-                                        Background="Transparent" BorderBrush="#2E333D" BorderThickness="1"
-                                        Foreground="#64748B" FontWeight="Bold" FontSize="10"
+                                        Background="Transparent" BorderBrush="#3D3D3D" BorderThickness="1"
+                                        Foreground="#717171" FontWeight="Bold" FontSize="10"
                                         Click="BtnNextRound_Click" Style="{StaticResource FlatButton}"/>
                             </StackPanel>
                         </Border>
@@ -2273,37 +2273,37 @@
                         </Grid.RowDefinitions>
 
                         <!-- TOOLBAR -->
-                        <Border Grid.Row="0" Background="Transparent" BorderBrush="#242830" BorderThickness="0,0,0,1" Padding="10,7">
+                        <Border Grid.Row="0" Background="Transparent" BorderBrush="#333333" BorderThickness="0,0,0,1" Padding="10,7">
                             <Grid>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                                     <Button x:Name="BtnEditorNew" Content="＋ НОВЫЙ" Height="28" Padding="10,0" Margin="0,0,4,0"
-                                           Background="Transparent" BorderBrush="#2E333D" BorderThickness="1"
-                                           Foreground="#94A3B8" FontSize="11" FontWeight="Bold"
+                                           Background="Transparent" BorderBrush="#3D3D3D" BorderThickness="1"
+                                           Foreground="#999999" FontSize="11" FontWeight="Bold"
                                            Click="BtnEditorNew_Click" Style="{StaticResource FlatButton}"/>
                                     <Button x:Name="BtnEditorDelete" Content="✕ УДАЛИТЬ" Height="28" Padding="10,0" Margin="0,0,4,0"
-                                           Background="Transparent" BorderBrush="#2E333D" BorderThickness="1"
+                                           Background="Transparent" BorderBrush="#3D3D3D" BorderThickness="1"
                                            Foreground="#da373c" FontSize="11" FontWeight="Bold"
                                            Click="BtnEditorDelete_Click" Style="{StaticResource FlatButton}"/>
                                     <Button x:Name="BtnEditorLoad" Content="ЗАГРУЗИТЬ" Height="28" Padding="10,0" Margin="0,0,4,0"
-                                           Background="Transparent" BorderBrush="#2E333D" BorderThickness="1"
-                                           Foreground="#94A3B8" FontSize="11" FontWeight="Bold"
+                                           Background="Transparent" BorderBrush="#3D3D3D" BorderThickness="1"
+                                           Foreground="#999999" FontSize="11" FontWeight="Bold"
                                            Click="BtnEditorLoad_Click" Style="{StaticResource FlatButton}"/>
                                     <Button x:Name="BtnEditorSave" Content="СОХРАНИТЬ" Height="28" Padding="10,0" Margin="0,0,4,0"
-                                           Background="Transparent" BorderBrush="#2E333D" BorderThickness="1"
-                                           Foreground="#94A3B8" FontSize="11" FontWeight="Bold"
+                                           Background="Transparent" BorderBrush="#3D3D3D" BorderThickness="1"
+                                           Foreground="#999999" FontSize="11" FontWeight="Bold"
                                            Click="BtnEditorSave_Click" Style="{StaticResource FlatButton}"/>
                                     <TextBlock x:Name="TxtEditorSaveToast" Text="" Foreground="#2ecc71" FontSize="11" FontWeight="Bold"
                                                VerticalAlignment="Center" Margin="8,0,0,0" Opacity="0"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                     <TextBox x:Name="TxtEditorSearch" Width="180" Height="28"
-                                            Background="#111318" BorderBrush="#2E333D" BorderThickness="1"
-                                            Foreground="#E2E8F0" Padding="8,0"
+                                            Background="#1F1F1F" BorderBrush="#3D3D3D" BorderThickness="1"
+                                            Foreground="#E8E8E8" Padding="8,0"
                                             VerticalContentAlignment="Center" FontSize="12"
                                             Style="{StaticResource EditorTextBoxStyle}"/>
                                     <Button x:Name="BtnEditorSearch" Content="ПОИСК" Height="28" Padding="10,0" Margin="4,0,0,0"
-                                           Background="Transparent" BorderBrush="#2E333D" BorderThickness="1"
-                                           Foreground="#94A3B8" FontSize="11" FontWeight="Bold"
+                                           Background="Transparent" BorderBrush="#3D3D3D" BorderThickness="1"
+                                           Foreground="#999999" FontSize="11" FontWeight="Bold"
                                            Style="{StaticResource FlatButton}"/>
                                 </StackPanel>
                             </Grid>
@@ -2312,7 +2312,7 @@
                         <!-- DATA: DataGrid -->
                         <DataGrid Grid.Row="1" x:Name="QuestionsDataGrid"
                                  Background="Transparent"
-                                 Foreground="#E2E8F0"
+                                 Foreground="#E8E8E8"
                                  GridLinesVisibility="None"
                                  HeadersVisibility="Column"
                                  AutoGenerateColumns="False"
@@ -2404,7 +2404,7 @@
                         </DataGrid>
 
                         <!-- FORM: Edit card -->
-                        <Border Grid.Row="2" Background="#111318" BorderBrush="#242830" BorderThickness="0,1,0,0"
+                        <Border Grid.Row="2" Background="#1F1F1F" BorderBrush="#333333" BorderThickness="0,1,0,0"
                                 CornerRadius="8,8,0,0" Margin="8,0,8,0" Padding="12,10">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -2418,7 +2418,7 @@
                                         <ColumnDefinition Width="180"/>
                                     </Grid.ColumnDefinitions>
                                      <StackPanel Grid.Column="0" Margin="0,0,6,0">
-                                        <TextBlock Text="ВОПРОС" FontSize="10" Foreground="#64748B" FontWeight="Bold" Margin="2,0,0,2"/>
+                                        <TextBlock Text="ВОПРОС" FontSize="10" Foreground="#717171" FontWeight="Bold" Margin="2,0,0,2"/>
                                         <TextBox x:Name="TxtEditQuestion" Style="{StaticResource EditorTextBoxStyle}" Height="32" FontSize="12"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1">
@@ -2434,11 +2434,11 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                      <StackPanel Grid.Column="0" Margin="0,0,6,0">
-                                        <TextBlock Text="ДОП. ДОПУЩЕНИЯ" FontSize="10" Foreground="#64748B" FontWeight="Bold" Margin="2,0,0,2"/>
+                                        <TextBlock Text="ДОП. ДОПУЩЕНИЯ" FontSize="10" Foreground="#717171" FontWeight="Bold" Margin="2,0,0,2"/>
                                         <TextBox x:Name="TxtEditAccept" Style="{StaticResource EditorTextBoxStyle}" Height="32" FontSize="12"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Margin="0,0,6,0">
-                                        <TextBlock Text="РАУНД" FontSize="10" Foreground="#64748B" FontWeight="Bold" Margin="2,0,0,2"/>
+                                        <TextBlock Text="РАУНД" FontSize="10" Foreground="#717171" FontWeight="Bold" Margin="2,0,0,2"/>
                                         <TextBox x:Name="TxtEditRound" Style="{StaticResource EditorTextBoxStyle}" Height="32" HorizontalContentAlignment="Center" FontSize="12"/>
                                     </StackPanel>
                                     <Button x:Name="BtnEditorApply" Grid.Column="2" Content="ПРИМЕНИТЬ" 
@@ -2456,27 +2456,27 @@
                     <Grid x:Name="SettingsContext" Visibility="Collapsed">
                         <Border Background="Transparent" Padding="24">
                             <StackPanel>
-                                <TextBlock Text="Настройки" Foreground="#E2E8F0" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
+                                <TextBlock Text="Настройки" Foreground="#E8E8E8" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
 
                                 <!-- Язык / Language -->
-                                <Border Background="#1D2129" CornerRadius="10" Padding="16" Margin="0,0,0,12" 
-                                        BorderBrush="#2E333D" BorderThickness="1">
+                                <Border Background="#2D2D2D" CornerRadius="10" Padding="16" Margin="0,0,0,12" 
+                                        BorderBrush="#3D3D3D" BorderThickness="1">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0" Margin="0,0,12,0">
-                                            <TextBlock Text="Язык интерфейса" Foreground="#E2E8F0" FontSize="14" FontWeight="SemiBold"/>
-                                            <TextBlock Text="Переключение языка вопросов и интерфейса" Foreground="#64748B" FontSize="11" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Язык интерфейса" Foreground="#E8E8E8" FontSize="14" FontWeight="SemiBold"/>
+                                            <TextBlock Text="Переключение языка вопросов и интерфейса" Foreground="#717171" FontSize="11" Margin="0,4,0,0" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                                             <Button x:Name="BtnSettingsLangRU" Content="RU" Width="44" Height="30"
-                                                    Background="#6366F1" Foreground="White" FontSize="12" FontWeight="Bold"
+                                                    Background="#6264A7" Foreground="White" FontSize="12" FontWeight="Bold"
                                                     Margin="0,0,4,0" Cursor="Hand"
                                                     Click="BtnLangRU_Click" Style="{StaticResource FlatButton}"/>
                                             <Button x:Name="BtnSettingsLangEN" Content="EN" Width="44" Height="30"
-                                                    Background="#242830" Foreground="#94A3B8" FontSize="12" FontWeight="Bold"
+                                                    Background="#333333" Foreground="#999999" FontSize="12" FontWeight="Bold"
                                                     Cursor="Hand"
                                                     Click="BtnLangEN_Click" Style="{StaticResource FlatButton}"/>
                                         </StackPanel>
@@ -2484,16 +2484,16 @@
                                 </Border>
 
                                 <!-- Пропустить вступление -->
-                                <Border Background="#1D2129" CornerRadius="10" Padding="16" Margin="0,0,0,12" 
-                                        BorderBrush="#2E333D" BorderThickness="1">
+                                <Border Background="#2D2D2D" CornerRadius="10" Padding="16" Margin="0,0,0,12" 
+                                        BorderBrush="#3D3D3D" BorderThickness="1">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0" Margin="0,0,12,0">
-                                            <TextBlock Text="Пропустить вступление" Foreground="#E2E8F0" FontSize="14" FontWeight="SemiBold"/>
-                                            <TextBlock Text="Перейти сразу к первому вопросу, минуя представление" Foreground="#64748B" FontSize="11" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Пропустить вступление" Foreground="#E8E8E8" FontSize="14" FontWeight="SemiBold"/>
+                                            <TextBlock Text="Перейти сразу к первому вопросу, минуя представление" Foreground="#717171" FontSize="11" Margin="0,4,0,0" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <CheckBox x:Name="ChkFastTrack" Grid.Column="1" VerticalAlignment="Center"
                                                   Checked="ChkFastTrack_Changed" Unchecked="ChkFastTrack_Changed"
@@ -2503,40 +2503,40 @@
 
                                 <!-- Номер пульта (info) -->
                                 <!-- Хронометраж голосования -->
-                                <Border Background="#1D2129" CornerRadius="10" Padding="16" Margin="0,0,0,12" 
-                                        BorderBrush="#2E333D" BorderThickness="1">
+                                <Border Background="#2D2D2D" CornerRadius="10" Padding="16" Margin="0,0,0,12" 
+                                        BorderBrush="#3D3D3D" BorderThickness="1">
                                     <StackPanel>
-                                        <TextBlock Text="Хронометраж голосования" Foreground="#E2E8F0" FontSize="14" FontWeight="SemiBold"/>
-                                        <TextBlock Text="Выберите сценарий голосования после каждого раунда" Foreground="#64748B" FontSize="11" Margin="0,4,0,12" TextWrapping="Wrap"/>
+                                        <TextBlock Text="Хронометраж голосования" Foreground="#E8E8E8" FontSize="14" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Выберите сценарий голосования после каждого раунда" Foreground="#717171" FontSize="11" Margin="0,4,0,12" TextWrapping="Wrap"/>
                                         <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
                                             <Button x:Name="BtnVoteModeExpress" Content="⚡ Экспресс" 
                                                     Height="32" Padding="14,0" Margin="0,0,6,0"
-                                                    Background="#6366F1" Foreground="White" FontSize="12" FontWeight="Bold"
+                                                    Background="#6264A7" Foreground="White" FontSize="12" FontWeight="Bold"
                                                     Cursor="Hand" Click="BtnVoteModeExpress_Click" Style="{StaticResource FlatButton}"/>
                                             <Button x:Name="BtnVoteModeFull" Content="🎬 Полный" 
                                                     Height="32" Padding="14,0"
-                                                    Background="#242830" Foreground="#94A3B8" FontSize="12" FontWeight="Bold"
+                                                    Background="#333333" Foreground="#999999" FontSize="12" FontWeight="Bold"
                                                     Cursor="Hand" Click="BtnVoteModeFull_Click" Style="{StaticResource FlatButton}"/>
                                         </StackPanel>
                                         <TextBlock x:Name="TxtVoteModeDescription" 
                                                    Text="Быстрое голосование без перерыва. Игроки сразу выбирают слабое звено." 
-                                                   Foreground="#64748B" FontSize="11" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                                                   Foreground="#717171" FontSize="11" Margin="0,8,0,0" TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </Border>
 
                                 <!-- Номер пульта (info) -->
-                                <Border Background="#1D2129" CornerRadius="10" Padding="16" Margin="0,0,0,12" 
-                                        BorderBrush="#2E333D" BorderThickness="1">
+                                <Border Background="#2D2D2D" CornerRadius="10" Padding="16" Margin="0,0,0,12" 
+                                        BorderBrush="#3D3D3D" BorderThickness="1">
                                     <StackPanel>
-                                        <TextBlock Text="Сенсорные пульты" Foreground="#E2E8F0" FontSize="14" FontWeight="SemiBold"/>
-                                        <TextBlock Text="Номера пультов назначаются в досье каждого участника" Foreground="#64748B" FontSize="11" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                        <TextBlock Text="Сенсорные пульты" Foreground="#E8E8E8" FontSize="14" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Номера пультов назначаются в досье каждого участника" Foreground="#717171" FontSize="11" Margin="0,4,0,0" TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </Border>
 
                                 <!-- Сброс по умолчанию -->
                                 <Button x:Name="BtnResetSettings" Content="⟲  Сбросить по умолчанию" 
                                         Height="36" Margin="0,12,0,0"
-                                        Background="#242830" Foreground="#94A3B8" FontSize="12" FontWeight="SemiBold"
+                                        Background="#333333" Foreground="#999999" FontSize="12" FontWeight="SemiBold"
                                         Cursor="Hand" HorizontalAlignment="Left" Padding="16,0"
                                         Click="BtnResetSettings_Click" Style="{StaticResource FlatButton}"/>
 
@@ -2553,13 +2553,13 @@
                     <DockPanel LastChildFill="True">
                         <!-- Низ правой панели: Экспорт + Паника -->
                         <StackPanel DockPanel.Dock="Bottom">
-                            <Border Height="1" Background="#2E333D" Margin="4,0,4,6"/>
-                            <TextBlock x:Name="TxtExportLabel" Text="ЭКСПОРТ" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                            <Border Height="1" Background="#3D3D3D" Margin="4,0,4,6"/>
+                            <TextBlock x:Name="TxtExportLabel" Text="ЭКСПОРТ" Foreground="#717171" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,4"/>
                             <UniformGrid Columns="2" Margin="2,0,2,4">
-                                <Button x:Name="BtnExportCSV" Content="📊 CSV" Background="#1D2129" Foreground="#E2E8F0" 
+                                <Button x:Name="BtnExportCSV" Content="📊 CSV" Background="#2D2D2D" Foreground="#E8E8E8" 
                                         Height="32" FontSize="11" FontWeight="Bold" Margin="0,0,2,0" 
                                         Click="BtnExportCSV_Click" Style="{StaticResource FlatButton}"/>
-                                <Button x:Name="BtnExportHTML" Content="📄 HTML" Background="#1D2129" Foreground="#E2E8F0" 
+                                <Button x:Name="BtnExportHTML" Content="📄 HTML" Background="#2D2D2D" Foreground="#E8E8E8" 
                                         Height="32" FontSize="11" FontWeight="Bold" Margin="2,0,0,0"
                                         Click="BtnExportHTML_Click" Style="{StaticResource FlatButton}"/>
                             </UniformGrid>
@@ -2568,40 +2568,40 @@
 
                         <!-- Основное содержимое правой панели (без скролла) -->
                         <StackPanel Margin="0">
-                        <TextBlock x:Name="TxtBroadcastHeader" Text="УПРАВЛЕНИЕ ЭФИРОМ" Foreground="#94A3B8" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                        <TextBlock x:Name="TxtBroadcastHeader" Text="УПРАВЛЕНИЕ ЭФИРОМ" Foreground="#999999" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
 
                         <!-- ▶ УПРАВЛЕНИЕ РАУНДОМ -->
-                        <Border Background="#1D2129" CornerRadius="10" Padding="10" Margin="0,0,0,8">
+                        <Border Background="#2D2D2D" CornerRadius="10" Padding="10" Margin="0,0,0,8">
                             <StackPanel>
-                                <TextBlock Text="▶ РАУНД" Foreground="#64748B" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                <TextBlock Text="▶ РАУНД" Foreground="#717171" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
                                 <UniformGrid Columns="2">
                                     <Button Content="READY" x:Name="BtnStartRound" Background="#22C55E" Foreground="White" FontWeight="Bold" Height="40" Margin="2" Click="BtnReady_Click" Style="{StaticResource FlatButton}"/>
-                                    <Button Content="START O'CLOCK" x:Name="BtnPlay" Background="#3B82F6" Foreground="White" FontWeight="Bold" Height="40" Margin="2" Click="BtnPlay_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button Content="START O'CLOCK" x:Name="BtnPlay" Background="#4F6BED" Foreground="White" FontWeight="Bold" Height="40" Margin="2" Click="BtnPlay_Click" Style="{StaticResource FlatButton}"/>
                                 </UniformGrid>
-                                <Button Content="CLOSE ROUND" x:Name="BtnNextRound" Background="#2E333D" Foreground="#E2E8F0" Height="34" Margin="2,6,2,0" Click="BtnNextRound_Click" Style="{StaticResource FlatButton}"/>
+                                <Button Content="CLOSE ROUND" x:Name="BtnNextRound" Background="#3D3D3D" Foreground="#E8E8E8" Height="34" Margin="2,6,2,0" Click="BtnNextRound_Click" Style="{StaticResource FlatButton}"/>
                                 <Button Content="⏩ ЗАВЕРШИТЬ РАУНД" x:Name="BtnDebugEndRoundTimer" Background="#7C3AED" Foreground="White" FontWeight="Bold" Height="34" Margin="2,4,2,0" Click="BtnDebugEndRoundTimer_Click" Style="{StaticResource FlatButton}" Visibility="Collapsed"/>
                             </StackPanel>
                         </Border>
                         
                         <!-- PRE-GAME: Студийное вступление -->
-                        <Border x:Name="PreGameButtons" Background="#1D2129" CornerRadius="10" Padding="10" Margin="0,0,0,8" Visibility="Collapsed">
+                        <Border x:Name="PreGameButtons" Background="#2D2D2D" CornerRadius="10" Padding="10" Margin="0,0,0,8" Visibility="Collapsed">
                             <StackPanel>
                                 <TextBlock Text="PRE-GAME" Foreground="#5865F2" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
                                 <UniformGrid Columns="2">
                                     <Button x:Name="BtnOpeningUI" Content="OPENING" Background="#5865F2" Foreground="White" Height="34" Margin="2" FontWeight="Bold" Click="BtnOpening_Click" Style="{StaticResource FlatButton}"/>
-                                    <Button x:Name="BtnIntro1UI" Content="INTRO 1" Background="#4752C4" Foreground="White" Height="34" Margin="2" FontWeight="Bold" IsEnabled="False" Click="BtnIntro1_Click" Style="{StaticResource FlatButton}"/>
-                                    <Button x:Name="BtnIntro2UI" Content="INTRO 2" Background="#4752C4" Foreground="White" Height="34" Margin="2" FontWeight="Bold" IsEnabled="False" Click="BtnIntro2_Click" Style="{StaticResource FlatButton}"/>
-                                    <Button x:Name="BtnRulesUI" Content="RULES" Background="#4752C4" Foreground="White" Height="34" Margin="2" FontWeight="Bold" IsEnabled="False" Click="BtnRulesIntro_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnIntro1UI" Content="INTRO 1" Background="#4F52B2" Foreground="White" Height="34" Margin="2" FontWeight="Bold" IsEnabled="False" Click="BtnIntro1_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnIntro2UI" Content="INTRO 2" Background="#4F52B2" Foreground="White" Height="34" Margin="2" FontWeight="Bold" IsEnabled="False" Click="BtnIntro2_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnRulesUI" Content="RULES" Background="#4F52B2" Foreground="White" Height="34" Margin="2" FontWeight="Bold" IsEnabled="False" Click="BtnRulesIntro_Click" Style="{StaticResource FlatButton}"/>
                                 </UniformGrid>
                             </StackPanel>
                         </Border>
 
                         <!-- 📺 ГРАФИКА БРОДКАСТА -->
-                        <Border Background="#1D2129" CornerRadius="10" Padding="10" Margin="0,0,0,0">
+                        <Border Background="#2D2D2D" CornerRadius="10" Padding="10" Margin="0,0,0,0">
                             <StackPanel>
-                                <TextBlock Text="📺 ГРАФИКА БРОДКАСТА" Foreground="#94A3B8" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                                <TextBlock Text="📺 ГРАФИКА БРОДКАСТА" Foreground="#999999" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,4"/>
                                 <Button x:Name="BtnLogo" Height="30" Margin="0,0,0,4" Click="BtnLogo_Click" Style="{StaticResource FlatButton}"
-                                        Background="#1D2129" BorderBrush="#2E333D" BorderThickness="1" 
+                                        Background="#2D2D2D" BorderBrush="#3D3D3D" BorderThickness="1" 
                                         ToolTip="ВКЛ/ВЫКЛ ЛОГОТИП НА ЭКРАНАХ">
                                     <StackPanel Orientation="Horizontal">
                                         <Image Source="/Assets/Images/logotipka.png" Height="18" Margin="0,0,6,0" Stretch="Uniform"/>
@@ -2610,25 +2610,25 @@
                                 </Button>
                                 <UniformGrid Columns="2" Margin="0,0,0,6">
                                     <Button x:Name="BtnStyleClassic" Content="🎨 CLASSIC" Height="26" Margin="2"
-                                            Background="#2E333D" Foreground="#E2E8F0" FontWeight="Bold" FontSize="10"
+                                            Background="#3D3D3D" Foreground="#E8E8E8" FontWeight="Bold" FontSize="10"
                                             Click="BtnBcStyleClassic_Click" Style="{StaticResource FlatButton}"/>
                                     <Button x:Name="BtnStyleNew" Content="✨ NEW" Height="26" Margin="2"
-                                            Background="#3B82F6" Foreground="White" FontWeight="Bold" FontSize="10"
+                                            Background="#4F6BED" Foreground="White" FontWeight="Bold" FontSize="10"
                                             Click="BtnBcStyleNew_Click" Style="{StaticResource FlatButton}"/>
                                 </UniformGrid>
-                                <TextBlock Text="РАУНД" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,3"/>
+                                <TextBlock Text="РАУНД" Foreground="#717171" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,3"/>
                                 <UniformGrid Columns="3">
                                     <ToggleButton x:Name="TglBcTimer" Content="⏱ ТАЙМЕР" Height="32" Margin="2"
-                                                  Background="#242830" Foreground="#2DD4BF" FontWeight="Bold" FontSize="10"
+                                                  Background="#333333" Foreground="#6264A7" FontWeight="Bold" FontSize="10"
                                                   Click="TglBcTimer_Click" Style="{StaticResource FlatToggleStyle}"/>
                                     <ToggleButton x:Name="TglBcChain" Content="💰 ЦЕПОЧКА" Height="32" Margin="2"
-                                                  Background="#242830" Foreground="#2DD4BF" FontWeight="Bold" FontSize="10"
+                                                  Background="#333333" Foreground="#6264A7" FontWeight="Bold" FontSize="10"
                                                   Click="TglBcChain_Click" Style="{StaticResource FlatToggleStyle}"/>
                                     <ToggleButton x:Name="TglBcChainTimer" Content="⏱💰 ВСЁ" Height="32" Margin="2"
-                                                  Background="#242830" Foreground="#2DD4BF" FontWeight="Bold" FontSize="10"
+                                                  Background="#333333" Foreground="#6264A7" FontWeight="Bold" FontSize="10"
                                                   Click="TglBcChainTimer_Click" Style="{StaticResource FlatToggleStyle}"/>
                                 </UniformGrid>
-                                <TextBlock Text="ОВЕРЛЕИ" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,6,0,3"/>
+                                <TextBlock Text="ОВЕРЛЕИ" Foreground="#717171" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,6,0,3"/>
                                 <UniformGrid Columns="2">
                                     <ToggleButton x:Name="TglBcBank" Content="💰 БАНК" Height="32" Margin="2"
                                                   Background="#1B5E20" Foreground="#A5D6A7" FontWeight="Bold" FontSize="10"
@@ -2648,7 +2648,7 @@
             <Border x:Name="ParticipantsOverlay" Grid.Row="0" Grid.RowSpan="5" Panel.ZIndex="200"
                     Background="#CC0D1117" Visibility="Collapsed"
                     MouseLeftButtonDown="ParticipantsOverlay_BackgroundClick">
-                <Border Background="#1A1D24" CornerRadius="16" BorderBrush="#2E333D" BorderThickness="1"
+                <Border Background="#252525" CornerRadius="16" BorderBrush="#3D3D3D" BorderThickness="1"
                         MaxWidth="800" MaxHeight="600" 
                         HorizontalAlignment="Center" VerticalAlignment="Center"
                         Padding="24" MouseLeftButtonDown="ParticipantsOverlay_CardClick">
@@ -2659,10 +2659,10 @@
                         </Grid.RowDefinitions>
                         <!-- Заголовок -->
                         <Grid Grid.Row="0" Margin="0,0,0,16">
-                            <TextBlock Text="👥 Участники шоу" Foreground="#E2E8F0" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <TextBlock Text="👥 Участники шоу" Foreground="#E8E8E8" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
                             <Button Content="✕" HorizontalAlignment="Right" 
                                     Width="32" Height="32" FontSize="14"
-                                    Background="Transparent" Foreground="#94A3B8" 
+                                    Background="Transparent" Foreground="#999999" 
                                     BorderThickness="0" Cursor="Hand"
                                     Click="BtnCloseParticipants_Click" Style="{StaticResource FlatButton}"/>
                         </Grid>
@@ -2676,25 +2676,25 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Background="#1D2129" CornerRadius="12" Padding="12" Margin="6" 
-                                                BorderBrush="#2E333D" BorderThickness="1" Cursor="Hand">
+                                        <Border Background="#2D2D2D" CornerRadius="12" Padding="12" Margin="6" 
+                                                BorderBrush="#3D3D3D" BorderThickness="1" Cursor="Hand">
                                             <StackPanel HorizontalAlignment="Center">
                                                 <!-- Фото -->
                                                 <Border Width="90" Height="90" CornerRadius="45" 
-                                                        Background="#2E333D" BorderBrush="#3A4050" BorderThickness="2"
+                                                        Background="#3D3D3D" BorderBrush="#4D4D4D" BorderThickness="2"
                                                         ClipToBounds="True" Margin="0,0,0,8"
                                                         MouseLeftButtonDown="PlayerPhoto_Click"
                                                         ToolTip="Нажмите для загрузки фото">
                                                     <Grid>
-                                                        <TextBlock Text="📷" FontSize="28" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#64748B"/>
+                                                        <TextBlock Text="📷" FontSize="28" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#717171"/>
                                                         <Image Source="{Binding PhotoSource}" Stretch="UniformToFill" Width="90" Height="90"/>
                                                     </Grid>
                                                 </Border>
                                                 <!-- Имя -->
-                                                <TextBlock Text="{Binding GameName}" Foreground="#E2E8F0" FontSize="12" FontWeight="Bold" 
+                                                <TextBlock Text="{Binding GameName}" Foreground="#E8E8E8" FontSize="12" FontWeight="Bold" 
                                                            HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="120"/>
                                                 <!-- Город/профессия -->
-                                                <TextBlock Text="{Binding CityDesc}" Foreground="#64748B" FontSize="9" 
+                                                <TextBlock Text="{Binding CityDesc}" Foreground="#717171" FontSize="9" 
                                                            HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="120"/>
                                             </StackPanel>
                                         </Border>
@@ -2754,7 +2754,7 @@
                                                         <Thumb>
                                                             <Thumb.Template>
                                                                 <ControlTemplate TargetType="Thumb">
-                                                                    <Border x:Name="tb" Background="#2E333D" CornerRadius="4"/>
+                                                                    <Border x:Name="tb" Background="#3D3D3D" CornerRadius="4"/>
                                                                     <ControlTemplate.Triggers>
                                                                         <Trigger Property="IsMouseOver" Value="True">
                                                                             <Setter TargetName="tb" Property="Background" Value="#3A4050"/>
@@ -2783,7 +2783,7 @@
                                                                 <Thumb>
                                                                     <Thumb.Template>
                                                                         <ControlTemplate TargetType="Thumb">
-                                                                            <Border x:Name="tb" Background="#2E333D" CornerRadius="4"/>
+                                                                            <Border x:Name="tb" Background="#3D3D3D" CornerRadius="4"/>
                                                                             <ControlTemplate.Triggers>
                                                                                 <Trigger Property="IsMouseOver" Value="True">
                                                                                     <Setter TargetName="tb" Property="Background" Value="#3A4050"/>
@@ -2820,7 +2820,7 @@
     <Border x:Name="DossierOverlay" Grid.RowSpan="3" Panel.ZIndex="300"
             Background="#E6050911" Visibility="Collapsed"
             MouseLeftButtonDown="DossierOverlay_BackgroundClick">
-        <Border Background="#1A1D24" CornerRadius="16" BorderBrush="#2E333D" BorderThickness="1"
+        <Border Background="#252525" CornerRadius="16" BorderBrush="#3D3D3D" BorderThickness="1"
                 Width="500" HorizontalAlignment="Center" VerticalAlignment="Center"
                 Padding="28" MouseLeftButtonDown="DossierOverlay_CardClick">
             <Grid>
@@ -2837,9 +2837,9 @@
 
                 <!-- Row 0: Title + Close -->
                 <Grid Grid.Row="0" Margin="0,0,0,20">
-                    <TextBlock Text="Досье участника" Foreground="#E2E8F0" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <TextBlock Text="Досье участника" Foreground="#E8E8E8" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
                     <Button Content="✕" HorizontalAlignment="Right" Width="32" Height="32" FontSize="14"
-                            Background="Transparent" Foreground="#94A3B8" BorderThickness="0" Cursor="Hand"
+                            Background="Transparent" Foreground="#999999" BorderThickness="0" Cursor="Hand"
                             Click="BtnCloseDossier_Click" Style="{StaticResource FlatButton}"/>
                 </Grid>
 
@@ -2852,13 +2852,13 @@
 
                     <!-- Photo square with "Изменить" overlay -->
                     <Border Grid.Column="0" Width="130" Height="130" CornerRadius="12" 
-                            Background="#242830" BorderBrush="#3A4050" BorderThickness="1"
+                            Background="#333333" BorderBrush="#4D4D4D" BorderThickness="1"
                             ClipToBounds="True" Margin="0,0,16,0" Cursor="Hand"
                             MouseLeftButtonDown="PlayerPhoto_Click"
                             ToolTip="Нажмите для загрузки фото">
                         <Grid>
                             <TextBlock x:Name="CropHintText" Text="📷" FontSize="32" HorizontalAlignment="Center" 
-                                       VerticalAlignment="Center" Foreground="#4A5568"/>
+                                       VerticalAlignment="Center" Foreground="#555555"/>
                             <Image x:Name="DossierPhotoImage" Stretch="UniformToFill"
                                    HorizontalAlignment="Center" VerticalAlignment="Center"
                                    RenderOptions.BitmapScalingMode="HighQuality">
@@ -2866,7 +2866,7 @@
                             </Image>
                             <!-- "Изменить" button overlay at bottom -->
                             <Border VerticalAlignment="Bottom" HorizontalAlignment="Center"
-                                    Background="#3B82F6" CornerRadius="4" Padding="10,3" Margin="0,0,0,6"
+                                    Background="#4F6BED" CornerRadius="4" Padding="10,3" Margin="0,0,0,6"
                                     Cursor="Hand" MouseLeftButtonDown="BtnDossierUploadPhoto_Click">
                                 <TextBlock Text="Изменить" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
                             </Border>
@@ -2875,16 +2875,16 @@
 
                     <!-- Name field with accent underline -->
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Игровое имя" Foreground="#64748B" FontSize="11" Margin="0,0,0,4"/>
+                        <TextBlock Text="Игровое имя" Foreground="#717171" FontSize="11" Margin="0,0,0,4"/>
                         <TextBox x:Name="DossierGameName" Background="Transparent" Foreground="White" 
                                  BorderThickness="0" FontSize="22" FontWeight="Bold" Padding="0,4"
                                  Style="{StaticResource ObsidianTextBox}"/>
-                        <Border Height="2" Background="#6366F1" CornerRadius="1" Margin="0,2,0,0"/>
-                        <TextBlock Text="ФИО" Foreground="#64748B" FontSize="11" Margin="0,14,0,4"/>
+                        <Border Height="2" Background="#6264A7" CornerRadius="1" Margin="0,2,0,0"/>
+                        <TextBlock Text="ФИО" Foreground="#717171" FontSize="11" Margin="0,14,0,4"/>
                         <TextBox x:Name="DossierFullName" Background="Transparent" Foreground="#ccc" 
                                  BorderThickness="0" FontSize="14" Padding="0,4"
                                  Style="{StaticResource ObsidianTextBox}"/>
-                        <Border Height="1" Background="#2E333D" Margin="0,4,0,0"/>
+                        <Border Height="1" Background="#3D3D3D" Margin="0,4,0,0"/>
                     </StackPanel>
                 </Grid>
 
@@ -2896,20 +2896,20 @@
                         <ColumnDefinition Width="80"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Margin="0,0,12,0">
-                        <TextBlock Text="Город / Профессия" Foreground="#64748B" FontSize="11" Margin="0,0,0,4"/>
-                        <TextBox x:Name="DossierCityDesc" Background="#242830" Foreground="#94A3B8" 
-                                 BorderBrush="#2E333D" BorderThickness="1" FontSize="13" Padding="10,8" 
+                        <TextBlock Text="Город / Профессия" Foreground="#717171" FontSize="11" Margin="0,0,0,4"/>
+                        <TextBox x:Name="DossierCityDesc" Background="#333333" Foreground="#999999" 
+                                 BorderBrush="#3D3D3D" BorderThickness="1" FontSize="13" Padding="10,8" 
                                  Style="{StaticResource ObsidianTextBox}"/>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Margin="0,0,8,0">
-                        <TextBlock Text="Возраст" Foreground="#64748B" FontSize="11" Margin="0,0,0,4"/>
-                        <TextBox x:Name="DossierAge" Background="#242830" Foreground="#94A3B8" 
-                                 BorderBrush="#2E333D" BorderThickness="1" FontSize="13" Padding="10,8"
+                        <TextBlock Text="Возраст" Foreground="#717171" FontSize="11" Margin="0,0,0,4"/>
+                        <TextBox x:Name="DossierAge" Background="#333333" Foreground="#999999" 
+                                 BorderBrush="#3D3D3D" BorderThickness="1" FontSize="13" Padding="10,8"
                                  TextAlignment="Center" Style="{StaticResource ObsidianTextBox}"/>
                     </StackPanel>
                     <StackPanel Grid.Column="2">
-                        <TextBlock Text="Пульт №" Foreground="#6366F1" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,4"/>
-                        <TextBox x:Name="DossierPultNumber" Background="#242830" Foreground="#6366F1" 
+                        <TextBlock Text="Пульт №" Foreground="#6264A7" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <TextBox x:Name="DossierPultNumber" Background="#333333" Foreground="#6264A7" 
                                  BorderBrush="#3B3E8E" BorderThickness="1" FontSize="13" Padding="10,8"
                                  TextAlignment="Center" FontWeight="Bold" Style="{StaticResource ObsidianTextBox}"/>
                     </StackPanel>
@@ -2917,9 +2917,9 @@
 
                 <!-- Row 3: Bio -->
                 <StackPanel Grid.Row="3" Margin="0,0,0,10">
-                    <TextBlock Text="Био / Интересный факт" Foreground="#64748B" FontSize="11" Margin="0,0,0,4"/>
-                    <TextBox x:Name="DossierBio" Background="#242830" Foreground="#94A3B8" 
-                             BorderBrush="#2E333D" BorderThickness="1" FontSize="12" 
+                    <TextBlock Text="Био / Интересный факт" Foreground="#717171" FontSize="11" Margin="0,0,0,4"/>
+                    <TextBox x:Name="DossierBio" Background="#333333" Foreground="#999999" 
+                             BorderBrush="#3D3D3D" BorderThickness="1" FontSize="12" 
                              Padding="10,8" Height="70" TextWrapping="Wrap" AcceptsReturn="True" 
                              VerticalScrollBarVisibility="Auto" Style="{StaticResource ObsidianTextBox}"/>
                 </StackPanel>
@@ -2927,11 +2927,11 @@
                 <!-- Row 7: Bottom buttons — Teams style -->
                 <Grid Grid.Row="7" Margin="0,12,0,0">
                     <Button Content="‹  Назад" HorizontalAlignment="Left" 
-                            Background="Transparent" Foreground="#94A3B8" FontSize="13" 
+                            Background="Transparent" Foreground="#999999" FontSize="13" 
                             BorderThickness="0" Cursor="Hand" Padding="0"
                             Click="BtnCloseDossier_Click" Style="{StaticResource FlatButton}"/>
                     <Button Content="✓  Сохранить" HorizontalAlignment="Right" 
-                            Background="#6366F1" Foreground="White" FontSize="13" FontWeight="Bold"
+                            Background="#6264A7" Foreground="White" FontSize="13" FontWeight="Bold"
                             Padding="20,8" Cursor="Hand"
                             Click="BtnSaveDossier_Click" Style="{StaticResource FlatButton}"/>
                 </Grid>
@@ -2941,7 +2941,7 @@
 
 
         <!-- Row 2: Obsidian Status Bar -->
-        <Border Grid.Row="2" Background="#171B22" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,1,0,0">
+        <Border Grid.Row="2" Background="#292929" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,1,0,0">
             <Grid>
                 <!-- Левая часть статус-бара -->
                 <TextBlock x:Name="TxtStatusBarInfo" Text="Weakest Link — Operator" 
