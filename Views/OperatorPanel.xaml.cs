@@ -141,6 +141,48 @@ namespace WeakestLink.Views
                 set { _isLocked = value; OnPropertyChanged(nameof(IsLocked)); }
             }
 
+            // ═══ АНКЕТА (→ левый сайдбар) ═══
+            private string _photoPath = "";
+            public string PhotoPath
+            {
+                get => _photoPath;
+                set { _photoPath = value; OnPropertyChanged(nameof(PhotoPath)); OnPropertyChanged(nameof(PhotoSource)); }
+            }
+
+            public System.Windows.Media.ImageSource? PhotoSource
+            {
+                get
+                {
+                    if (string.IsNullOrEmpty(_photoPath) || !System.IO.File.Exists(_photoPath)) return null;
+                    try
+                    {
+                        var bi = new System.Windows.Media.Imaging.BitmapImage();
+                        bi.BeginInit();
+                        bi.UriSource = new Uri(_photoPath, UriKind.Absolute);
+                        bi.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+                        bi.DecodePixelWidth = 120;
+                        bi.EndInit();
+                        bi.Freeze();
+                        return bi;
+                    }
+                    catch { return null; }
+                }
+            }
+
+            private int _age;
+            public int Age
+            {
+                get => _age;
+                set { _age = value; OnPropertyChanged(nameof(Age)); }
+            }
+
+            private string _bio = "";
+            public string Bio
+            {
+                get => _bio;
+                set { _bio = value; OnPropertyChanged(nameof(Bio)); }
+            }
+
             public string PrompterLine =>
                 string.IsNullOrWhiteSpace(CityDesc) ? FullName.Trim()
                                                     : $"{FullName.Trim()}, {CityDesc.Trim()}";
@@ -341,6 +383,7 @@ namespace WeakestLink.Views
             for (int i = 1; i <= 8; i++)
                 _rosterItems.Add(new PlayerSetupItem { ConsoleNumber = i });
             LstPlayers.ItemsSource = _rosterItems;
+            SidebarPlayerList.ItemsSource = _rosterItems;
             EliminationComboBox.ItemsSource = _engine.ActivePlayers;
             UpdateButtonStates();
             UpdateOperationalHints();
@@ -5064,6 +5107,23 @@ namespace WeakestLink.Views
             ServiceSidePanel.Visibility = TglServicePanel.IsChecked == true
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+        }
+
+        private void PlayerPhoto_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement fe && fe.DataContext is PlayerSetupItem player)
+            {
+                var dlg = new Microsoft.Win32.OpenFileDialog
+                {
+                    Title = $"Фото для {player.GameName}",
+                    Filter = "Изображения|*.png;*.jpg;*.jpeg;*.bmp;*.webp|Все файлы|*.*"
+                };
+                if (dlg.ShowDialog() == true)
+                {
+                    player.PhotoPath = dlg.FileName;
+                    Log($"📷 Фото загружено для {player.GameName}: {System.IO.Path.GetFileName(dlg.FileName)}");
+                }
+            }
         }
 
         private void BtnCloseToolbar_Click(object sender, RoutedEventArgs e)

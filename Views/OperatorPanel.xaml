@@ -836,6 +836,40 @@
                             <!-- Разделитель -->
                             <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,4,0,6"/>
 
+                            <!-- === УЧАСТНИКИ === -->
+                            <TextBlock Text="👥 УЧАСТНИКИ" Foreground="{StaticResource ObsidianAccentTeal}" FontSize="10" FontWeight="Bold" Margin="0,0,0,4"/>
+                            <ItemsControl x:Name="SidebarPlayerList" ItemsSource="{Binding}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#1D2129" CornerRadius="8" Padding="8" Margin="0,0,0,4" BorderBrush="#2E333D" BorderThickness="1">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="50"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <!-- Фото (клик для загрузки) -->
+                                                <Border Grid.Column="0" Width="44" Height="44" CornerRadius="22" 
+                                                        Background="#2E333D" BorderBrush="#3A4050" BorderThickness="1"
+                                                        Cursor="Hand" MouseLeftButtonDown="PlayerPhoto_Click" 
+                                                        ToolTip="Нажмите для загрузки фото" ClipToBounds="True">
+                                                    <Grid>
+                                                        <TextBlock Text="📷" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        <Image Source="{Binding PhotoSource}" Stretch="UniformToFill" Width="44" Height="44"/>
+                                                    </Grid>
+                                                </Border>
+                                                <!-- Данные -->
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
+                                                    <TextBlock Text="{Binding GameName}" Foreground="#E2E8F0" FontSize="12" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding CityDesc}" Foreground="#64748B" FontSize="9" TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Разделитель -->
+
                             <!-- === ИНСТРУМЕНТЫ === -->
                             <Button Content="✎ РЕДАКТОР ВОПРОСОВ" x:Name="BtnToggleQuestionEditor" Height="32" Margin="0,0,0,3" 
                                     Click="BtnToggleQuestionEditor_Click" Style="{StaticResource FlatButton}"
