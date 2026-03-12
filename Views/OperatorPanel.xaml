@@ -1403,7 +1403,7 @@
                                 </StackPanel>
 
                                 <!-- Карточки участников -->
-                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0,4">
+                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" Padding="0,4">
                                 <ItemsControl x:Name="LstPlayers">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
@@ -1445,22 +1445,22 @@
                                 </ScrollViewer>
 
                                 <!-- Кнопки -->
-                                <StackPanel Grid.Row="2" Margin="0,6,0,0">
-                                    <Button x:Name="BtnRosterConfirm" Content="ПРИНЯТЬ СОСТАВ" Background="#16A34A" Foreground="White" 
-                                            FontSize="14" FontWeight="Bold" Padding="0,10" 
-                                            Click="BtnRosterDone_Click" Style="{StaticResource GameButtonPressStyle}"/>
+                                <StackPanel Grid.Row="2" Margin="0,8,0,0">
+                                    <Button x:Name="BtnRosterConfirm" Content="✓  ПРИНЯТЬ СОСТАВ" 
+                                            Background="#16A34A" Foreground="White" 
+                                            FontSize="13" FontWeight="Bold" Height="42"
+                                            Margin="0,0,0,6"
+                                            Click="BtnRosterDone_Click" Style="{StaticResource FlatButton}"/>
 
-                                    <Button x:Name="BtnStartSession" Content="START SESSION" 
-                                            Height="44" 
-                                            Background="#3B82F6" Foreground="White" 
-                                            FontSize="14" FontWeight="Bold" 
-                                            Margin="0,4,0,0" Padding="20,8" 
+                                    <Button x:Name="BtnStartSession" Content="▶  START SESSION" 
+                                            Background="#1D4ED8" Foreground="White" 
+                                            FontSize="13" FontWeight="Bold" Height="42"
                                             Click="BtnStartSession_Click"
-                                            Style="{StaticResource GameButtonPressStyle}"/>
+                                            Style="{StaticResource FlatButton}"/>
 
                                     <CheckBox x:Name="ChkFastTrack" Content="Пропустить вступление" 
-                                              Foreground="{StaticResource ObsidianTextPrimary}" FontSize="12"
-                                              Margin="0,6,0,0"/>
+                                              Foreground="{StaticResource ObsidianTextSecondary}" FontSize="11"
+                                              Margin="4,8,0,0"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
