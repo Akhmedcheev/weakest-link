@@ -5210,10 +5210,10 @@ namespace WeakestLink.Views
                 TxtPredictionLabel.Text = en ? "ELIMINATION FORECAST" : "ПРОГНОЗ ВЫБЫВАНИЯ";
                 TxtNavLabel.Text = en ? "NAVIGATION" : "НАВИГАЦИЯ";
                 TxtStatsLabel.Text = en ? "STATISTICS" : "СТАТИСТИКА";
-                NavBtnSetup.Content = en ? "📋  Lobby" : "📋  Лобби";
-                NavBtnPlay.Content = en ? "🎮  Play" : "🎮  Игра";
-                NavBtnStats.Content = en ? "📊  Analytics" : "📊  Аналитика";
-                NavBtnEditor.Content = en ? "✏️  Editor" : "✏️  Редактор";
+                NavTxtSetup.Text = en ? "Lobby" : "Лобби";
+                NavTxtPlay.Text = en ? "Play" : "Игра";
+                NavTxtStats.Text = en ? "Analytics" : "Аналитика";
+                NavTxtEditor.Text = en ? "Editor" : "Редактор";
             }
             catch { }
 
