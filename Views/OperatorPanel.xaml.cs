@@ -4921,6 +4921,35 @@ namespace WeakestLink.Views
         private ObservableCollection<QuestionData> _editorQuestions = new();
         private const string EditorFilePath = "questions.json";
 
+        private void BtnTitleSettings_Click(object sender, RoutedEventArgs e)
+        {
+            if (SettingsContext.Visibility == Visibility.Visible)
+                SetCentralContext(_isSessionStarted ? "PLAY" : "SETUP");
+            else
+                SetCentralContext("SETTINGS");
+        }
+
+        private void SyncSettingsLangButtons()
+        {
+            try
+            {
+                var activeBg = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#6366F1"));
+                var inactiveBg = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#242830"));
+                var activeFg = System.Windows.Media.Brushes.White;
+                var inactiveFg = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#94A3B8"));
+
+                bool isEn = _currentLanguage == "EN";
+                BtnSettingsLangRU.Background = !isEn ? activeBg : inactiveBg;
+                BtnSettingsLangRU.Foreground = !isEn ? activeFg : inactiveFg;
+                BtnSettingsLangEN.Background = isEn ? activeBg : inactiveBg;
+                BtnSettingsLangEN.Foreground = isEn ? activeFg : inactiveFg;
+            }
+            catch { }
+        }
+
         private void BtnToggleQuestionEditor_Click(object sender, RoutedEventArgs e)
         {
             if (EditorContext.Visibility == Visibility.Visible)
@@ -5139,6 +5168,7 @@ namespace WeakestLink.Views
             BtnLangRU.Foreground = lang == "RU" ? System.Windows.Media.Brushes.White : mutedBrush;
             BtnLangEN.Background = lang == "EN" ? accentBrush : System.Windows.Media.Brushes.Transparent;
             BtnLangEN.Foreground = lang == "EN" ? System.Windows.Media.Brushes.White : mutedBrush;
+            SyncSettingsLangButtons();
 
             // Reload questions
             string questionsFile = lang == "EN" ? "questions_en.json" : "questions.json";
@@ -5607,6 +5637,7 @@ namespace WeakestLink.Views
                 PlayContext.Visibility = Visibility.Collapsed;
                 AnalyticsContext.Visibility = Visibility.Collapsed;
                 EditorContext.Visibility = Visibility.Collapsed;
+                SettingsContext.Visibility = Visibility.Collapsed;
 
                 switch (mode.ToUpper())
                 {
@@ -5637,6 +5668,11 @@ namespace WeakestLink.Views
                     case "EDIT":
                         EditorContext.Visibility = Visibility.Visible;
                         LoadQuestionsForEditor();
+                        break;
+
+                    case "SETTINGS":
+                        SettingsContext.Visibility = Visibility.Visible;
+                        SyncSettingsLangButtons();
                         break;
 
                     default:
