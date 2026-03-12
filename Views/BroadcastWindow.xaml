@@ -1,10 +1,10 @@
 <Window x:Class="WeakestLink.Views.BroadcastWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Broadcast" Background="Black"
+        Title="Broadcast" Background="#00B140"
         Width="1920" Height="1080"
         WindowStyle="None" ResizeMode="NoResize"
-        WindowState="Maximized"
+        WindowState="Normal"
         MouseLeftButtonDown="Window_MouseLeftButtonDown">
     <Window.Resources>
         <Style x:Key="ChainAmountStyle" TargetType="TextBlock">
@@ -167,7 +167,7 @@
         </Grid>
 
         <!-- ОВЕРЛЕЙ: Логотип -->
-        <Grid x:Name="LogoOverlay" Visibility="Collapsed" Background="Black">
+        <Grid x:Name="LogoOverlay" Visibility="Collapsed" Background="#00B140">
             <Image x:Name="ImgLogo" Stretch="Uniform"
                    HorizontalAlignment="Center" VerticalAlignment="Center"
                    MaxWidth="1400" MaxHeight="900"/>
