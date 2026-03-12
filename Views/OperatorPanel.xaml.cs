@@ -5824,6 +5824,7 @@ namespace WeakestLink.Views
                     items.Add(new PlayerListItem
                     {
                         Name = player,
+                        Initials = player.Length >= 2 ? player.Substring(0, 2).ToUpper() : player.ToUpper(),
                         StatusColor = isActive ? greenBrush : redBrush,
                         NameColor = isActive ? System.Windows.Media.Brushes.White : mutedBrush,
                         NameDecoration = isActive ? null : System.Windows.TextDecorations.Strikethrough,
@@ -6058,6 +6059,7 @@ namespace WeakestLink.Views
     public class PlayerListItem
     {
         public string Name { get; set; } = "";
+        public string Initials { get; set; } = "";
         public string StatusText { get; set; } = "";
         public System.Windows.Media.Brush StatusColor { get; set; } = System.Windows.Media.Brushes.Gray;
         public System.Windows.Media.Brush NameColor { get; set; } = System.Windows.Media.Brushes.White;
