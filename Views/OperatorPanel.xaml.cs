@@ -383,7 +383,7 @@ namespace WeakestLink.Views
             for (int i = 1; i <= 8; i++)
                 _rosterItems.Add(new PlayerSetupItem { ConsoleNumber = i });
             LstPlayers.ItemsSource = _rosterItems;
-            SidebarPlayerList.ItemsSource = _rosterItems;
+            ParticipantsGrid.ItemsSource = _rosterItems;
             EliminationComboBox.ItemsSource = _engine.ActivePlayers;
             UpdateButtonStates();
             UpdateOperationalHints();
@@ -5111,6 +5111,7 @@ namespace WeakestLink.Views
 
         private void PlayerPhoto_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            e.Handled = true;
             if (sender is FrameworkElement fe && fe.DataContext is PlayerSetupItem player)
             {
                 var dlg = new Microsoft.Win32.OpenFileDialog
@@ -5124,6 +5125,31 @@ namespace WeakestLink.Views
                     Log($"📷 Фото загружено для {player.GameName}: {System.IO.Path.GetFileName(dlg.FileName)}");
                 }
             }
+        }
+
+        private void BtnShowParticipants_Click(object sender, RoutedEventArgs e)
+        {
+            if (ParticipantsOverlay == null) return;
+            ParticipantsOverlay.Visibility = ParticipantsOverlay.Visibility == Visibility.Visible
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+        }
+
+        private void BtnCloseParticipants_Click(object sender, RoutedEventArgs e)
+        {
+            if (ParticipantsOverlay != null)
+                ParticipantsOverlay.Visibility = Visibility.Collapsed;
+        }
+
+        private void ParticipantsOverlay_BackgroundClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (ParticipantsOverlay != null)
+                ParticipantsOverlay.Visibility = Visibility.Collapsed;
+        }
+
+        private void ParticipantsOverlay_CardClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            e.Handled = true; // prevent background click from closing
         }
 
         private void BtnCloseToolbar_Click(object sender, RoutedEventArgs e)
