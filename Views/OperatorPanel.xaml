@@ -297,11 +297,11 @@
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#5c5c5c"/>
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#4D4D4D"/>
                                             </Trigger>
                                             <Trigger Property="IsChecked" Value="True">
-                                                <Setter TargetName="TkBorder" Property="Background" Value="#2A2A2A"/>
-                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#5c5c5c"/>
+                                                <Setter TargetName="TkBorder" Property="Background" Value="#333333"/>
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#4D4D4D"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
@@ -347,13 +347,13 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" CornerRadius="3">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" CornerRadius="4">
                             <ContentPresenter x:Name="content" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" TextBlock.Foreground="{TemplateBinding Foreground}"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#363636"/>
-                                <Setter TargetName="border" Property="BorderBrush" Value="#5c5c5c"/>
+                                <Setter TargetName="border" Property="Background" Value="#3D3D3D"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#4D4D4D"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="border" Property="Opacity" Value="0.4"/>
@@ -389,7 +389,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="#5865F2"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#6264A7"/>
                                 <Setter TargetName="border" Property="BorderThickness" Value="1.5"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
