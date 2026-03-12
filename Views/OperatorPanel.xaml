@@ -1015,15 +1015,8 @@
                             </TextBlock>
                         </StackPanel>
 
-                        <!-- Col 2: РАУНД (центр) -->
-                        <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="🔄 РАУНД" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
-                            <TextBlock x:Name="TxtRoundNumber" Text="1" Foreground="#3B82F6" FontSize="26" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
-                                <TextBlock.Effect>
-                                    <DropShadowEffect Color="#3B82F6" BlurRadius="8" ShadowDepth="0" Opacity="0.4"/>
-                                </TextBlock.Effect>
-                            </TextBlock>
-                        </StackPanel>
+                        <!-- Col 2: Spacer for floating badge -->
+                        <Grid Grid.Column="2" />
 
                         <!-- Col 3: ВОПРОС -->
                         <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="4,0,16,0">
@@ -2243,7 +2236,7 @@
                 <TextBlock x:Name="TxtGameState"/><TextBlock x:Name="TxtRound"/>
                 <TextBlock x:Name="TxtRoundBank"/><TextBlock x:Name="TxtStatusAction"/>
                 <TextBlock x:Name="TxtStatusHint"/><TextBlock x:Name="TxtStatusProcess"/>
-                <TextBlock x:Name="TxtTimerLabel"/>
+                <TextBlock x:Name="TxtTimerLabel"/><TextBlock x:Name="TxtRoundNumber"/>
                 <Button x:Name="BtnBotTurn"/><ToggleButton x:Name="TglAutoBot"/>
                 <Button x:Name="BtnBotGameSemiAuto"/><Button x:Name="BtnBotGameAuto"/>
                 <Button x:Name="BtnDebugEndRoundTimer"/>
