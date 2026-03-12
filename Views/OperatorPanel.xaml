@@ -17,18 +17,18 @@
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
-        <!-- ═══ OBSIDIAN v2.0 PALETTE — Charcoal Premium ═══ -->
-        <SolidColorBrush x:Key="ObsidianBg"            Color="#111318"/>  <!-- 00 dp — глубокий уголь -->
-        <SolidColorBrush x:Key="ObsidianSurface"       Color="#171B22"/>  <!-- 02 dp — панели -->
-        <SolidColorBrush x:Key="ObsidianCard"          Color="#1D2129"/>  <!-- 04 dp — карточки -->
-        <SolidColorBrush x:Key="ObsidianRaised"        Color="#242830"/>  <!-- 06 dp — приподнятые -->
-        <SolidColorBrush x:Key="ObsidianBorder"        Color="#2E333D"/>  <!-- границы -->
-        <SolidColorBrush x:Key="ObsidianBorderLight"   Color="#3A4050"/>  <!-- границы при ховере -->
-        <SolidColorBrush x:Key="ObsidianTextPrimary"   Color="#E2E8F0"/>  <!-- основной текст -->
-        <SolidColorBrush x:Key="ObsidianTextSecondary" Color="#94A3B8"/>  <!-- вторичный текст -->
-        <SolidColorBrush x:Key="ObsidianTextMuted"     Color="#64748B"/>  <!-- приглушённый -->
-        <SolidColorBrush x:Key="ObsidianAccentTeal"    Color="#2DD4BF"/>  <!-- основной акцент -->
-        <SolidColorBrush x:Key="ObsidianAccentBlue"    Color="#3B82F6"/>  <!-- информация -->
+        <!-- ═══ ONYX v1.0 PALETTE — Teams Dark ═══ -->
+        <SolidColorBrush x:Key="ObsidianBg"            Color="#1F1F1F"/>  <!-- 00 dp — основной фон -->
+        <SolidColorBrush x:Key="ObsidianSurface"       Color="#292929"/>  <!-- 02 dp — панели -->
+        <SolidColorBrush x:Key="ObsidianCard"          Color="#2D2D2D"/>  <!-- 04 dp — карточки -->
+        <SolidColorBrush x:Key="ObsidianRaised"        Color="#333333"/>  <!-- 06 dp — приподнятые -->
+        <SolidColorBrush x:Key="ObsidianBorder"        Color="#3D3D3D"/>  <!-- границы -->
+        <SolidColorBrush x:Key="ObsidianBorderLight"   Color="#4D4D4D"/>  <!-- границы при ховере -->
+        <SolidColorBrush x:Key="ObsidianTextPrimary"   Color="#E8E8E8"/>  <!-- основной текст -->
+        <SolidColorBrush x:Key="ObsidianTextSecondary" Color="#999999"/>  <!-- вторичный текст -->
+        <SolidColorBrush x:Key="ObsidianTextMuted"     Color="#717171"/>  <!-- приглушённый -->
+        <SolidColorBrush x:Key="ObsidianAccentTeal"    Color="#6264A7"/>  <!-- основной акцент — Teams purple -->
+        <SolidColorBrush x:Key="ObsidianAccentBlue"    Color="#4F6BED"/>  <!-- информация -->
         <SolidColorBrush x:Key="ObsidianAccentGold"    Color="#F59E0B"/>  <!-- банк, деньги -->
         <SolidColorBrush x:Key="ObsidianAccentGreen"   Color="#22C55E"/>  <!-- верно, успех -->
         <SolidColorBrush x:Key="ObsidianAccentRed"     Color="#EF4444"/>  <!-- неверно, критический -->
@@ -60,10 +60,10 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="#5c5c5c"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#4D4D4D"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="#4a4a4a"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#444444"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="border" Property="Opacity" Value="0.5"/>
@@ -81,13 +81,13 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Thumb">
-                        <Border x:Name="thumbBorder" Background="#171B22" CornerRadius="4"/>
+                        <Border x:Name="thumbBorder" Background="#292929" CornerRadius="4"/>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="thumbBorder" Property="Background" Value="#4e5058"/>
+                                <Setter TargetName="thumbBorder" Property="Background" Value="#4D4D4D"/>
                             </Trigger>
                             <Trigger Property="IsDragging" Value="True">
-                                <Setter TargetName="thumbBorder" Property="Background" Value="#5e636b"/>
+                                <Setter TargetName="thumbBorder" Property="Background" Value="#555555"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -179,7 +179,7 @@
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="btnBorder" Property="Opacity" Value="0.45"/>
                                 <Setter TargetName="hoverOverlay" Property="Opacity" Value="0"/>
-                                <Setter Property="Foreground" Value="#666"/>
+                                <Setter Property="Foreground" Value="#717171"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -200,10 +200,10 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsHighlighted" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#363636"/>
+                                <Setter TargetName="Border" Property="Background" Value="#3D3D3D"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#3E3E42"/>
+                                <Setter TargetName="Border" Property="Background" Value="#444444"/>
                                 <Setter Property="Foreground" Value="White"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -233,12 +233,12 @@
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#5c5c5c"/>
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#4D4D4D"/>
                                                 <Setter TargetName="Arrow" Property="Fill" Value="#CCC"/>
                                             </Trigger>
                                             <Trigger Property="IsChecked" Value="True">
-                                                <Setter TargetName="TkBorder" Property="Background" Value="#2A2A2A"/>
-                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#5c5c5c"/>
+                                                <Setter TargetName="TkBorder" Property="Background" Value="#333333"/>
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#4D4D4D"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
