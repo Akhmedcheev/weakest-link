@@ -5574,20 +5574,19 @@ namespace WeakestLink.Views
         {
             try
             {
-                var accentBrush = new System.Windows.Media.SolidColorBrush(
+                var pillBg = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3B82F6"));
-                var activeFg = (System.Windows.Media.Brush)FindResource("ObsidianTextPrimary");
+                var activeFg = System.Windows.Media.Brushes.White;
                 var inactiveFg = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#8B949E"));
 
                 var navButtons = new[] { NavBtnSetup, NavBtnPlay, NavBtnStats, NavBtnEditor };
-                var navAccents = new[] { NavAccentSetup, NavAccentPlay, NavAccentStats, NavAccentEditor };
                 var tags = new[] { "SETUP", "PLAY", "STATS", "EDIT" };
 
                 for (int i = 0; i < navButtons.Length; i++)
                 {
                     bool isActive = tags[i] == activeMode.ToUpper();
-                    navAccents[i].BorderBrush = isActive ? accentBrush : System.Windows.Media.Brushes.Transparent;
+                    navButtons[i].Background = isActive ? pillBg : System.Windows.Media.Brushes.Transparent;
                     navButtons[i].Foreground = isActive ? activeFg : inactiveFg;
                 }
             }

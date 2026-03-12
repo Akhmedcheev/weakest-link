@@ -844,50 +844,42 @@
                     <TextBlock x:Name="TxtNavLabel" Text="НАВИГАЦИЯ" Foreground="#3D4450" FontSize="9" FontWeight="Bold" 
                                Margin="16,14,0,6"/>
 
-                    <Border x:Name="NavAccentSetup" BorderBrush="#3B82F6" BorderThickness="3,0,0,0" Margin="0,1" CornerRadius="0">
-                        <Button x:Name="NavBtnSetup" Tag="SETUP" Height="36"
-                                Background="Transparent" Foreground="{StaticResource ObsidianTextPrimary}" HorizontalContentAlignment="Left"
-                                Padding="14,0,0,0" BorderThickness="0" Cursor="Hand"
-                                Click="NavBtn_Click" Style="{StaticResource FlatButton}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="▣" FontSize="13" Width="24" TextAlignment="Center" VerticalAlignment="Center" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-                                <TextBlock x:Name="NavTxtSetup" Text="Лобби" FontSize="13" FontWeight="Medium" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-                    </Border>
-                    <Border x:Name="NavAccentPlay" BorderBrush="Transparent" BorderThickness="3,0,0,0" Margin="0,1" CornerRadius="0">
-                        <Button x:Name="NavBtnPlay" Tag="PLAY" Height="36"
-                                Background="Transparent" Foreground="#8B949E" HorizontalContentAlignment="Left"
-                                Padding="14,0,0,0" BorderThickness="0" Cursor="Hand"
-                                Click="NavBtn_Click" Style="{StaticResource FlatButton}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="▶" FontSize="13" Width="24" TextAlignment="Center" VerticalAlignment="Center" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-                                <TextBlock x:Name="NavTxtPlay" Text="Игра" FontSize="13" FontWeight="Medium" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-                    </Border>
-                    <Border x:Name="NavAccentStats" BorderBrush="Transparent" BorderThickness="3,0,0,0" Margin="0,1" CornerRadius="0">
-                        <Button x:Name="NavBtnStats" Tag="STATS" Height="36"
-                                Background="Transparent" Foreground="#8B949E" HorizontalContentAlignment="Left"
-                                Padding="14,0,0,0" BorderThickness="0" Cursor="Hand"
-                                Click="NavBtn_Click" Style="{StaticResource FlatButton}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="◈" FontSize="13" Width="24" TextAlignment="Center" VerticalAlignment="Center" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-                                <TextBlock x:Name="NavTxtStats" Text="Аналитика" FontSize="13" FontWeight="Medium" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-                    </Border>
-                    <Border x:Name="NavAccentEditor" BorderBrush="Transparent" BorderThickness="3,0,0,0" Margin="0,1" CornerRadius="0">
-                        <Button x:Name="NavBtnEditor" Tag="EDIT" Height="36"
-                                Background="Transparent" Foreground="#8B949E" HorizontalContentAlignment="Left"
-                                Padding="14,0,0,0" BorderThickness="0" Cursor="Hand"
-                                Click="NavBtn_Click" Style="{StaticResource FlatButton}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="✎" FontSize="13" Width="24" TextAlignment="Center" VerticalAlignment="Center" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-                                <TextBlock x:Name="NavTxtEditor" Text="Редактор" FontSize="13" FontWeight="Medium" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-                    </Border>
+                    <Button x:Name="NavBtnSetup" Tag="SETUP" Height="38"
+                            Background="#3B82F6" Foreground="White" HorizontalContentAlignment="Left"
+                            Padding="14,0,0,0" Margin="10,2" BorderThickness="0" Cursor="Hand"
+                            Click="NavBtn_Click" Style="{StaticResource FlatButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="⊞" FontSize="14" Width="26" TextAlignment="Center" VerticalAlignment="Center" FontFamily="Segoe UI Symbol"/>
+                            <TextBlock x:Name="NavTxtSetup" Text="Лобби" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="NavBtnPlay" Tag="PLAY" Height="38"
+                            Background="Transparent" Foreground="#8B949E" HorizontalContentAlignment="Left"
+                            Padding="14,0,0,0" Margin="10,2" BorderThickness="0" Cursor="Hand"
+                            Click="NavBtn_Click" Style="{StaticResource FlatButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="▷" FontSize="14" Width="26" TextAlignment="Center" VerticalAlignment="Center" FontFamily="Segoe UI Symbol"/>
+                            <TextBlock x:Name="NavTxtPlay" Text="Игра" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="NavBtnStats" Tag="STATS" Height="38"
+                            Background="Transparent" Foreground="#8B949E" HorizontalContentAlignment="Left"
+                            Padding="14,0,0,0" Margin="10,2" BorderThickness="0" Cursor="Hand"
+                            Click="NavBtn_Click" Style="{StaticResource FlatButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="◇" FontSize="14" Width="26" TextAlignment="Center" VerticalAlignment="Center" FontFamily="Segoe UI Symbol"/>
+                            <TextBlock x:Name="NavTxtStats" Text="Аналитика" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="NavBtnEditor" Tag="EDIT" Height="38"
+                            Background="Transparent" Foreground="#8B949E" HorizontalContentAlignment="Left"
+                            Padding="14,0,0,0" Margin="10,2" BorderThickness="0" Cursor="Hand"
+                            Click="NavBtn_Click" Style="{StaticResource FlatButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="✎" FontSize="14" Width="26" TextAlignment="Center" VerticalAlignment="Center" FontFamily="Segoe UI Symbol"/>
+                            <TextBlock x:Name="NavTxtEditor" Text="Редактор" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
 
                     <!-- === GAME STATS (compact row) === -->
                     <Border Height="1" Background="#2E333D" Margin="12,10,12,6"/>
