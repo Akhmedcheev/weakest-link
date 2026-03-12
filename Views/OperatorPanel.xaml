@@ -1377,7 +1377,9 @@
                                                         <Grid>
                                                             <TextBlock Text="📷" FontSize="32" HorizontalAlignment="Center" 
                                                                        VerticalAlignment="Center" Foreground="#4A5568"/>
-                                                            <Image Source="{Binding PhotoSource}" Stretch="UniformToFill"/>
+                                                            <Image Source="{Binding PhotoSource}" Stretch="UniformToFill"
+                                                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                   RenderOptions.BitmapScalingMode="HighQuality"/>
                                                         </Grid>
                                                     </Border>
                                                     <!-- Имя (GameName) -->

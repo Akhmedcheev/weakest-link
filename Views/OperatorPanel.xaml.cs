@@ -160,7 +160,7 @@ namespace WeakestLink.Views
                         bi.BeginInit();
                         bi.UriSource = new Uri(_photoPath, UriKind.Absolute);
                         bi.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
-                        bi.DecodePixelWidth = 120;
+                        bi.DecodePixelWidth = 300;
                         bi.EndInit();
                         bi.Freeze();
                         return bi;
