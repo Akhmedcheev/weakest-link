@@ -513,6 +513,40 @@
             </Setter>
         </Style>
 
+        <!-- ObsidianCheckBox: тёмный чекбокс в стиле Obsidian -->
+        <Style x:Key="ObsidianCheckBox" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{StaticResource ObsidianTextSecondary}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border x:Name="CheckBorder" Width="18" Height="18" CornerRadius="4"
+                                    Background="#242830" BorderBrush="#3A4050" BorderThickness="1.5"
+                                    VerticalAlignment="Center" Margin="0,0,8,0">
+                                <TextBlock x:Name="CheckMark" Text="&#xE73E;" 
+                                           FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                           Foreground="White" HorizontalAlignment="Center" 
+                                           VerticalAlignment="Center" Visibility="Collapsed"/>
+                            </Border>
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="CheckBorder" Property="Background" Value="#2DD4BF"/>
+                                <Setter TargetName="CheckBorder" Property="BorderBrush" Value="#2DD4BF"/>
+                                <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="CheckBorder" Property="BorderBrush" Value="#64748B"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- FlatButton: ПОЛНОЕ переопределение ControlTemplate без ButtonChrome -->
         <Style x:Key="FlatButton" TargetType="Button">
             <Setter Property="Cursor" Value="Hand"/>
@@ -1457,8 +1491,8 @@
                                             Style="{StaticResource FlatButton}"/>
 
                                     <CheckBox x:Name="ChkFastTrack" Content="Пропустить вступление" 
-                                              Foreground="{StaticResource ObsidianTextSecondary}" FontSize="11"
-                                              Margin="4,8,0,0"/>
+                                              Margin="4,8,0,0"
+                                              Style="{StaticResource ObsidianCheckBox}"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
