@@ -4967,7 +4967,130 @@ namespace WeakestLink.Views
             if (ExpressVotingPanel != null) ExpressVotingPanel.Visibility = express ? Visibility.Visible : Visibility.Collapsed;
             if (FullVotingPanel != null) FullVotingPanel.Visibility = !express ? Visibility.Visible : Visibility.Collapsed;
 
+            if (!express) PopulateVoteTable();
+
             SaveSettings();
+        }
+
+        // === VOTE TABLE ===
+        private void PopulateVoteTable()
+        {
+            if (VoteTableRows == null) return;
+            VoteTableRows.Children.Clear();
+
+            var activePlayers = _engine.ActivePlayers;
+            if (activePlayers == null || activePlayers.Count == 0) return;
+
+            foreach (var player in activePlayers)
+            {
+                var row = new Grid { Margin = new Thickness(0, 2, 0, 2) };
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(14, GridUnitType.Pixel) });
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+                var nameBlock = new TextBlock
+                {
+                    Text = player,
+                    Foreground = System.Windows.Media.Brushes.White,
+                    FontSize = 12,
+                    FontWeight = FontWeights.SemiBold,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                Grid.SetColumn(nameBlock, 0);
+
+                var arrow = new TextBlock
+                {
+                    Text = "→",
+                    Foreground = new System.Windows.Media.SolidColorBrush(
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#64748B")),
+                    FontSize = 12,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                Grid.SetColumn(arrow, 1);
+
+                var combo = new ComboBox
+                {
+                    Height = 26,
+                    FontSize = 11,
+                    Background = System.Windows.Media.Brushes.Transparent,
+                    Foreground = new System.Windows.Media.SolidColorBrush(
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#E2E8F0")),
+                    BorderThickness = new Thickness(1),
+                    BorderBrush = new System.Windows.Media.SolidColorBrush(
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#2E333D")),
+                    Tag = player
+                };
+
+                // Add options: all active players except self
+                foreach (var target in activePlayers)
+                {
+                    if (target != player)
+                        combo.Items.Add(new ComboBoxItem { Content = target });
+                }
+                Grid.SetColumn(combo, 2);
+
+                row.Children.Add(nameBlock);
+                row.Children.Add(arrow);
+                row.Children.Add(combo);
+                VoteTableRows.Children.Add(row);
+            }
+        }
+
+        private void BtnConfirmVotes_Click(object sender, RoutedEventArgs e)
+        {
+            var votes = new Dictionary<string, string>();
+            bool allFilled = true;
+
+            foreach (var child in VoteTableRows.Children)
+            {
+                if (child is Grid row)
+                {
+                    string voterName = "";
+                    string votedFor = "";
+                    foreach (var el in row.Children)
+                    {
+                        if (el is TextBlock tb && Grid.GetColumn(tb) == 0) voterName = tb.Text;
+                        if (el is ComboBox cb)
+                        {
+                            var selected = cb.SelectedItem as ComboBoxItem;
+                            votedFor = selected?.Content?.ToString() ?? "";
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(voterName))
+                    {
+                        if (string.IsNullOrEmpty(votedFor)) allFilled = false;
+                        else votes[voterName] = votedFor;
+                    }
+                }
+            }
+
+            if (!allFilled)
+            {
+                Log("⚠ Не все голоса заполнены!");
+                return;
+            }
+
+            // Log all votes
+            Log("🗳️ === РЕЗУЛЬТАТЫ ГОЛОСОВАНИЯ ===");
+            foreach (var kv in votes)
+                Log($"  {kv.Key} → {kv.Value}");
+
+            // Count votes
+            var voteCounts = new Dictionary<string, int>();
+            foreach (var kv in votes)
+            {
+                if (!voteCounts.ContainsKey(kv.Value)) voteCounts[kv.Value] = 0;
+                voteCounts[kv.Value]++;
+            }
+
+            var sorted = voteCounts.OrderByDescending(x => x.Value);
+            Log("📊 Итог:");
+            foreach (var kv in sorted)
+                Log($"  {kv.Key}: {kv.Value} голос(ов)");
+
+            var topVoted = sorted.First();
+            Log($"👎 Больше всего голосов: {topVoted.Key} ({topVoted.Value})");
         }
 
         // === SETTINGS PERSISTENCE ===
