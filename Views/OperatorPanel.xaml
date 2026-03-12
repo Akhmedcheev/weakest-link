@@ -991,7 +991,6 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="120"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
                     <!-- Card 0: ТЕКУЩИЙ БАНК -->
@@ -1018,23 +1017,11 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Col 2: Spacer for floating ring -->
+                    <!-- Col 2: Spacer for floating round badge -->
                     <Grid Grid.Column="2"/>
 
-                    <!-- Card 3: РАУНД -->
+                    <!-- Card 3: ВОПРОС -->
                     <Border Grid.Column="3" Background="#1D2129" CornerRadius="10" BorderBrush="#2E333D" BorderThickness="1" Margin="2,0" Padding="6,4">
-                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="🔄 РАУНД" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
-                            <TextBlock x:Name="TxtRoundNumber" Text="1" Foreground="#3B82F6" FontSize="24" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
-                                <TextBlock.Effect>
-                                    <DropShadowEffect Color="#3B82F6" BlurRadius="8" ShadowDepth="0" Opacity="0.4"/>
-                                </TextBlock.Effect>
-                            </TextBlock>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Card 4: ВОПРОС -->
-                    <Border Grid.Column="4" Background="#1D2129" CornerRadius="10" BorderBrush="#2E333D" BorderThickness="1" Margin="2,0" Padding="6,4">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock Text="❓ ВОПРОС" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
                             <TextBlock x:Name="TxtQuestionCount" Text="0/0" Foreground="#F59E0B" FontSize="24" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
@@ -2253,6 +2240,7 @@
                 <Button x:Name="BtnBotGameSemiAuto"/><Button x:Name="BtnBotGameAuto"/>
                 <Button x:Name="BtnDebugEndRoundTimer"/>
                 <Border x:Name="PreGameButtons"/><Button x:Name="BtnOpeningUI"/><Button x:Name="BtnIntro1UI"/><Button x:Name="BtnIntro2UI"/><Button x:Name="BtnRulesUI"/>
+                <TextBlock x:Name="TxtRoundNumber"/>
              </Grid>
 
             <!-- ОВЕРЛЕЙ: Терминал логов (перекрывает, не сдвигает) -->
