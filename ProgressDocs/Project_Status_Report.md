@@ -1,6 +1,6 @@
 # Статус проекта: «Слабое звено» (Weakest Link)
 
-**Обновлено:** 07.03.2026
+**Обновлено:** 08.03.2026
 **Статус:** PRODUCTION READY
 
 ---
@@ -108,6 +108,39 @@
 * **Пульсация таймера:** Красный + анимация на последних 10 секундах.
 * **Финал:** Кружочки результатов, имена финалистов.
 
+### 11. AI-тестирование (Gemini / OpenAI)
+
+Автоматическое нагрузочное тестирование игры с помощью LLM.
+
+**AI-клиенты (Network/):**
+
+| Класс | API | Модель |
+|-------|-----|--------|
+| `GeminiTestPlayer` | Google Gemini REST | `gemini-2.5-flash` |
+| `GeminiBotClient` | Google Gemini REST | Конфигурируемая |
+| `AiBotTester` | OpenAI-совместимый | ChatGPT / DeepSeek / Ollama |
+
+* **BotDecision** (`Core/Models/BotDecision.cs`): `Action` + `Text` для десериализации ответа AI.
+* **Системный промпт:** Жёсткая викторина, строгий JSON без маркдауна.
+* **Очистка маркдауна:** Strip ` ```json ` / ` ``` ` перед десериализацией.
+* **Раздельный catch:** Таймаут, сеть, невалидный JSON → fallback `pass`.
+* **DiagLog:** `Debug.WriteLine` + `LogCallback` → лог оператора.
+
+**Интеграция в OperatorPanel:**
+
+* Меню: DEBUG → ТЕСТОВАЯ ИГРА С БОТАМИ → AI-тестирование (Gemini).
+* Поле ввода API-ключа + кнопка «ЗАПУСТИТЬ AI-ТЕСТ (8 ботов)».
+* `ProcessBotTurnAsync()`: задержка 2.5 сек → запрос к AI → bank/answer/pass.
+* Сравнение ответов с `AcceptableAnswers` (регистронезависимо).
+* Автозапуск при START O'CLOCK, автостоп при BREAK GAME / CLOSE SESSION / таймер.
+* Логирование: `[AI] Бот Альфа: ОТВЕЧАЕТ -> "Париж"`, `[AI] ✓ ВЕРНО`, `[AI] ✗ НЕВЕРНО`.
+
+### 12. UI-улучшения лога событий
+
+* Высота панели лога: 100px → 200px.
+* Шрифт: `Consolas 12` (моноширинный).
+* Горизонтальный + вертикальный скролл.
+
 ---
 
 ## Карта проекта
@@ -115,28 +148,45 @@
 ```
 Core/
 ├── GameEngine.cs           — Ядро: состояния, банк, таймер, статистика, дуэль
-├── GameState.cs            — 13 состояний
-├── GameServer.cs           — TCP-сервер
-├── GameClient.cs           — TCP-клиент
-├── QuestionProvider.cs     — Загрузка вопросов из JSON
+├── GameState.cs            — 13 состояний (enum)
+├── Models/
+│   ├── QuestionData.cs     — Модель вопроса
+│   ├── QuestionModel.cs    — Модель для редактора
+│   └── BotDecision.cs      — Решение AI-бота (Action + Text)
+├── Services/
+│   └── QuestionProvider.cs — JSON-загрузка вопросов
 └── Analytics/
     └── StatsAnalyzer.cs    — Аналитика, tie-detection, strongest/weakest
 
+Network/
+├── GameServer.cs           — TCP-сервер (broadcast)
+├── GameClient.cs           — TCP-клиент
+├── WebRemoteController.cs  — HTTP-пульт (iPad remote)
+├── GeminiTestPlayer.cs     — AI-бот Google Gemini 2.5 Flash
+├── GeminiBotClient.cs      — AI-бот Google Gemini (расширенный)
+└── AiBotTester.cs          — AI-бот OpenAI-совместимый
+
 Views/
-├── OperatorPanel.xaml/.cs  — Главный пульт оператора
+├── OperatorPanel.xaml/.cs  — Пульт оператора (~3500 строк)
 ├── HostScreen.xaml/.cs     — Классический экран ведущего
 ├── HostScreenModern.xaml/.cs — Современный экран (2020)
 └── RoundStatsWindow.xaml/.cs — Аналитика раунда
 
 Audio/
-├── AudioManager.cs         — NAudio: Play, Stop, Crossfade
+├── AudioManager.cs         — NAudio: Play, Stop, Crossfade, Bed
 └── Assets/Audio/           — 20+ mp3-файлов
+
+Data/
+├── questions.json          — Вопросы для раундов
+└── final_questions.json    — Вопросы для финальной дуэли
 ```
 
 ---
 
 ## Предстоящие задачи
 
+- [x] ~~AI-тестирование (Gemini / OpenAI)~~ ✅
+- [ ] AI-тестирование финальной дуэли
 - [ ] Host Screen Layout Editor (визуальное перетаскивание)
 - [ ] Экран титров (автопрокрутка)
 - [ ] Валидация JSON (GUI-проверка вопросов)

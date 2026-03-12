@@ -1,0 +1,128 @@
+<UserControl x:Class="WeakestLink.Views.BroadcastScreen"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="1080" d:DesignWidth="1920">
+    
+    <Grid Background="#000000">
+        <!-- Основная сетка: левая часть для денежной цепочки, центр для контента, правая нижняя для таймера -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400"/> <!-- Левая колонка для денежной цепочки -->
+            <ColumnDefinition Width="*"/>   <!-- Центральная часть для основного контента -->
+            <ColumnDefinition Width="400"/> <!-- Правая колонка для таймера -->
+        </Grid.ColumnDefinitions>
+        
+        <!-- Денежная цепочка (слева) -->
+        <Canvas Grid.Column="0" x:Name="MoneyChainCanvas" 
+                Background="#0A0A0A" 
+                Margin="10" 
+                ClipToBounds="True"/>
+        
+        <!-- Центральная часть (основной контент) -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Верхняя панель с информацией -->
+            <StackPanel Grid.Row="0" Margin="20" Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock x:Name="RoundInfoText" 
+                           Text="РАУНД 1" 
+                           FontSize="48" 
+                           FontWeight="Bold" 
+                           Foreground="#FFD700" 
+                           FontFamily="Arial Black"/>
+                <TextBlock x:Name="BankInfoText" 
+                           Text="БАНК: 0 ₽" 
+                           FontSize="48" 
+                           FontWeight="Bold" 
+                           Foreground="#00FF00" 
+                           FontFamily="Arial Black"
+                           Margin="50,0,0,0"/>
+            </StackPanel>
+            
+            <!-- Центральная область для вопроса и контента -->
+            <Grid Grid.Row="1" Margin="20">
+                <!-- Вопрос -->
+                <TextBlock x:Name="QuestionText" 
+                           Text="" 
+                           FontSize="36" 
+                           FontWeight="Bold" 
+                           Foreground="White" 
+                           FontFamily="Arial"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"/>
+                
+                <!-- Оверлей для сообщений ведущему (суфлёр) -->
+                <Grid x:Name="HostMessageOverlay" 
+                      Background="#80000000" 
+                      Visibility="Collapsed">
+                    <TextBlock x:Name="HostMessageText" 
+                               Text="" 
+                               FontSize="72" 
+                               FontWeight="Bold" 
+                               Foreground="White" 
+                               FontFamily="Arial Black"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
+                </Grid>
+            </Grid>
+            
+            <!-- Нижняя панель с текущим игроком -->
+            <StackPanel Grid.Row="2" Margin="20" Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="ТЕКУЩИЙ ИГРОК:" 
+                           FontSize="24" 
+                           Foreground="#888888" 
+                           FontFamily="Arial"/>
+                <TextBlock x:Name="CurrentPlayerText" 
+                           Text="" 
+                           FontSize="32" 
+                           FontWeight="Bold" 
+                           Foreground="#00FFFF" 
+                           FontFamily="Arial Black"
+                           Margin="10,0,0,0"/>
+            </StackPanel>
+        </Grid>
+        
+        <!-- Таймер (справа внизу) -->
+        <Grid Grid.Column="2" VerticalAlignment="Bottom" Margin="10">
+            <!-- Контейнер таймера с фиксированными размерами -->
+            <Border Width="350" Height="120" 
+                    Background="#1A1A1A" 
+                    CornerRadius="10">
+                <Grid>
+                    <!-- Фоновое изображение таймера -->
+                    <Image x:Name="TimerBackgroundImage" 
+                           Source="/Assets/TIMER.png" 
+                           Stretch="Uniform" 
+                           Opacity="0.8"/>
+                    
+                    <!-- Текст таймера с Viewbox для автоматического масштабирования -->
+                    <Viewbox Margin="20">
+                        <TextBlock x:Name="TimerText" 
+                                   Text="2:30" 
+                                   FontSize="72" 
+                                   FontWeight="Bold" 
+                                   Foreground="White" 
+                                   FontFamily="Arial Black"
+                                   TextAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </Grid>
+        <!-- Оверлей с логотипом (LOGO) -->
+        <Grid x:Name="LogoOverlay" Grid.ColumnSpan="3" Background="Black" Visibility="Collapsed">
+            <Image x:Name="ImgLogo" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="1200" MaxHeight="800"/>
+        </Grid>
+    </Grid>
+</UserControl>

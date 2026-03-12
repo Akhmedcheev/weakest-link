@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Broadcast Layout Editor — Weakest Link</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; font-family: 'Segoe UI', sans-serif; color: #ccc; overflow: hidden; }
+
+#toolbar {
+  position: fixed; top: 0; left: 0; right: 0; height: 48px; z-index: 1000;
+  background: linear-gradient(180deg, #2a2a4e, #1a1a2e);
+  border-bottom: 1px solid #444; display: flex; align-items: center; padding: 0 16px; gap: 12px;
+}
+#toolbar button {
+  background: #3a5; color: #fff; border: none; padding: 6px 16px; border-radius: 6px;
+  cursor: pointer; font-size: 14px; font-weight: bold;
+}
+#toolbar button:hover { background: #4b6; }
+#toolbar button.danger { background: #c33; }
+#toolbar button.danger:hover { background: #d44; }
+#toolbar .sep { width: 1px; height: 28px; background: #555; }
+#toolbar label { font-size: 13px; color: #aaa; }
+
+#canvas-wrap {
+  position: fixed; top: 48px; left: 0; right: 300px; bottom: 0;
+  background: #000; overflow: hidden;
+}
+#canvas {
+  position: relative; width: 1920px; height: 1080px; background: #000;
+  transform-origin: 0 0;
+}
+
+.elem {
+  position: absolute; cursor: move; user-select: none;
+  outline: 2px solid transparent; transition: outline-color 0.15s;
+}
+.elem:hover { outline-color: rgba(0,150,255,0.5); }
+.elem.selected { outline-color: #0af; outline-width: 3px; }
+.elem img { width: 100%; height: 100%; display: block; object-fit: fill; }
+.elem .text-overlay {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Arial Black', sans-serif; font-weight: 900; color: white;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.9); cursor: move;
+}
+
+.resize-handle {
+  position: absolute; width: 12px; height: 12px; background: #0af;
+  border: 2px solid #fff; border-radius: 2px; cursor: se-resize; z-index: 10;
+  bottom: -6px; right: -6px; display: none;
+}
+.elem.selected .resize-handle { display: block; }
+
+#props {
+  position: fixed; top: 48px; right: 0; width: 300px; bottom: 0;
+  background: #151528; border-left: 1px solid #444; padding: 16px;
+  overflow-y: auto;
+}
+#props h3 { color: #6af; margin-bottom: 12px; font-size: 16px; }
+.prop-group { margin-bottom: 16px; }
+.prop-group label { display: block; font-size: 12px; color: #888; margin-bottom: 4px; }
+.prop-group input {
+  width: 100%; padding: 6px 8px; background: #222; border: 1px solid #444;
+  color: #fff; border-radius: 4px; font-size: 14px;
+}
+.prop-group input:focus { border-color: #0af; outline: none; }
+
+#output {
+  position: fixed; bottom: 0; right: 0; width: 300px; max-height: 240px;
+  background: #0a0a1e; border-top: 1px solid #444; border-left: 1px solid #444;
+  padding: 12px; overflow-y: auto; z-index: 100; font-size: 12px;
+}
+#output h4 { color: #ffa; margin-bottom: 8px; }
+#output pre { color: #8f8; white-space: pre-wrap; font-family: 'Consolas', monospace; font-size: 11px; }
+
+.elem-list { list-style: none; margin-bottom: 16px; }
+.elem-list li { padding: 6px 8px; cursor: pointer; border-radius: 4px; font-size: 13px; margin-bottom: 2px; }
+.elem-list li:hover { background: #2a2a4e; }
+.elem-list li.active { background: #1a3a6e; color: #fff; }
+
+#ctxMenu {
+  display: none; position: fixed; z-index: 9999;
+  background: #222244; border: 1px solid #66aaff; border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,100,255,0.4); padding: 6px 0;
+  min-width: 180px;
+}
+#ctxMenu .ctx-item {
+  padding: 8px 16px; cursor: pointer; font-size: 14px; color: #ccc;
+  display: flex; align-items: center; gap: 8px;
+}
+#ctxMenu .ctx-item:hover { background: #3355aa; color: #fff; }
+#ctxMenu .ctx-header {
+  padding: 6px 16px; font-size: 11px; color: #888;
+  border-bottom: 1px solid #444; margin-bottom: 4px;
+}
+</style>
+</head>
+<body>
+
+<div id="toolbar">
+  <strong style="color:#6af;font-size:15px;">🎬 Layout Editor</strong>
+  <div class="sep"></div>
+  <label>Zoom:</label>
+  <input type="range" id="zoom" min="20" max="100" value="55" style="width:120px;">
+  <span id="zoomLabel">55%</span>
+  <div class="sep"></div>
+  <button onclick="saveConfig()" style="background:#36a">💾 Сохранить JSON</button>
+  <button onclick="document.getElementById('loadFile').click()" style="background:#a63">📂 Загрузить JSON</button>
+  <input type="file" id="loadFile" accept=".json" style="display:none" onchange="loadConfig(event)">
+  <div class="sep"></div>
+  <button onclick="exportValues()">📋 Экспорт значений</button>
+  <button class="danger" onclick="resetAll()">↺ Сброс</button>
+</div>
+
+<div id="canvas-wrap">
+  <div id="canvas"></div>
+</div>
+
+<div id="props">
+  <h3>Элементы</h3>
+  <ul class="elem-list" id="elemList"></ul>
+
+  <div id="propFields" style="display:none;">
+    <h3 id="propTitle">—</h3>
+    <div class="prop-group">
+      <label>X (left)</label>
+      <input type="number" id="propX" step="1">
+    </div>
+    <div class="prop-group">
+      <label>Y (bottom)</label>
+      <input type="number" id="propY" step="1">
+    </div>
+    <div class="prop-group">
+      <label>Width</label>
+      <input type="number" id="propW" step="1">
+    </div>
+    <div class="prop-group">
+      <label>Height</label>
+      <input type="number" id="propH" step="1">
+    </div>
+    <div class="prop-group">
+      <label>Текст</label>
+      <input type="text" id="propText">
+    </div>
+    <div class="prop-group">
+      <label>Размер шрифта (%)</label>
+      <input type="number" id="propFontPct" min="10" max="100" value="45" step="1">
+    </div>
+    <div class="prop-group">
+      <label>Отступ текста снизу (%) — смещение вверх</label>
+      <input type="number" id="propTextPadBot" min="0" max="60" value="15" step="1">
+    </div>
+  </div>
+</div>
+
+<div id="output" style="display:none;">
+  <h4>📋 Экспорт</h4>
+  <pre id="exportPre"></pre>
+</div>
+
+<div id="ctxMenu">
+  <div class="ctx-header">🎯 Выбрать элемент:</div>
+</div>
+
+<script>
+const ASSET_DIR = '../Assets/Images/';
+const CANVAS_W = 1920, CANVAS_H = 1080;
+
+// Initial element definitions matching current code
+const DEFAULTS = [
+  // chain planks (bottom-up, index 0=bank, 1=1000..8=50000)
+  { id: 'bank',  label: 'БАНК',   img: 'BANK.png',          x: 6,  bottom: 30,  w: 250*0.88,  h: 120*0.88, text: '0',     fontPct: 40, textPadBot: 35 },
+  { id: 'p1000', label: '1000',   img: 'moneytree_blue.png', x: 30, bottom: 170, w: 250*0.875, h: 105*0.875, text: '1000', fontPct: 45, textPadBot: 15 },
+  { id: 'p2000', label: '2000',   img: 'moneytree_blue.png', x: 27, bottom: 270, w: 250*0.89,  h: 105*0.89,  text: '2000', fontPct: 45, textPadBot: 15 },
+  { id: 'p5000', label: '5000',   img: 'moneytree_blue.png', x: 23, bottom: 370, w: 250*0.925, h: 105*0.925, text: '5000', fontPct: 45, textPadBot: 15 },
+  { id: 'p10k',  label: '10000',  img: 'moneytree_red.png',  x: 20, bottom: 470, w: 250*0.96,  h: 105*0.96,  text: '10000', fontPct: 45, textPadBot: 15 },
+  { id: 'p20k',  label: '20000',  img: 'moneytree_blue.png', x: 16, bottom: 570, w: 250*0.995, h: 105*0.995, text: '20000', fontPct: 45, textPadBot: 15 },
+  { id: 'p30k',  label: '30000',  img: 'moneytree_blue.png', x: 12, bottom: 670, w: 250*1.03,  h: 105*1.03,  text: '30000', fontPct: 45, textPadBot: 15 },
+  { id: 'p40k',  label: '40000',  img: 'moneytree_blue.png', x: 9,  bottom: 770, w: 250*1.065, h: 105*1.065, text: '40000', fontPct: 45, textPadBot: 15 },
+  { id: 'p50k',  label: '50000',  img: 'moneytree_blue.png', x: 6,  bottom: 870, w: 250*1.12,  h: 105*1.12,  text: '50000', fontPct: 45, textPadBot: 15 },
+  // timer
+  { id: 'timer', label: 'Таймер', img: 'TIMER.png', x: CANVAS_W - 300 - 30, bottom: 30, w: 300, h: 130, text: '2:30', fontPct: 35, textPadBot: 35 },
+];
+
+let elements = [];
+let selected = null;
+let dragging = null;
+let resizing = null;
+let dragOff = { x: 0, y: 0 };
+
+function init() {
+  elements = DEFAULTS.map(d => ({ ...d }));
+  renderAll();
+  updateZoom();
+}
+
+function renderAll() {
+  const canvas = document.getElementById('canvas');
+  canvas.innerHTML = '';
+
+  elements.forEach(el => {
+    const div = document.createElement('div');
+    div.className = 'elem';
+    div.dataset.id = el.id;
+    div.style.left = el.x + 'px';
+    div.style.bottom = el.bottom + 'px';
+    div.style.width = Math.round(el.w) + 'px';
+    div.style.height = Math.round(el.h) + 'px';
+
+    const img = document.createElement('img');
+    img.src = ASSET_DIR + el.img;
+    img.draggable = false;
+    div.appendChild(img);
+
+    if (el.text) {
+      const txt = document.createElement('div');
+      txt.className = 'text-overlay';
+      txt.style.fontSize = Math.round(el.h * (el.fontPct / 100)) + 'px';
+      // Все элементы используют textPadBot для смещения текста вверх
+      txt.style.paddingBottom = Math.round(el.h * ((el.textPadBot || 0) / 100)) + 'px';
+      txt.textContent = el.text;
+      div.appendChild(txt);
+    }
+
+    const handle = document.createElement('div');
+    handle.className = 'resize-handle';
+    div.appendChild(handle);
+
+    canvas.appendChild(div);
+  });
+
+  // Делегирование событий на canvas — один обработчик для всех
+  canvas.onmousedown = function(e) {
+    // Resize handle?
+    if (e.target.classList.contains('resize-handle')) {
+      const elem = e.target.closest('.elem');
+      if (!elem) return;
+      const el = elements.find(e2 => e2.id === elem.dataset.id);
+      if (!el) return;
+      selectElem(el.id);
+      resizing = el.id;
+      e.stopPropagation();
+      e.preventDefault();
+      return;
+    }
+    // Find closest .elem (works for text, img, and div itself)
+    const elem = e.target.closest('.elem');
+    if (!elem) return;
+    const el = elements.find(e2 => e2.id === elem.dataset.id);
+    if (!el) return;
+    selectElem(el.id);
+    dragging = el.id;
+    const rect = elem.getBoundingClientRect();
+    dragOff.x = e.clientX - rect.left;
+    dragOff.y = e.clientY - rect.top;
+    e.preventDefault();
+  };
+
+  // Правая кнопка мыши — контекстное меню для выбора элемента
+  canvas.oncontextmenu = function(e) {
+    e.preventDefault();
+    const menu = document.getElementById('ctxMenu');
+    menu.querySelectorAll('.ctx-item').forEach(i => i.remove());
+    elements.forEach(el => {
+      const item = document.createElement('div');
+      item.className = 'ctx-item';
+      item.textContent = el.label + (el.text ? ' [' + el.text + ']' : '');
+      item.addEventListener('click', () => {
+        selectElem(el.id);
+        menu.style.display = 'none';
+      });
+      menu.appendChild(item);
+    });
+    menu.style.left = e.clientX + 'px';
+    menu.style.top = e.clientY + 'px';
+    menu.style.display = 'block';
+  };
+
+  // Закрытие меню по клику
+  document.addEventListener('click', () => {
+    document.getElementById('ctxMenu').style.display = 'none';
+  });
+
+  renderElemList();
+  if (selected) updateProps();
+}
+
+function selectElem(id) {
+  selected = id;
+  document.querySelectorAll('.elem').forEach(d => d.classList.toggle('selected', d.dataset.id === id));
+  document.querySelectorAll('.elem-list li').forEach(li => li.classList.toggle('active', li.dataset.id === id));
+  document.getElementById('propFields').style.display = 'block';
+  updateProps();
+}
+
+function updateProps() {
+  const el = elements.find(e => e.id === selected);
+  if (!el) return;
+  document.getElementById('propTitle').textContent = el.label;
+  document.getElementById('propX').value = Math.round(el.x);
+  document.getElementById('propY').value = Math.round(el.bottom);
+  document.getElementById('propW').value = Math.round(el.w);
+  document.getElementById('propH').value = Math.round(el.h);
+  document.getElementById('propText').value = el.text || '';
+  document.getElementById('propFontPct').value = el.fontPct || 45;
+  document.getElementById('propTextPadBot').value = el.textPadBot || 0;
+}
+
+function renderElemList() {
+  const list = document.getElementById('elemList');
+  list.innerHTML = '';
+  elements.forEach(el => {
+    const li = document.createElement('li');
+    li.dataset.id = el.id;
+    li.textContent = el.label;
+    if (el.id === selected) li.classList.add('active');
+    li.addEventListener('click', () => selectElem(el.id));
+    list.appendChild(li);
+  });
+}
+
+// Drag & Resize
+document.addEventListener('mousemove', e => {
+  const canvas = document.getElementById('canvas');
+  const zoom = parseFloat(document.getElementById('zoom').value) / 100;
+
+  if (dragging) {
+    const el = elements.find(e2 => e2.id === dragging);
+    const cRect = canvas.getBoundingClientRect();
+    const mx = (e.clientX - cRect.left) / zoom;
+    const my = (e.clientY - cRect.top) / zoom;
+    el.x = Math.round(mx - dragOff.x / zoom);
+    el.bottom = Math.round(CANVAS_H - my - el.h + dragOff.y / zoom);
+    applyPosition(el);
+    updateProps();
+  }
+
+  if (resizing) {
+    const el = elements.find(e2 => e2.id === resizing);
+    const div = canvas.querySelector(`[data-id="${el.id}"]`);
+    const cRect = canvas.getBoundingClientRect();
+    const mx = (e.clientX - cRect.left) / zoom;
+    const my = (e.clientY - cRect.top) / zoom;
+    const top = CANVAS_H - el.bottom - el.h;
+    el.w = Math.max(40, Math.round(mx - el.x));
+    el.h = Math.max(20, Math.round(my - top));
+    el.bottom = CANVAS_H - top - el.h;
+    div.style.width = Math.round(el.w) + 'px';
+    div.style.height = Math.round(el.h) + 'px';
+    div.style.bottom = el.bottom + 'px';
+    // Update text size
+    const txt = div.querySelector('.text-overlay');
+    if (txt) {
+      txt.style.fontSize = Math.round(el.h * (el.fontPct / 100)) + 'px';
+      txt.style.paddingBottom = Math.round(el.h * ((el.textPadBot || 0) / 100)) + 'px';
+    }
+    updateProps();
+  }
+});
+
+document.addEventListener('mouseup', () => {
+  dragging = null;
+  resizing = null;
+});
+
+function applyPosition(el) {
+  const div = document.querySelector(`[data-id="${el.id}"]`);
+  if (div) {
+    div.style.left = el.x + 'px';
+    div.style.bottom = el.bottom + 'px';
+  }
+}
+
+// Property inputs
+['propX', 'propY', 'propW', 'propH', 'propText', 'propFontPct', 'propTextPadBot'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    const el = elements.find(e => e.id === selected);
+    if (!el) return;
+    el.x = parseInt(document.getElementById('propX').value) || 0;
+    el.bottom = parseInt(document.getElementById('propY').value) || 0;
+    el.w = parseInt(document.getElementById('propW').value) || 40;
+    el.h = parseInt(document.getElementById('propH').value) || 20;
+    el.text = document.getElementById('propText').value;
+    el.fontPct = parseInt(document.getElementById('propFontPct').value) || 45;
+    el.textPadBot = parseInt(document.getElementById('propTextPadBot').value) || 0;
+    renderAll();
+    selectElem(el.id);
+  });
+});
+
+// Zoom
+function updateZoom() {
+  const z = parseInt(document.getElementById('zoom').value);
+  document.getElementById('zoomLabel').textContent = z + '%';
+  const canvas = document.getElementById('canvas');
+  canvas.style.transform = `scale(${z / 100})`;
+}
+document.getElementById('zoom').addEventListener('input', updateZoom);
+
+// Export
+function exportValues() {
+  const lines = ['// ═══ Broadcast Layout Values (from Editor) ═══\n'];
+  elements.forEach(el => {
+    lines.push(`// ${el.label}: X=${Math.round(el.x)}, Bottom=${Math.round(el.bottom)}, W=${Math.round(el.w)}, H=${Math.round(el.h)}, FontPct=${el.fontPct}`);
+  });
+
+  // C# constants
+  lines.push('\n// ── Размеры плашек ──');
+  const p1 = elements.find(e => e.id === 'p1000');
+  const bank = elements.find(e => e.id === 'bank');
+  const timer = elements.find(e => e.id === 'timer');
+  if (p1) {
+    lines.push(`PlankWidth  = ${Math.round(p1.w / 0.875)};  // base (before scale)`);
+    lines.push(`PlankHeight = ${Math.round(p1.h / 0.875)};  // base (before scale)`);
+  }
+  if (bank) {
+    lines.push(`BankHeight  = ${Math.round(bank.h / 0.88)};  // base (before scale)`);
+  }
+  if (timer) {
+    lines.push(`\n// ── Таймер (XAML) ──`);
+    lines.push(`Width="${Math.round(timer.w)}" Height="${Math.round(timer.h)}"`);
+    lines.push(`Margin="0,0,${CANVAS_W - Math.round(timer.x) - Math.round(timer.w)},${Math.round(timer.bottom)}"`);
+  }
+
+  // All positions
+  lines.push('\n// ── Все позиции ──');
+  elements.forEach(el => {
+    lines.push(`${el.id}: left=${Math.round(el.x)}, bottom=${Math.round(el.bottom)}, ${Math.round(el.w)}×${Math.round(el.h)}`);
+  });
+
+  const out = document.getElementById('output');
+  out.style.display = 'block';
+  document.getElementById('exportPre').textContent = lines.join('\n');
+
+  // Copy to clipboard
+  navigator.clipboard.writeText(lines.join('\n')).catch(() => {});
+}
+
+// ── Save / Load config ──
+function saveConfig() {
+  const config = {
+    version: 1,
+    date: new Date().toISOString(),
+    canvas: { w: CANVAS_W, h: CANVAS_H },
+    elements: elements.map(el => ({
+      id: el.id, label: el.label, img: el.img,
+      x: Math.round(el.x), bottom: Math.round(el.bottom),
+      w: Math.round(el.w), h: Math.round(el.h),
+      text: el.text, fontPct: el.fontPct, textPadBot: el.textPadBot || 0
+    }))
+  };
+  const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'layout_config.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function loadConfig(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const config = JSON.parse(e.target.result);
+      if (!config.elements || !Array.isArray(config.elements)) {
+        alert('Неверный формат файла!');
+        return;
+      }
+      // Merge loaded values into elements
+      config.elements.forEach(saved => {
+        const el = elements.find(e2 => e2.id === saved.id);
+        if (el) {
+          el.x = saved.x;
+          el.bottom = saved.bottom;
+          el.w = saved.w;
+          el.h = saved.h;
+          if (saved.text !== undefined) el.text = saved.text;
+          if (saved.fontPct !== undefined) el.fontPct = saved.fontPct;
+          if (saved.textPadBot !== undefined) el.textPadBot = saved.textPadBot;
+        }
+      });
+      renderAll();
+      alert('✅ Настройки загружены!');
+    } catch (err) {
+      alert('Ошибка чтения файла: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = ''; // reset to allow re-loading same file
+}
+
+function resetAll() {
+  if (confirm('Сбросить все позиции к начальным?')) {
+    init();
+  }
+}
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (!selected) return;
+  const el = elements.find(e2 => e2.id === selected);
+  if (!el) return;
+  const step = e.shiftKey ? 10 : 1;
+  switch (e.key) {
+    case 'ArrowLeft':  el.x -= step; break;
+    case 'ArrowRight': el.x += step; break;
+    case 'ArrowUp':    el.bottom += step; break;
+    case 'ArrowDown':  el.bottom -= step; break;
+    case 'Delete':     return; // don't delete elements
+    default: return;
+  }
+  e.preventDefault();
+  applyPosition(el);
+  updateProps();
+});
+
+init();
+</script>
+</body>
+</html>

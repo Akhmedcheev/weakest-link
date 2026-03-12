@@ -411,6 +411,22 @@ namespace WeakestLink.Audio
         }
 
         /// <summary>
+        /// Устанавливает текущую позицию основного аудио-канала.
+        /// </summary>
+        public void SetAudioPosition(TimeSpan position)
+        {
+            try
+            {
+                var file = _audioFile;
+                if (file != null && position >= TimeSpan.Zero && position <= file.TotalTime)
+                {
+                    file.CurrentTime = position;
+                }
+            }
+            catch { }
+        }
+
+        /// <summary>
         /// Принудительно останавливает все звуки (алиас для Stop).
         /// </summary>
         public void StopAll()

@@ -1,7 +1,7 @@
 # Подробный отчёт о прогрессе: «Слабое звено» (Weakest Link)
 
 **Статус:** PRODUCTION READY
-**Обновлено:** 07.03.2026
+**Обновлено:** 08.03.2026
 **Фреймворк:** .NET WPF (C# / XAML)
 
 ---
@@ -24,9 +24,37 @@
 
 * **TCP Server:** Пульт оператора (порт 8888).
 * **TCP Client:** Экраны ведущего, студийные мониторы.
+* **WebRemoteController:** HTTP-пульт для iPad/планшета (порт 8080/8081).
 * **Протокол:** Строковые команды — `SET_STATE`, `UPDATE_BANK`, `UPDATE_TIMER`, `QUESTION`, `CURRENT_PLAYER`, `ELIMINATE`, `DUEL_UPDATE`, `WINNER`, `HOST_MESSAGE`, `HOST_MESSAGE|CLEAR`.
 * **HOST_MESSAGE:** Суфлёр ведущего — динамические тексты для каждой фазы игры (PRE-GAME, раунд, голосование, дуэль, победа).
 * **Устойчивость:** Обработка разрывов соединений.
+
+### 2.1. AI-тестирование (`Network/Gemini*.cs`, `AiBotTester.cs`) — 100%
+
+Нагрузочное тестирование игры с помощью LLM. Три AI-клиента:
+
+| Класс | Формат API | Модель по умолчанию | Файл |
+|-------|------------|---------------------|------|
+| `GeminiTestPlayer` | Google Gemini REST | `gemini-2.5-flash` | `Network/GeminiTestPlayer.cs` |
+| `GeminiBotClient` | Google Gemini REST | `gemini-2.0-flash` | `Network/GeminiBotClient.cs` |
+| `AiBotTester` | OpenAI `/v1/chat/completions` | `gpt-4o-mini` | `Network/AiBotTester.cs` |
+
+**Общая архитектура:**
+* **BotDecision** (`Core/Models/BotDecision.cs`): `Action` ("answer"/"bank"/"pass") + `Text`.
+* **Системный промпт:** Жёсткая викторина, без подсказок, строгий JSON.
+* **Очистка маркдауна:** `Replace("```json","").Replace("```","").Trim()` перед десериализацией.
+* **Обработка ошибок:** Раздельный catch по `TaskCanceledException`, `HttpRequestException`, `JsonException` → fallback pass.
+* **DiagLog:** Двойной вывод — `Debug.WriteLine` + `LogCallback` в лог оператора.
+* **HTTP-ошибки:** Чтение тела ответа при non-2xx для отображения причины.
+
+**Интеграция в OperatorPanel (`ProcessBotTurnAsync`):**
+* Флаг `_isAutoTestRunning` + экземпляр `_aiPlayer`.
+* Меню: DEBUG → ТЕСТОВАЯ ИГРА С БОТАМИ → AI-тестирование (Gemini) → поле API-ключа + кнопка запуска.
+* 8 ботов: Бот Альфа, Бет, Гамма, Дельта, Эпсилон, Зета, Эта, Тета.
+* Цикл: `Task.Delay(2500)` → `MakeMoveAsync()` → switch(action) → `BtnBank/Correct/Wrong/Pass_Click`.
+* Ответы сравниваются с `Answer` + `AcceptableAnswers` (регистронезависимо).
+* Автозапуск при START O'CLOCK, автостоп при BREAK GAME / CLOSE SESSION / таймер.
+* Логирование: `[AI] Имя: ОТВЕЧАЕТ/БЕРЁТ БАНК/ПАСУЕТ`, `[AI] ✓ ВЕРНО`, `[AI] ✗ НЕВЕРНО`.
 
 ### 3. Аналитика (`Core/Analytics/StatsAnalyzer.cs`) — 100%
 
@@ -131,14 +159,25 @@
 Core/
 ├── GameEngine.cs           — Ядро: состояния, банк, таймер, статистика, дуэль
 ├── GameState.cs            — 13 состояний (enum)
-├── GameServer.cs           — TCP-сервер (broadcast)
-├── GameClient.cs           — TCP-клиент
-├── QuestionProvider.cs     — JSON-загрузка вопросов
+├── Models/
+│   ├── QuestionData.cs     — Модель вопроса
+│   ├── QuestionModel.cs    — Модель для редактора
+│   └── BotDecision.cs      — Решение AI-бота (Action + Text)
+├── Services/
+│   └── QuestionProvider.cs — JSON-загрузка вопросов
 └── Analytics/
     └── StatsAnalyzer.cs    — Аналитика, tie-detection, strongest/weakest
 
+Network/
+├── GameServer.cs           — TCP-сервер (broadcast)
+├── GameClient.cs           — TCP-клиент
+├── WebRemoteController.cs  — HTTP-пульт (iPad remote)
+├── GeminiTestPlayer.cs     — AI-бот Google Gemini 2.5 Flash (основной)
+├── GeminiBotClient.cs      — AI-бот Google Gemini (расширенный)
+└── AiBotTester.cs          — AI-бот OpenAI-совместимый (ChatGPT, DeepSeek, Ollama)
+
 Views/
-├── OperatorPanel.xaml/.cs  — Пульт оператора (~3300 строк)
+├── OperatorPanel.xaml/.cs  — Пульт оператора (~3500 строк)
 ├── HostScreen.xaml/.cs     — Классический экран ведущего
 ├── HostScreenModern.xaml/.cs — Современный экран (2020)
 └── RoundStatsWindow.xaml/.cs — Окно аналитики раунда
@@ -171,13 +210,14 @@ Data/
 
 ## Предстоящие задачи
 
+- [x] ~~Студийное нагрузочное тестирование (AI Gemini / OpenAI)~~ ✅
+- [ ] AI-тестирование финальной дуэли
 - [ ] Host Screen Layout Editor
 - [ ] Экран титров (автопрокрутка)
 - [ ] Валидация JSON (GUI)
 - [ ] Интеграция с OBS/vMix (Alpha Channel)
 - [ ] Экспорт статистики (CSV/PDF)
 - [ ] Настройка пресетов игроков из TXT
-- [ ] Студийное нагрузочное тестирование
 
 ---
 

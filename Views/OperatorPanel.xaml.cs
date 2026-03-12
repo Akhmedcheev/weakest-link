@@ -14,11 +14,14 @@ using WeakestLink.Core.Services;
 using WeakestLink.Network;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using System.Text.Json;
 using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Animation;
 using QRCoder;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -28,10 +31,27 @@ namespace WeakestLink.Views
 {
     public partial class OperatorPanel : Window
     {
+        /// Длительность отбивки в начале раундового трека (мс).
+        /// Таймер игры стартует ПОСЛЕ этой задержки.
+        /// Подстройка: если гонг приходит позже нуля — увеличить, раньше — уменьшить.
+        private int TRACK_INTRO_BEAT_MS = 100;
+
         // Цветовые подсказки для UpdateButtonStates (UI Hygiene)
         private static readonly SolidColorBrush BrushActiveGreen = new SolidColorBrush(Color.FromRgb(0x4C, 0xAF, 0x50));
         private static readonly SolidColorBrush BrushActiveRed = new SolidColorBrush(Color.FromRgb(0xD3, 0x2F, 0x2F));
         private static readonly SolidColorBrush BrushBankOrange = new SolidColorBrush(Color.FromRgb(0xCC, 0x88, 0x00));
+
+        // Timer Hub adaptive color brushes (Segmented Fill Style)
+        private static readonly Color HubColorNormal   = Color.FromRgb(0x00, 0x4D, 0x60);  // Deep stee-blue
+        private static readonly Color HubColorGlow     = Color.FromRgb(0x00, 0xAE, 0xEF);  // Bright Cyan Glow
+        private static readonly Color HubColorCritical = Color.FromRgb(0x8B, 0x00, 0x00);  // Deep red
+        private static readonly Color HubDotBorder     = Color.FromRgb(0x1A, 0x1A, 0x1A);  // Thin gunmetal
+        private static readonly SolidColorBrush TimerBrushNormal   = new(HubColorGlow);
+        private static readonly SolidColorBrush TimerBrushCritical = new(HubColorCritical);
+        private bool _timerPulseRunning = false;
+        private readonly List<System.Windows.Controls.Border> _hubDots = new();
+        private int _hubTotalDots = 0;
+        private int _hubRoundDuration = 0;
         private static readonly SolidColorBrush BrushPassNeutral = new SolidColorBrush(Color.FromRgb(0x60, 0x7D, 0x8B));
         private static readonly SolidColorBrush BrushPlayBlue = new SolidColorBrush(Color.FromRgb(0x21, 0x96, 0xF3));
         private static readonly SolidColorBrush BrushStartClock = new SolidColorBrush(Color.FromRgb(0x00, 0x88, 0x00));
@@ -48,6 +68,10 @@ namespace WeakestLink.Views
         // Voting timer fields removed — voting system pending redesign
         private HostScreen _hostScreen;
         private HostScreenModern _hostModernScreen;
+        private HostScreenPremium _hostPremiumScreen;
+        private HostScreenModernPremium _hostModernPremiumScreen;
+        private BroadcastWindow? _broadcastWindow;
+        private AudienceScreen? _audienceScreen;
         private QuestionData? _currentQuestion;
         private int _timeLeftSeconds = 150;
         private int _questionCount = 0;
@@ -66,6 +90,12 @@ namespace WeakestLink.Views
             public string ValueDisplay => Value.ToString("N0") + " ₽";
             public string Background => IsActive ? "#FFD700" : "#1e1f22";
             public string TextColor => IsActive ? "#1a1a1a" : "White";
+        }
+        
+        public class EliminationComboItem
+        {
+            public string Name { get; set; } = "";
+            public string TextColor { get; set; } = "#dbdee1";
         }
 
         // Smart Roster: карточка игрока с разделением игровых и эфирных данных
@@ -104,7 +134,13 @@ namespace WeakestLink.Views
 
             public string ConsoleDisplay => $"Пульт {ConsoleNumber}";
 
-            // Строка для суфлёра: "Вадим Петров, слесарь из Омска"
+            private bool _isLocked;
+            public bool IsLocked
+            {
+                get => _isLocked;
+                set { _isLocked = value; OnPropertyChanged(nameof(IsLocked)); }
+            }
+
             public string PrompterLine =>
                 string.IsNullOrWhiteSpace(CityDesc) ? FullName.Trim()
                                                     : $"{FullName.Trim()}, {CityDesc.Trim()}";
@@ -131,7 +167,6 @@ namespace WeakestLink.Views
         private bool _isSuddenDeathMusicPlayed = false;
         private System.Windows.Shapes.Ellipse[] _p1Circles;
         private System.Windows.Shapes.Ellipse[] _p2Circles;
-        private RoundStatsWindow _statsWindow;
         private StatsAnalyzer _statsAnalyzer;
         private DispatcherTimer _autoBotTimer = null!;
         private DispatcherTimer? _timeOutGeneralBedFallbackTimer;
@@ -141,6 +176,7 @@ namespace WeakestLink.Views
         private Dictionary<string, string> _botVotes = new();
         private string _currentTestModeLabel = "";
         private bool _isAutoTestRunning = false;
+        private bool _isSessionStarted = false;
         private GeminiTestPlayer? _aiPlayer;
 
         public OperatorPanel()
@@ -309,6 +345,49 @@ namespace WeakestLink.Views
             UpdateButtonStates();
             UpdateOperationalHints();
             Log("Пульт оператора инициализирован. Состояние: Idle.");
+            
+            SetCentralContext("SETUP");
+        }
+
+        /// <summary>
+        /// При закрытии окна оператора: предупреждение + закрытие всех экранов ведущего.
+        /// </summary>
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
+            // Если уже подтверждено (повторный вызов при принудительном закрытии) — пропускаем диалог
+            if (_closingConfirmed) return;
+
+            // Показываем кастомный диалог подтверждения
+            var result = DarkMessageBox.Show(
+                "Вы закрываете пульт оператора.\n\nВсе экраны ведущего также будут закрыты.",
+                "Закрыть приложение?",
+                MessageBoxButton.OKCancel,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes)
+            {
+                // Отменяем закрытие
+                e.Cancel = true;
+                return;
+            }
+
+            // Подтверждено — закрываем все экраны ведущего
+            _closingConfirmed = true;
+            CloseAllHostScreens();
+        }
+
+        private bool _closingConfirmed = false;
+
+        private void CloseAllHostScreens()
+        {
+            try { if (_hostScreen        != null && _hostScreen.IsLoaded)              _hostScreen.Close(); }              catch { }
+            try { if (_hostModernScreen  != null && _hostModernScreen.IsLoaded)        _hostModernScreen.Close(); }        catch { }
+            try { if (_hostPremiumScreen != null && _hostPremiumScreen.IsLoaded)       _hostPremiumScreen.Close(); }       catch { }
+            try { if (_hostModernPremiumScreen != null && _hostModernPremiumScreen.IsLoaded) _hostModernPremiumScreen.Close(); } catch { }
+            try { if (_broadcastWindow != null && _broadcastWindow.IsLoaded) _broadcastWindow.Close(); } catch { }
+            try { if (_audienceScreen  != null && _audienceScreen.IsLoaded)  _audienceScreen.Close();  } catch { }
         }
 
         private void HandleRemoteCommand(string action)
@@ -316,27 +395,27 @@ namespace WeakestLink.Views
             switch (action)
             {
                 case "BANK":
-                    if (GridGameControls.Visibility == Visibility.Visible)
+                    if (PlayContext.Visibility == Visibility.Visible)
                         BtnBank_Click(null, null);
                     break;
                 case "CORRECT":
                     if (HeadToHeadPanel.Visibility == Visibility.Visible)
                         BtnDuelCorrect_Click(null, null);
-                    else if (GridGameControls.Visibility == Visibility.Visible)
+                    else if (PlayContext.Visibility == Visibility.Visible)
                         BtnCorrect_Click(null, null);
                     break;
                 case "WRONG":
                     if (HeadToHeadPanel.Visibility == Visibility.Visible)
                         BtnDuelWrong_Click(null, null);
-                    else if (GridGameControls.Visibility == Visibility.Visible)
+                    else if (PlayContext.Visibility == Visibility.Visible)
                         BtnWrong_Click(null, null);
                     break;
                 case "PASS":
-                    if (GridGameControls.Visibility == Visibility.Visible)
+                    if (PlayContext.Visibility == Visibility.Visible)
                         BtnPass_Click(null, null);
                     break;
                 case "NEXT":
-                    if (GridGameControls.Visibility == Visibility.Visible)
+                    if (PlayContext.Visibility == Visibility.Visible)
                         BtnNextQuestion_Click(null, null);
                     else if (HeadToHeadPanel.Visibility == Visibility.Visible && BtnStartDuel.Visibility == Visibility.Visible)
                         BtnStartDuel_Click(null, null);
@@ -555,6 +634,8 @@ namespace WeakestLink.Views
                     {
                         _hostScreen?.ShowRoundSummary(_lastRoundBankForSummary);
                         _hostModernScreen?.ShowRoundSummary(_lastRoundBankForSummary);
+                        _hostPremiumScreen?.ShowRoundSummary(_lastRoundBankForSummary);
+                        _hostModernPremiumScreen?.ShowRoundSummary(_lastRoundBankForSummary);
                     }
                     _fullBankTriggered = false;
 
@@ -571,7 +652,9 @@ namespace WeakestLink.Views
                     _votingTimer?.Stop();
                     _votingTimer = null;
                     TxtTimerLabel.Text = "ТАЙМЕР";
-                    TxtTimer.Foreground = Brushes.Yellow;
+                    TxtTimer.Foreground = TimerBrushNormal;
+                    ApplyTimerGlow(HubColorNormal);
+                    StopTimerPulse();
                     StartingPlayerTextBlock.Text = "—";
                     StartingPlayerTextBlock.Foreground = new SolidColorBrush(Color.FromRgb(0x88, 0x88, 0x88));
                 }
@@ -591,6 +674,8 @@ namespace WeakestLink.Views
 
                     _hostScreen?.ShowDiscussion();
                     _hostModernScreen?.ShowDiscussion();
+                    _hostPremiumScreen?.ShowDiscussion();
+                    _hostModernPremiumScreen?.ShowDiscussion();
 
                     if (_statsAnalyzer.IsTieDetected(_botVotes))
                     {
@@ -618,7 +703,21 @@ namespace WeakestLink.Views
                     }
                     else
                     {
-                        EliminationComboBox.ItemsSource = _engine.ActivePlayers;
+                        var sortedPlayers = _statsAnalyzer.GetSortedPlayersByPerformanceDesc(
+                            Math.Max(0, _engine.GetRoundDuration() - _timeLeftSeconds)
+                        );
+                        
+                        var analytics = _statsAnalyzer.AnalyzeRound(Math.Max(0, _engine.GetRoundDuration() - _timeLeftSeconds));
+                        string predictedElimination = analytics.EliminationPrediction;
+                        
+                        var items = sortedPlayers.Select(p => new EliminationComboItem 
+                        { 
+                            Name = p,
+                            TextColor = (p == predictedElimination) ? "#da373c" : "#dbdee1"
+                        }).ToList();
+                        
+                        EliminationComboBox.ItemsSource = items;
+                        
                         _tiedPlayerNames = null;
                         _tieStrongestLink = null;
                     }
@@ -628,6 +727,8 @@ namespace WeakestLink.Views
                 {
                     _hostScreen?.ShowReveal(_lastRoundBankForSummary);
                     _hostModernScreen?.ShowReveal(_lastRoundBankForSummary);
+                    _hostPremiumScreen?.ShowReveal(_lastRoundBankForSummary);
+                    _hostModernPremiumScreen?.ShowReveal(_lastRoundBankForSummary);
                 }
                 if (e.OldState == GameState.Reveal && e.NewState != GameState.Reveal)
                 {
@@ -635,7 +736,7 @@ namespace WeakestLink.Views
                     RevealProgressPanel.Visibility = Visibility.Collapsed;
                 }
                 
-                if (e.NewState == GameState.RoundSummary || e.NewState == GameState.Voting || e.NewState == GameState.Discussion || e.NewState == GameState.Reveal || e.NewState == GameState.Elimination || e.NewState == GameState.RoundReady)
+                if (e.NewState == GameState.RoundSummary || e.NewState == GameState.Voting || e.NewState == GameState.Discussion || e.NewState == GameState.Reveal || e.NewState == GameState.Elimination)
                 {
                     TxtCurrentQuestion.Text = "";
                     TxtCurrentAnswer.Text = "ОТВЕТ: —";
@@ -644,6 +745,8 @@ namespace WeakestLink.Views
                     {
                         _hostScreen?.ClearQuestionAndTimer();
                         _hostModernScreen?.ClearQuestionAndTimer();
+                        _hostPremiumScreen?.ClearQuestionAndTimer();
+                        _hostModernPremiumScreen?.ClearQuestionAndTimer();
                     }
                 }
                 
@@ -662,8 +765,9 @@ namespace WeakestLink.Views
                 // При выходе из Playing — возврат к RoundReadyState (список игроков и т.п.)
                 if (e.OldState == GameState.Playing && e.NewState != GameState.Playing)
                 {
-                    TxtTimer.Foreground = Brushes.Yellow;
-                    VisualStateManager.GoToElementState(MainContentGrid, "RoundReadyState", true);
+                    TxtTimer.Foreground = TimerBrushNormal;
+                    ApplyTimerGlow(HubColorNormal);
+                    StopTimerPulse();
                 }
                 
                 UpdateStateButtons(e.NewState);
@@ -717,6 +821,8 @@ namespace WeakestLink.Views
             string status;
             string hint;
             SolidColorBrush bg;
+
+
 
             switch (state)
             {
@@ -899,6 +1005,22 @@ namespace WeakestLink.Views
                 TxtRoundBank.Text = e.RoundBank.ToString("N0");
                 TxtTotalBank.Text = e.TotalBank.ToString("N0");
                 TxtRound.Text = e.CurrentRound.ToString();
+
+                // Обновляем видимую статусную панель
+                TxtCurrentBank.Text = e.RoundBank.ToString("N0");
+                TxtRoundNumber.Text = e.CurrentRound == 0 ? "—" : e.CurrentRound.ToString();
+                if (TxtRoundNumberCenter != null)
+                {
+                    TxtRoundNumberCenter.Text = e.CurrentRound == 0 ? "—" : e.CurrentRound.ToString();
+                    TimerArchBorder.Visibility = e.CurrentRound > 0 ? Visibility.Visible : Visibility.Collapsed;
+                }
+
+                // Обновляем левый мини-сайдбар
+                TxtCurrentBank_Side.Text = e.RoundBank.ToString("N0");
+                TxtTotalBank_Side.Text = e.TotalBank.ToString("N0");
+                TxtRoundNumber_Side.Text = e.CurrentRound == 0 ? "—" : e.CurrentRound.ToString();
+                
+
                 
                 if (!string.IsNullOrEmpty(e.CurrentPlayerTurn))
                 {
@@ -911,6 +1033,10 @@ namespace WeakestLink.Views
                 // Синхронизация с экраном ведущего и сетью
                 _hostScreen?.UpdateBank(e.CurrentChainIndex, e.RoundBank);
                 _hostModernScreen?.UpdateBank(e.CurrentChainIndex, e.RoundBank);
+                _hostPremiumScreen?.UpdateBank(e.CurrentChainIndex, e.RoundBank);
+                _hostModernPremiumScreen?.UpdateBank(e.CurrentChainIndex, e.RoundBank);
+                if (_broadcastWindow != null && _broadcastWindow.IsLoaded) _broadcastWindow.UpdateBank(e.CurrentChainIndex, e.RoundBank);
+                if (_audienceScreen  != null && _audienceScreen.IsLoaded)  _audienceScreen.UpdateBank(e.CurrentChainIndex, e.RoundBank);
                 _server.Broadcast($"UPDATE_BANK|{e.CurrentChainIndex}|{e.RoundBank}");
 
                 // Логирование важных финансовых операций
@@ -938,9 +1064,13 @@ namespace WeakestLink.Views
                         if (_engine.ActivePlayers.Count == 2)
                         {
                             int rawBank = _engine.RoundBank;
+                            _lastRoundBankForSummary = rawBank;
                             _engine.ApplyRoundBankToTotal();
                             VotingBorder.Visibility = Visibility.Collapsed;
                             BtnToFinal.Visibility = Visibility.Visible;
+                            BtnToFinal.IsEnabled = true;
+                            BtnToFinal.Background = BrushActiveGreen;
+                            BtnToFinal.Foreground = Brushes.White;
 
                             _server.Broadcast($"HOST_MESSAGE|В этом раунде вы заработали {rawBank:N0} руб. Мы удваиваем эту сумму!\nВаш общий призовой фонд сегодня составляет {_engine.TotalBank:N0} рублей.");
                             SetOperatorAction($"Банк 7-го раунда удвоен! Итого: {_engine.TotalBank:N0} ₽");
@@ -949,8 +1079,11 @@ namespace WeakestLink.Views
                             _audioManager.Play("Assets/Audio/Full_Bank_End.mp3", loop: false);
                             _hostScreen?.ShowFullBank(_engine.TotalBank);
                             _hostModernScreen?.ShowFullBank(_engine.TotalBank);
+                            _hostPremiumScreen?.ShowFullBank(_engine.TotalBank);
+                            _hostModernPremiumScreen?.ShowFullBank(_engine.TotalBank);
 
                             _engine.TransitionTo(GameState.Idle);
+                            OpenRoundAnalytics();
                         }
                         else
                         {
@@ -962,6 +1095,8 @@ namespace WeakestLink.Views
                             _audioManager.Play("Assets/Audio/Full_Bank_End.mp3", loop: false);
                             _hostScreen?.ShowFullBank(_lastRoundBankForSummary);
                             _hostModernScreen?.ShowFullBank(_lastRoundBankForSummary);
+                            _hostPremiumScreen?.ShowFullBank(_lastRoundBankForSummary);
+                            _hostModernPremiumScreen?.ShowFullBank(_lastRoundBankForSummary);
 
                             _engine.TransitionTo(GameState.RoundSummary);
                         }
@@ -987,6 +1122,8 @@ namespace WeakestLink.Views
                 TxtCurrentAnswer.Text = "ОТВЕТ: —";
                 _hostScreen?.UpdateQuestion(timeoutMessage, "—", _questionCount);
                 _hostModernScreen?.UpdateQuestion(timeoutMessage, "—", _questionCount);
+                _hostPremiumScreen?.UpdateQuestion(timeoutMessage, "—", _questionCount);
+                _hostModernPremiumScreen?.UpdateQuestion(timeoutMessage, "—", _questionCount);
                 _server.Broadcast($"QUESTION|{timeoutMessage}|—|{_questionCount}");
             }
 
@@ -1008,11 +1145,19 @@ namespace WeakestLink.Views
                         if (_engine.ActivePlayers.Count == 2)
                         {
                             int rawBank = _engine.RoundBank;
+                            _lastRoundBankForSummary = rawBank;
                             _engine.ApplyRoundBankToTotal();
 
                             _server.Broadcast($"HOST_MESSAGE|В этом раунде вы заработали {rawBank:N0} руб. Мы удваиваем эту сумму!\nВаш общий призовой фонд сегодня составляет {_engine.TotalBank:N0} рублей.");
                             SetOperatorAction($"Банк 7-го раунда удвоен! Итого: {_engine.TotalBank:N0} ₽");
                             Log($"Префинал завершён. Банк {rawBank} ₽ × 2 = {rawBank * 2} ₽. Итого: {_engine.TotalBank} ₽.");
+
+                            _currentQuestion = null;
+                            UpdateQuestionDisplay();
+
+                            _engine.TransitionTo(GameState.Idle);
+                            _eliminationPerformedThisRound = true;
+                            _audioManager.PlayBed("general_bed.mp3", loop: true);
 
                             VotingBorder.Visibility = Visibility.Collapsed;
                             BtnToFinal.Visibility = Visibility.Visible;
@@ -1020,20 +1165,19 @@ namespace WeakestLink.Views
                             BtnToFinal.Background = BrushActiveGreen;
                             BtnToFinal.Foreground = Brushes.White;
 
-                            _audioManager.OnMainPlaybackCompleted = () =>
-                                Dispatcher.BeginInvoke(() => _audioManager.PlayBed("general_bed.mp3"));
-
-                            _engine.TransitionTo(GameState.Idle);
-                            Log("Нажмите ПЕРЕЙТИ К ФИНАЛУ.");
+                            OpenRoundAnalytics();
+                            Log("Нажмите ПЕРЕЙТИ К ФИНАЛУ в карточке аналитики.");
                         }
                         else
                         {
                             _lastRoundBankForSummary = _engine.RoundBank;
                             _engine.ApplyRoundBankToTotal();
-                            Log($"Время вышло. Банк раунда ({_lastRoundBankForSummary} ₽) добавлен в общий. Переход к итогам.");
+                            Log($"Время вышло. Банк раунда ({_lastRoundBankForSummary} ₽) добавлен в общий.");
 
-                            _audioManager.StartBedWithFadeIn("general_bed.mp3", 3.0);
+                            _currentQuestion = null;
+                            UpdateQuestionDisplay();
 
+                            _audioManager.StartBedWithFadeIn("general_bed.mp3", 2.0);
                             _engine.TransitionTo(GameState.RoundSummary);
                         }
                     }
@@ -1047,8 +1191,42 @@ namespace WeakestLink.Views
 
         private void ResetTimer(int seconds)
         {
+            _hubRoundDuration = seconds > 0 ? seconds : 1; // avoid division by zero
             _timeLeftSeconds = seconds;
+            GenerateTimerHubDots(seconds);
             UpdateTimerDisplay();
+        }
+
+        /// <summary>
+        /// Generates exactly 20 time-segment dots per wing, representing blocks of seconds.
+        /// Dots are styled as outlines with near-black centers to leave a "depression" when faded.
+        /// </summary>
+        private void GenerateTimerHubDots(int totalSeconds)
+        {
+            _hubDots.Clear();
+            _hubTotalDots = 0;
+        }
+
+        private System.Windows.Controls.Border CreateHubDot()
+        {
+            var dot = new System.Windows.Controls.Border
+            {
+                Width = 12,
+                Height = 12,
+                CornerRadius = new CornerRadius(6),
+                Background = new SolidColorBrush(Colors.Transparent), // Transparent inside
+                BorderBrush = new SolidColorBrush(HubDotBorder), // Thin gunmetal
+                BorderThickness = new Thickness(1),
+                Margin = new Thickness(2, 0, 2, 0),
+            };
+            dot.Effect = new DropShadowEffect
+            {
+                Color = HubColorGlow, // Bright cyan glow
+                BlurRadius = 10,
+                ShadowDepth = 0,
+                Opacity = 0.0
+            };
+            return dot;
         }
 
         private void UpdateTimerDisplay()
@@ -1057,16 +1235,145 @@ namespace WeakestLink.Views
             int seconds = _timeLeftSeconds % 60;
             string timeStr = $"{minutes}:{seconds:D2}";
             TxtTimer.Text = timeStr;
+            TxtTimer_Side.Text = timeStr;
 
-            if (_engine.CurrentState == GameState.Playing && _timeLeftSeconds <= 10 && _timeLeftSeconds > 0)
-                TxtTimer.Foreground = Brushes.Red;
+            // Determine active color tier
+            Color activeColor;
+            Color activeGlowColor;
+            bool isCritical = false;
+            if (_engine.CurrentState == GameState.Playing && _timeLeftSeconds > 0 && _timeLeftSeconds <= 10)
+            {
+                activeColor = HubColorCritical;
+                activeGlowColor = HubColorCritical;
+                isCritical = true;
+            }
             else
-                TxtTimer.Foreground = Brushes.Yellow;
+            {
+                activeColor = HubColorNormal;
+                activeGlowColor = HubColorGlow;
+            }
+
+            // Apply color to timer digits (white normally, red when critical)
+            var timerBrush = isCritical ? new SolidColorBrush(Colors.Red) : new SolidColorBrush(Colors.White);
+            TxtTimer.Foreground = timerBrush;
+            TxtTimer_Side.Foreground = timerBrush;
+
+            // Apply glow to timer text and arch
+            ApplyTimerGlow(activeGlowColor);
+
+            // Pulse animation for critical state
+            if (isCritical)
+                StartTimerPulse();
+            else
+                StopTimerPulse();
+
+            // Smooth dot dimming logic (Energy Filling effect)
+            if (_hubTotalDots > 0)
+            {
+                UpdateHubDots(activeColor, activeGlowColor);
+            }
 
             if (_hostScreen != null && _hostScreen.IsLoaded)
                 _hostScreen.UpdateTimer(timeStr);
             if (_hostModernScreen != null && _hostModernScreen.IsLoaded)
                 _hostModernScreen.UpdateTimer(timeStr);
+            if (_hostPremiumScreen != null && _hostPremiumScreen.IsLoaded)
+                _hostPremiumScreen.UpdateTimer(timeStr);
+            if (_hostModernPremiumScreen != null && _hostModernPremiumScreen.IsLoaded)
+                _hostModernPremiumScreen.UpdateTimer(timeStr);
+            if (_broadcastWindow != null && _broadcastWindow.IsLoaded)
+                _broadcastWindow.UpdateTimer(timeStr, _timeLeftSeconds);
+            if (_audienceScreen != null && _audienceScreen.IsLoaded)
+                _audienceScreen.UpdateTimer(timeStr, _timeLeftSeconds);
+        }
+
+        /// <summary>
+        /// Smoothly dims dots from edges toward center based on exact elapsed fractional time.
+        /// As time passes, segments un-fill (fade out completely to 0 opacity), leaving only outline.
+        /// </summary>
+        private void UpdateHubDots(Color fillColor, Color glowColor)
+        {
+            if (_hubDots.Count == 0 || _hubRoundDuration <= 0) return;
+
+            int totalDots = _hubDots.Count;
+            int dotsPerWing = totalDots / 2;
+            double timePerDot = (double)_hubRoundDuration / dotsPerWing;
+            double elapsed = _hubRoundDuration - _timeLeftSeconds;
+
+            for (int i = 0; i < totalDots; i++)
+            {
+                // index 0..19 is Left Wing (inner to outer). index 20..39 is Right Wing (inner to outer).
+                int distanceFromCenter = i % dotsPerWing;
+                
+                // Fading happens from edges to center. So the outer edge (highest distance) fades first (burnIndex = 0).
+                int burnIndex = (dotsPerWing - 1) - distanceFromCenter;
+
+                var dot = _hubDots[i];
+
+                double dotStartTime = burnIndex * timePerDot;
+                double dotEndTime = (burnIndex + 1) * timePerDot;
+
+                double progress = 0; // 0 = fully active (filled), 1 = fully extinguished (empty contour)
+                if (elapsed >= dotEndTime) progress = 1.0;
+                else if (elapsed <= dotStartTime) progress = 0.0;
+                else progress = (elapsed - dotStartTime) / timePerDot;
+
+                // Filling transition: Outline remains solid, Background Fill & Glow fade smoothly
+                dot.Background = new SolidColorBrush(fillColor) { Opacity = 1 - progress };
+                
+                if (dot.Effect is DropShadowEffect eff)
+                {
+                    eff.Color = glowColor;
+                    eff.Opacity = 0.8 * (1 - progress);
+                }
+            }
+        }
+
+        private void ApplyTimerGlow(Color glowColor)
+        {
+            if (TxtTimer.Effect is DropShadowEffect glow)
+                glow.Color = glowColor;
+            if (TimerArchBorder?.Effect is DropShadowEffect archGlow)
+            {
+                archGlow.Color = glowColor;
+                // Leave the BlurRadius to be managed by the Storyboard (breathing) when critical
+            }
+        }
+
+        private void StartTimerPulse()
+        {
+            if (_timerPulseRunning) return;
+            _timerPulseRunning = true;
+                // Timer pulse removed (simple timer)
+                try
+                {
+                    if (TimerArchBorder?.Parent is FrameworkElement parent
+                        && parent.Resources.Contains("TimerHubPulseStoryboard"))
+                    {
+                        var sb = (Storyboard)parent.Resources["TimerHubPulseStoryboard"];
+                        sb.Begin();
+                    }
+                }
+            catch { /* storyboard not found — silent */ }
+        }
+
+        private void StopTimerPulse()
+        {
+            if (!_timerPulseRunning) return;
+            _timerPulseRunning = false;
+                // Timer pulse removed (simple timer)
+                try
+                {
+                    if (TimerArchBorder?.Parent is FrameworkElement parent
+                        && parent.Resources.Contains("TimerHubPulseStoryboard"))
+                    {
+                        var sb = (Storyboard)parent.Resources["TimerHubPulseStoryboard"];
+                        sb.Stop();
+                    }
+                    if (TimerArchBorder != null)
+                        TimerArchBorder.Opacity = 1.0;
+                }
+            catch { /* storyboard not found — silent */ }
         }
 
         // VotingDictorStatusTimer_Tick removed — voting system pending redesign
@@ -1205,7 +1512,20 @@ namespace WeakestLink.Views
         {
             try
             {
+                if ((_engine.ActivePlayers.Count <= 2 && _engine.CurrentRound > 0) || _engine.CurrentRound >= 7)
+                {
+                    if (TglAutoBot != null && TglAutoBot.IsChecked == true)
+                    {
+                        TglAutoBot.IsChecked = false;
+                        _autoBotTimer?.Stop();
+                    }
+                    
+                    DarkMessageBox.Show("Осталось 2 игрока! Обычные раунды больше недоступны. Используйте кнопку ТО FINAL для запуска финала.", "Достигнут финал", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 _nextRoundUsed = false;
+                _eliminationPerformedThisRound = false;
                 SetOperatorAction("Подготовка раунда");
                 if (_engine.CurrentState == GameState.RoundReady && BtnBotTurn.Visibility != Visibility.Visible)
                     return;
@@ -1226,6 +1546,11 @@ namespace WeakestLink.Views
                     _engine.PrepareNewRound();
                 }
                 TxtRound.Text = _engine.CurrentRound.ToString();
+                if (TxtRoundNumberCenter != null)
+                {
+                    TxtRoundNumberCenter.Text = _engine.CurrentRound.ToString();
+                    TimerArchBorder.Visibility = _engine.CurrentRound > 0 ? Visibility.Visible : Visibility.Collapsed;
+                }
 
                 _audioManager.PlayBed("playgame_with_general_bed.mp3", loop: false);
                 _server.Broadcast("CLEAR_ELIMINATION");
@@ -1236,14 +1561,8 @@ namespace WeakestLink.Views
                 _server.Broadcast($"UPDATE_TIMER|{_timeLeftSeconds}");
                 _server.Broadcast($"CURRENT_PLAYER|{_engine.CurrentPlayerTurn}");
 
-                _currentQuestion = _questionProvider.GetRandomQuestion();
-
-                // 2. Безопасная проверка загрузки вопроса
-                if (_currentQuestion == null)
-                {
-                    Log("ОШИБКА: Вопросы не загружены. Проверьте файл в папке bin.");
-                    return;
-                }
+                _questionCount = 0;
+                LoadNextQuestion();
 
                 _engine.TransitionTo(GameState.RoundReady);
 
@@ -1253,28 +1572,27 @@ namespace WeakestLink.Views
                     : $"Раунд {_engine.CurrentRound}. Начинаем с {firstPlayer}. Время пошло!";
                 _server.Broadcast($"HOST_MESSAGE|{prompterText}");
 
-                // Переключаем панели СРАЗУ: оператор видит боевой пульт и вопрос до старта таймера
-                SetupPanel.Visibility = Visibility.Collapsed;
-                GamePlayPanel.Visibility = Visibility.Collapsed;
+                SetCentralContext("PLAY");
+                GamePlayPanel.Visibility = Visibility.Visible;
                 HeadToHeadPanel.Visibility = Visibility.Collapsed;
                 WinnerPanel.Visibility = Visibility.Collapsed;
-                GridGameControls.Visibility = Visibility.Visible;
                 UpdateBankChainUI();
 
-                // Отображаем вопрос через штатный метод (обновляет все TextBlock-и, host screen, сеть)
-                UpdateQuestionDisplay();
                 TxtRoundBank.Text = _engine.RoundBank.ToString("N0");
                 TxtTotalBank.Text = _engine.TotalBank.ToString("N0");
 
                 StartingPlayerTextBlock.Text = $"НАЧИНАЕТ: {_engine.CurrentPlayerTurn.ToUpper()}";
                 StartingPlayerTextBlock.Foreground = new SolidColorBrush(Colors.Yellow);
 
+                // ФИНАЛЬНЫЙ ПИНОК: гарантируем обновление UI после всех переключений контекста
+                UpdateQuestionDisplay();
+
                 // Кнопки ещё неактивны — ждём START O'CLOCK
                 BtnCorrect.IsEnabled = false;
                 BtnIncorrect.IsEnabled = false;
                 BtnWrong.IsEnabled = false;
                 BtnBank.IsEnabled = false;
-                BtnPass.IsEnabled = false;
+                if (BtnPass != null) BtnPass.IsEnabled = false;
 
                 BtnPlay.IsEnabled = true;
                 BtnGamePlayPlay.IsEnabled = true;
@@ -1292,9 +1610,14 @@ namespace WeakestLink.Views
         {
             try
             {
+                BtnPlay.IsEnabled = false;
+                SetButtonDisabled(BtnPlay);
+                BtnGamePlayPlay.IsEnabled = false;
+                BtnGamePlayPlay.Background = new SolidColorBrush(Color.FromRgb(0x22, 0x22, 0x22));
+                BtnGamePlayPlay.Foreground = new SolidColorBrush(Color.FromRgb(0x55, 0x55, 0x55));
+
                 SetOperatorAction("Таймер запущен (START O'CLOCK)");
                 _server.Broadcast("HOST_MESSAGE|CLEAR");
-                // 1. Запуск логики раунда (таймер и музыка)
                 string fileName = _engine.CurrentRound switch
                 {
                     1 => "Round_bed_(230).mp3",
@@ -1310,7 +1633,8 @@ namespace WeakestLink.Views
                 if (test30)
                 {
                     int fullRoundDuration = _engine.GetRoundDuration();
-                    double skipSeconds = fullRoundDuration - 30;
+                    double introSec = TRACK_INTRO_BEAT_MS / 1000.0;
+                    double skipSeconds = (fullRoundDuration - 30) + introSec;
                     if (skipSeconds < 0) skipSeconds = 0;
                     _audioManager.Play($"Assets/Audio/{fileName}", startFromSeconds: skipSeconds);
                 }
@@ -1318,17 +1642,17 @@ namespace WeakestLink.Views
                 {
                     _audioManager.Play($"Assets/Audio/{fileName}");
                 }
-                await Task.Delay(1000);
+                await Task.Delay(TRACK_INTRO_BEAT_MS);
 
                 _engine.TransitionTo(GameState.Playing);
                 _roundTimer.Start();
-                LoadNextQuestion();
+                // LoadNextQuestion() убрано, так как вопрос уже загружен при переходе в READY.
 
                 // Активация игровых кнопок (панели уже переключены в READY)
                 BtnCorrect.IsEnabled = true;
                 BtnWrong.IsEnabled = true;
-                BtnPass.IsEnabled = true;
                 BtnBank.IsEnabled = true;
+                if (BtnPass != null) BtnPass.IsEnabled = true;
                 BtnIncorrect.IsEnabled = true;
 
                 // 4. Перевод фокуса на кнопку БАНК (самая частая и быстрая кнопка)
@@ -1356,6 +1680,12 @@ namespace WeakestLink.Views
                     {
                         if (newState == GameState.RoundReady)
                         {
+                            if ((_engine.ActivePlayers.Count <= 2 && _engine.CurrentRound > 0) || _engine.CurrentRound >= 7)
+                            {
+                                DarkMessageBox.Show("Осталось 2 игрока! Обычные раунды больше недоступны. Используйте кнопку ТО FINAL для запуска финала.", "Достигнут финал", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                return;
+                            }
+
                             _audioManager.PlayBed("playgame_with_general_bed.mp3", loop: false);
                             _server.Broadcast("CLEAR_ELIMINATION");
                             if (_engine.CurrentState == GameState.Elimination)
@@ -1406,8 +1736,8 @@ namespace WeakestLink.Views
             BtnStartDuel.Visibility = Visibility.Collapsed;
 
             BtnToFinal.Visibility = Visibility.Collapsed;
-            SetupPanel.Visibility = Visibility.Collapsed;
-            GridGameControls.Visibility = Visibility.Collapsed;
+            SetCentralContext("PLAY");
+            GamePlayPanel.Visibility = Visibility.Collapsed;
             HeadToHeadPanel.Visibility = Visibility.Visible;
             SetFinalDuelUIState(true);
             UpdateFinalCirclesUI();
@@ -1445,6 +1775,8 @@ namespace WeakestLink.Views
                 _server.Broadcast($"DUEL_UPDATE|{payload}");
                 _hostScreen?.SetDuelDisplay(TxtFinalist1.Text, TxtFinalist2.Text, p1s, p2s);
                 _hostModernScreen?.SetDuelDisplay(TxtFinalist1.Text, TxtFinalist2.Text, p1s, p2s);
+                _hostPremiumScreen?.SetDuelDisplay(TxtFinalist1.Text, TxtFinalist2.Text, p1s, p2s);
+                _hostModernPremiumScreen?.SetDuelDisplay(TxtFinalist1.Text, TxtFinalist2.Text, p1s, p2s);
             }
             catch (Exception ex) { Log($"ОШИБКА DUEL_UPDATE: {ex.Message}"); }
         }
@@ -1562,6 +1894,7 @@ namespace WeakestLink.Views
             }
 
             UpdateDuelUI();
+            _broadcastWindow?.UpdateFinalDuel();
         }
 
         private void SendDuelPrompterUpdate()
@@ -1728,6 +2061,7 @@ namespace WeakestLink.Views
         }
 
         private bool _nextRoundUsed = false;
+        private bool _eliminationPerformedThisRound = false;
 
         private void BtnNextRound_Click(object sender, RoutedEventArgs e)
         {
@@ -1736,9 +2070,8 @@ namespace WeakestLink.Views
                 SetOperatorAction("Переход к новому раунду");
                 Log("=== ПЕРЕХОД К НОВОМУ РАУНДУ ===");
 
-                // 1. Остановка таймера и аудио
+                // 1. Остановка таймера (музыка продолжает играть — CLOSE ROUND не глушит аудио)
                 _roundTimer?.Stop();
-                _audioManager?.Stop();
 
                 // 2. Переносим заработанное в общий банк (если ещё не перенесено)
                 if (_engine.RoundBank > 0)
@@ -1748,10 +2081,13 @@ namespace WeakestLink.Views
                     Log($"Банк раунда перенесён в общий. Итого: {_engine.TotalBank:N0} ₽");
                 }
 
-                // 3. Уборка сцены: скрываем панели голосования/аналитики
                 _server.Broadcast("CLEAR_ELIMINATION");
                 RevealProgressPanel.Visibility = Visibility.Collapsed;
-                CloseAnalytics();
+                VotingBorder.Visibility = Visibility.Collapsed;
+                SetCentralContext("PLAY");
+                GamePlayPanel.Visibility = Visibility.Visible;
+                HeadToHeadPanel.Visibility = Visibility.Collapsed;
+                WinnerPanel.Visibility = Visibility.Collapsed;
 
                 // 4. Сброс стейт-машины в Idle (чистый лист)
                 if (_engine.CurrentState != GameState.Idle)
@@ -1772,6 +2108,14 @@ namespace WeakestLink.Views
 
                 UpdateButtonStates();
                 UpdateOperationalHints();
+
+                // Обновить номер раунда в центральной плашке (показываем следующий раунд)
+                if (TxtRoundNumberCenter != null)
+                {
+                    int nextRound = _engine.CurrentRound + 1;
+                    TxtRoundNumberCenter.Text = nextRound.ToString();
+                    TimerArchBorder.Visibility = Visibility.Visible;
+                }
             }
             catch (Exception ex)
             {
@@ -1829,9 +2173,21 @@ namespace WeakestLink.Views
         {
             try
             {
-                SetOperatorAction("VOTE START: голосование 45 сек");
+                int votingDuration = 45;
+                if (CmbVotingDuration.SelectedItem is ComboBoxItem selectedItem && selectedItem.Tag != null)
+                {
+                    if (int.TryParse(selectedItem.Tag.ToString(), out int parsed))
+                        votingDuration = parsed;
+                }
+
+                SetOperatorAction($"VOTE START: голосование {votingDuration} сек");
                 BtnStartVoting.IsEnabled = false;
                 SetButtonDisabled(BtnStartVoting);
+
+                // Активируем кнопку ручного завершения голосования
+                BtnEndVoting.IsEnabled = true;
+                BtnEndVoting.Background = new SolidColorBrush(Color.FromRgb(0xDA, 0x37, 0x3C));
+                BtnEndVoting.Foreground = Brushes.White;
 
                 _audioManager.Stop();
                 _audioManager.Play("Assets/Audio/new_voting_system v3START.mp3", loop: false);
@@ -1840,13 +2196,13 @@ namespace WeakestLink.Views
 
                 _engine.TransitionTo(GameState.Voting);
 
-                _votingTimeLeft = 45;
+                _votingTimeLeft = votingDuration;
                 UpdateVotingTimerDisplay();
 
                 await Task.Delay(1000);
 
                 StartVotingCountdown();
-                Log("Голосование запущено. Таймер: 45с, обратный отсчёт начат.");
+                Log($"Голосование запущено. Таймер: {votingDuration}с, обратный отсчёт начат.");
             }
             catch (Exception ex)
             {
@@ -1871,9 +2227,12 @@ namespace WeakestLink.Views
 
                 if (_votingTimeLeft <= 10 && _votingTimeLeft > 0)
                 {
-                    TxtTimer.Foreground = Brushes.Red;
+                    TxtTimer.Foreground = TimerBrushCritical;
+                    ApplyTimerGlow(HubColorCritical);
                     _hostScreen?.SetVotingTimerUrgent(true);
                     _hostModernScreen?.SetVotingTimerUrgent(true);
+                    _hostPremiumScreen?.SetVotingTimerUrgent(true);
+                    _hostModernPremiumScreen?.SetVotingTimerUrgent(true);
                 }
 
                 if (_votingTimeLeft <= 5 && _votingTimeLeft > 0)
@@ -1890,8 +2249,11 @@ namespace WeakestLink.Views
                 Log("Голосование завершено по времени (0:00).");
 
                 TxtTimer.Foreground = Brushes.Yellow;
+                TxtTimer_Side.Foreground = Brushes.Yellow;
                 _hostScreen?.SetVotingTimerUrgent(false);
                 _hostModernScreen?.SetVotingTimerUrgent(false);
+                _hostPremiumScreen?.SetVotingTimerUrgent(false);
+                _hostModernPremiumScreen?.SetVotingTimerUrgent(false);
 
                 StartVotingTrackCrossfadeWatch();
 
@@ -1901,16 +2263,25 @@ namespace WeakestLink.Views
 
         private void UpdateVotingTimerDisplay()
         {
-            string timeStr = $"0:{_votingTimeLeft:D2}";
+            int minutes = _votingTimeLeft / 60;
+            int seconds = _votingTimeLeft % 60;
+            string timeStr = $"{minutes}:{seconds:D2}";
 
             TxtTimerLabel.Text = "ГОЛОСОВАНИЕ";
             TxtTimer.Text = timeStr;
+            TxtTimer_Side.Text = timeStr;
 
             if (_votingTimeLeft <= 10 && _votingTimeLeft > 0)
-                TxtTimer.Foreground = Brushes.Red;
+            {
+                TxtTimer.Foreground = TimerBrushCritical;
+                TxtTimer_Side.Foreground = TimerBrushCritical;
+                ApplyTimerGlow(HubColorCritical);
+            }
 
             _hostScreen?.ShowVotingTimer(timeStr, _votingTimeLeft);
             _hostModernScreen?.ShowVotingTimer(timeStr, _votingTimeLeft);
+            _hostPremiumScreen?.ShowVotingTimer(timeStr, _votingTimeLeft);
+            _hostModernPremiumScreen?.ShowVotingTimer(timeStr, _votingTimeLeft);
 
             _server.Broadcast($"VOTING_TIMER|{timeStr}");
         }
@@ -1923,13 +2294,32 @@ namespace WeakestLink.Views
                 _votingTimer = null;
                 Log("Голосование завершено досрочно (все голоса введены).");
 
-                TxtTimer.Foreground = Brushes.Yellow;
+                TxtTimer.Foreground = TimerBrushNormal;
+                TxtTimer_Side.Foreground = TimerBrushNormal;
+                ApplyTimerGlow(HubColorNormal);
+                StopTimerPulse();
                 _hostScreen?.SetVotingTimerUrgent(false);
                 _hostModernScreen?.SetVotingTimerUrgent(false);
+                _hostPremiumScreen?.SetVotingTimerUrgent(false);
+                _hostModernPremiumScreen?.SetVotingTimerUrgent(false);
+
+                // Деактивируем кнопку ручного завершения
+                BtnEndVoting.IsEnabled = false;
+                SetButtonDisabled(BtnEndVoting);
 
                 StartVotingTrackCrossfadeWatch();
 
                 _engine.TransitionTo(GameState.Discussion);
+            }
+        }
+
+        private void BtnEndVoting_Click(object sender, RoutedEventArgs e)
+        {
+            if (_engine.CurrentState == GameState.Voting)
+            {
+                SetOperatorAction("END VOTING: ручное завершение");
+                Log("Оператор завершил голосование вручную.");
+                StopVotingTimerEarly();
             }
         }
 
@@ -2042,7 +2432,16 @@ namespace WeakestLink.Views
 
         private async void BtnEliminate_Click(object sender, RoutedEventArgs e)
         {
-            string targetName = EliminationComboBox.SelectedItem as string;
+            // Support both old simple strings (for ties) and new EliminationComboItem (for normal voting)
+            string targetName = "";
+            if (EliminationComboBox.SelectedItem is EliminationComboItem item)
+            {
+                targetName = item.Name;
+            }
+            else
+            {
+                targetName = EliminationComboBox.SelectedItem as string;
+            }
 
             if (string.IsNullOrEmpty(targetName))
             {
@@ -2059,6 +2458,7 @@ namespace WeakestLink.Views
 
                 _engine.ActivePlayers.Remove(targetName);
                 _engine.EliminatePlayer(targetName);
+                _eliminationPerformedThisRound = true;
 
                 _server.Broadcast($"ELIMINATE|{targetName}");
                 Log($"ИГРОК ВЫБЫЛ: {targetName}. Walk of Shame запущен.");
@@ -2177,6 +2577,8 @@ namespace WeakestLink.Views
             SetOperatorAction("Логотип вкл/выкл");
             _hostScreen?.ToggleLogoScreen();
             _hostModernScreen?.ToggleLogoScreen();
+            _hostPremiumScreen?.ToggleLogoScreen();
+            _hostModernPremiumScreen?.ToggleLogoScreen();
             Log("Экран ведущего: переключён логотип.");
         }
 
@@ -2221,6 +2623,8 @@ namespace WeakestLink.Views
                 _engine?.TransitionTo(GameState.Idle);
                 _hostScreen?.ClearScreen();
                 _hostModernScreen?.ClearScreen();
+                _hostPremiumScreen?.ClearScreen();
+                _hostModernPremiumScreen?.ClearScreen();
                 Log("!!! ЭКСТРЕННАЯ ОСТАНОВКА ИГРЫ (BREAK GAME) !!!");
             }
         }
@@ -2239,23 +2643,22 @@ namespace WeakestLink.Views
                 _roundTimer?.Stop();
                 _audioManager?.StopAll();
                 _engine?.ResetGame();
-                TxtTimer.Foreground = Brushes.Yellow;
+                TxtTimer.Foreground = TimerBrushNormal;
+                ApplyTimerGlow(HubColorNormal);
+                StopTimerPulse();
                 _hostScreen?.ClearScreen();
                 _hostModernScreen?.ClearScreen();
+                _hostPremiumScreen?.ClearScreen();
+                _hostModernPremiumScreen?.ClearScreen();
                 CloseAnalytics();
 
-                SetupPanel.Visibility = Visibility.Visible;
-                GridGameControls.Visibility = Visibility.Collapsed;
-                GamePlayPanel.Visibility = Visibility.Collapsed;
-                WinnerPanel.Visibility = Visibility.Collapsed;
-                HeadToHeadPanel.Visibility = Visibility.Collapsed;
+                _isSessionStarted = false;
+                FreezeRoster(false);
+                BtnStartSession.IsEnabled = true;
+                BtnStartSession.Content = "START SESSION";
+                SetCentralContext("SETUP");
                 PreGamePanel.Visibility = Visibility.Collapsed;
                 PreGameButtons.Visibility = Visibility.Collapsed;
-
-                RosterExpander.IsExpanded = true;
-                RosterExpander.IsEnabled = true;
-                BtnStartSession.IsEnabled = true;
-                BtnStartSession.Content = "НАЧАТЬ СЕССИЮ";
 
                 _nextRoundUsed = false;
 
@@ -2270,12 +2673,32 @@ namespace WeakestLink.Views
             }
         }
 
-        // ═══ Smart Roster: кнопка ГОТОВО — сворачиваем экспандер ═══
         private void BtnRosterDone_Click(object sender, RoutedEventArgs e)
         {
-            RosterExpander.IsExpanded = false;
             var filled = _rosterItems.Count(r => !string.IsNullOrWhiteSpace(r.GameName));
-            Log($"Ростер закрыт. Заполнено {filled} из 8 пультов.");
+            if (filled < 8)
+            {
+                DarkMessageBox.Show("Введите имена всех 8 игроков перед утверждением состава.", "Недостаточно игроков",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            FreezeRoster(true);
+            Log($"Состав утверждён. Заполнено {filled} из 8 пультов.");
+        }
+
+        private void FreezeRoster(bool freeze)
+        {
+            foreach (var item in _rosterItems)
+                item.IsLocked = freeze;
+
+            BtnRosterConfirm.Visibility = freeze ? Visibility.Collapsed : Visibility.Visible;
+            TxtRosterConfirmed.Visibility = freeze ? Visibility.Visible : Visibility.Collapsed;
+            LstPlayers.IsEnabled = !freeze;
+            LstPlayers.Opacity = freeze ? 0.7 : 1.0;
+            SetupPanel.Background = freeze
+                ? new SolidColorBrush(Color.FromRgb(0x14, 0x1A, 0x14))
+                : (Brush)FindResource("ObsidianBg");
         }
 
         // Smart Roster: Переместить вверх
@@ -2383,10 +2806,20 @@ namespace WeakestLink.Views
 
             try
             {
-                SetOperatorAction("Сессия запущена");
-                if (_rosterItems.Count < 2)
+                if (BtnRosterConfirm != null && BtnRosterConfirm.Visibility == Visibility.Visible)
                 {
-                    DarkMessageBox.Show("Добавьте хотя бы двух игроков для начала сессии!", "Недостаточно игроков", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    DarkMessageBox.Show("Сначала подтвердите участников! Нажмите 'ПРИНЯТЬ СОСТАВ' перед запуском сессии.", "Состав не утвержден", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                SetOperatorAction("Сессия запущена");
+                _isSessionStarted = true;
+                // Синхронизация Smart Roster → движок (порядок тумб сохранён)
+                SyncRosterToEngine();
+
+                if (_engine.ActivePlayers.Count < 8)
+                {
+                    DarkMessageBox.Show("Заполните всех 8 игроков (колонка 'ИМЯ НА ТУМБЕ') для начала сессии!", "Недостаточно игроков", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -2399,13 +2832,9 @@ namespace WeakestLink.Views
                     return;
                 }
 
-                // Синхронизация Smart Roster → движок (порядок тумб сохранён)
-                SyncRosterToEngine();
                 Log($"✅ Игроков: {_engine.ActivePlayers.Count}, Вопросов: {_questionProvider.LoadedCount}");
 
-                // 2. Блокируем элементы ввода, чтобы исключить ошибки
-                RosterExpander.IsExpanded = false;
-                RosterExpander.IsEnabled = false;
+                FreezeRoster(true);
                 BtnStartSession.IsEnabled = false;
 
                 // 3. Меняем состояние кнопки на «СЕССИЯ ЗАПУЩЕНА»
@@ -2413,6 +2842,9 @@ namespace WeakestLink.Views
 
                 // 4. Раунд инициализируем как 0 — первый вызов PrepareNewRound() сделает его 1
                 _engine.ResetRoundCounter();
+                _questionCount = 0;
+                TxtQuestionCount.Text = $"0/{_questionProvider.LoadedCount}";
+                TxtQuestionCount_Side.Text = $"0/{_questionProvider.LoadedCount}";
 
                 _server.Broadcast("CLEAR_ELIMINATION");
 
@@ -2420,6 +2852,7 @@ namespace WeakestLink.Views
                 if (ChkFastTrack.IsChecked == true)
                 {
                     // Сразу к Раунду 1 — пропускаем PRE-GAME целиком
+                    _engine.TransitionTo(GameState.RulesExplanation);
                     PreGamePanel.Visibility = Visibility.Collapsed;
                     FinalizePregameAndPrepareRound();
                     Log("Сессия запущена (FastTrack). PRE-GAME пропущен. Жмите READY.");
@@ -2554,12 +2987,23 @@ namespace WeakestLink.Views
         {
             _engine.PrepareNewRound();
             TxtRound.Text = _engine.CurrentRound.ToString();
+            if (TxtRoundNumberCenter != null)
+            {
+                TxtRoundNumberCenter.Text = _engine.CurrentRound.ToString();
+                TimerArchBorder.Visibility = _engine.CurrentRound > 0 ? Visibility.Visible : Visibility.Collapsed;
+            }
             int roundDuration = _engine.GetNewRoundDuration();
             _timeLeftSeconds = roundDuration;
             UpdateTimerDisplay();
             _server.Broadcast($"UPDATE_TIMER|{_timeLeftSeconds}");
 
             PreGamePanel.Visibility = Visibility.Collapsed;
+
+            SetCentralContext("PLAY");
+            GamePlayPanel.Visibility = Visibility.Visible;
+            HeadToHeadPanel.Visibility = Visibility.Collapsed;
+            WinnerPanel.Visibility = Visibility.Collapsed;
+
             BtnStartRound.IsEnabled = true;
             BtnStartRound.Background = BrushActiveGreen;
             BtnStartRound.Foreground = Brushes.White;
@@ -2577,7 +3021,9 @@ namespace WeakestLink.Views
             var playerNames = names.Take(playerCount).ToArray();
 
             _engine.ResetGame();
-            TxtTimer.Foreground = Brushes.Yellow;
+            TxtTimer.Foreground = TimerBrushNormal;
+            ApplyTimerGlow(HubColorNormal);
+            StopTimerPulse();
             _engine.ActivePlayers.Clear();
             foreach (var name in playerNames)
                 _engine.ActivePlayers.Add(name);
@@ -2589,18 +3035,21 @@ namespace WeakestLink.Views
                 _engine.NextRound();
 
             _server.Broadcast("CLEAR_ELIMINATION");
-            SetupPanel.Visibility = Visibility.Collapsed;
-            GridGameControls.Visibility = Visibility.Visible;
+            SetCentralContext("PLAY");
+            GamePlayPanel.Visibility = Visibility.Visible;
+            HeadToHeadPanel.Visibility = Visibility.Collapsed;
+            WinnerPanel.Visibility = Visibility.Collapsed;
 
             // Кнопки неактивны до START O'CLOCK
             BtnCorrect.IsEnabled = false;
-            BtnIncorrect.IsEnabled = false;
             BtnWrong.IsEnabled = false;
             BtnBank.IsEnabled = false;
-            BtnPass.IsEnabled = false;
+            if (BtnPass != null) BtnPass.IsEnabled = false;
+            BtnIncorrect.IsEnabled = false;
 
             if (selectedIndex == 7) // ФИНАЛ
             {
+                GamePlayPanel.Visibility = Visibility.Collapsed;
                 HeadToHeadPanel.Visibility = Visibility.Visible;
                 FinalPrestartBorder.Visibility = Visibility.Collapsed;
                 BtnStartDuel.Visibility = Visibility.Visible;
@@ -2622,6 +3071,7 @@ namespace WeakestLink.Views
             }
             else
             {
+                GamePlayPanel.Visibility = Visibility.Visible;
                 HeadToHeadPanel.Visibility = Visibility.Collapsed;
                 SetFinalDuelUIState(false);
                 _engine.FinalizeRoundSetup();
@@ -2638,8 +3088,7 @@ namespace WeakestLink.Views
                 {
                     TxtCurrentQuestion.Text = _currentQuestion.Text;
                     TxtCurrentAnswer.Text = $"ОТВЕТ: {_currentQuestion.Answer}";
-                    TxtQuickEditQuestion.Text = _currentQuestion.Text;
-                    TxtQuickEditAnswer.Text = _currentQuestion.Answer;
+
                     _questionCount = 1;
                 }
                 else
@@ -2721,6 +3170,263 @@ namespace WeakestLink.Views
             Log("AI-ТЕСТ: Загружены 8 ботов Gemini. Запуск сессии...");
 
             BtnStartSession_Click(sender, e);
+        }
+
+        // ──────────────────────────────────────────────────────────────────────
+        //  ТЕСТ-ИГРА: 7 РАУНДОВ + ФИНАЛ (Бот 1 … Бот 8)
+        // ──────────────────────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Вариант А — Полу-авто: загружает 8 ботов, ставит раунд 1, таймер 30 сек,
+        /// включает AutoBot. Переходы между раундами делает оператор вручную.
+        /// </summary>
+        private void BtnBotGameSemiAuto_Click(object sender, RoutedEventArgs e)
+        {
+            var botNames = new[] { "Бот 1", "Бот 2", "Бот 3", "Бот 4",
+                                   "Бот 5", "Бот 6", "Бот 7", "Бот 8" };
+            // Гарантируем 30-секундный таймер
+            if (ChkTestLast30Sec != null) ChkTestLast30Sec.IsChecked = true;
+            LoadTestTeam(botNames, "Тест-игра Бот 1–8 (полу-авто)");
+
+            // Включаем AutoBot сразу
+            TglAutoBot.IsChecked = true;
+            _autoBotTimer.Start();
+
+            _currentTestModeLabel = "Бот 1 vs Бот 2 · Полу-авто";
+            UpdateTestModeBadge();
+            Log("🤖 ТЕСТ-ИГРА (ПОЛУ-АВТО): 8 ботов, раунд 1, 30 сек. AutoBot включён. Управляйте переходами вручную.");
+        }
+
+        /// <summary>
+        /// Вариант Б — Полный автопилот: проигрывает все 7 раундов + финал без участия оператора.
+        /// После каждого раунда автоматически выбывает бот с наихудшей статистикой.
+        /// Финал разыгрывается между «Бот 1» и «Бот 2».
+        /// </summary>
+        private void BtnBotGameAuto_Click(object sender, RoutedEventArgs e)
+        {
+            if (_fullAutoBotTask != null && !_fullAutoBotTask.IsCompleted)
+            {
+                // Повторный клик = стоп
+                _fullAutoBotCts?.Cancel();
+                Log("⚡ Автопилот: ОСТАНОВЛЕН пользователем.");
+                BtnBotGameAuto.Content = "⚡ АВТОПИЛОТ";
+                BtnBotGameAuto.Background = new SolidColorBrush(Color.FromRgb(0x1B, 0x5E, 0x20));
+                return;
+            }
+
+            BtnBotGameAuto.Content = "⏹ СТОП";
+            BtnBotGameAuto.Background = new SolidColorBrush(Color.FromRgb(0x8B, 0x00, 0x00));
+
+            _fullAutoBotCts = new System.Threading.CancellationTokenSource();
+            _fullAutoBotTask = RunFullAutoBotGameAsync(_fullAutoBotCts.Token);
+        }
+
+        private Task? _fullAutoBotTask;
+        private System.Threading.CancellationTokenSource? _fullAutoBotCts;
+
+        private async Task RunFullAutoBotGameAsync(System.Threading.CancellationToken ct)
+        {
+            const int RoundTimeSec  = 30;   // длительность каждого раунда
+            const int BotTurnDelayMs = 600; // пауза между ходами бота (мс)
+
+            var botNames = new[] { "Бот 1", "Бот 2", "Бот 3", "Бот 4",
+                                   "Бот 5", "Бот 6", "Бот 7", "Бот 8" };
+
+            // 1. Инициализация — раунд 1, 8 ботов
+            await Dispatcher.InvokeAsync(() =>
+            {
+                if (ChkTestLast30Sec != null) ChkTestLast30Sec.IsChecked = true;
+                LoadTestTeam(botNames, "Тест-игра Бот 1–8 (автопилот)");
+                _currentTestModeLabel = "Бот 1 vs Бот 2 · Автопилот";
+                UpdateTestModeBadge();
+                Log("⚡ АВТОПИЛОТ: запуск полной игры 7 раундов + финал.");
+            });
+
+            // Раунды 1–7
+            for (int round = 1; round <= 7 && !ct.IsCancellationRequested; round++)
+            {
+                int playerCount = 9 - round; // R1=8 игроков, R7=2 игрока
+
+                await Dispatcher.InvokeAsync(() =>
+                    Log($"── Раунд {round} | Игроков: {_engine.ActivePlayers.Count} | Таймер {RoundTimeSec} сек ──"));
+
+                // 2. Старт раунда
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    if (_engine.CurrentState == GameState.RoundReady)
+                        BtnPlay_Click(null!, null!);
+                });
+
+                // 3. Ждём, пока раунд Playing, делаем ходы
+                while (!ct.IsCancellationRequested)
+                {
+                    bool stillPlaying = false;
+                    await Dispatcher.InvokeAsync(() => stillPlaying = _engine.CurrentState == GameState.Playing);
+                    if (!stillPlaying) break;
+                    await Dispatcher.InvokeAsync(() => BtnBotTurn_Click(null!, null!));
+                    await Task.Delay(BotTurnDelayMs, ct).ContinueWith(_ => { }); // не бросаем при отмене
+                }
+
+                if (ct.IsCancellationRequested) break;
+
+                // 4. Раунд закончился (таймер вышел) — переходим к аналитике/RoundSummary
+                await Task.Delay(800);
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    // Если таймер ещё идёт — принудительно завершаем
+                    if (_engine.CurrentState == GameState.Playing)
+                        BtnNextRound_Click(null!, null!);
+                });
+                await Task.Delay(800);
+
+                // 5. Голосование: авто-выбывание наихудшего бота
+                // (не Бот 1 и не Бот 2, пока есть другие)
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    string? toEliminate = FindWorstBot();
+                    if (toEliminate == null) return;
+
+                    // Переход к состоянию голосования
+                    try
+                    {
+                        if (_engine.CurrentState == GameState.RoundSummary)
+                            BtnStartVoting_Click(null!, null!);
+                    }
+                    catch { }
+                    try
+                    {
+                        if (_engine.CurrentState == GameState.Voting)
+                            BtnEndVoting_Click(null!, null!);
+                    }
+                    catch { }
+                    try
+                    {
+                        if (_engine.CurrentState == GameState.Voting || _engine.CurrentState == GameState.Discussion)
+                            BtnReveal_Click(null!, null!);
+                    }
+                    catch { }
+
+                    // Выбываем
+                    if (EliminationComboBox != null)
+                    {
+                        var item = EliminationComboBox.Items
+                            .OfType<object>()
+                            .FirstOrDefault(i => i.ToString()?.Contains(toEliminate) == true
+                                             || (i.GetType().GetProperty("Name")?.GetValue(i)?.ToString() == toEliminate));
+                        if (item != null) EliminationComboBox.SelectedItem = item;
+                    }
+                    try { BtnEliminate_Click(null!, null!); } catch { }
+
+                    Log($"⚡ АВТО-ВЫБЫВАНИЕ: {toEliminate} покидает игру.");
+                });
+
+                await Task.Delay(1000);
+
+                // 6. Подготовка следующего раунда
+                if (round < 7)
+                {
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        try { BtnNextRound_Click(null!, null!); } catch { }
+                    });
+                    await Task.Delay(500);
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        try { BtnReady_Click(null!, null!); } catch { }
+                    });
+                    await Task.Delay(300);
+                }
+            }
+
+            if (ct.IsCancellationRequested) goto Cleanup;
+
+            // 7. Финал
+            await Dispatcher.InvokeAsync(() =>
+            {
+                Log("⚡ АВТОПИЛОТ: переход к финальной дуэли Бот 1 vs Бот 2.");
+                try { BtnToFinal_Click(null!, null!); } catch { }
+            });
+
+            await Task.Delay(800);
+
+            // Запускаем дуэль
+            await Dispatcher.InvokeAsync(() =>
+            {
+                try { BtnStartDuel_Click(null!, null!); } catch { }
+            });
+
+            // Финальные ходы (авто)
+            while (!ct.IsCancellationRequested)
+            {
+                bool inFinal = false;
+                await Dispatcher.InvokeAsync(() => inFinal = _engine.CurrentState == GameState.FinalDuel
+                                                             && string.IsNullOrEmpty(_engine.FinalWinner));
+                if (!inFinal) break;
+
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    // случайный ответ для финального дуэли (70% верно)
+                    bool correct = new Random().Next(100) < 70;
+                    if (correct) BtnDuelCorrect_Click(null!, null!);
+                    else         BtnDuelWrong_Click(null!, null!);
+                });
+                await Task.Delay(BotTurnDelayMs);
+            }
+
+            await Dispatcher.InvokeAsync(() =>
+            {
+                string winner = _engine.FinalWinner;
+                if (!string.IsNullOrEmpty(winner))
+                    Log($"🏆 АВТОПИЛОТ ЗАВЕРШЁН! Победитель: {winner}");
+                else
+                    Log("⚡ АВТОПИЛОТ ЗАВЕРШЁН.");
+            });
+
+            Cleanup:
+            await Dispatcher.InvokeAsync(() =>
+            {
+                BtnBotGameAuto.Content = "⚡ АВТОПИЛОТ";
+                BtnBotGameAuto.Background = new SolidColorBrush(Color.FromRgb(0x1B, 0x5E, 0x20));
+                _fullAutoBotCts = null;
+            });
+        }
+
+        /// <summary>
+        /// Возвращает имя бота, который должен выбыть (худшая статистика).
+        /// Защищает «Бот 1» и «Бот 2» от выбывания до финала.
+        /// </summary>
+        private string? FindWorstBot()
+        {
+            if (_engine.ActivePlayers.Count <= 2) return null;
+
+            int round = _engine.CurrentRound;
+
+            // Выбираем «самого слабого», исключая Бот 1 и Бот 2
+            string? worst = _engine.ActivePlayers
+                .Where(p => p != "Бот 1" && p != "Бот 2")
+                .OrderBy(p =>
+                {
+                    if (_engine.PlayerStatistics.TryGetValue(p, out var byRound)
+                        && byRound.TryGetValue(round, out var stats))
+                        return stats.CorrectAnswers;
+                    return 0;
+                })
+                .ThenByDescending(p =>
+                {
+                    if (_engine.PlayerStatistics.TryGetValue(p, out var byRound)
+                        && byRound.TryGetValue(round, out var stats))
+                        return stats.IncorrectAnswers;
+                    return 0;
+                })
+                .FirstOrDefault();
+
+            // Если осталось только Бот 1 + Бот 2 + один чужой → выбываем чужого
+            if (worst == null)
+            {
+                worst = _engine.ActivePlayers.FirstOrDefault(p => p != "Бот 1" && p != "Бот 2");
+            }
+
+            return worst;
         }
 
         private async Task ProcessBotTurnAsync()
@@ -2834,7 +3540,9 @@ namespace WeakestLink.Views
         private void BtnTestFinal_Click(object sender, RoutedEventArgs e)
         {
             _engine.ResetGame();
-            TxtTimer.Foreground = Brushes.Yellow;
+            TxtTimer.Foreground = TimerBrushNormal;
+            ApplyTimerGlow(HubColorNormal);
+            StopTimerPulse();
             _engine.ActivePlayers.Clear();
             _engine.ActivePlayers.Add("Алексей");
             _engine.ActivePlayers.Add("Борис");
@@ -2848,10 +3556,10 @@ namespace WeakestLink.Views
             UpdateStatsTable();
             UpdateTestModeBadge();
 
-            // Интерфейс: показываем игровую панель с кнопкой «ПЕРЕЙТИ К ФИНАЛУ»
-            SetupPanel.Visibility = Visibility.Collapsed;
-            GridGameControls.Visibility = Visibility.Visible;
+            SetCentralContext("PLAY");
+            GamePlayPanel.Visibility = Visibility.Visible;
             HeadToHeadPanel.Visibility = Visibility.Collapsed;
+            WinnerPanel.Visibility = Visibility.Collapsed;
             VotingBorder.Visibility = Visibility.Collapsed;
 
             BtnToFinal.Visibility = Visibility.Visible;
@@ -2875,7 +3583,7 @@ namespace WeakestLink.Views
                 return;
             }
 
-            int modeIndex = CmbBotMode?.SelectedIndex ?? 3;
+            int modeIndex = 3;
             var rnd = new Random();
             bool hasMoneyInChain = _engine.CurrentChainIndex > 0;
 
@@ -3039,13 +3747,13 @@ namespace WeakestLink.Views
                 _engine.NextRound();
             }
 
-            // Переключение интерфейса
             _server.Broadcast("CLEAR_ELIMINATION");
-            SetupPanel.Visibility = Visibility.Collapsed;
-            GridGameControls.Visibility = Visibility.Visible;
+            SetCentralContext("PLAY");
+            WinnerPanel.Visibility = Visibility.Collapsed;
 
             if (selectedIndex == 7) // ФИНАЛ
             {
+                GamePlayPanel.Visibility = Visibility.Collapsed;
                 HeadToHeadPanel.Visibility = Visibility.Visible;
                 FinalPrestartBorder.Visibility = Visibility.Collapsed;
                 BtnStartDuel.Visibility = Visibility.Visible;
@@ -3065,6 +3773,7 @@ namespace WeakestLink.Views
             }
             else
             {
+                GamePlayPanel.Visibility = Visibility.Visible;
                 HeadToHeadPanel.Visibility = Visibility.Collapsed;
                 SetFinalDuelUIState(false);
                 Log($"DEBUG: Быстрый старт -> РАУНД {targetRound} ({playerCount} игр.)");
@@ -3125,6 +3834,92 @@ namespace WeakestLink.Views
             }
         }
 
+        private void BtnOpenHostPremium_Click(object sender, RoutedEventArgs e)
+        {
+            if (_hostPremiumScreen == null || !_hostPremiumScreen.IsLoaded)
+            {
+                _hostPremiumScreen = new HostScreenPremium(_engine);
+                _hostPremiumScreen.Show();
+                Log("Экран PREMIUM открыт.");
+
+                if (_currentQuestion != null)
+                {
+                    _hostPremiumScreen.UpdateQuestion(_currentQuestion.Text, _currentQuestion.Answer, _questionCount);
+                }
+                if (_engine.CurrentState == GameState.FinalDuel)
+                {
+                    string p1s = string.Join(",", _engine.Player1FinalScores.Select(s => s == true ? "1" : (s == false ? "0" : "-1")));
+                    string p2s = string.Join(",", _engine.Player2FinalScores.Select(s => s == true ? "1" : (s == false ? "0" : "-1")));
+                    _hostPremiumScreen.SetDuelDisplay(TxtFinalist1.Text, TxtFinalist2.Text, p1s, p2s);
+                }
+            }
+            else
+            {
+                _hostPremiumScreen.Focus();
+            }
+        }
+
+        private void BtnOpenHostModernPremium_Click(object sender, RoutedEventArgs e)
+        {
+            if (_hostModernPremiumScreen == null || !_hostModernPremiumScreen.IsLoaded)
+            {
+                _hostModernPremiumScreen = new HostScreenModernPremium(_engine);
+                _hostModernPremiumScreen.Show();
+                Log("Экран MODERN PREMIUM открыт.");
+
+                if (_currentQuestion != null)
+                {
+                    _hostModernPremiumScreen.UpdateQuestion(_currentQuestion.Text, _currentQuestion.Answer, _questionCount);
+                }
+                if (_engine.CurrentState == GameState.FinalDuel)
+                {
+                    string p1s = string.Join(",", _engine.Player1FinalScores.Select(s => s == true ? "1" : (s == false ? "0" : "-1")));
+                    string p2s = string.Join(",", _engine.Player2FinalScores.Select(s => s == true ? "1" : (s == false ? "0" : "-1")));
+                    _hostModernPremiumScreen.SetDuelDisplay(TxtFinalist1.Text, TxtFinalist2.Text, p1s, p2s);
+                }
+            }
+            else
+            {
+                _hostModernPremiumScreen.Focus();
+            }
+        }
+
+        private void BtnOpenBroadcast_Click(object sender, RoutedEventArgs e)
+        {
+            if (_broadcastWindow == null || !_broadcastWindow.IsLoaded)
+            {
+                _broadcastWindow = new BroadcastWindow(_engine);
+                _broadcastWindow.Show();
+                Log("Экран BROADCAST открыт.");
+                // Синхронизация текущего таймера и банка
+                _broadcastWindow.UpdateBank(_engine.CurrentChainIndex, _engine.RoundBank);
+                int m = _timeLeftSeconds / 60, s = _timeLeftSeconds % 60;
+                _broadcastWindow.UpdateTimer($"{m}:{s:D2}", _timeLeftSeconds);
+            }
+            else
+            {
+                _broadcastWindow.Focus();
+            }
+        }
+
+        private void BtnOpenAudience_Click(object sender, RoutedEventArgs e)
+        {
+            if (_audienceScreen == null || !_audienceScreen.IsLoaded)
+            {
+                _audienceScreen = new AudienceScreen(_engine);
+                _audienceScreen.Show();
+                Log("Экран AUDIENCE открыт.");
+                _audienceScreen.UpdateBank(_engine.CurrentChainIndex, _engine.RoundBank);
+                _audienceScreen.UpdateRound(_engine.CurrentRound);
+                int m = _timeLeftSeconds / 60, s = _timeLeftSeconds % 60;
+                _audienceScreen.UpdateTimer($"{m}:{s:D2}", _timeLeftSeconds);
+            }
+            else
+            {
+                _audienceScreen.Focus();
+            }
+        }
+
         private void BtnNextQuestion_Click(object sender, RoutedEventArgs e)
         {
             SetOperatorAction("Следующий вопрос");
@@ -3157,19 +3952,34 @@ namespace WeakestLink.Views
 
         private void UpdateQuestionDisplay()
         {
-            if (_currentQuestion == null) return;
+            if (_currentQuestion == null) 
+            {
+                QuestionCard.Visibility = Visibility.Collapsed;
+                LinkLogoPanel.Visibility = Visibility.Visible;
+                return;
+            }
+
+            // Прячем лого, показываем карточку
+            LinkLogoPanel.Visibility = Visibility.Collapsed;
+            QuestionCard.Visibility = Visibility.Visible;
 
             // Обновляем текст на пульте оператора
             TxtCurrentQuestion.Text = _currentQuestion.Text;
             TxtCurrentAnswer.Text = $"ОТВЕТ: {_currentQuestion.Answer} ({_currentQuestion.AcceptableAnswers})";
+            
+            Log($"UI: Установка вопроса '{(_currentQuestion.Text.Length > 20 ? _currentQuestion.Text.Substring(0, 17) + "..." : _currentQuestion.Text)}' на пульте.");
 
-            // Мини-редактор: заполняем поля быстрой правки
-            TxtQuickEditQuestion.Text = _currentQuestion.Text;
-            TxtQuickEditAnswer.Text = _currentQuestion.Answer;
+
+
+            // Обновляем счётчик вопросов в статусной панели
+            TxtQuestionCount.Text = $"{_questionCount}/{_questionProvider.LoadedCount}";
+            TxtQuestionCount_Side.Text = $"{_questionCount}/{_questionProvider.LoadedCount}";
 
             // И обязательно на экране ведущего (прямое обновление)
             _hostScreen?.UpdateQuestion(_currentQuestion.Text, _currentQuestion.Answer, _questionCount);
             _hostModernScreen?.UpdateQuestion(_currentQuestion.Text, _currentQuestion.Answer, _questionCount);
+            _hostPremiumScreen?.UpdateQuestion(_currentQuestion.Text, _currentQuestion.Answer, _questionCount);
+            _hostModernPremiumScreen?.UpdateQuestion(_currentQuestion.Text, _currentQuestion.Answer, _questionCount);
 
             // Рассылка по сети всем клиентам
             _server.Broadcast($"QUESTION|{_currentQuestion.Text}|{_currentQuestion.Answer}|{_questionCount}");
@@ -3207,6 +4017,14 @@ namespace WeakestLink.Views
                 });
             }
             BankChainList.ItemsSource = items;
+
+            // Обновляем имя текущего игрока на всех экранах
+            string currentPlayer = _engine.CurrentPlayerTurn ?? "";
+            _server.Broadcast($"CURRENT_PLAYER|{currentPlayer}");
+            if (_broadcastWindow != null && _broadcastWindow.IsLoaded)
+                _broadcastWindow.UpdateCurrentPlayer(currentPlayer);
+            if (_audienceScreen != null && _audienceScreen.IsLoaded)
+                _audienceScreen.UpdateCurrentPlayer(currentPlayer);
         }
 
         private void UpdateStateButtons(GameState state)
@@ -3215,7 +4033,6 @@ namespace WeakestLink.Views
             // (стиль disabled задаётся через SetButtonDisabled: тёмный фон #333 и серый текст #888)
             BtnStartRound.Opacity = 1.0;
             BtnPlay.Opacity = 1.0;
-            BtnReset.Opacity = 1.0;
         }
 
         /// <summary>
@@ -3257,9 +4074,7 @@ namespace WeakestLink.Views
                         BtnWrong.IsEnabled = true;
                         BtnWrong.Background = BrushActiveRed;
                         BtnWrong.Foreground = white;
-                        BtnPass.IsEnabled = true;
-                        BtnPass.Background = BrushPassNeutral;
-                        BtnPass.Foreground = white;
+                        if (BtnPass != null) { BtnPass.IsEnabled = true; BtnPass.Background = BrushPassNeutral; BtnPass.Foreground = white; }
                         BtnBank.IsEnabled = true;
                         BtnBank.Background = BrushBankOrange;
                         BtnBank.Foreground = Brushes.Black;
@@ -3283,17 +4098,17 @@ namespace WeakestLink.Views
                         SetButtonDisabled(BtnToFinal);
                         BtnNextRound.IsEnabled = false;
                         SetButtonDisabled(BtnNextRound);
+                        BtnCloseRoundFromAnalytics.IsEnabled = false;
+                        BtnCloseRoundFromAnalytics.Visibility = Visibility.Collapsed;
                         BtnEndShow.IsEnabled = false;
                         SetButtonDisabled(BtnEndShow);
-                        SetButtonDisabled(BtnStartVoting); BtnStartVoting.IsEnabled = false;
-                        SetButtonDisabled(BtnReveal); BtnReveal.IsEnabled = false;
-                        SetButtonDisabled(BtnHotDiscussion); BtnHotDiscussion.IsEnabled = false;
+                        ApplyVotingStepper(0);
                         break;
 
                     case GameState.RoundSummary:
                         SetButtonDisabled(BtnCorrect); BtnCorrect.IsEnabled = false;
                         SetButtonDisabled(BtnWrong); BtnWrong.IsEnabled = false;
-                        SetButtonDisabled(BtnPass); BtnPass.IsEnabled = false;
+                        if (BtnPass != null) { SetButtonDisabled(BtnPass); BtnPass.IsEnabled = false; }
                         SetButtonDisabled(BtnBank); BtnBank.IsEnabled = false;
                         SetButtonDisabled(BtnNextQuestion); BtnNextQuestion.IsEnabled = false;
                         SetButtonDisabled(BtnStartRound); BtnStartRound.IsEnabled = false;
@@ -3306,12 +4121,10 @@ namespace WeakestLink.Views
                         SetButtonDisabled(BtnDuelWrong); BtnDuelWrong.IsEnabled = false;
                         SetButtonDisabled(BtnToFinal); BtnToFinal.IsEnabled = false;
                         SetButtonDisabled(BtnNextRound); BtnNextRound.IsEnabled = false;
+                        BtnCloseRoundFromAnalytics.IsEnabled = false;
+                        BtnCloseRoundFromAnalytics.Visibility = Visibility.Collapsed;
                         SetButtonDisabled(BtnEndShow); BtnEndShow.IsEnabled = false;
-                        BtnStartVoting.IsEnabled = true;
-                        BtnStartVoting.Background = BrushBankOrange;
-                        BtnStartVoting.Foreground = white;
-                        SetButtonDisabled(BtnReveal); BtnReveal.IsEnabled = false;
-                        SetButtonDisabled(BtnHotDiscussion); BtnHotDiscussion.IsEnabled = false;
+                        ApplyVotingStepper(1);
                         break;
 
                     case GameState.Voting:
@@ -3320,36 +4133,49 @@ namespace WeakestLink.Views
                     case GameState.Elimination:
                         SetButtonDisabled(BtnCorrect); BtnCorrect.IsEnabled = false;
                         SetButtonDisabled(BtnWrong); BtnWrong.IsEnabled = false;
-                        SetButtonDisabled(BtnPass); BtnPass.IsEnabled = false;
+                        if (BtnPass != null) { SetButtonDisabled(BtnPass); BtnPass.IsEnabled = false; }
                         SetButtonDisabled(BtnBank); BtnBank.IsEnabled = false;
                         SetButtonDisabled(BtnNextQuestion); BtnNextQuestion.IsEnabled = false;
                         SetButtonDisabled(BtnStartRound); BtnStartRound.IsEnabled = false;
                         SetButtonDisabled(BtnPlay); BtnPlay.IsEnabled = false;
                         SetButtonDisabled(BtnGamePlayPlay); BtnGamePlayPlay.IsEnabled = false;
-                        bool canEliminate = (state == GameState.Discussion || state == GameState.Reveal);
-                        EliminationComboBox.IsEnabled = canEliminate;
-                        BtnEliminate.IsEnabled = canEliminate;
-                        BtnEliminate.Background = canEliminate ? BrushActiveRed : BrushDisabledGray;
-                        BtnEliminate.Foreground = canEliminate ? white : BrushDisabledForeground;
-                        bool canReveal = (state == GameState.Discussion);
-                        BtnReveal.IsEnabled = canReveal;
-                        BtnReveal.Background = canReveal ? new SolidColorBrush(Color.FromRgb(0x88, 0x00, 0xAA)) : BrushDisabledGray;
-                        BtnReveal.Foreground = canReveal ? white : BrushDisabledForeground;
-                        bool canHotDiscussion = (state == GameState.Reveal);
-                        BtnHotDiscussion.IsEnabled = canHotDiscussion;
-                        BtnHotDiscussion.Background = canHotDiscussion ? new SolidColorBrush(Color.FromRgb(0xE6, 0x5C, 0x00)) : BrushDisabledGray;
-                        BtnHotDiscussion.Foreground = canHotDiscussion ? white : BrushDisabledForeground;
                         SetButtonDisabled(BtnStartDuel); BtnStartDuel.IsEnabled = false;
                         SetButtonDisabled(BtnDuelCorrect); BtnDuelCorrect.IsEnabled = false;
                         SetButtonDisabled(BtnDuelWrong); BtnDuelWrong.IsEnabled = false;
                         SetButtonDisabled(BtnToFinal); BtnToFinal.IsEnabled = false;
-                        bool canNextAfterElim = (state == GameState.Elimination) && _engine.ActivePlayers.Count >= 2 && !_nextRoundUsed;
+                        SetButtonDisabled(BtnEndShow); BtnEndShow.IsEnabled = false;
+
+                        if (state == GameState.Voting)
+                        {
+                            ApplyVotingStepper(2);
+                        }
+                        else if (state == GameState.Discussion)
+                        {
+                            ApplyVotingStepper(3);
+                        }
+                        else if (state == GameState.Reveal)
+                        {
+                            ApplyVotingStepper(4);
+                        }
+                        else
+                        {
+                            ApplyVotingStepper(0);
+                        }
+
+                        bool canEliminate = (state == GameState.Discussion || state == GameState.Reveal);
+                        EliminationComboBox.IsEnabled = canEliminate;
+                        BtnEliminate.IsEnabled = canEliminate;
+                        BtnEliminate.Foreground = canEliminate ? new SolidColorBrush(Color.FromRgb(0xDA, 0x37, 0x3C)) : BrushDisabledForeground;
+                        BtnEliminate.BorderBrush = canEliminate ? new SolidColorBrush(Color.FromRgb(0xDA, 0x37, 0x3C)) : new SolidColorBrush(Color.FromRgb(0x2a, 0x2a, 0x2a));
+
+                        bool canNextAfterElim = (state == GameState.Elimination) && _engine.ActivePlayers.Count >= 2 && !_nextRoundUsed && _eliminationPerformedThisRound;
                         BtnNextRound.IsEnabled = canNextAfterElim;
                         BtnNextRound.Background = canNextAfterElim ? BrushActiveGreen : BrushDisabledGray;
                         BtnNextRound.Foreground = canNextAfterElim ? white : BrushDisabledForeground;
                         if (!canNextAfterElim) SetButtonDisabled(BtnNextRound);
-                        SetButtonDisabled(BtnEndShow); BtnEndShow.IsEnabled = false;
-                        SetButtonDisabled(BtnStartVoting); BtnStartVoting.IsEnabled = false;
+                        
+                        BtnCloseRoundFromAnalytics.IsEnabled = canNextAfterElim;
+                        BtnCloseRoundFromAnalytics.Visibility = canNextAfterElim ? Visibility.Visible : Visibility.Collapsed;
                         break;
 
                     case GameState.IntroOpening:
@@ -3365,13 +4191,14 @@ namespace WeakestLink.Views
                         SetButtonDisabled(BtnWrong);
                         BtnWrong.IsEnabled = false;
                         SetButtonDisabled(BtnPass);
-                        BtnPass.IsEnabled = false;
+                        if (BtnPass != null) BtnPass.IsEnabled = false;
                         SetButtonDisabled(BtnBank);
                         BtnBank.IsEnabled = false;
                         BtnNextQuestion.IsEnabled = (state == GameState.RoundReady);
                         BtnNextQuestion.Background = (state == GameState.RoundReady) ? BrushPlayBlue : BrushDisabledGray;
                         BtnNextQuestion.Foreground = (state == GameState.RoundReady) ? white : BrushDisabledForeground;
-                        bool readyEnabled = !isPreGame && ((state == GameState.Idle) || (state == GameState.RulesExplanation) || (state == GameState.RoundReady && BtnBotTurn.Visibility == Visibility.Visible));
+                        bool isFinalReachedForReady = (_engine.ActivePlayers.Count <= 2 && _engine.CurrentRound > 0) || _engine.CurrentRound >= 7;
+                        bool readyEnabled = _isSessionStarted && !isPreGame && !isFinalReachedForReady && ((state == GameState.Idle) || (state == GameState.RulesExplanation) || (state == GameState.RoundReady && BtnBotTurn.Visibility == Visibility.Visible));
                         BtnStartRound.IsEnabled = readyEnabled;
                         BtnStartRound.Background = readyEnabled ? BrushActiveGreen : BrushDisabledGray;
                         BtnStartRound.Foreground = readyEnabled ? white : BrushDisabledForeground;
@@ -3394,15 +4221,16 @@ namespace WeakestLink.Views
                         BtnToFinal.IsEnabled = canGoToFinal;
                         BtnToFinal.Background = canGoToFinal ? BrushActiveGreen : BrushDisabledGray;
                         BtnToFinal.Foreground = canGoToFinal ? white : BrushDisabledForeground;
-                        bool canNextRound = (state == GameState.Idle) && _engine.CurrentRound > 0 && _engine.ActivePlayers.Count >= 2 && !_nextRoundUsed;
+                        bool canNextRound = (state == GameState.Idle) && _engine.CurrentRound > 0 && _engine.ActivePlayers.Count >= 2 && !_nextRoundUsed && _eliminationPerformedThisRound;
                         BtnNextRound.IsEnabled = canNextRound;
                         BtnNextRound.Background = canNextRound ? BrushActiveGreen : BrushDisabledGray;
                         BtnNextRound.Foreground = canNextRound ? white : BrushDisabledForeground;
+
+                        BtnCloseRoundFromAnalytics.IsEnabled = canNextRound;
+                        BtnCloseRoundFromAnalytics.Visibility = canNextRound ? Visibility.Visible : Visibility.Collapsed;
                         BtnEndShow.IsEnabled = false;
                         SetButtonDisabled(BtnEndShow);
-                        SetButtonDisabled(BtnStartVoting); BtnStartVoting.IsEnabled = false;
-                        SetButtonDisabled(BtnReveal); BtnReveal.IsEnabled = false;
-                        SetButtonDisabled(BtnHotDiscussion); BtnHotDiscussion.IsEnabled = false;
+                        ApplyVotingStepper(0);
                         break;
 
                     case GameState.FinalDuel:
@@ -3411,7 +4239,7 @@ namespace WeakestLink.Views
                         SetButtonDisabled(BtnWrong);
                         BtnWrong.IsEnabled = false;
                         SetButtonDisabled(BtnPass);
-                        BtnPass.IsEnabled = false;
+                        if (BtnPass != null) BtnPass.IsEnabled = false;
                         SetButtonDisabled(BtnBank);
                         BtnBank.IsEnabled = false;
                         SetButtonDisabled(BtnNextQuestion);
@@ -3441,9 +4269,7 @@ namespace WeakestLink.Views
                         BtnEndShow.IsEnabled = true;
                         BtnEndShow.Background = new SolidColorBrush(Colors.Transparent);
                         BtnEndShow.Foreground = Brushes.Gold;
-                        SetButtonDisabled(BtnStartVoting); BtnStartVoting.IsEnabled = false;
-                        SetButtonDisabled(BtnReveal); BtnReveal.IsEnabled = false;
-                        SetButtonDisabled(BtnHotDiscussion); BtnHotDiscussion.IsEnabled = false;
+                        ApplyVotingStepper(0);
                         break;
 
                     default:
@@ -3452,7 +4278,7 @@ namespace WeakestLink.Views
                         SetButtonDisabled(BtnWrong);
                         BtnWrong.IsEnabled = false;
                         SetButtonDisabled(BtnPass);
-                        BtnPass.IsEnabled = false;
+                        if (BtnPass != null) BtnPass.IsEnabled = false;
                         SetButtonDisabled(BtnBank);
                         BtnBank.IsEnabled = false;
                         SetButtonDisabled(BtnNextQuestion);
@@ -3537,19 +4363,7 @@ namespace WeakestLink.Views
             PlayersGrid.ItemsSource = stats;
         }
 
-        private void BtnOpenQuestionEditor_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var editorWindow = new QuestionEditorWindow();
-                editorWindow.Show();
-            }
-            catch (Exception ex)
-            {
-                Log($"Ошибка открытия редактора: {ex.Message}");
-                DarkMessageBox.Show($"Не удалось открыть редактор: {ex.Message}", "Ошибка");
-            }
-        }
+
 
         private void BtnValidateJson_Click(object sender, RoutedEventArgs e)
         {
@@ -3575,30 +4389,144 @@ namespace WeakestLink.Views
             }
         }
 
-        private void BtnQuickEditSave_Click(object sender, RoutedEventArgs e)
+        private void BtnSelfTest_Click(object sender, RoutedEventArgs e)
         {
-            if (_currentQuestion == null)
+            try
             {
-                Log("Быстрая правка: нет текущего вопроса на экране.");
-                return;
-            }
-            string newText = TxtQuickEditQuestion.Text?.Trim() ?? "";
-            string newAnswer = TxtQuickEditAnswer.Text?.Trim() ?? "";
-            if (string.IsNullOrEmpty(newText) || string.IsNullOrEmpty(newAnswer))
-            {
-                Log("Быстрая правка: текст и ответ не могут быть пустыми.");
-                return;
-            }
-            _currentQuestion.Text = newText;
-            _currentQuestion.Answer = newAnswer;
-            _currentQuestion.AcceptableAnswers = newAnswer;
+                var selfTest = new SelfTest();
 
-            TxtCurrentQuestion.Text = newText;
-            TxtCurrentAnswer.Text = $"ОТВЕТ: {newAnswer}";
-            _hostScreen?.UpdateQuestion(newText, newAnswer, _questionCount);
-            _hostModernScreen?.UpdateQuestion(newText, newAnswer, _questionCount);
-            _server.Broadcast($"QUESTION|{newText}|{newAnswer}|{_questionCount}");
-            Log("Вопрос отредактирован на лету и обновлён на экране.");
+                // Путь к исходнику OperatorPanel.xaml.cs для HostScreen Parity Check
+                string sourcePath = System.IO.Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory, 
+                    "..", "..", "..", "..", "Views", "OperatorPanel.xaml.cs");
+                
+                // Пробуем альтернативный путь если не нашли
+                if (!System.IO.File.Exists(sourcePath))
+                {
+                    sourcePath = System.IO.Path.Combine(
+                        AppDomain.CurrentDomain.BaseDirectory, 
+                        "..", "..", "..", "Views", "OperatorPanel.xaml.cs");
+                }
+                if (!System.IO.File.Exists(sourcePath))
+                {
+                    // Прямой путь к проекту
+                    sourcePath = @"O:\WEAKEST LINK SOPFTWARE AI TESTERING\Views\OperatorPanel.xaml.cs";
+                }
+
+                var results = selfTest.RunAll(sourcePath);
+                string report = SelfTest.GenerateReport(results);
+
+                int passed = results.Count(r => r.Passed);
+                int failed = results.Count(r => !r.Passed);
+
+                // Сохраняем полный отчёт в файл
+                try
+                {
+                    string reportPath = System.IO.Path.Combine(
+                        AppDomain.CurrentDomain.BaseDirectory, "SelfTestReport.txt");
+                    System.IO.File.WriteAllText(reportPath, report);
+                    Log($"Self-test отчёт сохранён: {reportPath}");
+                }
+                catch { /* не критично */ }
+
+                // Показываем результат
+                DarkMessageBox.Show(
+                    report,
+                    $"🧪 Self-Test: {passed} ✅  {failed} ❌",
+                    MessageBoxButton.OK,
+                    failed > 0 ? MessageBoxImage.Warning : MessageBoxImage.Information);
+
+                Log($"Self-test завершён: {passed} прошло, {failed} провалено из {results.Count}.");
+            }
+            catch (Exception ex)
+            {
+                DarkMessageBox.Show(
+                    $"Ошибка при запуске Self-Test:\n{ex.Message}",
+                    "Self-Test Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                Log($"ОШИБКА SELF-TEST: {ex.Message}");
+            }
+        }
+
+        // ═══════════════════════════════════════════════════
+        // 📺 ГРАФИКА БРОДКАСТА — toggle handlers
+        // ═══════════════════════════════════════════════════
+
+        private void TglBcTimer_Click(object sender, RoutedEventArgs e)
+        {
+            if (_broadcastWindow == null || !_broadcastWindow.IsLoaded) return;
+            bool show = TglBcTimer.IsChecked == true;
+            _broadcastWindow.SetTimerVisibility(show);
+            Log($"Broadcast: Таймер {(show ? "показан" : "скрыт")}.");
+        }
+
+        private void TglBcChain_Click(object sender, RoutedEventArgs e)
+        {
+            if (_broadcastWindow == null || !_broadcastWindow.IsLoaded) return;
+            bool show = TglBcChain.IsChecked == true;
+            _broadcastWindow.SetChainVisibility(show);
+            Log($"Broadcast: Цепочка {(show ? "показана" : "скрыта")}.");
+        }
+
+        private void TglBcChainTimer_Click(object sender, RoutedEventArgs e)
+        {
+            if (_broadcastWindow == null || !_broadcastWindow.IsLoaded) return;
+            bool show = TglBcChainTimer.IsChecked == true;
+            _broadcastWindow.SetChainVisibility(show);
+            _broadcastWindow.SetTimerVisibility(show);
+            // Синхронизируем индивидуальные кнопки
+            TglBcTimer.IsChecked = show;
+            TglBcChain.IsChecked = show;
+            Log($"Broadcast: Цепочка+Таймер {(show ? "показаны" : "скрыты")}.");
+        }
+
+        private void TglBcBank_Click(object sender, RoutedEventArgs e)
+        {
+            if (_broadcastWindow == null || !_broadcastWindow.IsLoaded) return;
+            bool show = TglBcBank.IsChecked == true;
+            if (show)
+                _broadcastWindow.ShowBankOverlay(_engine.TotalBank);
+            else
+                _broadcastWindow.HideBankOverlay();
+            Log($"Broadcast: Банк {(show ? "показан" : "скрыт")}.");
+        }
+
+        private void TglBcDuel_Click(object sender, RoutedEventArgs e)
+        {
+            if (_broadcastWindow == null || !_broadcastWindow.IsLoaded) return;
+            bool show = TglBcDuel.IsChecked == true;
+            if (show)
+            {
+                string p1 = _engine.ActivePlayers.Count >= 1 ? _engine.ActivePlayers[0] : "";
+                string p2 = _engine.ActivePlayers.Count >= 2 ? _engine.ActivePlayers[1] : "";
+                _broadcastWindow.ShowFinalDuel(p1, p2);
+            }
+            else
+                _broadcastWindow.HideFinalDuel();
+            Log($"Broadcast: Дуэль {(show ? "показана" : "скрыта")}.");
+        }
+
+        private void BtnBcStyleClassic_Click(object sender, RoutedEventArgs e)
+        {
+            if (_broadcastWindow == null || !_broadcastWindow.IsLoaded) return;
+            _broadcastWindow.SwitchStyle(false);
+            BtnStyleClassic.Background = new SolidColorBrush(Color.FromRgb(0x58, 0x65, 0xF2));
+            BtnStyleClassic.Foreground = Brushes.White;
+            BtnStyleNew.Background = new SolidColorBrush(Color.FromRgb(0x4e, 0x50, 0x58));
+            BtnStyleNew.Foreground = new SolidColorBrush(Color.FromRgb(0xdb, 0xde, 0xe1));
+            Log("Broadcast: Стиль → CLASSIC.");
+        }
+
+        private void BtnBcStyleNew_Click(object sender, RoutedEventArgs e)
+        {
+            if (_broadcastWindow == null || !_broadcastWindow.IsLoaded) return;
+            _broadcastWindow.SwitchStyle(true);
+            BtnStyleNew.Background = new SolidColorBrush(Color.FromRgb(0x58, 0x65, 0xF2));
+            BtnStyleNew.Foreground = Brushes.White;
+            BtnStyleClassic.Background = new SolidColorBrush(Color.FromRgb(0x4e, 0x50, 0x58));
+            BtnStyleClassic.Foreground = new SolidColorBrush(Color.FromRgb(0xdb, 0xde, 0xe1));
+            Log("Broadcast: Стиль → NEW.");
         }
 
         private void Log(string message)
@@ -3618,12 +4546,21 @@ namespace WeakestLink.Views
                 return;
             }
 
+            // F9 — DEBUG: тест финальной дуэли (показать оверлей с демо-сценарием)
+            if (e.Key == Key.F9)
+            {
+                DebugTestFinalDuel();
+                e.Handled = true;
+                base.OnKeyDown(e);
+                return;
+            }
+
             // Защита: не срабатываем, если фокус в поле ввода (имя игрока и т.д.)
             if (e.OriginalSource is TextBox) return;
 
             bool handled = true;
 
-            if (GridGameControls.Visibility != Visibility.Visible && HeadToHeadPanel.Visibility != Visibility.Visible) 
+            if (PlayContext.Visibility != Visibility.Visible && HeadToHeadPanel.Visibility != Visibility.Visible) 
             {
                 base.OnKeyDown(e);
                 return;
@@ -3673,6 +4610,95 @@ namespace WeakestLink.Views
             base.OnKeyDown(e);
         }
 
+        private DispatcherTimer? _debugFinalTimer;
+        private int _debugFinalStep;
+
+        private void DebugTestFinalDuel()
+        {
+            // Убедимся, что BroadcastWindow открыт
+            if (_broadcastWindow == null || !_broadcastWindow.IsLoaded)
+            {
+                _broadcastWindow = new BroadcastWindow(_engine);
+                _broadcastWindow.Show();
+            }
+
+            // Сценарий: P1 = ✓ ✗ ✓ ✗ ✓ (3:2), P2 = ✗ ✓ ✓ ✓ ✗ (3:2)
+            bool?[] p1Script = { true, false, true, false, true };
+            bool?[] p2Script = { false, true, true, true, false };
+
+            // Инициализировать движок для теста
+            _engine.Player1FinalScores.Clear();
+            _engine.Player2FinalScores.Clear();
+            for (int i = 0; i < 5; i++)
+            {
+                _engine.Player1FinalScores.Add(null);
+                _engine.Player2FinalScores.Add(null);
+            }
+
+            _broadcastWindow.ShowFinalDuel("ТЕСТИГРОК", "ДЕБАГОВ");
+            Log("DEBUG F9: Тест финальной дуэли запущен. Демо-сценарий: 5 пар ответов за 10 секунд.");
+
+            _debugFinalStep = 0;
+            _debugFinalTimer?.Stop();
+            _debugFinalTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1500) };
+            _debugFinalTimer.Tick += (s, ev) =>
+            {
+                if (_debugFinalStep >= 5)
+                {
+                    _debugFinalTimer.Stop();
+                    Log("DEBUG F9: Демо завершено. Нажмите F9 ещё раз для повтора.");
+                    return;
+                }
+
+                _engine.Player1FinalScores[_debugFinalStep] = p1Script[_debugFinalStep];
+                _engine.Player2FinalScores[_debugFinalStep] = p2Script[_debugFinalStep];
+                _broadcastWindow.UpdateFinalDuel();
+
+                string r1 = p1Script[_debugFinalStep] == true ? "✓" : "✗";
+                string r2 = p2Script[_debugFinalStep] == true ? "✓" : "✗";
+                Log($"DEBUG F9: Пара {_debugFinalStep + 1}/5 — P1:{r1}  P2:{r2}");
+
+                _debugFinalStep++;
+            };
+            _debugFinalTimer.Start();
+        }
+
+        private void BtnDebugTestFinal_Click(object sender, RoutedEventArgs e)
+        {
+            // 1. Подготовить движок: 2 игрока, раунд 7
+            _engine.ResetGame();
+            TxtTimer.Foreground = TimerBrushNormal;
+            ApplyTimerGlow(HubColorNormal);
+            StopTimerPulse();
+            _engine.ActivePlayers.Clear();
+            _engine.ActivePlayers.Add("Алексей");
+            _engine.ActivePlayers.Add("Борис");
+            _engine.ResetRoundCounter();
+            for (int i = 0; i < 7; i++) _engine.NextRound();
+
+            _currentTestModeLabel = "Финал (DEBUG-тест)";
+            UpdateTestModeBadge();
+
+            // 2. Перейти к финалу (минуя промежуточный экран)
+            BtnToFinal_Click(null!, null!);
+
+            // 3. Автоматически применить — первый отвечает Алексей
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+            {
+                CmbFirstResponder.SelectedIndex = 0;
+                BtnApplyDuel_Click(null!, null!);
+
+                // 4. Открыть BroadcastWindow и показать оверлей
+                if (_broadcastWindow == null || !_broadcastWindow.IsLoaded)
+                {
+                    _broadcastWindow = new BroadcastWindow(_engine);
+                    _broadcastWindow.Show();
+                }
+                _broadcastWindow?.ShowFinalDuel("Алексей", "Борис");
+                Log("DEBUG: Финальная дуэль запущена! Жми → Верно / ← Неверно для ответов.");
+            });
+        }
+
         private void BtnEndShow_Click(object sender, RoutedEventArgs e)
         {
             SetOperatorAction("Шоу завершено");
@@ -3681,11 +4707,11 @@ namespace WeakestLink.Views
             
             Log("ЗАВЕРШЕНИЕ ПРОГРАММЫ. Сброс системы в начальное состояние.");
 
-            // Сброс видимости
-            SetupPanel.Visibility = Visibility.Visible;
-            GridGameControls.Visibility = Visibility.Collapsed;
-            WinnerPanel.Visibility = Visibility.Collapsed;
-            HeadToHeadPanel.Visibility = Visibility.Collapsed;
+            _isSessionStarted = false;
+            FreezeRoster(false);
+            BtnStartSession.IsEnabled = true;
+            BtnStartSession.Content = "START SESSION";
+            SetCentralContext("SETUP");
 
             // Восстановление прозрачности панелей (если были приглушены в финале)
             SetFinalDuelUIState(false);
@@ -3700,71 +4726,112 @@ namespace WeakestLink.Views
             _server.Broadcast("RESET_GAME");
         }
 
-        #region Аналитика раунда
+        private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true, WriteIndented = true };
 
-        /// <summary>
-        /// Открывает окно аналитики раунда
-        /// </summary>
-        private void OpenRoundAnalytics()
+        #region Integrated Modules (Question Editor & Analytics)
+
+        private ObservableCollection<QuestionData> _editorQuestions = new();
+        private const string EditorFilePath = "questions.json";
+
+        private void BtnToggleQuestionEditor_Click(object sender, RoutedEventArgs e)
+        {
+            if (EditorContext.Visibility == Visibility.Visible)
+                SetCentralContext(_isSessionStarted ? "PLAY" : "SETUP");
+            else
+                SetCentralContext("EDIT");
+        }
+
+        private void BtnToggleAnalytics_Click(object sender, RoutedEventArgs e)
+        {
+            if (AnalyticsContext.Visibility == Visibility.Visible)
+                SetCentralContext(_isSessionStarted ? "PLAY" : "SETUP");
+            else
+                SetCentralContext("STATS");
+        }
+
+        private void BtnAnalytics_Click(object sender, RoutedEventArgs e)
+        {
+            if (AnalyticsContext.Visibility == Visibility.Visible)
+                SetCentralContext(_isSessionStarted ? "PLAY" : "SETUP");
+            else
+                SetCentralContext("STATS");
+        }
+
+        private void LoadQuestionsForEditor()
         {
             try
             {
-                // Закрываем предыдущее окно, если оно было открыто
-                if (_statsWindow != null)
+                if (!File.Exists(EditorFilePath))
                 {
-                    _statsWindow.Close();
-                    _statsWindow = null;
+                    Log($"Файл {EditorFilePath} не найден.");
+                    QuestionsDataGrid.ItemsSource = null;
+                    return;
                 }
 
-                // Рассчитываем длительность раунда
-                int roundDuration = _engine.GetRoundDuration() - _timeLeftSeconds;
-                
-                // Создаем и показываем новое окно аналитики
-                _statsWindow = new RoundStatsWindow(_engine, roundDuration, _botVotes, savedRoundBank: _lastRoundBankForSummary);
-                _statsWindow.Owner = this;
-                _statsWindow.Show();
-                
-                Log($"📊 Открыта аналитика раунда {_engine.CurrentRound} (длительность: {roundDuration} сек)");
+                string json = File.ReadAllText(EditorFilePath);
+                var questions = JsonSerializer.Deserialize<List<QuestionData>>(json, JsonOptions) ?? new List<QuestionData>();
+                _editorQuestions = new ObservableCollection<QuestionData>(questions);
+
+                QuestionsDataGrid.ItemsSource = _editorQuestions;
+                Log($"📝 Загружено {_editorQuestions.Count} вопросов в редактор.");
             }
             catch (Exception ex)
             {
-                Log($"Ошибка открытия аналитики: {ex.Message}");
-                DarkMessageBox.Show($"Не удалось открыть аналитику раунда: {ex.Message}", "Ошибка", 
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                Log($"❌ Ошибка загрузки базы: {ex.Message}");
             }
         }
 
-        /// <summary>
-        /// Обновляет данные в открытом окне аналитики
-        /// </summary>
-        private void RefreshAnalytics()
+        private async void SaveQuestionsForEditor()
         {
-            if (_statsWindow != null && _statsWindow.IsLoaded)
+            try
             {
-                _statsWindow.RefreshAnalytics();
+                string json = JsonSerializer.Serialize(_editorQuestions.ToList(), JsonOptions);
+                File.WriteAllText(EditorFilePath, json);
+                _questionProvider.LoadQuestions(EditorFilePath);
+                Log("✅ База вопросов сохранена и синхронизирована.");
+                ShowEditorSaveToast("СОХРАНЕНО ✓");
             }
-        }
-
-        /// <summary>
-        /// Закрывает окно аналитики при выходе из Voting
-        /// </summary>
-        private void CloseAnalytics()
-        {
-            if (_statsWindow != null)
+            catch (Exception ex)
             {
-                _statsWindow.Close();
-                _statsWindow = null;
-                Log("📊 Окно аналитики закрыто");
+                Log($"❌ Ошибка сохранения базы: {ex.Message}");
+                ShowEditorSaveToast("ОШИБКА ✗");
             }
         }
 
-        /// <summary>
-        /// Обработчик кнопки аналитики
-        /// </summary>
-        private void BtnAnalytics_Click(object sender, RoutedEventArgs e)
+        private async void ShowEditorSaveToast(string text)
         {
-            OpenRoundAnalytics();
+            TxtEditorSaveToast.Text = text;
+            TxtEditorSaveToast.Opacity = 1;
+            await Task.Delay(2000);
+            for (double o = 1.0; o >= 0; o -= 0.1)
+            {
+                TxtEditorSaveToast.Opacity = o;
+                await Task.Delay(30);
+            }
+            TxtEditorSaveToast.Opacity = 0;
         }
+
+        private void BtnEditorLoad_Click(object sender, RoutedEventArgs e) => LoadQuestionsForEditor();
+        private void BtnEditorSave_Click(object sender, RoutedEventArgs e) => SaveQuestionsForEditor();
+
+        private async void OpenRoundAnalytics()
+        {
+            SetupContext.Visibility = Visibility.Collapsed;
+            PlayContext.Visibility = Visibility.Collapsed;
+            AnalyticsContext.Visibility = Visibility.Collapsed;
+            EditorContext.Visibility = Visibility.Collapsed;
+
+            TxtTransitionTitle.Text = $"ИТОГИ РАУНДА {_engine.CurrentRound}";
+            TxtTransitionSub.Text = $"Банк: {_lastRoundBankForSummary:N0} ₽  •  Переход к аналитике...";
+            TransitionOverlay.Visibility = Visibility.Visible;
+
+            await Task.Delay(2000);
+
+            TransitionOverlay.Visibility = Visibility.Collapsed;
+            SetCentralContext("STATS");
+        }
+        private void RefreshAnalytics() => UpdateAnalyticsData();
+        private void CloseAnalytics() => SetCentralContext(_isSessionStarted ? "PLAY" : "SETUP");
 
         #endregion
 
@@ -3931,6 +4998,302 @@ namespace WeakestLink.Views
                 : Visibility.Collapsed;
         }
 
+        private void ChkDebugEndRoundButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (BtnDebugEndRoundTimer == null) return;
+            BtnDebugEndRoundTimer.Visibility = ChkDebugEndRoundButton.IsChecked == true
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+
+        private void BtnDebugEndRoundTimer_Click(object sender, RoutedEventArgs e)
+        {
+            if (_engine.CurrentState == GameState.Playing && _roundTimer != null && _roundTimer.IsEnabled)
+            {
+                const int jumpToSeconds = 5;
+                Log($"✂ [DEBUG] Принудительное завершение времени раунда (осталось {jumpToSeconds} секунд).");
+                if (_timeLeftSeconds > jumpToSeconds)
+                {
+                    _timeLeftSeconds = jumpToSeconds;
+                    UpdateTimerDisplay();
+
+                    var (position, duration) = _audioManager.GetAudioPosition();
+
+                    if (duration > TimeSpan.Zero)
+                    {
+                        // Структура трека: [отбивка TRACK_INTRO_BEAT_MS] + [roundDuration сек игры] + [долгий фейд-аут]
+                        // НЕ ориентируемся на duration файла — после гонга идёт длинный фейдинг.
+                        // Позиция трека когда таймер = N: (roundDuration - N) + introBeat
+                        int fullRoundDuration = _engine.GetRoundDuration();
+                        double introSec = TRACK_INTRO_BEAT_MS / 1000.0;
+                        double targetSec = (fullRoundDuration - jumpToSeconds) + introSec;
+
+                        _audioManager.SetAudioPosition(TimeSpan.FromSeconds(targetSec));
+                        Log($"[DEBUG] Аудио: {targetSec:F1}s (раунд {fullRoundDuration}с, отбивка {introSec:F1}с, таймер → {jumpToSeconds}с).");
+                    }
+                }
+            }
+            else
+            {
+                Log("⚠ [DEBUG] Кнопка работает только во время активного таймера раунда (игра идет).");
+            }
+        }
+
+        #region Central Context Management
+
+        /// <summary>
+        /// Переключает центральный контекст между SETUP, PLAY, STATS, EDIT
+        /// </summary>
+        private void SetCentralContext(string mode)
+        {
+            try
+            {
+                SetupContext.Visibility = Visibility.Collapsed;
+                PlayContext.Visibility = Visibility.Collapsed;
+                AnalyticsContext.Visibility = Visibility.Collapsed;
+                EditorContext.Visibility = Visibility.Collapsed;
+
+                switch (mode.ToUpper())
+                {
+                    case "SETUP":
+                        SetupContext.Visibility = Visibility.Visible;
+                        break;
+
+                    case "PLAY":
+                        PlayContext.Visibility = Visibility.Visible;
+                        if (_engine?.CurrentState == GameState.FinalDuel)
+                        {
+                            GamePlayPanel.Visibility = Visibility.Collapsed;
+                            HeadToHeadPanel.Visibility = Visibility.Visible;
+                        }
+                        break;
+
+                    case "STATS":
+                        AnalyticsContext.Visibility = Visibility.Visible;
+                        UpdateAnalyticsData();
+                        break;
+
+                    case "EDIT":
+                        EditorContext.Visibility = Visibility.Visible;
+                        LoadQuestionsForEditor();
+                        break;
+
+                    default:
+                        SetupContext.Visibility = Visibility.Visible;
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"❌ Ошибка при переключении контекста: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Обновляет данные в аналитическом контексте
+        /// </summary>
+        private void UpdateAnalyticsData()
+        {
+            try
+            {
+                int roundDuration = Math.Max(0, _engine.GetRoundDuration() - _timeLeftSeconds);
+                var analytics = _statsAnalyzer.AnalyzeRound(roundDuration, _lastRoundBankForSummary);
+
+                TxtAnalyticsTotalGames.Text = _engine.CurrentRound.ToString();
+                TxtAnalyticsAvgBank.Text = $"{analytics.TotalBanked:N0} ₽";
+                TxtAnalyticsBestPlayer.Text = string.IsNullOrEmpty(analytics.StrongestLink) ? "—" : analytics.StrongestLink;
+                TxtAnalyticsPlayTime.Text = $"{roundDuration / 60}:{roundDuration % 60:D2}";
+
+                var rows = analytics.PlayerStats.Select(p => new AnalyticsRow
+                {
+                    Name = p.Name,
+                    CorrectAnswers = p.CorrectAnswers,
+                    WrongAnswers = p.TotalMistakes,
+                    MoneyLost = p.ChainBreaksLost,
+                    PassCount = p.Passes,
+                    BankedAmount = $"{p.BankedMoney:N0}",
+                    Prediction = p.Name == analytics.WeakestLink ? "СЛАБОЕ ЗВЕНО"
+                               : p.Name == analytics.StrongestLink ? "СИЛЬНОЕ ЗВЕНО"
+                               : "",
+                    IsWeakest = p.Name == analytics.WeakestLink,
+                    IsStrongest = p.Name == analytics.StrongestLink
+                }).ToList();
+
+                AnalyticsPlayersGrid.ItemsSource = rows;
+
+                AnalyticsPlayersGrid.LoadingRow -= AnalyticsGrid_LoadingRow;
+                AnalyticsPlayersGrid.LoadingRow += AnalyticsGrid_LoadingRow;
+            }
+            catch (Exception ex)
+            {
+                Log($"Ошибка обновления аналитики: {ex.Message}");
+            }
+        }
+
+        private void QuestionsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (QuestionsDataGrid.SelectedItem is QuestionData q)
+            {
+                TxtEditQuestion.Text = q.Text;
+                TxtEditAnswer.Text = q.Answer;
+                TxtEditAccept.Text = q.AcceptableAnswers;
+                TxtEditRound.Text = q.Round?.ToString() ?? "";
+            }
+        }
+
+        private void BtnEditorApply_Click(object sender, RoutedEventArgs e)
+        {
+            if (QuestionsDataGrid.SelectedItem is QuestionData q)
+            {
+                q.Text = TxtEditQuestion.Text;
+                q.Answer = TxtEditAnswer.Text;
+                q.AcceptableAnswers = TxtEditAccept.Text;
+                if (int.TryParse(TxtEditRound.Text, out int round))
+                    q.Round = round;
+                else
+                    q.Round = null;
+                
+                QuestionsDataGrid.Items.Refresh();
+                SaveQuestionsForEditor();
+            }
+        }
+
+        private void BtnEditorNew_Click(object sender, RoutedEventArgs e)
+        {
+            var newQ = new QuestionData
+            {
+                Text = "НОВЫЙ ВОПРОС",
+                Answer = "ОТВЕТ",
+                Round = 1
+            };
+            _editorQuestions.Add(newQ);
+            QuestionsDataGrid.SelectedItem = newQ;
+            QuestionsDataGrid.ScrollIntoView(newQ);
+            Log("➕ Добавлен новый пустой вопрос.");
+        }
+
+        private void BtnEditorDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (QuestionsDataGrid.SelectedItem is QuestionData q)
+            {
+                _editorQuestions.Remove(q);
+                Log($"🗑️ Вопрос '{q.Text}' удален.");
+                SaveQuestionsForEditor();
+            }
+        }
+
+        private void AnalyticsGrid_LoadingRow(object? sender, DataGridRowEventArgs e)
+        {
+            if (e.Row.DataContext is AnalyticsRow row)
+            {
+                if (row.IsWeakest)
+                    e.Row.Background = new SolidColorBrush(Color.FromArgb(0x30, 0xDA, 0x37, 0x3C));
+                else if (row.IsStrongest)
+                    e.Row.Background = new SolidColorBrush(Color.FromArgb(0x20, 0x2E, 0xCC, 0x71));
+                else
+                    e.Row.Background = Brushes.Transparent;
+            }
+        }
+
+        /// <summary>
+        /// Stepper: highlights the active voting phase button, dims the rest.
+        /// step: 1=VOTE, 2=END, 3=REVEAL, 4=VERDICT, 0=all dim
+        /// </summary>
+        private void ApplyVotingStepper(int step)
+        {
+            var buttons = new[] { BtnStartVoting, BtnEndVoting, BtnReveal, BtnHotDiscussion };
+            var activeBorders = new[]
+            {
+                new SolidColorBrush(Color.FromRgb(0xF1, 0xC4, 0x0F)),
+                new SolidColorBrush(Color.FromRgb(0xDA, 0x37, 0x3C)),
+                new SolidColorBrush(Color.FromRgb(0x88, 0x00, 0xAA)),
+                new SolidColorBrush(Color.FromRgb(0xE6, 0x5C, 0x00))
+            };
+            var activeFg = new[]
+            {
+                new SolidColorBrush(Color.FromRgb(0xF1, 0xC4, 0x0F)),
+                Brushes.White,
+                Brushes.White,
+                Brushes.White
+            };
+            var activeBg = new Brush[]
+            {
+                new SolidColorBrush(Color.FromArgb(0x18, 0xF1, 0xC4, 0x0F)),
+                new SolidColorBrush(Color.FromArgb(0x18, 0xDA, 0x37, 0x3C)),
+                new SolidColorBrush(Color.FromArgb(0x18, 0x88, 0x00, 0xAA)),
+                new SolidColorBrush(Color.FromArgb(0x18, 0xE6, 0x5C, 0x00))
+            };
+
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                bool isActive = (i + 1) == step;
+                buttons[i].IsEnabled = isActive;
+                buttons[i].Opacity = isActive ? 1.0 : 0.4;
+                buttons[i].BorderBrush = isActive ? activeBorders[i] : new SolidColorBrush(Color.FromRgb(0x2a, 0x2a, 0x2a));
+                buttons[i].Foreground = isActive ? activeFg[i] : new SolidColorBrush(Color.FromRgb(0x44, 0x44, 0x44));
+                buttons[i].Background = isActive ? activeBg[i] : Brushes.Transparent;
+            }
+        }
+
+        private void EliminationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (AnalyticsPlayersGrid?.ItemsSource == null) return;
+
+            string selectedName = "";
+            if (EliminationComboBox.SelectedItem != null)
+            {
+                var prop = EliminationComboBox.SelectedItem.GetType().GetProperty("Name");
+                selectedName = prop?.GetValue(EliminationComboBox.SelectedItem)?.ToString() ?? "";
+            }
+
+            foreach (var item in AnalyticsPlayersGrid.Items)
+            {
+                var row = AnalyticsPlayersGrid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+                if (row == null) continue;
+
+                bool isSelected = item is AnalyticsRow ar && ar.Name == selectedName;
+                if (isSelected)
+                {
+                    row.Background = new SolidColorBrush(Color.FromArgb(0x40, 0xDA, 0x37, 0x3C));
+                    row.BorderBrush = new SolidColorBrush(Color.FromRgb(0xDA, 0x37, 0x3C));
+                    row.BorderThickness = new Thickness(1);
+                }
+                else
+                {
+                    row.BorderThickness = new Thickness(0);
+                    if (item is AnalyticsRow arx)
+                    {
+                        if (arx.IsWeakest)
+                            row.Background = new SolidColorBrush(Color.FromArgb(0x30, 0xDA, 0x37, 0x3C));
+                        else if (arx.IsStrongest)
+                            row.Background = new SolidColorBrush(Color.FromArgb(0x20, 0x2E, 0xCC, 0x71));
+                        else
+                            row.Background = Brushes.Transparent;
+                    }
+                    else
+                    {
+                        row.Background = Brushes.Transparent;
+                    }
+                }
+            }
+        }
+
         #endregion
+
+        #endregion
+    }
+
+    public class AnalyticsRow
+    {
+        public string Name { get; set; } = "";
+        public int CorrectAnswers { get; set; }
+        public int WrongAnswers { get; set; }
+        public int MoneyLost { get; set; }
+        public int PassCount { get; set; }
+        public string BankedAmount { get; set; } = "0";
+        public string Prediction { get; set; } = "";
+        public bool IsWeakest { get; set; }
+        public bool IsStrongest { get; set; }
     }
 }

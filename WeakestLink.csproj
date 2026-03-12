@@ -1,13 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <Compile Remove="MainWindow.xaml.cs" />
-    <Page Remove="MainWindow.xaml" />
     <Compile Remove="QuestionEditor\**\*" />
     <Page Remove="QuestionEditor\**\*" />
     <Compile Remove="OLDIES\**\*" />
     <Page Remove="OLDIES\**\*" />
     <None Remove="OLDIES\**\*" />
+    <Compile Remove="WeakestLinkNew\**\*" />
+    <Page Remove="WeakestLinkNew\**\*" />
+    <None Remove="WeakestLinkNew\**\*" />
     <Compile Remove="WLINK AI TESTER\**\*" />
     <Page Remove="WLINK AI TESTER\**\*" />
     <Compile Remove="WLINK AI TESTER 2\**\*" />
@@ -15,16 +16,19 @@
     <Compile Remove="WEAKEST_LINK_BUILD_NEW\**\*" />
     <Page Remove="WEAKEST_LINK_BUILD_NEW\**\*" />
     <Compile Remove="Assets — копия\**\*" />
-    <Compile Remove=".snapshots\**\*" />
+    <Compile Remove="MainWindow.xaml.cs" />
+    <Page Remove="MainWindow.xaml" />
+    <None Remove=".snapshots\**\*" />
   </ItemGroup>
   <PropertyGroup>
     <OutputPath>$(MSBuildProjectDirectory)\Build\$(Configuration)\$(TargetFramework)\</OutputPath>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>app.ico</ApplicationIcon>
   </PropertyGroup>
   <Target Name="BuildQuestionEditor" AfterTargets="Build" Condition="Exists('$(ProjectDir)QuestionEditor\WeakestLink.QuestionEditor.csproj')">
     <Exec Command="dotnet build &quot;$(ProjectDir)QuestionEditor\WeakestLink.QuestionEditor.csproj&quot; -c $(Configuration)" IgnoreExitCode="true" />
@@ -38,6 +42,27 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Assets\Images\logotipka.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Images\moneytree_blue.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Images\moneytree_red.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Images\BANK.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Images\TIMER.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Images\GOOD.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Images\BAD.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Images\NORMAL.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

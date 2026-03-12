@@ -1,7 +1,8 @@
 using System;
 using System.Windows;
+using System.Windows.Controls;
 
-namespace MoneyChain
+namespace WeakestLink
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml

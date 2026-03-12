@@ -183,10 +183,12 @@ namespace WeakestLink.Core.Analytics
             var list = stats.ToList();
             if (list.Count == 0) return "";
 
+            // Баланс: каждый «чистый» верный ответ ≈ 10 000, банк добавляется напрямую.
+            // Банк 50 000 ≈ 5 чистых ответов — справедливое соотношение.
             return list
-                .OrderByDescending(p => p.CorrectAnswers)
+                .OrderByDescending(p => (p.CorrectAnswers - p.TotalMistakes) * 10000.0 + p.BankedMoney)
+                .ThenByDescending(p => p.CorrectAnswers)
                 .ThenByDescending(p => p.BankedMoney)
-                .ThenBy(p => p.TotalMistakes)
                 .First().Name;
         }
 
@@ -283,6 +285,23 @@ namespace WeakestLink.Core.Analytics
         {
             var analytics = AnalyzeRound(roundDurationSeconds);
             return analytics.StrongestLink;
+        }
+
+        /// <summary>
+        /// Возвращает отсортированный список игроков текущего раунда: от самого сильного к самому слабому.
+        /// В качестве основы сортировки используется та же логика, что и у DetermineStrongestLink.
+        /// </summary>
+        public List<string> GetSortedPlayersByPerformanceDesc(int roundDurationSeconds)
+        {
+            var analytics = AnalyzeRound(roundDurationSeconds);
+            if (analytics.PlayerStats == null || analytics.PlayerStats.Count == 0) return new List<string>();
+
+            return analytics.PlayerStats
+                .OrderByDescending(p => (p.CorrectAnswers - p.TotalMistakes) * 10000.0 + p.BankedMoney)
+                .ThenByDescending(p => p.CorrectAnswers)
+                .ThenByDescending(p => p.BankedMoney)
+                .Select(p => p.Name)
+                .ToList();
         }
 
         private (string prediction, string reason) PredictElimination(IEnumerable<PlayerRoundStats> stats, string weakestLinkName)

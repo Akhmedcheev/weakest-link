@@ -230,7 +230,7 @@ namespace WeakestLink.Core
             {
                 case GameState.Idle:
                     if (newState == GameState.RoundReady || newState == GameState.FinalDuel
-                        || newState == GameState.IntroOpening) isValid = true;
+                        || newState == GameState.IntroOpening || newState == GameState.RulesExplanation) isValid = true;
                     break;
                 case GameState.IntroOpening:
                     if (newState == GameState.IntroNarrative || newState == GameState.Idle) isValid = true;
@@ -303,7 +303,28 @@ namespace WeakestLink.Core
                 CurrentChainIndex++;
             }
 
-            // На вершине цепочки остаёмся до явного нажатия БАНК — без автозачисления в банк.
+            // Автобанк при достижении вершины цепочки (50000).
+            if (CurrentChainIndex >= BankChain.Length)
+            {
+                int valueToBank = BankChain[CurrentChainIndex - 1];
+                UpdatePlayerStat(CurrentPlayerTurn, s =>
+                {
+                    s.BankedMoney += valueToBank;
+                    s.BankPressCount++;
+                });
+                RoundBank += valueToBank;
+                CurrentChainIndex = 0;
+
+                if (RoundBank >= MaxRoundBank)
+                {
+                    RoundBank = MaxRoundBank;
+                    NotifyBankChanged();
+                    MoveToNextPlayer();
+                    MaxBankReached?.Invoke();
+                    return;
+                }
+            }
+
             MoveToNextPlayer();
             NotifyBankChanged();
         }

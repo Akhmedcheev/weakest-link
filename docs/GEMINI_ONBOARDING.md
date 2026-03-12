@@ -41,9 +41,13 @@ WeakestLink/
 │   ├── Models/         # QuestionModel, QuestionData
 │   └── Analytics/
 │       └── StatsAnalyzer.cs  # Анализ раунда, прогноз выбывания
-├── Network/            # Сеть
+├── Network/            # Сеть + AI-клиенты
 │   ├── GameServer.cs   # TCP-сервер (порт 8888)
-│   └── WebRemoteController.cs
+│   ├── GameClient.cs   # TCP-клиент
+│   ├── WebRemoteController.cs  # HTTP-пульт (iPad)
+│   ├── GeminiTestPlayer.cs     # AI-бот Gemini 2.5 Flash (основной)
+│   ├── GeminiBotClient.cs      # AI-бот Gemini (расширенный)
+│   └── AiBotTester.cs          # AI-бот OpenAI-совместимый
 ├── Audio/              # Звук
 │   ├── AudioManager.cs # Воспроизведение, beds, one-shot, кроссфейд
 │   └── LoopStream.cs   # Зацикливание аудио
@@ -203,6 +207,49 @@ WeakestLink/
 
 ---
 
+## 13. AI-тестирование (нагрузочное тестирование с LLM)
+
+### Классы
+
+| Класс | API | Модель | Метод |
+|-------|-----|--------|-------|
+| `GeminiTestPlayer` | Google Gemini REST | `gemini-2.5-flash` | `MakeMoveAsync(questionText, chainStep)` |
+| `GeminiBotClient` | Google Gemini REST | Конфигурируемая | `GetDecisionAsync(questionText, bank, chainStep)` |
+| `AiBotTester` | OpenAI `/v1/chat/completions` | Конфигурируемая | `GetDecisionAsync(questionText, chainStep, isFinalRound)` |
+
+### BotDecision (`Core/Models/BotDecision.cs`)
+
+```csharp
+public class BotDecision
+{
+    [JsonPropertyName("action")] public string Action { get; set; } = "pass";
+    [JsonPropertyName("text")]   public string Text { get; set; } = "";
+    public static BotDecision PassFallback => new() { Action = "pass", Text = "" };
+}
+```
+
+### Интеграция в OperatorPanel
+
+* **Меню:** DEBUG → ТЕСТОВАЯ ИГРА С БОТАМИ → AI-тестирование (Gemini)
+* **Поле:** `TxtGeminiApiKey` — ввод API-ключа (есть хардкод по умолчанию)
+* **Кнопка:** «ЗАПУСТИТЬ AI-ТЕСТ (8 ботов)» → `BtnStartGeminiTest_Click`
+* **Флаг:** `_isAutoTestRunning` — включает AI-автопилот
+* **Цикл:** `ProcessBotTurnAsync()` — `Task.Delay(2500)` → `MakeMoveAsync()` → switch → BtnClick
+* **Логирование:** `[AI] {имя}: ОТВЕЧАЕТ/БЕРЁТ БАНК/ПАСУЕТ` + `[AI] ✓/✗` + `[GEMINI] HTTP/ТАЙМАУТ/СЕТЬ`
+* **Автозапуск:** При START O'CLOCK (если `_isAutoTestRunning`)
+* **Автостоп:** BREAK GAME, CLOSE SESSION, таймер, EXIT BOT TEST
+
+### Обработка ошибок (GeminiTestPlayer)
+
+```
+TaskCanceledException → "[GEMINI] ТАЙМАУТ"
+HttpRequestException  → "[GEMINI] СЕТЬ"
+JsonException         → "[GEMINI] JSON PARSE"
+Exception             → "[GEMINI] ОШИБКА: TypeName: message"
+→ все возвращают BotDecision { Action = "pass" }
+```
+
 ---
-*Документ обновлён: 06.03.2026*
+
+*Документ обновлён: 08.03.2026*
 *Создан для ввода в курс дела AI-ассистента Gemini. Обновляй при изменении архитектуры и ключевых сценариев.*

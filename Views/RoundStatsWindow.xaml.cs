@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using Microsoft.Win32;
 using WeakestLink.Core;
 using WeakestLink.Core.Analytics;
@@ -17,6 +19,8 @@ namespace WeakestLink.Views
         private readonly int _roundDurationSeconds;
         private readonly int _savedRoundBank;
         private Dictionary<string, string> _votes = new();
+        
+        private StatsAnalyzer.RoundAnalytics? _currentAnalytics;
 
         public RoundStatsWindow(GameEngine engine, int roundDurationSeconds, Dictionary<string, string>? votes = null, int savedRoundBank = -1)
         {
@@ -34,7 +38,8 @@ namespace WeakestLink.Views
         {
             try
             {
-                var analytics = _analyzer.AnalyzeRound(_roundDurationSeconds, _savedRoundBank);
+                _currentAnalytics = _analyzer.AnalyzeRound(_roundDurationSeconds, _savedRoundBank);
+                var analytics = _currentAnalytics;
                 
                 // Обновляем DataGrid со статистикой игроков
                 var sortedStats = analytics.PlayerStats
@@ -43,17 +48,18 @@ namespace WeakestLink.Views
                     .ThenByDescending(p => p.BankedMoney)         // Затем по деньгам в банк
                     .ToList();
                 
-                PlayersDataGrid.ItemsSource = null;  // Сбрасываем привязку
-                PlayersDataGrid.ItemsSource = sortedStats;  // Устанавливаем новую коллекцию
-                PlayersDataGrid.Items.Refresh();  // Принудительно обновляем
+                PlayersDataGrid.ItemsSource = null;
+                PlayersDataGrid.ItemsSource = sortedStats;
                 
-                // Обновляем прогноз выбывания с объяснением
-                PredictionText.Text = $"Прогноз на выбывание: {analytics.EliminationPrediction}";
+                // Прогноз выбывания (красный акцент)
+                PredictionText.Text = string.IsNullOrEmpty(analytics.EliminationPrediction) 
+                    ? "НЕ ОПРЕДЕЛЕНО" 
+                    : analytics.EliminationPrediction.ToUpper();
                 
-                // Добавляем объяснение прогноза
+                // Добавляем объяснение
                 if (!string.IsNullOrEmpty(analytics.EliminationReason))
                 {
-                    ExplanationText.Text = $"Причина: {analytics.EliminationReason}";
+                    ExplanationText.Text = analytics.EliminationReason;
                     ExplanationText.Visibility = Visibility.Visible;
                 }
                 else
@@ -61,54 +67,28 @@ namespace WeakestLink.Views
                     ExplanationText.Visibility = Visibility.Collapsed;
                 }
                 
-                // Обновляем общую статистику раунда
+                // Метрики (Cards)
                 TotalBankedText.Text = $"{analytics.TotalBanked:N0} ₽";
                 TotalBurnedText.Text = $"{analytics.TotalBurned:N0} ₽";
-                
-                // Форматируем длительность раунда
-                int minutes = _roundDurationSeconds / 60;
-                int seconds = _roundDurationSeconds % 60;
-                RoundDurationText.Text = $"{minutes}:{seconds:D2}";
-                
-                TotalQuestionsText.Text = analytics.TotalQuestionsAsked.ToString();
-                AverageTimeText.Text = $"{analytics.AverageAnswerTime:F1} сек";
-                
-                StrongestLinkText.Text = analytics.StrongestLink;
-                WeakestLinkText.Text = analytics.WeakestLink;
+                EfficiencyText.Text = $"{analytics.EfficiencyPercentage:F1}%";
+                StrongestLinkText.Text = string.IsNullOrEmpty(analytics.StrongestLink) ? "—" : analytics.StrongestLink;
 
                 if (!string.IsNullOrEmpty(analytics.StrongestLink))
                     _engine.LastStrongestLinkName = analytics.StrongestLink;
                 
-                // Обновляем главного перестраховщика (средний банк)
-                if (!string.IsNullOrEmpty(analytics.PanicBanker))
-                {
-                    var panicPlayer = analytics.PlayerStats.FirstOrDefault(p => p.Name == analytics.PanicBanker);
-                    PanicBankerText.Text = panicPlayer != null
-                        ? $"{analytics.PanicBanker} (Средний банк: {panicPlayer.AverageBankAmount:N0} ₽)"
-                        : analytics.PanicBanker;
-                }
-                else
-                {
-                    PanicBankerText.Text = "—";
-                }
+                PanicBankerText.Text = string.IsNullOrEmpty(analytics.PanicBanker) ? "—" : analytics.PanicBanker;
                 
-                // Обновляем эффективность
-                EfficiencyText.Text = $"{analytics.EfficiencyPercentage:F1}%";
-                
-                // Проверяем ничью и показываем баннер
+                // Плашка ничьей
                 bool isTie = _analyzer.IsTieDetected(_votes);
                 if (isTie)
                 {
                     TieBanner.Visibility = Visibility.Visible;
-                    TieBannerText.Text = $"⚖️ НИЧЬЯ! Решает Сильное звено: {analytics.StrongestLink}";
+                    TieBannerText.Text = $"⚖️ НИЧЬЯ (РЕШАЕТ {analytics.StrongestLink})";
                 }
                 else
                 {
                     TieBanner.Visibility = Visibility.Collapsed;
                 }
-
-                // Выделяем сильное и слабое звено в таблице цветом
-                HighlightSpecialPlayers(analytics, isTie);
             }
             catch (Exception ex)
             {
@@ -117,44 +97,40 @@ namespace WeakestLink.Views
             }
         }
 
-        private void HighlightSpecialPlayers(StatsAnalyzer.RoundAnalytics analytics, bool isTie = false)
+        private void GridPlayerStats_LoadingRow(object sender, DataGridRowEventArgs e)
         {
-            if (PlayersDataGrid.ItemsSource == null) return;
-
-            var items = PlayersDataGrid.Items.Cast<StatsAnalyzer.PlayerRoundStats>().ToList();
-            
-            foreach (var item in items)
+            if (e.Row.Item is StatsAnalyzer.PlayerRoundStats playerStat && _currentAnalytics != null)
             {
-                var row = PlayersDataGrid.ItemContainerGenerator.ContainerFromItem(item) as System.Windows.Controls.DataGridRow;
-                if (row != null)
+                bool isStrongest = playerStat.Name == _currentAnalytics.StrongestLink;
+                bool isWeakest = playerStat.Name == _currentAnalytics.WeakestLink;
+                bool isPanicBanker = playerStat.Name == _currentAnalytics.PanicBanker;
+
+                // Цвета фона строки
+                if (isStrongest)
                 {
-                    if (item.Name == analytics.StrongestLink)
-                    {
-                        if (isTie)
-                        {
-                            row.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 80, 0));
-                            row.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 215, 0));
-                            row.BorderThickness = new Thickness(3);
-                        }
-                        else
-                        {
-                            row.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 80, 0));
-                        }
-                    }
-                    else if (item.Name == analytics.WeakestLink)
-                    {
-                        row.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(80, 0, 0));
-                    }
-                    else if (item.Name == analytics.PanicBanker)
-                    {
-                        row.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(60, 0, 80));
-                    }
-                    else if (item.Name == analytics.EliminationPrediction && 
-                             item.Name != analytics.WeakestLink)
-                    {
-                        row.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 140, 0));
-                        row.BorderThickness = new Thickness(3);
-                    }
+                    // Мягкий зеленый оттенок (Opacity 0.1): #1A00FF00
+                    e.Row.Background = new SolidColorBrush(Color.FromArgb(25, 0, 255, 0));
+                }
+                else if (isWeakest)
+                {
+                    // Мягкий красный оттенок (#da373c, Opacity ~0.15): #26da373c
+                    e.Row.Background = new SolidColorBrush(Color.FromArgb(38, 218, 55, 60));
+                }
+                else
+                {
+                    e.Row.Background = Brushes.Transparent;
+                }
+
+                // Цвета рамок (Panic Banker получает фиолетовый акцент слева)
+                if (isPanicBanker)
+                {
+                    e.Row.BorderThickness = new Thickness(4, 0, 0, 1);
+                    e.Row.BorderBrush = new SolidColorBrush(Color.FromRgb(122, 42, 209)); // #7a2ad1
+                }
+                else
+                {
+                    e.Row.BorderThickness = new Thickness(0, 0, 0, 1);
+                    e.Row.BorderBrush = new SolidColorBrush(Color.FromRgb(38, 38, 38)); // #262626
                 }
             }
         }
@@ -185,10 +161,9 @@ namespace WeakestLink.Views
                 sb.AppendLine("=== ИТОГИ РАУНДА ===");
                 sb.AppendLine($"Собрано в банк;{TotalBankedText.Text}");
                 sb.AppendLine($"Сгорело денег;{TotalBurnedText.Text}");
-                sb.AppendLine($"Длительность раунда;{RoundDurationText.Text}");
                 sb.AppendLine($"Эффективность;{EfficiencyText.Text}");
                 sb.AppendLine($"Сильное звено;{StrongestLinkText.Text}");
-                sb.AppendLine($"Слабое звено;{WeakestLinkText.Text}");
+                sb.AppendLine($"Слабое звено;{_currentAnalytics?.WeakestLink}");
                 sb.AppendLine($"Главный перестраховщик;{PanicBankerText.Text}");
                 sb.AppendLine($"Прогноз на выбывание;{PredictionText.Text}");
 
@@ -213,28 +188,35 @@ namespace WeakestLink.Views
             }
         }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
 
-        /// <summary>
-        /// Обновляет аналитику (вызывается извне при изменении данных)
-        /// </summary>
+        private void BtnMinimize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ButtonState == System.Windows.Input.MouseButtonState.Pressed)
+            {
+                DragMove();
+            }
+        }
+
         public void RefreshAnalytics()
         {
             LoadAnalytics();
         }
 
-        /// <summary>
-        /// Показывает окно аналитики в модальном режиме
-        /// </summary>
         public static void ShowAnalytics(GameEngine engine, int roundDurationSeconds, Window? owner = null, Dictionary<string, string>? votes = null)
         {
             var window = new RoundStatsWindow(engine, roundDurationSeconds, votes);
             if (owner != null)
             {
-                window.Owner = owner;
+                window.Owner = window;
                 window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             }
             window.ShowDialog();

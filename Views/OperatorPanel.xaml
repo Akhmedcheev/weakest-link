@@ -18,11 +18,13 @@
 
     <Window.Resources>
         <!-- ═══ OBSIDIAN PALETTE ═══ -->
-        <SolidColorBrush x:Key="ObsidianBg"            Color="#1E1E1E"/>
-        <SolidColorBrush x:Key="ObsidianSurface"       Color="#252525"/>
-        <SolidColorBrush x:Key="ObsidianBorder"        Color="#363636"/>
-        <SolidColorBrush x:Key="ObsidianTextPrimary"   Color="#DADCDE"/>
-        <SolidColorBrush x:Key="ObsidianTextSecondary" Color="#8B8BA7"/>
+        <SolidColorBrush x:Key="ObsidianBg"            Color="#0D0D0D"/>
+        <SolidColorBrush x:Key="ObsidianSurface"       Color="#161616"/>
+        <SolidColorBrush x:Key="ObsidianBorder"        Color="#262626"/>
+        <SolidColorBrush x:Key="ObsidianTextPrimary"   Color="#E0E0E0"/>
+        <SolidColorBrush x:Key="ObsidianTextSecondary" Color="#808080"/>
+        <SolidColorBrush x:Key="ObsidianAccentBlue"    Color="#5865F2"/>
+        <SolidColorBrush x:Key="ObsidianAccentGold"    Color="#FFD700"/>
 
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
@@ -357,6 +359,80 @@
         <!-- Именованный алиас для обратной совместимости -->
         <Style x:Key="NoWhiteWhenDisabledButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"/>
 
+        <!-- ObsidianTextBox: темный ввод с тонкой рамкой -->
+        <Style x:Key="ObsidianTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="#2b2d31"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#262626"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CaretBrush" Value="White"/>
+            <Setter Property="SelectionBrush" Value="#5865F2"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="3" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false"
+                                          HorizontalScrollBarVisibility="Hidden" 
+                                          VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#5865F2"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="1.5"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#3a3c42"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль TextBox с красной подсветкой при фокусе для редактора -->
+        <Style x:Key="EditorTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#2b2d31"/>
+            <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
+            <Setter Property="BorderBrush" Value="#262626"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CaretBrush" Value="{StaticResource ObsidianTextPrimary}"/>
+            <Setter Property="SelectionBrush" Value="#7C3AED"/>
+            <Setter Property="Padding" Value="8,2"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="3" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false"
+                                          HorizontalScrollBarVisibility="Hidden" 
+                                          VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#da373c"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#4a4a4a"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- Стиль игровых кнопок с эффектом физического нажатия -->
         <Style x:Key="GameButtonPressStyle" TargetType="Button">
             <Setter Property="Cursor" Value="Hand"/>
@@ -643,20 +719,43 @@
         <Grid Grid.Row="1" x:Name="RootLayoutGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="70"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
-        <!-- ЛЕВЫЙ SIDEBAR: Иконки -->
+        
+        <!-- COLUMN 0: Icon Sidebar (Icons) -->
         <Border Grid.Column="0" Background="{StaticResource ObsidianBg}" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,1,0">
-            <StackPanel x:Name="LeftSidebarPanel" VerticalAlignment="Top" Margin="0,15,0,0">
-                <Button Content="🛠" FontSize="22" Background="Transparent" BorderThickness="0" Foreground="{StaticResource ObsidianTextSecondary}" Margin="0,0,0,20" Cursor="Hand" HorizontalAlignment="Center"/>
-                <Button Content="📝" FontSize="22" Background="Transparent" BorderThickness="0" Foreground="{StaticResource ObsidianTextSecondary}" Margin="0,0,0,20" Cursor="Hand" HorizontalAlignment="Center"/>
-                <Button Content="📊" FontSize="22" Background="Transparent" BorderThickness="0" Foreground="{StaticResource ObsidianTextSecondary}" Margin="0,0,0,20" Cursor="Hand" HorizontalAlignment="Center"/>
+            <StackPanel x:Name="LeftSidebarPanel" VerticalAlignment="Top" Margin="0,10,0,0">
+                <StackPanel HorizontalAlignment="Center" Margin="0,0,0,8">
+                    <TextBlock Text="БАНК" Foreground="#666" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtCurrentBank_Side" Text="0" Foreground="Yellow" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                </StackPanel>
+                <Border Height="1" Background="#363636" Margin="8,0"/>
+                <StackPanel HorizontalAlignment="Center" Margin="0,8,0,8">
+                    <TextBlock Text="ОБЩИЙ" Foreground="#666" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtTotalBank_Side" Text="0" Foreground="#00FF00" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                </StackPanel>
+                <Border Height="1" Background="#363636" Margin="8,0"/>
+                <StackPanel HorizontalAlignment="Center" Margin="0,8,0,8">
+                    <TextBlock Text="ВРЕМЯ" Foreground="#666" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtTimer_Side" Text="00:00" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                </StackPanel>
+                <Border Height="1" Background="#363636" Margin="8,0"/>
+                <StackPanel HorizontalAlignment="Center" Margin="0,8,0,8">
+                    <TextBlock Text="РАУНД" Foreground="#666" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtRoundNumber_Side" Text="—" Foreground="Cyan" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                </StackPanel>
+                <Border Height="1" Background="#363636" Margin="8,0"/>
+                <StackPanel HorizontalAlignment="Center" Margin="0,8,0,8">
+                    <TextBlock Text="ВОПРОС" Foreground="#666" FontSize="9" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtQuestionCount_Side" Text="0/0" Foreground="Orange" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                </StackPanel>
             </StackPanel>
         </Border>
 
-        <!-- ПРАВАЯ ЧАСТЬ: Весь остальной интерфейс -->
-        <Grid Grid.Column="1">
+
+        <!-- COLUMN 2: ПРАВАЯ ЧАСТЬ (Now Grid.Column="2") -->
+        <Grid Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/> <!-- 0: Верхнее меню (Debug) -->
                 <RowDefinition Height="Auto"/> <!-- 1: Панель статуса (Банк, Таймер) -->
@@ -706,17 +805,22 @@
                                             <ComboBoxItem Content="Раунд 7"/>
                                             <ComboBoxItem Content="ФИНАЛ"/>
                                         </ComboBox>
-                                        <CheckBox x:Name="ChkTestLast30Sec" Content="30 сек раунд" Foreground="#888" FontSize="11" Margin="0,8,0,8"/>
+                                        <CheckBox x:Name="ChkTestLast30Sec" Content="30 сек раунд" Foreground="#888" FontSize="11" Margin="0,8,0,0"/>
+                                        <CheckBox x:Name="ChkDebugEndRoundButton" Content="кнопка Раунд Завершен" Foreground="#888" FontSize="11" Margin="0,8,0,4" Click="ChkDebugEndRoundButton_Click"/>
                                         <Button Content="БЫСТРЫЙ СТАРТ" x:Name="BtnQuickStart" Height="25" MinWidth="90" FontSize="12" Background="#5865F2" Foreground="White" Padding="8,0" Click="BtnQuickStart_Click" Style="{StaticResource FlatButton}"/>
                                         <Button Content="ЗАПОЛНИТЬ СЛУЧАЙНЫМИ" x:Name="BtnFillRandom" Height="25" MinWidth="90" FontSize="12" Background="#4e5058" Foreground="White" Padding="8,0" Margin="0,6,0,0" Click="BtnFillRandom_Click" Style="{StaticResource FlatButton}"/>
+                                        <Button Content="🎬 ТЕСТ ФИНАЛА" x:Name="BtnDebugTestFinal" Height="25" MinWidth="90" FontSize="12" Background="#da373c" Foreground="White" Padding="8,0" Margin="0,6,0,0" Click="BtnDebugTestFinal_Click" Style="{StaticResource FlatButton}"/>
                                     </StackPanel>
                                 </MenuItem.Header>
                             </MenuItem>
                         </MenuItem>
                     </Menu>
-                    <Button Content="✎ РЕДАКТОР ВОПРОСОВ" x:Name="BtnOpenQuestionEditor" Height="25" MinWidth="140" FontSize="12" Background="Transparent" Foreground="#dbdee1" BorderThickness="0" Margin="0,0,8,0" Click="BtnOpenQuestionEditor_Click" Style="{StaticResource FlatButton}"/>
+                    <!-- Кнопка "РЕДАКТОР ВОПРОСОВ" теперь переключает боковую панель -->
+                    <Button Content="✎ РЕДАКТОР ВОПРОСОВ" x:Name="BtnToggleQuestionEditor" Height="25" MinWidth="140" FontSize="12" Background="Transparent" Foreground="#dbdee1" BorderThickness="0" Margin="0,0,8,0" Click="BtnToggleQuestionEditor_Click" Style="{StaticResource FlatButton}"/>
+                    <!-- Кнопка "АНАЛИТИКА" -->
+                    <Button Content="📊 АНАЛИТИКА" x:Name="BtnToggleAnalytics" Height="25" MinWidth="120" FontSize="12" Background="Transparent" Foreground="#dbdee1" BorderThickness="0" Margin="0,0,8,0" Click="BtnToggleAnalytics_Click" Style="{StaticResource FlatButton}"/>
                     <Button Content="✓ VALIDATE JSON" x:Name="BtnValidateJson" Height="25" MinWidth="120" FontSize="12" Background="Transparent" Foreground="#dbdee1" BorderThickness="0" Margin="0,0,8,0" Click="BtnValidateJson_Click" Style="{StaticResource FlatButton}"/>
-                    
+                    <Button Content="🧪 SELF-TEST" x:Name="BtnSelfTest" Height="25" MinWidth="100" FontSize="12" Background="Transparent" Foreground="#FF9800" BorderThickness="0" Margin="0,0,8,0" Click="BtnSelfTest_Click" Style="{StaticResource FlatButton}"/>
                     <Menu VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Margin="0,0,4,0">
                         <MenuItem Header="ТЕСТОВАЯ ИГРА С БОТАМИ" FontWeight="Bold" Foreground="#dbdee1">
                              <MenuItem Header="Загрузить команду..." Click="BtnTestTeam1_Click"/>
@@ -741,38 +845,86 @@
                 </StackPanel>
             </Border>
 
-            <!-- 1. ПАНЕЛЬ СТАТУСА (Банк, Таймер) -->
-            <Border Grid.Row="1" Background="{StaticResource ObsidianBg}" Margin="10" CornerRadius="10" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="10,0">
-                        <TextBlock Text="ТЕКУЩИЙ БАНК" Foreground="#888" FontSize="12" HorizontalAlignment="Center"/>
-                        <TextBlock x:Name="TxtCurrentBank" Text="0" Foreground="Yellow" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <!-- 1. FUTURIST TIMER HUB (Sketched Semi-Circle & Wings) -->
+            <Grid Grid.Row="1" Margin="10,5,10,10" ClipToBounds="False">
+                <Grid.Resources>
+                    <Storyboard x:Key="TimerHubPulseStoryboard" RepeatBehavior="Forever" AutoReverse="True">
+                        <DoubleAnimation Storyboard.TargetName="TimerArchBorder"
+                                         Storyboard.TargetProperty="Opacity"
+                                         From="1.0" To="0.55" Duration="0:0:0.6"/>
+                    </Storyboard>
+                </Grid.Resources>
+
+                <!-- 1A: BLACK STATS BAR (Monolithic Base) -->
+                <Border Background="#0C0C0C" CornerRadius="4" BorderBrush="#1A1A1A" BorderThickness="1" 
+                        Height="46" VerticalAlignment="Bottom">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Col 0: ТЕКУЩИЙ БАНК -->
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="16,0,10,0">
+                            <TextBlock Text="ТЕКУЩИЙ БАНК" Foreground="#555" FontSize="9" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="TxtCurrentBank" Text="0" Foreground="#D4AA40" FontSize="26" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect Color="#D4AA40" BlurRadius="5" ShadowDepth="0" Opacity="0.3"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- Col 1: ОБЩИЙ БАНК -->
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="4,0,8,0">
+                            <TextBlock Text="ОБЩИЙ БАНК" Foreground="#555" FontSize="9" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="TxtTotalBank" Text="0" Foreground="#2E9E5E" FontSize="26" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect Color="#2E9E5E" BlurRadius="5" ShadowDepth="0" Opacity="0.3"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- Col 2: Empty Spacer for the Ring that floats above -->
+                        <Grid Grid.Column="2" />
+
+                        <!-- Col 3: РАУНД -->
+                        <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="8,0,4,0">
+                            <TextBlock Text="РАУНД" Foreground="#555" FontSize="9" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="TxtRoundNumber" Text="1" Foreground="#3CA8B8" FontSize="26" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect Color="#3CA8B8" BlurRadius="5" ShadowDepth="0" Opacity="0.3"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- Col 4: ВОПРОС -->
+                        <StackPanel Grid.Column="4" VerticalAlignment="Center" Margin="4,0,16,0">
+                            <TextBlock Text="ВОПРОС" Foreground="#555" FontSize="9" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="TxtQuestionCount" Text="0/0" Foreground="#C87A20" FontSize="26" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect Color="#C87A20" BlurRadius="5" ShadowDepth="0" Opacity="0.3"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- 1B: Round Number (top center) -->
+                <Border x:Name="TimerArchBorder" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,-20"
+                        CornerRadius="8" Background="#1a1a1a" BorderBrush="#444" BorderThickness="1"
+                        Padding="16,4" Panel.ZIndex="10" Visibility="Collapsed">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock x:Name="TxtRoundNumberCenter" Text="1" Foreground="White" 
+                                   FontSize="28" FontWeight="Bold" FontFamily="Segoe UI"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="РАУНД" Foreground="#999" FontSize="10" FontWeight="Bold" 
+                                   HorizontalAlignment="Center" Margin="0,-2,0,2"/>
                     </StackPanel>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0">
-                        <TextBlock Text="ОБЩИЙ БАНК" Foreground="#888" FontSize="12" HorizontalAlignment="Center"/>
-                        <TextBlock x:Name="TxtTotalBank" Text="0" Foreground="#00FF00" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="10,0">
-                        <TextBlock Text="ОСТАЛОСЬ ВРЕМЕНИ" Foreground="#888" FontSize="12" HorizontalAlignment="Center"/>
-                        <TextBlock x:Name="TxtTimer" Text="00:00" Foreground="White" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="10,0">
-                        <TextBlock Text="РАУНД" Foreground="#888" FontSize="12" HorizontalAlignment="Center"/>
-                        <TextBlock x:Name="TxtRoundNumber" Text="1" Foreground="Cyan" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="4" VerticalAlignment="Center" Margin="10,0">
-                        <TextBlock Text="ВОПРОС" Foreground="#888" FontSize="12" HorizontalAlignment="Center"/>
-                        <TextBlock x:Name="TxtQuestionCount" Text="0/0" Foreground="Orange" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
+                </Border>
+            </Grid>
 
             <!-- 2. СЕЙЧАС / ШАГ / ХИНТ -->
             <Border x:Name="YouMadeBorder" Grid.Row="2" Background="#330000" Margin="10,0,10,10" CornerRadius="5" Padding="5" Visibility="Collapsed">
@@ -788,8 +940,8 @@
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SetupPanel" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
                                 </ObjectAnimationUsingKeyFrames>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridGameControls" Storyboard.TargetProperty="Visibility">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlayContext" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
                                 </ObjectAnimationUsingKeyFrames>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GamePlayPanel" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
@@ -825,11 +977,11 @@
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SetupPanel" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
                                 </ObjectAnimationUsingKeyFrames>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridGameControls" Storyboard.TargetProperty="Visibility">
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlayContext" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
                                 </ObjectAnimationUsingKeyFrames>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GamePlayPanel" Storyboard.TargetProperty="Visibility">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
                                 </ObjectAnimationUsingKeyFrames>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeadToHeadPanel" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
@@ -859,8 +1011,8 @@
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SetupPanel" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
                                 </ObjectAnimationUsingKeyFrames>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridGameControls" Storyboard.TargetProperty="Visibility">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlayContext" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
                                 </ObjectAnimationUsingKeyFrames>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GamePlayPanel" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
@@ -896,8 +1048,8 @@
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SetupPanel" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
                                 </ObjectAnimationUsingKeyFrames>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridGameControls" Storyboard.TargetProperty="Visibility">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlayContext" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
                                 </ObjectAnimationUsingKeyFrames>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GamePlayPanel" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
@@ -933,8 +1085,8 @@
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SetupPanel" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
                                 </ObjectAnimationUsingKeyFrames>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridGameControls" Storyboard.TargetProperty="Visibility">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlayContext" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
                                 </ObjectAnimationUsingKeyFrames>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GamePlayPanel" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
@@ -970,7 +1122,7 @@
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SetupPanel" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
                                 </ObjectAnimationUsingKeyFrames>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridGameControls" Storyboard.TargetProperty="Visibility">
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlayContext" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
                                 </ObjectAnimationUsingKeyFrames>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GamePlayPanel" Storyboard.TargetProperty="Visibility">
@@ -1028,7 +1180,7 @@
                                 </ObjectAnimationUsingKeyFrames>
                                 <ColorAnimation Storyboard.TargetName="TxtTimer" 
                                                 Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" 
-                                                To="#FFFF00" Duration="0:0:0.5"/>
+                                                To="#004D60" Duration="0:0:0.5"/>
                             </Storyboard>
                         </VisualState>
                     </VisualStateGroup>
@@ -1051,11 +1203,10 @@
                                    Foreground="{StaticResource ObsidianTextSecondary}" FontSize="11" FontWeight="Bold" 
                                    HorizontalAlignment="Center" Margin="0,0,0,12"/>
                         <StackPanel>
-                            <Button x:Name="BtnLogo" Height="36" Margin="0,0,0,4" Click="BtnLogo_Click" Style="{StaticResource FlatButton}"
-                                    Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" FontWeight="Bold" FontSize="11"
-                                    HorizontalContentAlignment="Center">
-                                <TextBlock Text="🎬  LOGO" TextWrapping="Wrap" TextAlignment="Center"/>
+                            <Button x:Name="BtnLogo" Height="48" Margin="0,0,0,8" Click="BtnLogo_Click" Style="{StaticResource FlatButton}"
+                                    Background="#111" BorderBrush="#333" BorderThickness="1" 
+                                    ToolTip="ВКЛ/ВЫКЛ ЛОГОТИП НА ЭКРАНАХ">
+                                <Image Source="/Assets/Images/logotipka.png" Margin="6" Stretch="Uniform"/>
                             </Button>
                             <Button x:Name="BtnStopAudio" Height="36" Margin="0,0,0,4" Click="BtnStopAudio_Click" Style="{StaticResource FlatButton}"
                                     Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
@@ -1087,290 +1238,217 @@
                 </Border>
 
 
-                <!-- ЦЕНТР: Вопрос / Настройка -->
+                <!-- ЦЕНТР: Парящая карточка Mission Control -->
                 <Grid Grid.Column="1" ClipToBounds="True">
-                    <!-- Setup Panel -->
-                    <Border x:Name="SetupPanel" Background="{StaticResource ObsidianBg}" Padding="20" Visibility="Visible">
-                        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Width="850">
-                            <!-- Expander: только список пультов -->
-                            <Expander x:Name="RosterExpander" Header="СФОРМИРОВАТЬ КОМАНДУ" IsExpanded="True"
-                                      Foreground="#b5bac1" FontSize="14" FontWeight="Bold" Margin="0,0,0,8">
-                                <StackPanel Margin="0,8,0,0">
-                                    <!-- Smart Roster: 8 фиксированных слотов пультов -->
-                                    <ItemsControl x:Name="LstPlayers" ItemsSource="{Binding}">
+                    <Border x:Name="CentralSlot" Width="800" Height="500" 
+                            VerticalAlignment="Center" HorizontalAlignment="Center"
+                            Background="#161616" CornerRadius="12" 
+                            BorderBrush="#262626" BorderThickness="1">
+                        <Grid ClipToBounds="True">
+                    <!-- 0. SETUP CONTEXT - Лобби / формирование команды -->
+                    <Grid x:Name="SetupContext" Visibility="Visible">
+                        <Border x:Name="SetupPanel" Background="{StaticResource ObsidianBg}" Padding="10,6,10,6">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Заголовок -->
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="4,0,0,4">
+                                    <TextBlock Text="СОСТАВ КОМАНДЫ" Foreground="#b5bac1" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="TxtRosterConfirmed" Text="  ✓ УТВЕРЖДЁН" Foreground="#2ecc71" FontSize="12" FontWeight="Bold" 
+                                               VerticalAlignment="Center" Visibility="Collapsed"/>
+                                </StackPanel>
+
+                                <!-- Таблица пультов -->
+                                <ItemsControl x:Name="LstPlayers" Grid.Row="1">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border x:Name="SlotBorder" Background="#1e1f22" CornerRadius="3" Margin="0,1" Padding="3,1"
+                                                    BorderBrush="#262626" BorderThickness="1">
+                                                <Grid Height="34" HorizontalAlignment="Stretch">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="32"/>
+                                                        <ColumnDefinition Width="1.3*"/>
+                                                        <ColumnDefinition Width="1.3*"/>
+                                                        <ColumnDefinition Width="2*"/>
+                                                        <ColumnDefinition Width="26"/>
+                                                        <ColumnDefinition Width="26"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0" 
+                                                               Text="{Binding ConsoleNumber, StringFormat=#{0}}" 
+                                                               Foreground="#5865F2" FontWeight="Bold" FontSize="12" 
+                                                               VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                    <TextBox Grid.Column="1" Text="{Binding GameName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                             Background="#2b2d31" Foreground="White" 
+                                                             BorderBrush="#262626" BorderThickness="1" 
+                                                             FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" 
+                                                             Padding="5,3" Margin="0,0,2,0"
+                                                             Style="{StaticResource ObsidianTextBox}"/>
+                                                    <TextBox Grid.Column="2" Text="{Binding FullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                             Background="#2b2d31" Foreground="#ccc" 
+                                                             BorderBrush="#262626" BorderThickness="1" 
+                                                             FontSize="12" VerticalAlignment="Center" 
+                                                             Padding="5,3" Margin="0,0,2,0"
+                                                             Style="{StaticResource ObsidianTextBox}"/>
+                                                    <TextBox Grid.Column="3" Text="{Binding CityDesc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                             Background="#2b2d31" Foreground="#888" 
+                                                             BorderBrush="#262626" BorderThickness="1" 
+                                                             FontSize="12" VerticalAlignment="Center" 
+                                                             Padding="5,3" Margin="0,0,2,0"
+                                                             Style="{StaticResource ObsidianTextBox}"/>
+                                                    <Button Grid.Column="4" Content="↑" Tag="{Binding}" 
+                                                            Width="24" Height="24"
+                                                            Background="#2b2d31" Foreground="#666" 
+                                                            BorderBrush="#262626" BorderThickness="1"
+                                                            FontSize="11"
+                                                            Click="BtnRosterMoveUp_Click" Style="{StaticResource FlatButton}" 
+                                                            Padding="0" Margin="1,0"/>
+                                                    <Button Grid.Column="5" Content="↓" Tag="{Binding}" 
+                                                            Width="24" Height="24"
+                                                            Background="#2b2d31" Foreground="#666" 
+                                                            BorderBrush="#262626" BorderThickness="1"
+                                                            FontSize="11"
+                                                            Click="BtnRosterMoveDown_Click" Style="{StaticResource FlatButton}" 
+                                                            Padding="0" Margin="1,0"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <!-- Кнопки -->
+                                <StackPanel Grid.Row="2" Margin="0,6,0,0">
+                                    <Button x:Name="BtnRosterConfirm" Content="ПРИНЯТЬ СОСТАВ" Background="#248046" Foreground="White" 
+                                            FontSize="14" FontWeight="Bold" Padding="0,10" 
+                                            Click="BtnRosterDone_Click" Style="{StaticResource GameButtonPressStyle}"/>
+
+                                    <Button x:Name="BtnStartSession" Content="START SESSION" 
+                                            Height="44" 
+                                            Background="#5865F2" Foreground="White" 
+                                            FontSize="14" FontWeight="Bold" 
+                                            Margin="0,4,0,0" Padding="20,8" 
+                                            Click="BtnStartSession_Click"
+                                            Style="{StaticResource GameButtonPressStyle}"/>
+
+                                    <CheckBox x:Name="ChkFastTrack" Content="Пропустить вступление" 
+                                              Foreground="{StaticResource ObsidianTextPrimary}" FontSize="12"
+                                              Margin="0,6,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- 1. PLAY CONTEXT - Текущая игра -->
+                    <Grid x:Name="PlayContext" Visibility="Collapsed">
+                    <Grid x:Name="GamePlayPanel" Visibility="Collapsed" Margin="0" Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="160"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- LEFT: Цепочка банка + Раунд -->
+                        <Border x:Name="BankChainColumn" Grid.Column="0" Background="#111111" 
+                                CornerRadius="8,0,0,8" BorderBrush="#202020" BorderThickness="1,1,0,1">
+                            <Grid Margin="0" VerticalAlignment="Stretch">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                
+                                <TextBlock Grid.Row="0" Text="ЦЕПОЧКА" Foreground="#666" FontSize="10" FontWeight="Bold" 
+                                           HorizontalAlignment="Center" Margin="0,15,0,5"/>
+                                           
+                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
+                                    <ItemsControl x:Name="BankChainList" HorizontalAlignment="Stretch" Margin="10,0">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Border Background="#1e1f22" CornerRadius="3" Margin="0,2" Padding="5,4"
-                                                        BorderBrush="#555" BorderThickness="1">
-                                                    <Grid MinHeight="50" Margin="0,0,0,4" HorizontalAlignment="Stretch">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="70"/>
-                                                            <ColumnDefinition Width="1*"/>
-                                                            <ColumnDefinition Width="1*"/>
-                                                            <ColumnDefinition Width="2.5*"/>
-                                                            <ColumnDefinition Width="44"/>
-                                                            <ColumnDefinition Width="44"/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <!-- Статический адрес пульта -->
-                                                        <TextBlock Grid.Column="0" 
-                                                                   Text="{Binding ConsoleNumber, StringFormat=Пульт \{0\}}" 
-                                                                   Foreground="#5865F2" FontWeight="Bold" FontSize="14" 
-                                                                   VerticalAlignment="Center" HorizontalAlignment="Left"
-                                                                   Margin="5,0,10,0"/>
-                                                        <!-- ★ Игровое имя (→ движок) -->
-                                                        <TextBox Grid.Column="1" Text="{Binding GameName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                                                 ToolTip="{Binding GameName}"
-                                                                 Background="#2b2d31" Foreground="#FFFFFF" 
-                                                                 BorderBrush="#555" BorderThickness="1" 
-                                                                 FontSize="16" FontWeight="Bold" VerticalAlignment="Center" 
-                                                                 Padding="10,8" Margin="0,0,6,0"/>
-                                                        <!-- ФИО (→ суфлёр) -->
-                                                        <TextBox Grid.Column="2" Text="{Binding FullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                                                 ToolTip="{Binding FullName}"
-                                                                 Background="#2b2d31" Foreground="#b0b0b0" 
-                                                                 BorderBrush="#555" BorderThickness="1" 
-                                                                 FontSize="16" VerticalAlignment="Center" 
-                                                                 Padding="10,8" Margin="0,0,6,0"/>
-                                                        <!-- Город / Профессия (→ суфлёр) -->
-                                                        <TextBox Grid.Column="3" Text="{Binding CityDesc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                                                 ToolTip="{Binding CityDesc}"
-                                                                 Background="#2b2d31" Foreground="#888" 
-                                                                 BorderBrush="#555" BorderThickness="1" 
-                                                                 FontSize="16" VerticalAlignment="Center" 
-                                                                 Padding="10,8" Margin="0,0,6,0"/>
-                                                        <!-- Кнопки перемещения -->
-                                                        <Button Grid.Column="4" Content="↑" Tag="{Binding}" 
-                                                                Width="40" Height="40"
-                                                                Background="#3a3c42" Foreground="#dbdee1" 
-                                                                BorderBrush="#555" BorderThickness="1"
-                                                                FontSize="18" FontWeight="Bold"
-                                                                Click="BtnRosterMoveUp_Click" Style="{StaticResource FlatButton}" 
-                                                                Padding="0" Margin="2,0"/>
-                                                        <Button Grid.Column="5" Content="↓" Tag="{Binding}" 
-                                                                Width="40" Height="40"
-                                                                Background="#3a3c42" Foreground="#dbdee1" 
-                                                                BorderBrush="#555" BorderThickness="1"
-                                                                FontSize="18" FontWeight="Bold"
-                                                                Click="BtnRosterMoveDown_Click" Style="{StaticResource FlatButton}" 
-                                                                Padding="0" Margin="2,0"/>
-                                                    </Grid>
+                                                <Border Background="{Binding Background}" CornerRadius="4" Margin="0,3" Padding="0,8"
+                                                        BorderBrush="#262626" BorderThickness="1">
+                                                    <TextBlock Text="{Binding ValueDisplay}" Foreground="{Binding TextColor}" FontSize="14" FontWeight="Bold" 
+                                                               HorizontalAlignment="Center" TextAlignment="Center"/>
                                                 </Border>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
-                                </StackPanel>
-                            </Expander>
-
-                            <!-- Кнопки управления — всегда видны -->
-                            <Button Content="ГОТОВО" Background="#248046" Foreground="White" 
-                                    FontSize="18" FontWeight="Bold" Padding="0,15" Margin="0,8,0,0" 
-                                    Click="BtnRosterDone_Click" Style="{StaticResource FlatButton}"/>
-
-                            <Button x:Name="BtnStartSession" Content="START SESSION" 
-                                    MinHeight="50" Height="55" 
-                                    Background="#5865F2" Foreground="White" 
-                                    FontSize="18" FontWeight="Bold" 
-                                    Margin="0,10,0,0" Padding="20,10" 
-                                    Click="BtnStartSession_Click"
-                                    Style="{StaticResource FlatButton}"/>
-
-                            <CheckBox x:Name="ChkFastTrack" Content="Пропустить вступление" 
-                                      Foreground="#b5bac1" FontSize="13" Margin="0,10,0,0"/>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Game Controls — Боевой кокпит (Command Palette + BankChain) -->
-                    <Grid x:Name="GridGameControls" Visibility="Collapsed">
-                        <Border HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                Width="750" Height="420"
-                                Background="{DynamicResource ObsidianSurface}" 
-                                BorderBrush="{DynamicResource ObsidianBorder}" BorderThickness="1"
-                                CornerRadius="8" Padding="20" Margin="20"
-                                Panel.ZIndex="200">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="25" ShadowDepth="10" Opacity="0.7" Color="Black"/>
-                            </Border.Effect>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="180"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-
-                                <!-- Col 0: Цепочка банка (на всю высоту карточки) -->
-                                <Border Grid.Column="0" x:Name="BankChainColumn"
-                                        Background="Transparent" 
-                                        BorderBrush="{DynamicResource ObsidianBorder}" BorderThickness="0,0,1,0"
-                                        Padding="10" VerticalAlignment="Stretch">
-                                    <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="ЦЕПОЧКА" Foreground="{DynamicResource ObsidianTextSecondary}" 
-                                                   FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" 
-                                                   Margin="0,0,0,6"/>
-                                        <ItemsControl x:Name="BankChainList">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Border Background="{Binding Background}" Margin="0,1" Padding="8,4" CornerRadius="4">
-                                                        <TextBlock Text="{Binding ValueDisplay}" Foreground="{Binding TextColor}" 
-                                                                   FontSize="15" FontWeight="Bold" HorizontalAlignment="Right"/>
-                                                    </Border>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
+                                </ScrollViewer>
+                                
+                                <!-- Таймер под цепочкой -->
+                                <Border Grid.Row="2" Background="#1a1a1a" CornerRadius="6" 
+                                        BorderBrush="#333" BorderThickness="1"
+                                        Margin="10,8,10,15" Padding="8,6">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="ВРЕМЯ" Foreground="#666" FontSize="9" FontWeight="Bold" 
+                                                   HorizontalAlignment="Center" Margin="0,0,0,2"/>
+                                        <TextBlock x:Name="TxtTimer" Text="0:00" Foreground="White" 
+                                                   FontSize="32" FontWeight="Bold" FontFamily="Segoe UI, Consolas"
+                                                   HorizontalAlignment="Center"/>
                                     </StackPanel>
                                 </Border>
-
-                                <!-- Col 1: Вопрос + Кнопки -->
-                                <Grid Grid.Column="1">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-
-                                    <!-- Row 0: Вопрос + Ответ (центрирован) -->
-                                    <StackPanel Grid.Row="0" VerticalAlignment="Center" Margin="24,16">
-                                        <TextBlock x:Name="TxtCurrentQuestion" Text="Ожидание вопроса..." 
-                                                   Foreground="{DynamicResource ObsidianTextPrimary}" FontSize="24" FontWeight="Bold" 
-                                                   TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,14"/>
-                                        <TextBlock x:Name="TxtCurrentAnswer" Text="ОТВЕТ: —" 
-                                                   Foreground="{DynamicResource ObsidianTextSecondary}" FontSize="17" FontWeight="Normal" 
-                                                   TextAlignment="Center" TextWrapping="Wrap"/>
-                                    </StackPanel>
-
-                                    <!-- Row 1: Кнопки (только в правой колонке) -->
-                                    <Border Grid.Row="1" 
-                                            BorderBrush="{DynamicResource ObsidianBorder}" BorderThickness="0,1,0,0" 
-                                            Padding="0,10,0,0" Margin="0,4,0,0">
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <Button x:Name="BtnCorrect" Width="120" Height="90" Margin="3"
-                                                    Background="#23a559" BorderThickness="0" Cursor="Hand"
-                                                    Click="BtnCorrect_Click" Style="{StaticResource GameButtonPressStyle}">
-                                                <Button.Template>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6">
-                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </Border>
-                                                        <ControlTemplate.Triggers>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter TargetName="bd" Property="Background" Value="#2db86b"/>
-                                                            </Trigger>
-                                                            <Trigger Property="IsPressed" Value="True">
-                                                                <Setter TargetName="bd" Property="Background" Value="#1a8a44"/>
-                                                            </Trigger>
-                                                            <Trigger Property="IsEnabled" Value="False">
-                                                                <Setter TargetName="bd" Property="Opacity" Value="0.4"/>
-                                                            </Trigger>
-                                                        </ControlTemplate.Triggers>
-                                                    </ControlTemplate>
-                                                </Button.Template>
-                                                <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Text="ВЕРНО" FontSize="18" FontWeight="Bold" Foreground="White" TextAlignment="Center"/>
-                                                    <TextBlock Text="ENTER" FontSize="9" Foreground="#B0FFFFFF" TextAlignment="Center" Margin="0,3,0,0"/>
-                                                </StackPanel>
-                                            </Button>
-
-                                            <Button x:Name="BtnBank" Width="120" Height="90" Margin="3,3,14,3"
-                                                    Background="#FFD700" BorderThickness="0" Cursor="Hand"
-                                                    Click="BtnBank_Click" Style="{StaticResource GameButtonPressStyle}">
-                                                <Button.Template>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6">
-                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </Border>
-                                                        <ControlTemplate.Triggers>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter TargetName="bd" Property="Background" Value="#FFE033"/>
-                                                            </Trigger>
-                                                            <Trigger Property="IsPressed" Value="True">
-                                                                <Setter TargetName="bd" Property="Background" Value="#D4B400"/>
-                                                            </Trigger>
-                                                            <Trigger Property="IsEnabled" Value="False">
-                                                                <Setter TargetName="bd" Property="Opacity" Value="0.4"/>
-                                                            </Trigger>
-                                                        </ControlTemplate.Triggers>
-                                                    </ControlTemplate>
-                                                </Button.Template>
-                                                <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Text="БАНК" FontSize="18" FontWeight="Bold" Foreground="#1a1a1a" TextAlignment="Center"/>
-                                                    <TextBlock Text="SPACE" FontSize="9" Foreground="#50000000" TextAlignment="Center" Margin="0,3,0,0"/>
-                                                </StackPanel>
-                                            </Button>
-
-                                            <Button x:Name="BtnWrong" Width="120" Height="90" Margin="3"
-                                                    Background="#da373c" BorderThickness="0" Cursor="Hand"
-                                                    Click="BtnWrong_Click" Style="{StaticResource GameButtonPressStyle}">
-                                                <Button.Template>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6">
-                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </Border>
-                                                        <ControlTemplate.Triggers>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter TargetName="bd" Property="Background" Value="#e54e52"/>
-                                                            </Trigger>
-                                                            <Trigger Property="IsPressed" Value="True">
-                                                                <Setter TargetName="bd" Property="Background" Value="#b82d31"/>
-                                                            </Trigger>
-                                                            <Trigger Property="IsEnabled" Value="False">
-                                                                <Setter TargetName="bd" Property="Opacity" Value="0.4"/>
-                                                            </Trigger>
-                                                        </ControlTemplate.Triggers>
-                                                    </ControlTemplate>
-                                                </Button.Template>
-                                                <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Text="НЕВЕРНО" FontSize="18" FontWeight="Bold" Foreground="White" TextAlignment="Center"/>
-                                                    <TextBlock Text="DEL" FontSize="9" Foreground="#B0FFFFFF" TextAlignment="Center" Margin="0,3,0,0"/>
-                                                </StackPanel>
-                                            </Button>
-
-                                            <Button x:Name="BtnPass" Width="120" Height="90" Margin="3"
-                                                    Background="#4e5058" BorderThickness="0" Cursor="Hand"
-                                                    Click="BtnPass_Click" Style="{StaticResource GameButtonPressStyle}">
-                                                <Button.Template>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6">
-                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </Border>
-                                                        <ControlTemplate.Triggers>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter TargetName="bd" Property="Background" Value="#5c5e66"/>
-                                                            </Trigger>
-                                                            <Trigger Property="IsPressed" Value="True">
-                                                                <Setter TargetName="bd" Property="Background" Value="#3e4046"/>
-                                                            </Trigger>
-                                                            <Trigger Property="IsEnabled" Value="False">
-                                                                <Setter TargetName="bd" Property="Opacity" Value="0.4"/>
-                                                            </Trigger>
-                                                        </ControlTemplate.Triggers>
-                                                    </ControlTemplate>
-                                                </Button.Template>
-                                                <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Text="ПАСС" FontSize="18" FontWeight="Bold" Foreground="#dbdee1" TextAlignment="Center"/>
-                                                    <TextBlock Text="BACK" FontSize="9" Foreground="#80FFFFFF" TextAlignment="Center" Margin="0,3,0,0"/>
-                                                </StackPanel>
-                                            </Button>
-                                        </StackPanel>
-                                    </Border>
-                                </Grid>
                             </Grid>
                         </Border>
-                    </Grid>
-                    
-                    <Grid x:Name="GamePlayPanel" Visibility="Collapsed">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="130"/>
-                        </Grid.RowDefinitions>
-                        <Border Grid.Row="0" Background="#2A2A2A" CornerRadius="10" Padding="20" Margin="10" MinHeight="200">
-                            <TextBlock x:Name="TxtGamePlayQuestion" Text="Ожидание вопроса..." Foreground="White" FontSize="36" FontWeight="Bold" 
-                                       TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"
-                                       MinHeight="50"/>
+
+                        <!-- RIGHT: Вопрос + кнопки действий -->
+                        <Border Grid.Column="1" Background="#14151C" CornerRadius="0,8,8,0" BorderBrush="#202020" BorderThickness="0,1,1,1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Логотип/заглушка (когда нет вопроса) -->
+                                <StackPanel x:Name="LinkLogoPanel" Grid.Row="0" Opacity="0.15" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Image Source="/Assets/Images/logotipka.png" Height="150" Stretch="Uniform"/>
+                                </StackPanel>
+
+                                <!-- Область вопроса -->
+                                <Border x:Name="QuestionCard" Grid.Row="0" Background="Transparent" Padding="24,10" Margin="0">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        
+                                        <TextBlock x:Name="TxtCurrentQuestion" Grid.Row="0" Text="Ожидание вопроса..." 
+                                                   Foreground="White" FontSize="28" FontWeight="Bold" 
+                                                   TextWrapping="Wrap" TextAlignment="Center" 
+                                                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                   Margin="20,0"/>
+                                        <TextBlock x:Name="TxtCurrentAnswer" Grid.Row="1" Text="ОТВЕТ: —" 
+                                                   Foreground="#da373c" FontSize="20" FontWeight="ExtraBold"
+                                                   HorizontalAlignment="Center" Margin="0,10,0,5"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Кнопки действий 2x2 -->
+                                <UniformGrid Grid.Row="1" Columns="2" Margin="10,5,10,10">
+                                    <Button x:Name="BtnCorrect" Content="✓ ВЕРНО" Height="65" Margin="4" FontSize="22" FontWeight="ExtraBold"
+                                            Background="#4CAF50" Foreground="White"
+                                            Click="BtnCorrect_Click" Style="{StaticResource GameButtonPressStyle}"/>
+                                    <Button x:Name="BtnBank" Content="₽ БАНК" Height="65" Margin="4" FontSize="22" FontWeight="ExtraBold"
+                                            Background="#F39C12" Foreground="#111"
+                                            Click="BtnBank_Click" Style="{StaticResource GameButtonPressStyle}"/>
+                                    <Button x:Name="BtnWrong" Content="✗ НЕВЕРНО" Height="65" Margin="4" FontSize="22" FontWeight="ExtraBold"
+                                            Background="#E53935" Foreground="White"
+                                            Click="BtnWrong_Click" Style="{StaticResource GameButtonPressStyle}"/>
+                                    <Button x:Name="BtnPass" Content="» ПАСС" Height="65" Margin="4" FontSize="22" FontWeight="ExtraBold"
+                                            Background="#607D8B" Foreground="White"
+                                            Click="BtnPass_Click" Style="{StaticResource GameButtonPressStyle}"/>
+                                </UniformGrid>
+
+                                <!-- START O'CLOCK -->
+                                <Button Grid.Row="2" x:Name="BtnGamePlayPlay" Content="► START O'CLOCK" 
+                                        Height="46" FontSize="20" FontWeight="ExtraBold" 
+                                        Background="#151515" Foreground="#333" 
+                                        BorderBrush="Transparent" BorderThickness="0" 
+                                        Margin="14,0,14,14" 
+                                        Click="BtnPlay_Click" Style="{StaticResource GameButtonPressStyle}"/>
+                            </Grid>
                         </Border>
-                        <Button Grid.Row="1" x:Name="BtnGamePlayPlay" Content="START O'CLOCK" 
-                                MinHeight="80" MaxHeight="120"
-                                FontSize="40" FontWeight="ExtraBold" 
-                                Background="#004400" Foreground="#00FF00" 
-                                BorderBrush="#00CC00" BorderThickness="3" 
-                                Margin="15" 
-                                Click="BtnPlay_Click" Style="{StaticResource GameButtonPressStyle}"/>
                     </Grid>
 
                     <Grid x:Name="HeadToHeadPanel" Visibility="Collapsed" Background="#111" Margin="5">
@@ -1427,14 +1505,549 @@
                     </Grid>
 
                     <!-- 4. ПОБЕДА -->
-                    <Grid x:Name="WinnerPanel" Grid.Row="0" Grid.RowSpan="3" Visibility="Collapsed" Background="#000">
+                    <Grid x:Name="WinnerPanel" Grid.Row="0" Grid.RowSpan="3" Visibility="Collapsed" Background="#1e1f22">
+                        <Border Background="#2b2d31" CornerRadius="12" Padding="48,36" 
+                                HorizontalAlignment="Center" VerticalAlignment="Center"
+                                MaxWidth="500" BorderBrush="#3a3c42" BorderThickness="1">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="ПОБЕДИТЕЛЬ" Foreground="#949BA4" FontSize="12" FontWeight="Bold" 
+                                           HorizontalAlignment="Center" Margin="0,0,0,8" FontFamily="Segoe UI"/>
+                                <TextBlock x:Name="TxtFinalWinnerName" Text="ИМЯ" Foreground="#F2F3F5" 
+                                           FontSize="56" FontWeight="ExtraBold" HorizontalAlignment="Center" 
+                                           FontFamily="Segoe UI" Margin="0,0,0,8"/>
+                                <Border Height="1" Background="#3a3c42" Margin="20,8,20,12"/>
+                                <TextBlock x:Name="TxtFinalWinnings" Text="0 ₽" Foreground="#5865F2" 
+                                           FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" 
+                                           Margin="0,0,0,20" FontFamily="Segoe UI"/>
+                                <Button x:Name="BtnEndShow" Content="ЗАВЕРШИТЬ ИГРУ" 
+                                        Background="#5865F2" BorderThickness="0" 
+                                        Foreground="White" FontSize="15" FontFamily="Segoe UI" FontWeight="SemiBold"
+                                        Padding="40,12" HorizontalAlignment="Center"
+                                        Click="BtnEndShow_Click" Style="{StaticResource NoWhiteWhenDisabledButtonStyle}"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                    </Grid>
+                    
+                    <!-- TRANSITION OVERLAY -->
+                    <Grid x:Name="TransitionOverlay" Visibility="Collapsed" Background="#111">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="ПОБЕДИТЕЛЬ" Foreground="Gold" FontSize="36" HorizontalAlignment="Center"/>
-                            <TextBlock x:Name="TxtFinalWinnerName" Text="ИМЯ" Foreground="White" FontSize="80" FontWeight="ExtraBold" HorizontalAlignment="Center"/>
-                            <TextBlock x:Name="TxtFinalWinnings" Text="0 ₽" Foreground="#00FFCC" FontSize="60" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,20"/>
-                            <Button x:Name="BtnEndShow" Content="ЗАВЕРШИТЬ ИГРУ" Background="Transparent" BorderBrush="Gold" BorderThickness="2" Foreground="Gold" FontSize="24" Padding="30,15" Click="BtnEndShow_Click" Style="{StaticResource NoWhiteWhenDisabledButtonStyle}"/>
+                            <TextBlock x:Name="TxtTransitionTitle" Text="ИТОГИ РАУНДА" 
+                                       Foreground="#5865F2" FontSize="28" FontWeight="ExtraBold" 
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="TxtTransitionSub" Text="Переход к аналитике..." 
+                                       Foreground="#666" FontSize="14" HorizontalAlignment="Center" Margin="0,8,0,0"/>
                         </StackPanel>
                     </Grid>
+
+                    <!-- 2. ANALYTICS CONTEXT - Dashboard -->
+                    <Grid x:Name="AnalyticsContext" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Заголовок -->
+                        <Border Grid.Row="0" Background="Transparent" Padding="15,12" BorderBrush="#262626" BorderThickness="0,0,0,1">
+                            <Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📊" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="ANALYTICS" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                              FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <TextBlock Text="ПРОГНОЗ ВЫБЫВАНИЯ" Foreground="#FF6B6B" FontSize="11" FontWeight="Bold"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center" Opacity="0.8"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Ключевые метрики (компактные) -->
+                        <UniformGrid Grid.Row="1" Columns="4" Margin="8,8,8,4">
+                            <Border Background="#1e1f22" CornerRadius="6" Padding="8,6" Margin="3">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="ИГРЫ" Foreground="#555" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="TxtAnalyticsTotalGames" Text="0" Foreground="#5865F2" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Background="#1e1f22" CornerRadius="6" Padding="8,6" Margin="3">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="СР. БАНК" Foreground="#555" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="TxtAnalyticsAvgBank" Text="0 ₽" Foreground="#00FF00" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Background="#1e1f22" CornerRadius="6" Padding="8,6" Margin="3">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="MVP" Foreground="#555" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="TxtAnalyticsBestPlayer" Text="—" Foreground="#FFD700" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Background="#1e1f22" CornerRadius="6" Padding="8,6" Margin="3">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="ВРЕМЯ" Foreground="#555" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="TxtAnalyticsPlayTime" Text="00:00" Foreground="#FF6B6B" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </UniformGrid>
+                        
+                        <!-- Таблица игроков (прозрачная) -->
+                        <Border Grid.Row="2" Background="Transparent" Margin="8,4,8,8" Padding="0">
+                            <DataGrid x:Name="AnalyticsPlayersGrid" 
+                                     Background="Transparent" 
+                                     Foreground="{StaticResource ObsidianTextPrimary}"
+                                     GridLinesVisibility="Horizontal" 
+                                     HorizontalGridLinesBrush="#262626"
+                                     VerticalGridLinesBrush="Transparent"
+                                     HeadersVisibility="Column"
+                                     AutoGenerateColumns="False"
+                                     CanUserAddRows="False" CanUserDeleteRows="False"
+                                     CanUserReorderColumns="False" CanUserSortColumns="True"
+                                     SelectionMode="Single" IsReadOnly="True"
+                                     AlternatingRowBackground="Transparent"
+                                     RowBackground="Transparent"
+                                     BorderThickness="0">
+                                <DataGrid.Resources>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="BorderBrush" Value="#363636"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                        <Setter Property="Foreground" Value="#aaa"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="FontSize" Value="11"/>
+                                        <Setter Property="Padding" Value="8,6"/>
+                                    </Style>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#1e1f22"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.Resources>
+                                <DataGrid.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="BorderBrush" Value="Transparent"/>
+                                        <Setter Property="Foreground" Value="#dbdee1"/>
+                                        <Setter Property="FontSize" Value="13"/>
+                                        <Setter Property="Padding" Value="8,4"/>
+                                    </Style>
+                                </DataGrid.CellStyle>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="ИГРОК" Width="140" Binding="{Binding Name}">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                <Setter Property="FontSize" Value="13"/>
+                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="ВЕРНО" Width="70" Binding="{Binding CorrectAnswers}">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#2ecc71"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="TextAlignment" Value="Center"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="НЕВЕРНО" Width="80" Binding="{Binding WrongAnswers}">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#e74c3c"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="TextAlignment" Value="Center"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="ПОТЕРИ" Width="80" Binding="{Binding MoneyLost, StringFormat=N0}">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#ff6b6b"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="TextAlignment" Value="Center"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="ПАССЫ" Width="65" Binding="{Binding PassCount}">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#a0a0a0"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="TextAlignment" Value="Center"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="БАНК" Width="80" Binding="{Binding BankedAmount}">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#f1c40f"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="TextAlignment" Value="Center"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="ПРОГНОЗ" Width="*" Binding="{Binding Prediction}">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#FF6B6B"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="TextAlignment" Value="Center"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+
+                        <!-- Decision Hub -->
+                        <Border Grid.Row="3" Background="#111113" BorderBrush="#262626" BorderThickness="0,1,0,0" Padding="10,6">
+                            <StackPanel>
+                                <!-- Voting duration selector -->
+                                <Grid Margin="0,0,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="ТАЙМЕР ГОЛОСОВАНИЯ" Foreground="#444" FontSize="10" FontWeight="Bold" 
+                                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <ComboBox x:Name="CmbVotingDuration" Grid.Column="1" Height="24" FontSize="11" 
+                                              Background="#1e1f22" Foreground="#dbdee1" BorderThickness="0" SelectedIndex="0">
+                                        <ComboBoxItem Content="0:45 (стандарт)" Tag="45"/>
+                                        <ComboBoxItem Content="1:00" Tag="60"/>
+                                        <ComboBoxItem Content="1:30" Tag="90"/>
+                                        <ComboBoxItem Content="2:00" Tag="120"/>
+                                    </ComboBox>
+                                </Grid>
+
+                                <!-- Voting Stepper -->
+                                <Grid Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="1.3*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button x:Name="BtnStartVoting" Grid.Column="0" Content="① VOTE" Height="36" Margin="0,0,2,0"
+                                            Background="Transparent" BorderBrush="#2a2a2a" BorderThickness="1"
+                                            Foreground="#444" FontWeight="Bold" FontSize="11" Opacity="0.4"
+                                            IsEnabled="False" Click="BtnStartVoting_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnEndVoting" Grid.Column="1" Content="② END" Height="36" Margin="2,0"
+                                            Background="Transparent" BorderBrush="#2a2a2a" BorderThickness="1"
+                                            Foreground="#444" FontWeight="Bold" FontSize="11" Opacity="0.4"
+                                            IsEnabled="False" Click="BtnEndVoting_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnReveal" Grid.Column="2" Content="③ REVEAL" Height="36" Margin="2,0"
+                                            Background="Transparent" BorderBrush="#2a2a2a" BorderThickness="1"
+                                            Foreground="#444" FontWeight="Bold" FontSize="11" Opacity="0.4"
+                                            IsEnabled="False" Click="BtnReveal_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnHotDiscussion" Grid.Column="3" Content="④ VERDICT" Height="36" Margin="2,0,0,0"
+                                            BorderBrush="#2a2a2a" BorderThickness="1"
+                                            Foreground="#444" FontWeight="Bold" FontSize="12" Opacity="0.4"
+                                            IsEnabled="False" Click="BtnHotDiscussion_Click" Style="{StaticResource FlatButton}">
+                                        <Button.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                <GradientStop Color="#1a1a1e" Offset="0"/>
+                                                <GradientStop Color="#121214" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Button.Background>
+                                    </Button>
+                                </Grid>
+
+                                <!-- Reveal Timeline -->
+                                <Border x:Name="RevealProgressPanel" Background="#0D0D18" CornerRadius="5" Margin="0,2,0,4" Padding="10,8" Visibility="Collapsed">
+                                    <StackPanel>
+                                        <Grid Margin="0,0,0,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock x:Name="TxtRevealPhase" Text="ИНТРО ВЕДУЩЕЙ" Foreground="#FFD700" FontSize="12" FontWeight="Bold" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="TxtRevealTime" Text="0:00 / 0:00" Foreground="#777" FontSize="11" Grid.Column="2" VerticalAlignment="Center"/>
+                                        </Grid>
+                                        <!-- Segmented timeline background -->
+                                        <Grid Height="6" Margin="0,0,0,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="1*"/>
+                                                <ColumnDefinition Width="16*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Background="#1a1a3a" CornerRadius="3,0,0,3"/>
+                                            <Border Grid.Column="1" Background="#0a2a0a" CornerRadius="0,3,3,0"/>
+                                        </Grid>
+                                        <ProgressBar x:Name="RevealProgress" Height="6" Margin="0,-10,0,0"
+                                                     Minimum="0" Maximum="100" Value="0" 
+                                                     Background="Transparent" Foreground="#FFD700"
+                                                     BorderThickness="0"/>
+                                        <Grid Margin="0,6,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Background="#141428" CornerRadius="3" Padding="4,2" Margin="0,0,2,0">
+                                                <TextBlock Text="ИНТРО" Foreground="#5865F2" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <Border x:Name="RevealCueMarker" Grid.Column="1" Background="#0a1e0a" CornerRadius="3" Padding="4,2" Margin="2,0,0,0">
+                                                <TextBlock Text="▶ ВСКРЫТИЕ" Foreground="#2ecc71" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                            </Border>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Elimination row -->
+                                <Border x:Name="VotingBorder" Background="#1a0a0a" CornerRadius="5" Margin="0,2" Padding="10,8" 
+                                        Visibility="Collapsed" BorderBrush="#2a1515" BorderThickness="1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="ИСКЛЮЧИТЬ:" Foreground="#aa4444" FontSize="11" FontWeight="Bold" 
+                                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <ComboBox x:Name="EliminationComboBox" Grid.Column="1" Height="30" FontSize="13" 
+                                                  Background="#111" Foreground="#dbdee1" BorderThickness="0" Margin="0,0,6,0"
+                                                  SelectionChanged="EliminationComboBox_SelectionChanged">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Name}" Foreground="{Binding TextColor}" />
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        <Button x:Name="BtnEliminate" Grid.Column="2" Content="ELIMINATE" Width="110" Height="30"
+                                                BorderBrush="#da373c" BorderThickness="1.5"
+                                                Foreground="#da373c" FontWeight="Bold" FontSize="11"
+                                                Click="BtnEliminate_Click" Style="{StaticResource FlatButton}">
+                                            <Button.Background>
+                                                <SolidColorBrush Color="#00000000"/>
+                                            </Button.Background>
+                                            <Button.Triggers>
+                                                <EventTrigger RoutedEvent="MouseEnter">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                                                            To="#4a1515" Duration="0:0:0.15"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                                <EventTrigger RoutedEvent="MouseLeave">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                                                            To="#00000000" Duration="0:0:0.2"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </Button.Triggers>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Final transition -->
+                                <Button x:Name="BtnToFinal" Content="ПЕРЕЙТИ К ФИНАЛУ" Height="36" Margin="0,4,0,0"
+                                        Background="#00AA00" Foreground="White" FontWeight="Bold" FontSize="12"
+                                        Visibility="Collapsed" Click="BtnToFinal_Click" Style="{StaticResource FlatButton}"/>
+
+                                <!-- Close round -->
+                                <Button x:Name="BtnCloseRoundFromAnalytics" Content="CLOSE ROUND" Height="32" Margin="0,4,0,0"
+                                        Background="Transparent" BorderBrush="#2a2a2a" BorderThickness="1"
+                                        Foreground="#555" FontWeight="Bold" FontSize="10"
+                                        Click="BtnNextRound_Click" Style="{StaticResource FlatButton}"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                    
+                    <!-- 3. EDITOR CONTEXT - Редактор вопросов -->
+                    <Grid x:Name="EditorContext" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- TOOLBAR -->
+                        <Border Grid.Row="0" Background="Transparent" BorderBrush="#1a1a1a" BorderThickness="0,0,0,1" Padding="10,7">
+                            <Grid>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                    <Button x:Name="BtnEditorNew" Content="＋ НОВЫЙ" Height="28" Padding="10,0" Margin="0,0,4,0"
+                                           Background="Transparent" BorderBrush="#262626" BorderThickness="1"
+                                           Foreground="#888" FontSize="11" FontWeight="Bold"
+                                           Click="BtnEditorNew_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnEditorDelete" Content="✕ УДАЛИТЬ" Height="28" Padding="10,0" Margin="0,0,4,0"
+                                           Background="Transparent" BorderBrush="#262626" BorderThickness="1"
+                                           Foreground="#da373c" FontSize="11" FontWeight="Bold"
+                                           Click="BtnEditorDelete_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnEditorLoad" Content="ЗАГРУЗИТЬ" Height="28" Padding="10,0" Margin="0,0,4,0"
+                                           Background="Transparent" BorderBrush="#262626" BorderThickness="1"
+                                           Foreground="#888" FontSize="11" FontWeight="Bold"
+                                           Click="BtnEditorLoad_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnEditorSave" Content="СОХРАНИТЬ" Height="28" Padding="10,0" Margin="0,0,4,0"
+                                           Background="Transparent" BorderBrush="#262626" BorderThickness="1"
+                                           Foreground="#888" FontSize="11" FontWeight="Bold"
+                                           Click="BtnEditorSave_Click" Style="{StaticResource FlatButton}"/>
+                                    <TextBlock x:Name="TxtEditorSaveToast" Text="" Foreground="#2ecc71" FontSize="11" FontWeight="Bold"
+                                               VerticalAlignment="Center" Margin="8,0,0,0" Opacity="0"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <TextBox x:Name="TxtEditorSearch" Width="180" Height="28"
+                                            Background="#0a0a0a" BorderBrush="#262626" BorderThickness="1"
+                                            Foreground="#dbdee1" Padding="8,0"
+                                            VerticalContentAlignment="Center" FontSize="12"
+                                            Style="{StaticResource EditorTextBoxStyle}"/>
+                                    <Button x:Name="BtnEditorSearch" Content="ПОИСК" Height="28" Padding="10,0" Margin="4,0,0,0"
+                                           Background="Transparent" BorderBrush="#262626" BorderThickness="1"
+                                           Foreground="#888" FontSize="11" FontWeight="Bold"
+                                           Style="{StaticResource FlatButton}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- DATA: DataGrid -->
+                        <DataGrid Grid.Row="1" x:Name="QuestionsDataGrid"
+                                 Background="Transparent"
+                                 Foreground="#dbdee1"
+                                 GridLinesVisibility="None"
+                                 HeadersVisibility="Column"
+                                 AutoGenerateColumns="False"
+                                 CanUserAddRows="False" CanUserDeleteRows="False"
+                                 CanUserReorderColumns="False" CanUserResizeColumns="True"
+                                 CanUserResizeRows="False" CanUserSortColumns="True"
+                                 SelectionMode="Single" SelectionUnit="FullRow" FontSize="13"
+                                 SelectionChanged="QuestionsDataGrid_SelectionChanged"
+                                 AlternatingRowBackground="Transparent"
+                                 RowBackground="Transparent"
+                                 BorderThickness="0" Margin="8,4,8,0"
+                                 VerticalScrollBarVisibility="Auto"
+                                 HorizontalScrollBarVisibility="Disabled">
+                            <DataGrid.Resources>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="Foreground" Value="#808080"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Setter Property="FontSize" Value="10"/>
+                                    <Setter Property="Padding" Value="8,6"/>
+                                </Style>
+                                <Style TargetType="DataGridRow">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="MinHeight" Value="32"/>
+                                    <Setter Property="Margin" Value="0,1"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="#18da373c"/>
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#0cffffff"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="Foreground" Value="#dbdee1"/>
+                                    <Setter Property="Padding" Value="8,5"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="DataGridCell">
+                                                <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+                                                    <ContentPresenter/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </DataGrid.Resources>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ВОПРОС" Binding="{Binding Text}" Width="*" IsReadOnly="True">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="#dbdee1"/>
+                                            <Setter Property="TextWrapping" Value="NoWrap"/>
+                                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="ОТВЕТ" Binding="{Binding Answer}" Width="180" IsReadOnly="True">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="#da373c"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="ДОП. ДОПУЩЕНИЯ" Binding="{Binding AcceptableAnswers}" Width="150" IsReadOnly="True">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="#666"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="РАУНД" Binding="{Binding Round}" Width="70" IsReadOnly="True">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="#555"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- FORM: Edit card -->
+                        <Border Grid.Row="2" Background="#0D0D0D" BorderBrush="#1a1a1a" BorderThickness="0,1,0,0"
+                                CornerRadius="8,8,0,0" Margin="8,0,8,0" Padding="12,10">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="180"/>
+                                    </Grid.ColumnDefinitions>
+                                     <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                        <TextBlock Text="ВОПРОС" FontSize="10" Foreground="#555" FontWeight="Bold" Margin="2,0,0,2"/>
+                                        <TextBox x:Name="TxtEditQuestion" Style="{StaticResource EditorTextBoxStyle}" Height="32" FontSize="12"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="ОТВЕТ" FontSize="10" Foreground="#da373c" FontWeight="Bold" Margin="2,0,0,2"/>
+                                        <TextBox x:Name="TxtEditAnswer" Style="{StaticResource EditorTextBoxStyle}" Foreground="#da373c" Height="32" FontWeight="Bold" FontSize="12"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Grid Grid.Row="1" Margin="0,6,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="90"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                     <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                        <TextBlock Text="ДОП. ДОПУЩЕНИЯ" FontSize="10" Foreground="#555" FontWeight="Bold" Margin="2,0,0,2"/>
+                                        <TextBox x:Name="TxtEditAccept" Style="{StaticResource EditorTextBoxStyle}" Height="32" FontSize="12"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Margin="0,0,6,0">
+                                        <TextBlock Text="РАУНД" FontSize="10" Foreground="#555" FontWeight="Bold" Margin="2,0,0,2"/>
+                                        <TextBox x:Name="TxtEditRound" Style="{StaticResource EditorTextBoxStyle}" Height="32" HorizontalContentAlignment="Center" FontSize="12"/>
+                                    </StackPanel>
+                                    <Button x:Name="BtnEditorApply" Grid.Column="2" Content="ПРИМЕНИТЬ" 
+                                            Height="32" Padding="16,0" VerticalAlignment="Bottom"
+                                            Background="#da373c" Foreground="White" 
+                                            FontWeight="Bold" FontSize="11"
+                                            Click="BtnEditorApply_Click"
+                                            Style="{StaticResource FlatButton}"/>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                        </Grid>
+                    </Border>
                 </Grid>
 
                 <!-- ПРАВАЯ КОЛОНКА: Панель управления -->
@@ -1462,79 +2075,69 @@
                             </StackPanel>
                         </Border>
 
-                        <Button x:Name="BtnBotTurn" Content="🤖 ХОД БОТА (F5)" Visibility="Collapsed" Background="#4CAF50" Foreground="White" FontWeight="Bold" Height="40" Margin="0,5" Click="BtnBotTurn_Click" Style="{StaticResource FlatButton}"/>
-                        <ToggleButton x:Name="TglAutoBot" Content="🤖 АВТОПИЛОТ" Visibility="Collapsed" Background="#2196F3" Foreground="White" FontWeight="Bold" Height="40" Margin="0,5" Click="TglAutoBot_Click" Style="{StaticResource FlatToggleStyle}"/>
+
                         <UniformGrid Columns="2">
                             <Button Content="HOST CLASSIC" Background="#4e5058" Foreground="#dbdee1" Height="40" Margin="2" Click="BtnOpenHost_Click" Style="{StaticResource FlatButton}"/>
                             <Button Content="HOST MODERN" Background="#4e5058" Foreground="#dbdee1" Height="40" Margin="2" Click="BtnOpenHostModern_Click" Style="{StaticResource FlatButton}"/>
+                            <Button Content="PREMIUM" Background="#5865F2" Foreground="White" Height="40" Margin="2" Click="BtnOpenHostPremium_Click" Style="{StaticResource FlatButton}"/>
+                            <Button Content="MOD. PREMIUM" Background="#5865F2" Foreground="White" Height="40" Margin="2" Click="BtnOpenHostModernPremium_Click" Style="{StaticResource FlatButton}"/>
+                            <Button Content="📡 BROADCAST" Background="#B71C1C" Foreground="White" FontWeight="Bold" Height="40" Margin="2" Click="BtnOpenBroadcast_Click" Style="{StaticResource FlatButton}" ToolTip="TV-оверлей: цепочка + таймер (хромакей)"/>
+                            <Button Content="🎭 AUDIENCE" Background="#1565C0" Foreground="White" FontWeight="Bold" Height="40" Margin="2" Click="BtnOpenAudience_Click" Style="{StaticResource FlatButton}" ToolTip="Экран для зала: игрок, раунд, банк, цепочка"/>
                             <Button Content="ANALYTICS" Background="#4e5058" Foreground="#dbdee1" Height="40" Margin="2" Click="BtnAnalytics_Click" Style="{StaticResource FlatButton}"/>
+
                             <Button Content="READY" x:Name="BtnStartRound" Background="#23a559" Foreground="White" Height="40" Margin="2" Click="BtnReady_Click" Style="{StaticResource FlatButton}"/>
                             <Button Content="START O'CLOCK" x:Name="BtnPlay" Background="#5865F2" Foreground="White" FontWeight="Bold" Height="40" Margin="2" Click="BtnPlay_Click" Style="{StaticResource FlatButton}"/>
                             <Button Content="CLOSE ROUND" x:Name="BtnNextRound" Background="#4e5058" Foreground="#dbdee1" Height="40" Margin="2" Click="BtnNextRound_Click" Style="{StaticResource FlatButton}"/>
                         </UniformGrid>
                         
-                        <Button x:Name="BtnStartVoting" Content="VOTE START" Background="#4e5058" Foreground="#dbdee1" FontWeight="Bold" Height="50" Margin="0,10,0,0" IsEnabled="False" Click="BtnStartVoting_Click" Style="{StaticResource FlatButton}"/>
-
-                        <Button x:Name="BtnReveal" Content="REVEAL" Background="#4e5058" Foreground="#dbdee1" FontWeight="Bold" Height="50" Margin="0,5,0,0" IsEnabled="False" Click="BtnReveal_Click" Style="{StaticResource FlatButton}"/>
-
-                        <Border x:Name="RevealProgressPanel" Background="#1A1A2E" CornerRadius="5" Margin="0,5,0,0" Padding="8" Visibility="Collapsed">
-                            <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock x:Name="TxtRevealPhase" Text="ИНТРО ВЕДУЩЕЙ" Foreground="#FFD700" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
-                                    <ProgressBar x:Name="RevealProgress" Grid.Column="1" Height="16" Margin="10,0" Minimum="0" Maximum="100" Value="0" Background="#333" Foreground="#FFD700"/>
-                                    <TextBlock x:Name="TxtRevealTime" Text="0:00 / 0:00" Foreground="#AAA" FontSize="12" Grid.Column="2" VerticalAlignment="Center"/>
-                                </Grid>
-                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                    <Border Background="#2A1A00" CornerRadius="3" Padding="6,2" Margin="0,0,6,0">
-                                        <TextBlock Text="0:01–0:05 ИНТРО" Foreground="#FFD700" FontSize="11"/>
-                                    </Border>
-                                    <Border x:Name="RevealCueMarker" Background="#002A00" CornerRadius="3" Padding="6,2">
-                                        <TextBlock Text="0:06 ▶ ВСКРЫТИЕ КАРТОЧЕК" Foreground="#00FF00" FontSize="11" FontWeight="Bold"/>
-                                    </Border>
-                                </StackPanel>
-                            </StackPanel>
-                        </Border>
-
-                        <Button x:Name="BtnHotDiscussion" Content="VERDICT" Background="#4e5058" Foreground="#dbdee1" FontWeight="Bold" Height="50" Margin="0,5,0,0" IsEnabled="False" Click="BtnHotDiscussion_Click" Style="{StaticResource FlatButton}"/>
-
-                        <Border x:Name="VotingBorder" Background="#2b2d31" CornerRadius="4" Margin="0,10" Padding="10">
-                            <StackPanel>
-                                <TextBlock Text="ИСКЛЮЧЕНИЕ:" Foreground="#888" FontSize="12" Margin="0,0,0,5"/>
-                                <ComboBox x:Name="EliminationComboBox" Height="36" FontSize="16" Background="#1e1f22" Foreground="#dbdee1" BorderThickness="0" Margin="0,0,0,5"/>
-                                <Button x:Name="BtnEliminate" Content="ELIMINATE" Background="#da373c" Foreground="White" FontWeight="Bold" Height="40" Click="BtnEliminate_Click" Style="{StaticResource FlatButton}"/>
-                            </StackPanel>
-                        </Border>
-
-                        <Button x:Name="BtnToFinal" Content="ПЕРЕЙТИ К ФИНАЛУ" Background="#00AA00" Foreground="White" Height="50" FontWeight="Bold" Visibility="Collapsed" Margin="0,0,0,10" Click="BtnToFinal_Click" Style="{StaticResource FlatButton}"/>
+                        <!-- Decision Hub кнопки перенесены в AnalyticsContext -->
                         
-                        <Button x:Name="BtnReset" Content="RESET IDLE" Background="#4e5058" Foreground="#dbdee1" Height="36" Margin="2" Click="BtnState_Click" Tag="Idle" Style="{StaticResource FlatButton}" HorizontalAlignment="Left"/>
+                        <!-- УДалена кнопка RESET IDLE - она дублирует функционал CLOSE ROUND и ломает логику финалов -->
 
-                        <Expander Header="✏️ БЫСТРАЯ ПРАВКА ТЕКУЩЕГО ВОПРОСА" Foreground="#888" Margin="0,10,0,0" IsExpanded="False">
-                            <StackPanel Margin="0,5,0,0">
-                                <TextBlock Text="Текст вопроса:" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
-                                <TextBox x:Name="TxtQuickEditQuestion" TextWrapping="Wrap" AcceptsReturn="True" Height="60" 
-                                         Background="#111" Foreground="White" BorderBrush="#555" Padding="5" VerticalScrollBarVisibility="Auto"/>
-                                <TextBlock Text="Ответ:" Foreground="#888" FontSize="11" Margin="0,5,0,2"/>
-                                <TextBox x:Name="TxtQuickEditAnswer" Height="28" Background="#111" Foreground="White" BorderBrush="#555" Padding="5"/>
-                                <Button x:Name="BtnQuickEditSave" Content="СОХРАНИТЬ И ОБНОВИТЬ" Background="#006688" Foreground="White" Height="36" Margin="0,8,0,0" Click="BtnQuickEditSave_Click" Style="{StaticResource FlatButton}"/>
+                        <!-- 📺 ГРАФИКА БРОДКАСТА -->
+                        <Border Background="#2b2d31" CornerRadius="5" Padding="8" Margin="0,10,0,0">
+                            <StackPanel>
+                                <TextBlock Text="📺 ГРАФИКА БРОДКАСТА" Foreground="#888" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                                <UniformGrid Columns="2" Margin="0,0,0,6">
+                                    <Button x:Name="BtnStyleClassic" Content="🎨 CLASSIC" Height="26" Margin="2"
+                                            Background="#4e5058" Foreground="#dbdee1" FontWeight="Bold" FontSize="10"
+                                            Click="BtnBcStyleClassic_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnStyleNew" Content="✨ NEW" Height="26" Margin="2"
+                                            Background="#5865F2" Foreground="White" FontWeight="Bold" FontSize="10"
+                                            Click="BtnBcStyleNew_Click" Style="{StaticResource FlatButton}"/>
+                                </UniformGrid>
+                                <TextBlock Text="РАУНД" Foreground="#555" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,3"/>
+                                <UniformGrid Columns="3">
+                                    <ToggleButton x:Name="TglBcTimer" Content="⏱ ТАЙМЕР" Height="32" Margin="2"
+                                                  Background="#37474F" Foreground="#80CBC4" FontWeight="Bold" FontSize="10"
+                                                  Click="TglBcTimer_Click" Style="{StaticResource FlatToggleStyle}"/>
+                                    <ToggleButton x:Name="TglBcChain" Content="💰 ЦЕПОЧКА" Height="32" Margin="2"
+                                                  Background="#37474F" Foreground="#80CBC4" FontWeight="Bold" FontSize="10"
+                                                  Click="TglBcChain_Click" Style="{StaticResource FlatToggleStyle}"/>
+                                    <ToggleButton x:Name="TglBcChainTimer" Content="⏱💰 ВСЁ" Height="32" Margin="2"
+                                                  Background="#37474F" Foreground="#80CBC4" FontWeight="Bold" FontSize="10"
+                                                  Click="TglBcChainTimer_Click" Style="{StaticResource FlatToggleStyle}"/>
+                                </UniformGrid>
+                                <TextBlock Text="ОВЕРЛЕИ" Foreground="#555" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,6,0,3"/>
+                                <UniformGrid Columns="2">
+                                    <ToggleButton x:Name="TglBcBank" Content="💰 БАНК" Height="32" Margin="2"
+                                                  Background="#1B5E20" Foreground="#A5D6A7" FontWeight="Bold" FontSize="10"
+                                                  Click="TglBcBank_Click" Style="{StaticResource FlatToggleStyle}"/>
+                                    <ToggleButton x:Name="TglBcDuel" Content="🎯 ДУЭЛЬ" Height="32" Margin="2"
+                                                  Background="#4A148C" Foreground="#CE93D8" FontWeight="Bold" FontSize="10"
+                                                  Click="TglBcDuel_Click" Style="{StaticResource FlatToggleStyle}"/>
+                                </UniformGrid>
                             </StackPanel>
-                        </Expander>
+                        </Border>
                         </StackPanel>
                     </DockPanel>
                 </Border>
             </Grid>
 
-            <!-- Hidden stubs for code-behind references -->
+            <!-- Code-behind write targets: referenced in state handlers, will be promoted to visible UI -->
             <Grid Visibility="Collapsed">
                 <Button x:Name="BtnIntro1"/><Button x:Name="BtnIntro2"/><Button x:Name="BtnNextQuestion"/>
                 <Button x:Name="BtnOpening"/><Button x:Name="BtnIncorrect"/><Button x:Name="BtnRulesIntro"/>
-                <ComboBox x:Name="CmbBotMode"/>
-                <Grid x:Name="MainContentGrid"/>
                 <DataGrid x:Name="PlayersGrid"><DataGrid.Columns><DataGridTextColumn x:Name="VotedForColumn"/></DataGrid.Columns></DataGrid>
                 <StackPanel x:Name="PreGamePanel"/><TextBlock x:Name="RemoteLinkText"/>
                 <Border x:Name="RoundBankPanel"/><TextBlock x:Name="StartingPlayerTextBlock"/>
@@ -1543,6 +2146,9 @@
                 <TextBlock x:Name="TxtRoundBank"/><TextBlock x:Name="TxtStatusAction"/>
                 <TextBlock x:Name="TxtStatusHint"/><TextBlock x:Name="TxtStatusProcess"/>
                 <TextBlock x:Name="TxtTimerLabel"/>
+                <Button x:Name="BtnBotTurn"/><ToggleButton x:Name="TglAutoBot"/>
+                <Button x:Name="BtnBotGameSemiAuto"/><Button x:Name="BtnBotGameAuto"/>
+                <Button x:Name="BtnDebugEndRoundTimer"/>
              </Grid>
 
             <!-- ОВЕРЛЕЙ: Терминал логов (перекрывает, не сдвигает) -->
@@ -1636,7 +2242,7 @@
                 </Grid>
             </Border>
         </Grid>
-    </Grid>
+        </Grid>
 
         <!-- Row 2: Obsidian Status Bar -->
         <Border Grid.Row="2" Background="#191919" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,1,0,0">
@@ -1668,5 +2274,4 @@
             </Grid>
         </Border>
     </Grid>
-
 </Window>
