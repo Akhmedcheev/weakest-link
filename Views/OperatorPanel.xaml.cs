@@ -5365,6 +5365,7 @@ namespace WeakestLink.Views
                 DossierCityDesc.Text = player.CityDesc;
                 DossierAge.Text = player.Age > 0 ? player.Age.ToString() : "";
                 DossierBio.Text = player.Bio;
+                DossierPultNumber.Text = player.ConsoleNumber.ToString();
 
                 // Load full (uncropped) photo for crop editor
                 DossierPhotoImage.Source = player.FullPhotoSource;
@@ -5407,6 +5408,7 @@ namespace WeakestLink.Views
             _currentDossierPlayer.CityDesc = DossierCityDesc.Text;
             if (int.TryParse(DossierAge.Text, out int age)) _currentDossierPlayer.Age = age;
             _currentDossierPlayer.Bio = DossierBio.Text;
+            if (int.TryParse(DossierPultNumber.Text, out int pult)) _currentDossierPlayer.ConsoleNumber = pult;
 
             // Save crop position from transform
             SaveCropPosition();
