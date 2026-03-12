@@ -2959,7 +2959,7 @@
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="bd" Property="Background" Value="#242830"/>
+                                    <Setter TargetName="bd" Property="Background" Value="#333333"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
