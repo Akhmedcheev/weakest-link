@@ -5067,6 +5067,9 @@ namespace WeakestLink.Views
             if (!allFilled || votes.Count == 0)
             {
                 Log("⚠ Не все голоса заполнены!");
+                BtnConfirmVotes.Background = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#DC2626"));
+                BtnConfirmVotes.Content = "⚠ Заполните все!";
                 return;
             }
 
@@ -5092,7 +5095,23 @@ namespace WeakestLink.Views
             {
                 var topVoted = sorted[0];
                 Log($"👎 Больше всего голосов: {topVoted.Key} ({topVoted.Value})");
+
+                // Auto-select in elimination dropdown
+                for (int i = 0; i < EliminationComboBox.Items.Count; i++)
+                {
+                    var item = EliminationComboBox.Items[i]?.ToString();
+                    if (item != null && item.Contains(topVoted.Key))
+                    {
+                        EliminationComboBox.SelectedIndex = i;
+                        break;
+                    }
+                }
             }
+
+            // Visual feedback — green success
+            BtnConfirmVotes.Background = new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#16A34A"));
+            BtnConfirmVotes.Content = "✓ Голоса приняты!";
         }
 
         // === SETTINGS PERSISTENCE ===
