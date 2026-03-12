@@ -2173,6 +2173,7 @@
                                     <Button Content="START O'CLOCK" x:Name="BtnPlay" Background="#3B82F6" Foreground="White" FontWeight="Bold" Height="40" Margin="2" Click="BtnPlay_Click" Style="{StaticResource FlatButton}"/>
                                 </UniformGrid>
                                 <Button Content="CLOSE ROUND" x:Name="BtnNextRound" Background="#2E333D" Foreground="#E2E8F0" Height="34" Margin="2,6,2,0" Click="BtnNextRound_Click" Style="{StaticResource FlatButton}"/>
+                                <Button Content="⏩ ЗАВЕРШИТЬ РАУНД" x:Name="BtnDebugEndRoundTimer" Background="#7C3AED" Foreground="White" FontWeight="Bold" Height="34" Margin="2,4,2,0" Click="BtnDebugEndRoundTimer_Click" Style="{StaticResource FlatButton}" Visibility="Collapsed"/>
                             </StackPanel>
                         </Border>
                         
@@ -2242,7 +2243,6 @@
                 <TextBlock x:Name="TxtTimerLabel"/><TextBlock x:Name="TxtRoundNumber"/>
                 <Button x:Name="BtnBotTurn"/><ToggleButton x:Name="TglAutoBot"/>
                 <Button x:Name="BtnBotGameSemiAuto"/><Button x:Name="BtnBotGameAuto"/>
-                <Button x:Name="BtnDebugEndRoundTimer"/>
                 <Border x:Name="PreGameButtons"/><Button x:Name="BtnOpeningUI"/><Button x:Name="BtnIntro1UI"/><Button x:Name="BtnIntro2UI"/><Button x:Name="BtnRulesUI"/>
              </Grid>
 
