@@ -1581,7 +1581,7 @@
                         <Grid ClipToBounds="True">
                     <!-- 0. SETUP CONTEXT - Лобби / формирование команды -->
                     <Grid x:Name="SetupContext" Visibility="Visible">
-                        <Border x:Name="SetupPanel" Background="{StaticResource ObsidianBg}" Padding="10,6,10,6">
+                        <Border x:Name="SetupPanel" Background="{StaticResource ObsidianBg}" Padding="10,6,10,6" CornerRadius="12">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
