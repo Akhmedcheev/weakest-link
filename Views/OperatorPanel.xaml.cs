@@ -2677,6 +2677,43 @@ namespace WeakestLink.Views
             Log($"DEBUG: Раунд {_engine.CurrentRound}, время {TxtTimer.Text}, звук {fileName}");
         }
 
+        // === EXPORT STATS ===
+        private void BtnExportCSV_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var exporter = new WeakestLink.Core.Analytics.StatsExporter(_engine, _statsAnalyzer);
+                string dir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports");
+                System.IO.Directory.CreateDirectory(dir);
+                string file = System.IO.Path.Combine(dir, $"game_report_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
+                exporter.ExportCSV(file);
+                Log($"CSV exported: {file}");
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(file) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                Log($"Export CSV error: {ex.Message}");
+            }
+        }
+
+        private void BtnExportHTML_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var exporter = new WeakestLink.Core.Analytics.StatsExporter(_engine, _statsAnalyzer);
+                string dir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports");
+                System.IO.Directory.CreateDirectory(dir);
+                string file = System.IO.Path.Combine(dir, $"game_report_{DateTime.Now:yyyyMMdd_HHmmss}.html");
+                exporter.ExportHTML(file);
+                Log($"HTML exported: {file}");
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(file) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                Log($"Export HTML error: {ex.Message}");
+            }
+        }
+
         private void BtnPanic_Click(object sender, RoutedEventArgs e)
         {
             SetOperatorAction("ЭКСТРЕННАЯ ОСТАНОВКА!");
@@ -5163,8 +5200,10 @@ namespace WeakestLink.Views
             {
                 BtnStartRound.Content = "READY";
                 BtnPlay.Content = "START O'CLOCK";
-                BtnNextRound.Content = en ? "CLOSE ROUND" : "CLOSE ROUND";
+                BtnNextRound.Content = "CLOSE ROUND";
                 BtnPanic.Content = en ? "! PANIC !" : "! ПАНИКА !";
+                TxtExportLabel.Text = en ? "EXPORT" : "ЭКСПОРТ";
+                TxtBroadcastHeader.Text = en ? "BROADCAST CONTROL" : "УПРАВЛЕНИЕ ЭФИРОМ";
             }
             catch { }
 
