@@ -5605,42 +5605,145 @@ namespace WeakestLink.Views
         /// <summary>
         /// Обновляет данные в аналитическом контексте
         /// </summary>
+        private int _analyticsFilterRound = 0; // 0 = ALL
+
+        private void BtnRoundFilter_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag != null)
+            {
+                _analyticsFilterRound = int.Parse(btn.Tag.ToString());
+
+                // Update pills visual
+                var accentBrush = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3B82F6"));
+                var mutedBrush = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#64748B"));
+
+                foreach (var child in RoundFilterButtons.Children)
+                {
+                    if (child is Button filterBtn)
+                    {
+                        bool isActive = filterBtn.Tag?.ToString() == _analyticsFilterRound.ToString();
+                        filterBtn.Background = isActive ? accentBrush : System.Windows.Media.Brushes.Transparent;
+                        filterBtn.Foreground = isActive ? System.Windows.Media.Brushes.White : mutedBrush;
+                    }
+                }
+
+                UpdateAnalyticsData();
+            }
+        }
+
         private void UpdateAnalyticsData()
         {
             try
             {
-                int roundDuration = Math.Max(0, _engine.GetRoundDuration() - _timeLeftSeconds);
-                var analytics = _statsAnalyzer.AnalyzeRound(roundDuration, _lastRoundBankForSummary);
-
-                TxtAnalyticsTotalGames.Text = _engine.CurrentRound.ToString();
-                TxtAnalyticsAvgBank.Text = $"{analytics.TotalBanked:N0} ₽";
-                TxtAnalyticsBestPlayer.Text = string.IsNullOrEmpty(analytics.StrongestLink) ? "—" : analytics.StrongestLink;
-                TxtAnalyticsPlayTime.Text = $"{roundDuration / 60}:{roundDuration % 60:D2}";
-
-                var rows = analytics.PlayerStats.Select(p => new AnalyticsRow
+                if (_analyticsFilterRound == 0)
                 {
-                    Name = p.Name,
-                    CorrectAnswers = p.CorrectAnswers,
-                    WrongAnswers = p.TotalMistakes,
-                    MoneyLost = p.ChainBreaksLost,
-                    PassCount = p.Passes,
-                    BankedAmount = $"{p.BankedMoney:N0}",
-                    Prediction = p.Name == analytics.WeakestLink ? "СЛАБОЕ ЗВЕНО"
-                               : p.Name == analytics.StrongestLink ? "СИЛЬНОЕ ЗВЕНО"
-                               : "",
-                    IsWeakest = p.Name == analytics.WeakestLink,
-                    IsStrongest = p.Name == analytics.StrongestLink
-                }).ToList();
-
-                AnalyticsPlayersGrid.ItemsSource = rows;
-
-                AnalyticsPlayersGrid.LoadingRow -= AnalyticsGrid_LoadingRow;
-                AnalyticsPlayersGrid.LoadingRow += AnalyticsGrid_LoadingRow;
+                    // ALL — cumulative across all rounds
+                    UpdateAnalyticsCumulative();
+                }
+                else
+                {
+                    // Specific round
+                    UpdateAnalyticsForRound(_analyticsFilterRound);
+                }
             }
             catch (Exception ex)
             {
-                Log($"Ошибка обновления аналитики: {ex.Message}");
+                Log($"Analytics error: {ex.Message}");
             }
+        }
+
+        private void UpdateAnalyticsCumulative()
+        {
+            var allPlayers = _engine.PlayerStatistics.Keys.ToList();
+            var rows = new List<AnalyticsRow>();
+
+            int totalBanked = 0;
+            string bestPlayer = "—";
+            int bestScore = -999;
+
+            foreach (var player in allPlayers)
+            {
+                if (!_engine.PlayerStatistics.TryGetValue(player, out var rounds)) continue;
+                int c = rounds.Values.Sum(r => r.CorrectAnswers);
+                int w = rounds.Values.Sum(r => r.IncorrectAnswers);
+                int p = rounds.Values.Sum(r => r.Passes);
+                int b = rounds.Values.Sum(r => r.BankedMoney);
+                int d = rounds.Values.Sum(r => r.ExactDroppedMoney);
+
+                totalBanked += b;
+                int score = (c - (w + p)) * 10000 + b;
+                if (score > bestScore) { bestScore = score; bestPlayer = player; }
+
+                rows.Add(new AnalyticsRow
+                {
+                    Name = player,
+                    CorrectAnswers = c,
+                    WrongAnswers = w + p,
+                    MoneyLost = d,
+                    PassCount = p,
+                    BankedAmount = $"{b:N0}",
+                    Prediction = "",
+                    IsWeakest = false,
+                    IsStrongest = player == bestPlayer
+                });
+            }
+
+            // Mark best/worst after calculating all
+            if (rows.Count > 0)
+            {
+                var best = rows.OrderByDescending(r => r.CorrectAnswers - r.WrongAnswers).First();
+                var worst = rows.OrderBy(r => r.CorrectAnswers - r.WrongAnswers).First();
+                best.IsStrongest = true;
+                best.Prediction = _currentLanguage == "EN" ? "MVP" : "MVP";
+                if (worst.Name != best.Name)
+                {
+                    worst.IsWeakest = true;
+                    worst.Prediction = _currentLanguage == "EN" ? "WEAKEST" : "СЛАБЕЙШИЙ";
+                }
+            }
+
+            TxtAnalyticsTotalGames.Text = _engine.CurrentRound.ToString();
+            TxtAnalyticsAvgBank.Text = $"{totalBanked:N0}";
+            TxtAnalyticsBestPlayer.Text = bestPlayer;
+            TxtAnalyticsPlayTime.Text = "—";
+
+            AnalyticsPlayersGrid.ItemsSource = rows;
+            AnalyticsPlayersGrid.LoadingRow -= AnalyticsGrid_LoadingRow;
+            AnalyticsPlayersGrid.LoadingRow += AnalyticsGrid_LoadingRow;
+        }
+
+        private void UpdateAnalyticsForRound(int round)
+        {
+            // Temporarily set engine round context for analysis
+            int roundDuration = Math.Max(0, _engine.GetRoundDuration() - _timeLeftSeconds);
+            var analytics = _statsAnalyzer.AnalyzeRound(roundDuration, _lastRoundBankForSummary);
+
+            TxtAnalyticsTotalGames.Text = $"R{round}";
+            TxtAnalyticsAvgBank.Text = $"{analytics.TotalBanked:N0}";
+            TxtAnalyticsBestPlayer.Text = string.IsNullOrEmpty(analytics.StrongestLink) ? "—" : analytics.StrongestLink;
+            TxtAnalyticsPlayTime.Text = $"{roundDuration / 60}:{roundDuration % 60:D2}";
+
+            bool en = _currentLanguage == "EN";
+            var rows = analytics.PlayerStats.Select(p => new AnalyticsRow
+            {
+                Name = p.Name,
+                CorrectAnswers = p.CorrectAnswers,
+                WrongAnswers = p.TotalMistakes,
+                MoneyLost = p.ChainBreaksLost,
+                PassCount = p.Passes,
+                BankedAmount = $"{p.BankedMoney:N0}",
+                Prediction = p.Name == analytics.WeakestLink ? (en ? "WEAKEST LINK" : "СЛАБОЕ ЗВЕНО")
+                           : p.Name == analytics.StrongestLink ? (en ? "STRONGEST" : "СИЛЬНОЕ ЗВЕНО")
+                           : "",
+                IsWeakest = p.Name == analytics.WeakestLink,
+                IsStrongest = p.Name == analytics.StrongestLink
+            }).ToList();
+
+            AnalyticsPlayersGrid.ItemsSource = rows;
+            AnalyticsPlayersGrid.LoadingRow -= AnalyticsGrid_LoadingRow;
+            AnalyticsPlayersGrid.LoadingRow += AnalyticsGrid_LoadingRow;
         }
 
         private void QuestionsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)

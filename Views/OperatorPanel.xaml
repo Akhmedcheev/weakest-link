@@ -1740,6 +1740,7 @@
                     <Grid x:Name="AnalyticsContext" Visibility="Collapsed">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/> <!-- Round filter -->
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
@@ -1750,16 +1751,52 @@
                             <Grid>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="📊" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                    <TextBlock Text="ANALYTICS" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                    <TextBlock x:Name="TxtAnalyticsTitle" Text="ANALYTICS" Foreground="{StaticResource ObsidianTextPrimary}" 
                                               FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                                 </StackPanel>
-                                <TextBlock Text="ПРОГНОЗ ВЫБЫВАНИЯ" Foreground="#FF6B6B" FontSize="11" FontWeight="Bold"
+                                <TextBlock x:Name="TxtPredictionLabel" Text="ПРОГНОЗ ВЫБЫВАНИЯ" Foreground="#FF6B6B" FontSize="11" FontWeight="Bold"
                                            HorizontalAlignment="Right" VerticalAlignment="Center" Opacity="0.8"/>
                             </Grid>
                         </Border>
 
+                        <!-- Фильтр по раундам -->
+                        <Border Grid.Row="1" Background="#111318" Padding="8,6" BorderBrush="#2E333D" BorderThickness="0,0,0,1">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock x:Name="TxtRoundFilterLabel" Text="РАУНД:" Foreground="#64748B" FontSize="9" FontWeight="Bold" 
+                                           VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <Border x:Name="RoundFilterContainer" CornerRadius="6" Background="#1D2129" Padding="2">
+                                    <StackPanel x:Name="RoundFilterButtons" Orientation="Horizontal">
+                                        <Button Content="ALL" Tag="0" Width="36" Height="22" FontSize="9" FontWeight="Bold"
+                                                Background="#3B82F6" Foreground="White" BorderThickness="0" Cursor="Hand"
+                                                Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
+                                        <Button Content="R1" Tag="1" Width="28" Height="22" FontSize="9" FontWeight="Bold"
+                                                Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
+                                                Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
+                                        <Button Content="R2" Tag="2" Width="28" Height="22" FontSize="9" FontWeight="Bold"
+                                                Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
+                                                Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
+                                        <Button Content="R3" Tag="3" Width="28" Height="22" FontSize="9" FontWeight="Bold"
+                                                Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
+                                                Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
+                                        <Button Content="R4" Tag="4" Width="28" Height="22" FontSize="9" FontWeight="Bold"
+                                                Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
+                                                Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
+                                        <Button Content="R5" Tag="5" Width="28" Height="22" FontSize="9" FontWeight="Bold"
+                                                Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
+                                                Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
+                                        <Button Content="R6" Tag="6" Width="28" Height="22" FontSize="9" FontWeight="Bold"
+                                                Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
+                                                Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
+                                        <Button Content="R7" Tag="7" Width="28" Height="22" FontSize="9" FontWeight="Bold"
+                                                Background="Transparent" Foreground="#64748B" BorderThickness="0" Cursor="Hand"
+                                                Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
                         <!-- Ключевые метрики (компактные) -->
-                        <UniformGrid Grid.Row="1" Columns="4" Margin="8,8,8,4">
+                        <UniformGrid Grid.Row="2" Columns="4" Margin="8,8,8,4">
                             <Border Background="#171B22" CornerRadius="6" Padding="8,6" Margin="3">
                                 <StackPanel HorizontalAlignment="Center">
                                     <TextBlock Text="ИГРЫ" Foreground="#64748B" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
@@ -1787,7 +1824,7 @@
                         </UniformGrid>
                         
                         <!-- Таблица игроков (прозрачная) -->
-                        <Border Grid.Row="2" Background="Transparent" Margin="8,4,8,8" Padding="0">
+                        <Border Grid.Row="3" Background="Transparent" Margin="8,4,8,8" Padding="0">
                             <DataGrid x:Name="AnalyticsPlayersGrid" 
                                      Background="Transparent" 
                                      Foreground="{StaticResource ObsidianTextPrimary}"
@@ -1900,7 +1937,7 @@
                         </Border>
 
                         <!-- Decision Hub -->
-                        <Border Grid.Row="3" Background="#111318" BorderBrush="#2E333D" BorderThickness="0,1,0,0" Padding="10,6">
+                        <Border Grid.Row="4" Background="#111318" BorderBrush="#2E333D" BorderThickness="0,1,0,0" Padding="10,6">
                             <StackPanel>
                                 <!-- Voting duration selector -->
                                 <Grid Margin="0,0,0,5">
