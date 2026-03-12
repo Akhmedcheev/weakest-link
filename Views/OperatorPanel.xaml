@@ -831,7 +831,7 @@
                                Margin="16,14,0,6"/>
 
                     <Button x:Name="NavBtnSetup" Tag="SETUP" Height="38"
-                            Background="#4F6BED" Foreground="White" HorizontalContentAlignment="Left"
+                            Background="#6264A7" Foreground="White" HorizontalContentAlignment="Left"
                             Padding="14,0,0,0" Margin="10,2" BorderThickness="0" Cursor="Hand"
                             Click="NavBtn_Click" Style="{StaticResource FlatButton}">
                         <StackPanel Orientation="Horizontal">

@@ -5863,10 +5863,10 @@ namespace WeakestLink.Views
             try
             {
                 var pillBg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#4F6BED"));
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#6264A7"));
                 var activeFg = System.Windows.Media.Brushes.White;
                 var inactiveFg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#8B949E"));
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#999999"));
 
                 var navButtons = new[] { NavBtnSetup, NavBtnPlay, NavBtnStats, NavBtnEditor };
                 var tags = new[] { "SETUP", "PLAY", "STATS", "EDIT" };
