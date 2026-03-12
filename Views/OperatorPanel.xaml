@@ -2414,7 +2414,7 @@
                     <!-- Crop-редактор фото -->
                     <Border Height="250" CornerRadius="12" 
                             Background="#0D1117" BorderBrush="#3A4050" BorderThickness="1"
-                            ClipToBounds="True" Margin="0,0,0,4" Cursor="Move"
+                            ClipToBounds="True" Margin="0,0,0,4" Cursor="SizeAll"
                             MouseLeftButtonDown="CropPhoto_MouseDown"
                             MouseMove="CropPhoto_MouseMove"
                             MouseLeftButtonUp="CropPhoto_MouseUp">
