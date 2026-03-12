@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="1080" d:DesignWidth="1920">
     
-    <Grid Background="#000000">
+    <Grid Background="#00B140">
         <!-- Основная сетка: левая часть для денежной цепочки, центр для контента, правая нижняя для таймера -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="400"/> <!-- Левая колонка для денежной цепочки -->
@@ -16,7 +16,7 @@
         
         <!-- Денежная цепочка (слева) -->
         <Canvas Grid.Column="0" x:Name="MoneyChainCanvas" 
-                Background="#0A0A0A" 
+                Background="#00B140" 
                 Margin="10" 
                 ClipToBounds="True"/>
         
@@ -61,7 +61,7 @@
                 
                 <!-- Оверлей для сообщений ведущему (суфлёр) -->
                 <Grid x:Name="HostMessageOverlay" 
-                      Background="#80000000" 
+                      Background="#8000B140" 
                       Visibility="Collapsed">
                     <TextBlock x:Name="HostMessageText" 
                                Text="" 
@@ -96,7 +96,7 @@
         <Grid Grid.Column="2" VerticalAlignment="Bottom" Margin="10">
             <!-- Контейнер таймера с фиксированными размерами -->
             <Border Width="350" Height="120" 
-                    Background="#1A1A1A" 
+                    Background="#00B140" 
                     CornerRadius="10">
                 <Grid>
                     <!-- Фоновое изображение таймера -->
@@ -121,7 +121,7 @@
             </Border>
         </Grid>
         <!-- Оверлей с логотипом (LOGO) -->
-        <Grid x:Name="LogoOverlay" Grid.ColumnSpan="3" Background="Black" Visibility="Collapsed">
+        <Grid x:Name="LogoOverlay" Grid.ColumnSpan="3" Background="#00B140" Visibility="Collapsed">
             <Image x:Name="ImgLogo" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="1200" MaxHeight="800"/>
         </Grid>
     </Grid>
