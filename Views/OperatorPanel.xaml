@@ -876,30 +876,46 @@
                     <TextBlock x:Name="TxtStatsLabel" Text="СТАТИСТИКА" Foreground="#3D4450" FontSize="9" FontWeight="Bold" 
                                Margin="16,0,0,6"/>
 
-                    <UniformGrid Columns="3" Margin="8,0,8,4">
-                        <StackPanel HorizontalAlignment="Center" Margin="0,2">
-                            <TextBlock x:Name="TxtBankLabel" Text="БАНК" Foreground="#3D4450" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
-                            <TextBlock x:Name="TxtCurrentBank_Side" Text="0" Foreground="#FFA657" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <Border Background="#1D2129" CornerRadius="8" Padding="10,8" Margin="10,0,10,4" BorderBrush="#2E333D" BorderThickness="1">
+                        <StackPanel>
+                            <!-- Row 1: Bank / Total / Time -->
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                    <TextBlock x:Name="TxtBankLabel" Text="БАНК" Foreground="#4A5568" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtCurrentBank_Side" Text="0" Foreground="#FFA657" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                    <TextBlock x:Name="TxtTotalLabel" Text="ОБЩИЙ" Foreground="#4A5568" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtTotalBank_Side" Text="0" Foreground="#3FB950" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                                    <TextBlock x:Name="TxtTimeLabel" Text="ВРЕМЯ" Foreground="#4A5568" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtTimer_Side" Text="00:00" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                            <Border Height="1" Background="#2E333D" Margin="4,0,4,6"/>
+                            <!-- Row 2: Round / Question -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                    <TextBlock x:Name="TxtRoundLabel" Text="РАУНД" Foreground="#4A5568" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtRoundNumber_Side" Text="—" Foreground="#58A6FF" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                    <TextBlock x:Name="TxtQuestionLabel" Text="ВОПРОС" Foreground="#4A5568" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtQuestionCount_Side" Text="0/0" Foreground="#FFA657" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
                         </StackPanel>
-                        <StackPanel HorizontalAlignment="Center" Margin="0,2">
-                            <TextBlock x:Name="TxtTotalLabel" Text="ОБЩИЙ" Foreground="#3D4450" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
-                            <TextBlock x:Name="TxtTotalBank_Side" Text="0" Foreground="#3FB950" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel HorizontalAlignment="Center" Margin="0,2">
-                            <TextBlock x:Name="TxtTimeLabel" Text="ВРЕМЯ" Foreground="#3D4450" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
-                            <TextBlock x:Name="TxtTimer_Side" Text="00:00" Foreground="White" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
-                        </StackPanel>
-                    </UniformGrid>
-                    <UniformGrid Columns="2" Margin="8,0,8,2">
-                        <StackPanel HorizontalAlignment="Center" Margin="0,2">
-                            <TextBlock x:Name="TxtRoundLabel" Text="РАУНД" Foreground="#3D4450" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
-                            <TextBlock x:Name="TxtRoundNumber_Side" Text="—" Foreground="#58A6FF" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel HorizontalAlignment="Center" Margin="0,2">
-                            <TextBlock x:Name="TxtQuestionLabel" Text="ВОПРОС" Foreground="#3D4450" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
-                            <TextBlock x:Name="TxtQuestionCount_Side" Text="0/0" Foreground="#FFA657" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
-                        </StackPanel>
-                    </UniformGrid>
+                    </Border>
 
                     <!-- === ROUND STATUS ICONS === -->
                     <Border Height="1" Background="#2E333D" Margin="12,8,12,6"/>
