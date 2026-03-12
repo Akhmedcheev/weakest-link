@@ -5204,6 +5204,10 @@ namespace WeakestLink.Views
                 BtnPanic.Content = en ? "! PANIC !" : "! ПАНИКА !";
                 TxtExportLabel.Text = en ? "EXPORT" : "ЭКСПОРТ";
                 TxtBroadcastHeader.Text = en ? "BROADCAST CONTROL" : "УПРАВЛЕНИЕ ЭФИРОМ";
+                TxtRoundStatusLabel.Text = en ? "ROUNDS" : "РАУНДЫ";
+                TxtPlayerListLabel.Text = en ? "PLAYERS" : "ИГРОКИ";
+                TxtRoundFilterLabel.Text = en ? "ROUND:" : "РАУНД:";
+                TxtPredictionLabel.Text = en ? "ELIMINATION FORECAST" : "ПРОГНОЗ ВЫБЫВАНИЯ";
             }
             catch { }
 
@@ -5570,6 +5574,8 @@ namespace WeakestLink.Views
                 {
                     case "SETUP":
                         SetupContext.Visibility = Visibility.Visible;
+                        UpdatePlayerList();
+                        UpdateRoundIcons();
                         break;
 
                     case "PLAY":
@@ -5579,11 +5585,15 @@ namespace WeakestLink.Views
                             GamePlayPanel.Visibility = Visibility.Collapsed;
                             HeadToHeadPanel.Visibility = Visibility.Visible;
                         }
+                        UpdatePlayerList();
+                        UpdateRoundIcons();
                         break;
 
                     case "STATS":
                         AnalyticsContext.Visibility = Visibility.Visible;
                         UpdateAnalyticsData();
+                        UpdatePlayerList();
+                        UpdateRoundIcons();
                         break;
 
                     case "EDIT":
@@ -5593,6 +5603,8 @@ namespace WeakestLink.Views
 
                     default:
                         SetupContext.Visibility = Visibility.Visible;
+                        UpdatePlayerList();
+                        UpdateRoundIcons();
                         break;
                 }
             }
@@ -5744,6 +5756,101 @@ namespace WeakestLink.Views
             AnalyticsPlayersGrid.ItemsSource = rows;
             AnalyticsPlayersGrid.LoadingRow -= AnalyticsGrid_LoadingRow;
             AnalyticsPlayersGrid.LoadingRow += AnalyticsGrid_LoadingRow;
+        }
+
+        // === PLAYER LIST + ROUND ICONS ===
+        private Border[] _roundIcons;
+
+        private void UpdatePlayerList()
+        {
+            try
+            {
+                bool en = _currentLanguage == "EN";
+                var allPlayers = _engine.PlayerStatistics.Keys.ToList();
+                if (allPlayers.Count == 0 && _engine.ActivePlayers != null)
+                    allPlayers = _engine.ActivePlayers.ToList();
+
+                var items = new List<PlayerListItem>();
+                var greenBrush = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3FB950"));
+                var redBrush = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#F85149"));
+                var mutedBrush = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#64748B"));
+                var darkGreenBg = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0D2818"));
+                var darkRedBg = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#2D0F0F"));
+
+                foreach (var player in allPlayers)
+                {
+                    bool isActive = _engine.ActivePlayers?.Contains(player) ?? false;
+                    items.Add(new PlayerListItem
+                    {
+                        Name = player,
+                        StatusColor = isActive ? greenBrush : redBrush,
+                        NameColor = isActive ? System.Windows.Media.Brushes.White : mutedBrush,
+                        NameDecoration = isActive ? null : System.Windows.TextDecorations.Strikethrough,
+                        StatusText = isActive ? (en ? "ACTIVE" : "АКТИВ") : (en ? "OUT" : "ВЫБЫЛ"),
+                        PillBackground = isActive ? darkGreenBg : darkRedBg,
+                        PillForeground = isActive ? greenBrush : redBrush
+                    });
+                }
+
+                PlayerListItems.ItemsSource = items;
+            }
+            catch { }
+        }
+
+        private void UpdateRoundIcons()
+        {
+            try
+            {
+                if (_roundIcons == null)
+                    _roundIcons = new[] { RoundIcon1, RoundIcon2, RoundIcon3, RoundIcon4, RoundIcon5, RoundIcon6, RoundIcon7 };
+
+                var currentBrush = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3B82F6"));
+                var doneBrush = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3FB950"));
+                var doneBg = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0D2818"));
+                var futureBrush = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#2E333D"));
+                var defaultBg = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#1D2129"));
+                var currentBg = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0D1B2A"));
+
+                int current = _engine.CurrentRound;
+
+                for (int i = 0; i < _roundIcons.Length; i++)
+                {
+                    int roundNum = i + 1;
+                    if (roundNum < current)
+                    {
+                        // Completed
+                        _roundIcons[i].BorderBrush = doneBrush;
+                        _roundIcons[i].Background = doneBg;
+                        if (_roundIcons[i].Child is TextBlock tb1) tb1.Foreground = doneBrush;
+                    }
+                    else if (roundNum == current)
+                    {
+                        // Current
+                        _roundIcons[i].BorderBrush = currentBrush;
+                        _roundIcons[i].Background = currentBg;
+                        if (_roundIcons[i].Child is TextBlock tb2) { tb2.Foreground = System.Windows.Media.Brushes.White; tb2.FontWeight = FontWeights.ExtraBold; }
+                    }
+                    else
+                    {
+                        // Future
+                        _roundIcons[i].BorderBrush = futureBrush;
+                        _roundIcons[i].Background = defaultBg;
+                        if (_roundIcons[i].Child is TextBlock tb3) tb3.Foreground = futureBrush;
+                    }
+                }
+            }
+            catch { }
         }
 
         private void QuestionsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -5910,5 +6017,16 @@ namespace WeakestLink.Views
         public string Prediction { get; set; } = "";
         public bool IsWeakest { get; set; }
         public bool IsStrongest { get; set; }
+    }
+
+    public class PlayerListItem
+    {
+        public string Name { get; set; } = "";
+        public string StatusText { get; set; } = "";
+        public System.Windows.Media.Brush StatusColor { get; set; } = System.Windows.Media.Brushes.Gray;
+        public System.Windows.Media.Brush NameColor { get; set; } = System.Windows.Media.Brushes.White;
+        public System.Windows.TextDecorationCollection NameDecoration { get; set; } = null;
+        public System.Windows.Media.Brush PillBackground { get; set; } = System.Windows.Media.Brushes.Transparent;
+        public System.Windows.Media.Brush PillForeground { get; set; } = System.Windows.Media.Brushes.Gray;
     }
 }
