@@ -2284,9 +2284,9 @@
                                                 Background="#1a1a2e" BorderBrush="#3D3D3D" BorderThickness="1"
                                                 Foreground="#8B8B8B" FontWeight="Bold" FontSize="8"
                                                 Click="BtnAfterInterviewBed_Click" Style="{StaticResource FlatButton}"/>
-                                        <Button x:Name="BtnMusicStop" Grid.Column="6" Content="⏹" Height="24"
+                                        <Button x:Name="BtnMusicStop" Grid.Column="6" Content="STOP" Height="24"
                                                 Background="#2a1515" BorderBrush="#4a2020" BorderThickness="1"
-                                                Foreground="#EF4444" FontWeight="Bold" FontSize="10"
+                                                Foreground="#EF4444" FontWeight="Bold" FontSize="8"
                                                 Click="BtnStopAudio_Click" Style="{StaticResource FlatButton}"/>
                                     </Grid>
                                 </Border>
