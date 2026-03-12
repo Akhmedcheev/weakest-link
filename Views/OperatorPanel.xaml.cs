@@ -4962,6 +4962,11 @@ namespace WeakestLink.Views
                   "Игроки поднимают таблички с именами.\n" +
                   "Ведущая опрашивает участников → объявляет слабое звено → выбывание.";
             Log($"📋 Режим голосования: {(express ? "ЭКСПРЕСС" : "ПОЛНЫЙ")}");
+
+            // Toggle voting panels in Analytics
+            if (ExpressVotingPanel != null) ExpressVotingPanel.Visibility = express ? Visibility.Visible : Visibility.Collapsed;
+            if (FullVotingPanel != null) FullVotingPanel.Visibility = !express ? Visibility.Visible : Visibility.Collapsed;
+
             SaveSettings();
         }
 

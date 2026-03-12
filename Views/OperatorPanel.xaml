@@ -2092,6 +2092,8 @@
                         <!-- Decision Hub -->
                         <Border Grid.Row="4" Background="#111318" BorderBrush="#2E333D" BorderThickness="0,1,0,0" Padding="10,6">
                             <StackPanel>
+                                <!-- === EXPRESS VOTING PANEL === -->
+                                <StackPanel x:Name="ExpressVotingPanel">
                                 <!-- Voting duration selector -->
                                 <Grid Margin="0,0,0,5">
                                     <Grid.ColumnDefinitions>
@@ -2141,6 +2143,20 @@
                                         </Button.Background>
                                     </Button>
                                 </Grid>
+                                </StackPanel>
+
+                                <!-- === FULL VOTING PANEL === -->
+                                <Border x:Name="FullVotingPanel" Visibility="Collapsed"
+                                        Background="#1A1520" CornerRadius="6" Padding="14,12" Margin="0,0,0,4"
+                                        BorderBrush="#2E2538" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Text="⏸  ГОЛОСОВАНИЕ ЗА КУЛИСАМИ" Foreground="#C084FC" FontSize="12" FontWeight="Bold" Margin="0,0,0,8"/>
+                                        <TextBlock Text="1. Ведущая подводит итог и объявляет голосование" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0"/>
+                                        <TextBlock Text="2. Перерыв — игроки отдыхают и делают выбор" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0"/>
+                                        <TextBlock Text="3. Внесите результаты голосования ниже" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0"/>
+                                        <TextBlock Text="4. Возврат в эфир → таблички → обсуждение → выбывание" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Border>
 
                                 <!-- Reveal Timeline -->
                                 <Border x:Name="RevealProgressPanel" Background="#0D0D18" CornerRadius="5" Margin="0,2,0,4" Padding="10,8" Visibility="Collapsed">
