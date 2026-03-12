@@ -5098,9 +5098,11 @@ namespace WeakestLink.Views
 
         // === SETTINGS PERSISTENCE ===
         private const string SettingsFilePath = "app_settings.json";
+        private bool _isLoadingSettings = false;
 
         private void SaveSettings()
         {
+            if (_isLoadingSettings) return;
             try
             {
                 var settings = new Dictionary<string, object>
@@ -5124,6 +5126,7 @@ namespace WeakestLink.Views
             try
             {
                 if (!System.IO.File.Exists(SettingsFilePath)) return;
+                _isLoadingSettings = true;
                 var json = System.IO.File.ReadAllText(SettingsFilePath);
                 var doc = System.Text.Json.JsonDocument.Parse(json);
                 var root = doc.RootElement;
@@ -5139,9 +5142,11 @@ namespace WeakestLink.Views
                     ChkFastTrack.IsChecked = skipEl.GetBoolean();
 
                 Log("✅ Настройки загружены");
+                _isLoadingSettings = false;
             }
             catch (Exception ex)
             {
+                _isLoadingSettings = false;
                 Log($"⚠ Ошибка загрузки настроек: {ex.Message}");
             }
         }
