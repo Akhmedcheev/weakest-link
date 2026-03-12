@@ -4929,6 +4929,34 @@ namespace WeakestLink.Views
                 SetCentralContext("SETTINGS");
         }
 
+        // === VOTING MODE ===
+        private bool _isExpressVoting = true;
+
+        private void BtnVoteModeExpress_Click(object sender, RoutedEventArgs e) => SetVoteMode(true);
+        private void BtnVoteModeFull_Click(object sender, RoutedEventArgs e) => SetVoteMode(false);
+
+        private void SetVoteMode(bool express)
+        {
+            _isExpressVoting = express;
+            var activeBg = new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#6366F1"));
+            var inactiveBg = new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#242830"));
+            var activeFg = System.Windows.Media.Brushes.White;
+            var inactiveFg = new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#94A3B8"));
+
+            BtnVoteModeExpress.Background = express ? activeBg : inactiveBg;
+            BtnVoteModeExpress.Foreground = express ? activeFg : inactiveFg;
+            BtnVoteModeFull.Background = !express ? activeBg : inactiveBg;
+            BtnVoteModeFull.Foreground = !express ? activeFg : inactiveFg;
+
+            TxtVoteModeDescription.Text = express
+                ? "Быстрое голосование без перерыва. Игроки сразу выбирают слабое звено."
+                : "Полный формат: перерыв ~10 мин → голосование → разбор. Общее время ~20-30 мин. Результаты вносятся через пульты игроков.";
+            Log($"📋 Режим голосования: {(express ? "ЭКСПРЕСС" : "ПОЛНЫЙ")}");
+        }
+
         private void SyncSettingsLangButtons()
         {
             try
