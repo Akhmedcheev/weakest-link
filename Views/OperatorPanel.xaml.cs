@@ -192,6 +192,7 @@ namespace WeakestLink.Views
         }
 
         private readonly ObservableCollection<PlayerSetupItem> _rosterItems = new();
+        private PlayerSetupItem? _currentDossierPlayer;
 
 
 
@@ -5149,7 +5150,67 @@ namespace WeakestLink.Views
 
         private void ParticipantsOverlay_CardClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            e.Handled = true; // prevent background click from closing
+            e.Handled = true;
+        }
+
+        // ═══ ДОСЬЕ УЧАСТНИКА ═══
+        private void PlayerCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement fe && fe.DataContext is PlayerSetupItem player)
+            {
+                _currentDossierPlayer = player;
+                DossierGameName.Text = player.GameName;
+                DossierFullName.Text = player.FullName;
+                DossierCityDesc.Text = player.CityDesc;
+                DossierAge.Text = player.Age > 0 ? player.Age.ToString() : "";
+                DossierBio.Text = player.Bio;
+                DossierPhotoImage.Source = player.PhotoSource;
+                DossierOverlay.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void BtnSaveDossier_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentDossierPlayer == null) return;
+            _currentDossierPlayer.GameName = DossierGameName.Text;
+            _currentDossierPlayer.FullName = DossierFullName.Text;
+            _currentDossierPlayer.CityDesc = DossierCityDesc.Text;
+            if (int.TryParse(DossierAge.Text, out int age)) _currentDossierPlayer.Age = age;
+            _currentDossierPlayer.Bio = DossierBio.Text;
+            DossierOverlay.Visibility = Visibility.Collapsed;
+            Log($"📋 Досье обновлено: {_currentDossierPlayer.GameName}");
+        }
+
+        private void BtnCloseDossier_Click(object sender, RoutedEventArgs e)
+        {
+            DossierOverlay.Visibility = Visibility.Collapsed;
+        }
+
+        private void DossierOverlay_BackgroundClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            DossierOverlay.Visibility = Visibility.Collapsed;
+        }
+
+        private void DossierOverlay_CardClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void DossierPhoto_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            if (_currentDossierPlayer == null) return;
+            var dlg = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = $"Фото для {_currentDossierPlayer.GameName}",
+                Filter = "Изображения|*.png;*.jpg;*.jpeg;*.bmp;*.webp|Все файлы|*.*"
+            };
+            if (dlg.ShowDialog() == true)
+            {
+                _currentDossierPlayer.PhotoPath = dlg.FileName;
+                DossierPhotoImage.Source = _currentDossierPlayer.PhotoSource;
+                Log($"📷 Фото загружено: {System.IO.Path.GetFileName(dlg.FileName)}");
+            }
         }
 
         private void BtnCloseToolbar_Click(object sender, RoutedEventArgs e)
