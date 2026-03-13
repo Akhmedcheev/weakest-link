@@ -4,14 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Weakest Link - Host Screen" Height="1080" Width="1920"
+        Title="Weakest Link - Host Screen" 
+        Height="{DynamicResource WindowHDHeight}" 
+        Width="{DynamicResource WindowHDWidth}"
         Background="Black" Foreground="White"
         WindowStartupLocation="CenterScreen">
-    
+
     <Viewbox Stretch="Uniform">
-        <Grid Width="1920" Height="1080" Background="#050510">
+        <Grid Width="{DynamicResource WindowHDWidth}" Height="{DynamicResource WindowHDHeight}" Background="#050510">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="MoneyTreeColumn" Width="280"/>
+                <ColumnDefinition x:Name="MoneyTreeColumn" Width="{DynamicResource MoneyTreeColumnWidth}"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 

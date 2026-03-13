@@ -4,8 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Weakest Link - Operator Panel" Height="1000" Width="1400"
-        Background="{DynamicResource ObsidianBg}" Foreground="{DynamicResource ObsidianTextPrimary}"
+        Title="Weakest Link - Operator Panel" 
+        Height="{DynamicResource WindowDefaultHeight}" 
+        Width="{DynamicResource WindowDefaultWidth}"
+        Background="{DynamicResource ObsidianBg}" 
+        Foreground="{DynamicResource ObsidianTextPrimary}"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         WindowStyle="None"
@@ -17,62 +20,10 @@
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
-        <!-- ═══ ONYX v1.0 PALETTE — Teams Dark ═══ -->
-        <SolidColorBrush x:Key="ObsidianBg"            Color="#1F1F1F"/>  <!-- 00 dp — основной фон -->
-        <SolidColorBrush x:Key="ObsidianSurface"       Color="#292929"/>  <!-- 02 dp — панели -->
-        <SolidColorBrush x:Key="ObsidianCard"          Color="#2D2D2D"/>  <!-- 04 dp — карточки -->
-        <SolidColorBrush x:Key="ObsidianRaised"        Color="#333333"/>  <!-- 06 dp — приподнятые -->
-        <SolidColorBrush x:Key="ObsidianBorder"        Color="#3D3D3D"/>  <!-- границы -->
-        <SolidColorBrush x:Key="ObsidianBorderLight"   Color="#4D4D4D"/>  <!-- границы при ховере -->
-        <SolidColorBrush x:Key="ObsidianTextPrimary"   Color="#E8E8E8"/>  <!-- основной текст -->
-        <SolidColorBrush x:Key="ObsidianTextSecondary" Color="#999999"/>  <!-- вторичный текст -->
-        <SolidColorBrush x:Key="ObsidianTextMuted"     Color="#717171"/>  <!-- приглушённый -->
-        <SolidColorBrush x:Key="ObsidianAccentTeal"    Color="#6264A7"/>  <!-- основной акцент — Teams purple -->
-        <SolidColorBrush x:Key="ObsidianAccentBlue"    Color="#4F6BED"/>  <!-- информация -->
-        <SolidColorBrush x:Key="ObsidianAccentGold"    Color="#F59E0B"/>  <!-- банк, деньги -->
-        <SolidColorBrush x:Key="ObsidianAccentGreen"   Color="#22C55E"/>  <!-- верно, успех -->
-        <SolidColorBrush x:Key="ObsidianAccentRed"     Color="#EF4444"/>  <!-- неверно, критический -->
-
-        <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
-        </Style>
-
-        <!-- ═══ OBSIDIAN TextBox ═══ -->
-        <Style TargetType="TextBox">
-            <Setter Property="Background" Value="{StaticResource ObsidianSurface}"/>
-            <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource ObsidianBorder}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CaretBrush" Value="{StaticResource ObsidianTextPrimary}"/>
-            <Setter Property="SelectionBrush" Value="#7C3AED"/>
-            <Setter Property="Padding" Value="6,4"/>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TextBox">
-                        <Border x:Name="border" Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}" 
-                                CornerRadius="3" SnapsToDevicePixels="True">
-                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false"
-                                          HorizontalScrollBarVisibility="Hidden" 
-                                          VerticalScrollBarVisibility="Hidden"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="#4D4D4D"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="#444444"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/ObsidianStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
 
         <!-- Discord Scrollbar: Thumb -->
         <Style x:Key="DiscordScrollThumb" TargetType="Thumb">
@@ -135,7 +86,7 @@
             </Style.Triggers>
         </Style>
         <Style x:Key="DiscordButton" TargetType="Button">
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -179,7 +130,7 @@
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="btnBorder" Property="Opacity" Value="0.45"/>
                                 <Setter TargetName="hoverOverlay" Property="Opacity" Value="0"/>
-                                <Setter Property="Foreground" Value="#717171"/>
+                                <Setter Property="Foreground" Value="{StaticResource ObsidianTextDisabled}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -200,11 +151,11 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsHighlighted" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#3D3D3D"/>
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource ObsidianRaised}"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#444444"/>
-                                <Setter Property="Foreground" Value="White"/>
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource ObsidianBorderLight}"/>
+                                <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -229,16 +180,16 @@
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
                                         <Border x:Name="TkBorder" Background="{StaticResource ObsidianSurface}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
-                                            <Path x:Name="Arrow" Fill="#999" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Data="M0,0 L4,4 L8,0 Z"/>
+                                            <Path x:Name="Arrow" Fill="{StaticResource ObsidianTextSecondary}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Data="M0,0 L4,4 L8,0 Z"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#4D4D4D"/>
-                                                <Setter TargetName="Arrow" Property="Fill" Value="#CCC"/>
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="{StaticResource ObsidianBorderLight}"/>
+                                                <Setter TargetName="Arrow" Property="Fill" Value="{StaticResource ObsidianTextPrimary}"/>
                                             </Trigger>
                                             <Trigger Property="IsChecked" Value="True">
-                                                <Setter TargetName="TkBorder" Property="Background" Value="#333333"/>
-                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#4D4D4D"/>
+                                                <Setter TargetName="TkBorder" Property="Background" Value="{StaticResource ObsidianRaised}"/>
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="{StaticResource ObsidianBorderLight}"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
@@ -293,15 +244,15 @@
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
                                         <Border x:Name="TkBorder" Background="{StaticResource ObsidianSurface}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
-                                            <Path x:Name="Arrow" Fill="#999" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Data="M0,0 L4,4 L8,0 Z"/>
+                                            <Path x:Name="Arrow" Fill="{StaticResource ObsidianTextSecondary}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Data="M0,0 L4,4 L8,0 Z"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#4D4D4D"/>
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="{StaticResource ObsidianBorderLight}"/>
                                             </Trigger>
                                             <Trigger Property="IsChecked" Value="True">
-                                                <Setter TargetName="TkBorder" Property="Background" Value="#333333"/>
-                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="#4D4D4D"/>
+                                                <Setter TargetName="TkBorder" Property="Background" Value="{StaticResource ObsidianRaised}"/>
+                                                <Setter TargetName="TkBorder" Property="BorderBrush" Value="{StaticResource ObsidianBorderLight}"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
@@ -352,8 +303,8 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#3D3D3D"/>
-                                <Setter TargetName="border" Property="BorderBrush" Value="#4D4D4D"/>
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource ObsidianRaised}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ObsidianBorderLight}"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="border" Property="Opacity" Value="0.4"/>
@@ -365,80 +316,6 @@
         </Style>
         <!-- Именованный алиас для обратной совместимости -->
         <Style x:Key="NoWhiteWhenDisabledButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"/>
-
-        <!-- ObsidianTextBox: темный ввод с тонкой рамкой -->
-        <Style x:Key="ObsidianTextBox" TargetType="TextBox">
-            <Setter Property="Background" Value="#2b2d31"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#262626"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CaretBrush" Value="White"/>
-            <Setter Property="SelectionBrush" Value="#5865F2"/>
-            <Setter Property="Padding" Value="8,6"/>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TextBox">
-                        <Border x:Name="border" Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}" 
-                                CornerRadius="3" SnapsToDevicePixels="True">
-                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false"
-                                          HorizontalScrollBarVisibility="Hidden" 
-                                          VerticalScrollBarVisibility="Hidden"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="#6264A7"/>
-                                <Setter TargetName="border" Property="BorderThickness" Value="1.5"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="#3a3c42"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Стиль TextBox с красной подсветкой при фокусе для редактора -->
-        <Style x:Key="EditorTextBoxStyle" TargetType="TextBox">
-            <Setter Property="Background" Value="#2b2d31"/>
-            <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
-            <Setter Property="BorderBrush" Value="#262626"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CaretBrush" Value="{StaticResource ObsidianTextPrimary}"/>
-            <Setter Property="SelectionBrush" Value="#7C3AED"/>
-            <Setter Property="Padding" Value="8,2"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TextBox">
-                        <Border x:Name="border" Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}" 
-                                CornerRadius="3" SnapsToDevicePixels="True">
-                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false"
-                                          HorizontalScrollBarVisibility="Hidden" 
-                                          VerticalScrollBarVisibility="Hidden"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="#da373c"/>
-                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="#4a4a4a"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
         <!-- Стиль игровых кнопок с эффектом физического нажатия -->
         <Style x:Key="GameButtonPressStyle" TargetType="Button">
@@ -453,7 +330,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="#222" BorderThickness="0,0,0,4" Padding="{TemplateBinding Padding}" CornerRadius="5">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{StaticResource ObsidianBg}" BorderThickness="0,0,0,4" Padding="{TemplateBinding Padding}" CornerRadius="5">
                             <ContentPresenter x:Name="content" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" HorizontalAlignment="Center" VerticalAlignment="Center" TextBlock.Foreground="{TemplateBinding Foreground}"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -513,40 +390,6 @@
             </Setter>
         </Style>
 
-        <!-- ObsidianCheckBox: тёмный чекбокс в стиле Obsidian -->
-        <Style x:Key="ObsidianCheckBox" TargetType="CheckBox">
-            <Setter Property="Foreground" Value="{StaticResource ObsidianTextSecondary}"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="CheckBox">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Border x:Name="CheckBorder" Width="18" Height="18" CornerRadius="4"
-                                    Background="#333333" BorderBrush="#4D4D4D" BorderThickness="1.5"
-                                    VerticalAlignment="Center" Margin="0,0,8,0">
-                                <TextBlock x:Name="CheckMark" Text="&#xE73E;" 
-                                           FontFamily="Segoe MDL2 Assets" FontSize="12"
-                                           Foreground="White" HorizontalAlignment="Center" 
-                                           VerticalAlignment="Center" Visibility="Collapsed"/>
-                            </Border>
-                            <ContentPresenter VerticalAlignment="Center"/>
-                        </StackPanel>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="CheckBorder" Property="Background" Value="#2DD4BF"/>
-                                <Setter TargetName="CheckBorder" Property="BorderBrush" Value="#2DD4BF"/>
-                                <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="CheckBorder" Property="BorderBrush" Value="#64748B"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <!-- FlatButton: Teams-style flat button — Onyx -->
         <Style x:Key="FlatButton" TargetType="Button">
             <Setter Property="Cursor" Value="Hand"/>
@@ -593,13 +436,13 @@
         <!-- ═══ Dark Menu: корневое меню ═══ -->
         <Style TargetType="Menu">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#E8E8E8"/>
+            <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
         </Style>
 
         <!-- ═══ Dark MenuItem: полный шаблон ═══ -->
         <Style TargetType="MenuItem">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#E8E8E8"/>
+            <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
             <Setter Property="Padding" Value="8,4"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Template">
@@ -635,12 +478,12 @@
                                     <!-- Горячие клавиши -->
                                     <TextBlock x:Name="IGTHost" Grid.Column="2" 
                                                Text="{TemplateBinding InputGestureText}" 
-                                               Foreground="#999999" FontSize="11"
+                                               Foreground="{StaticResource ObsidianTextSecondary}" FontSize="11"
                                                Margin="20,0,0,0" VerticalAlignment="Center"/>
 
                                     <!-- Стрелка подменю -->
                                     <Path x:Name="SubMenuArrow" Grid.Column="3" 
-                                          Fill="#888" VerticalAlignment="Center" 
+                                          Fill="{StaticResource ObsidianTextMuted}" VerticalAlignment="Center" 
                                           Data="M0,0 L4,3.5 L0,7 Z" Visibility="Collapsed"/>
                                 </Grid>
                             </Border>
@@ -650,7 +493,7 @@
                                    IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" 
                                    Placement="Bottom" AllowsTransparency="True" Focusable="False" 
                                    PopupAnimation="Fade" HorizontalOffset="-2">
-                                <Border Background="#2D2D2D" BorderBrush="#555" BorderThickness="1" 
+                                <Border Background="{StaticResource ObsidianCard}" BorderBrush="{StaticResource ObsidianBorderLight}" BorderThickness="1" 
                                         CornerRadius="2" Padding="0,4" SnapsToDevicePixels="True">
                                     <ScrollViewer CanContentScroll="True" 
                                                   VerticalScrollBarVisibility="Auto"
@@ -674,16 +517,16 @@
                             </Trigger>
                             <!-- Hover -->
                             <Trigger Property="IsHighlighted" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#3E3E42"/>
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource ObsidianRaised}"/>
                                 <Setter Property="Foreground" Value="White"/>
                             </Trigger>
                             <!-- Нажатие (открытие подменю из TopLevel) -->
                             <Trigger Property="IsSubmenuOpen" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#333337"/>
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource ObsidianSurface}"/>
                             </Trigger>
                             <!-- Disabled -->
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Foreground" Value="#666"/>
+                                <Setter Property="Foreground" Value="{StaticResource ObsidianTextDisabled}"/>
                             </Trigger>
                             <!-- Скрыть иконку если нет -->
                             <Trigger Property="Icon" Value="{x:Null}">
@@ -698,7 +541,7 @@
         <!-- ═══ Dark Separator в меню ═══ -->
         <Style TargetType="Separator">
             <Setter Property="Height" Value="1"/>
-            <Setter Property="Background" Value="#444"/>
+            <Setter Property="Background" Value="{StaticResource ObsidianBorder}"/>
             <Setter Property="Margin" Value="8,4"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -712,6 +555,7 @@
             </Setter>
         </Style>
 
+        </ResourceDictionary>
     </Window.Resources>
     
     <!-- Outer wrapper: Title bar + Content -->
@@ -723,7 +567,7 @@
         </Grid.RowDefinitions>
 
         <!-- Row 0: Onyx Title Bar (Teams-style flat) -->
-        <Border Grid.Row="0" Background="#1F1F1F" BorderBrush="#2A2A2A" BorderThickness="0,0,0,1">
+        <Border Grid.Row="0" Background="{StaticResource ObsidianBg}" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="0,0,0,1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -736,10 +580,10 @@
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,20,0">
                     <Image Source="/Assets/Images/logotipka.png" Width="30" Height="30" Stretch="Uniform" 
                            RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,10,0"/>
-                    <TextBlock Text="WEAKEST LINK" FontSize="13" FontWeight="ExtraBold" Foreground="#E8E8E8" 
+                    <TextBlock Text="WEAKEST LINK" FontSize="13" FontWeight="ExtraBold" Foreground="{StaticResource ObsidianTextPrimary}" 
                                VerticalAlignment="Center"/>
-                    <Border Width="1" Height="16" Background="#3D3D3D" Margin="14,0,14,0" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="TxtTitleBarMode" Text="Operator" FontSize="12" Foreground="#717171" 
+                    <Border Width="1" Height="16" Background="{StaticResource ObsidianBorder}" Margin="14,0,14,0" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="TxtTitleBarMode" Text="Operator" FontSize="12" Foreground="{StaticResource ObsidianTextDisabled}" 
                                VerticalAlignment="Center" FontWeight="SemiBold"/>
                 </StackPanel>
 
@@ -753,7 +597,7 @@
                                 </Ellipse.Fill>
                             </Ellipse>
                             <TextBlock x:Name="TxtTitleSession" Text="СЕССИЯ ЗАПУЩЕНА" FontSize="10" 
-                                       Foreground="#22C55E" FontWeight="Bold" VerticalAlignment="Center"/>
+                                       Foreground="{StaticResource ColorSuccess}" FontWeight="Bold" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -761,43 +605,55 @@
                 <!-- RIGHT: Utility Icons -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,6,0">
                     <Button x:Name="BtnTitleQR" Content="&#xE8B9;" ToolTip="QR-код для подключения"
-                            FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="#999999"
+                            FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="{StaticResource ObsidianTextSecondary}"
                             Padding="8,4" Background="Transparent" BorderThickness="0" Cursor="Hand"
                             WindowChrome.IsHitTestVisibleInChrome="True" Style="{StaticResource FlatButton}"/>
                     <Button x:Name="BtnTakeSelfie" Content="&#xE722;" ToolTip="Скриншот (Ctrl+Q)"
-                            FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="#999999"
+                            FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="{StaticResource ObsidianTextSecondary}"
                             Padding="8,4" Margin="2,0,0,0" Background="Transparent" BorderThickness="0" Cursor="Hand"
                             WindowChrome.IsHitTestVisibleInChrome="True"
                             Click="BtnTakeSelfie_Click" Style="{StaticResource FlatButton}"/>
                     <Button x:Name="BtnTitleSettings" Content="&#xE713;" ToolTip="Настройки"
-                            FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="#999999"
+                            FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="{StaticResource ObsidianTextSecondary}"
                             Padding="8,4" Margin="2,0,0,0" Background="Transparent" BorderThickness="0" Cursor="Hand"
                             WindowChrome.IsHitTestVisibleInChrome="True" Click="BtnTitleSettings_Click" Style="{StaticResource FlatButton}"/>
+
+                    <!-- Переключатель расширенного режима -->
+                    <ToggleButton x:Name="TglExtendedMode" ToolTip="Расширенный режим (показать все панели)"
+                                  FontFamily="Segoe MDL2 Assets" FontSize="14" 
+                                  Padding="8,4" Margin="6,0,0,0" 
+                                  Background="Transparent" BorderThickness="0" Cursor="Hand"
+                                  WindowChrome.IsHitTestVisibleInChrome="True"
+                                  Click="TglExtendedMode_Click" Style="{StaticResource FlatToggleStyle}">
+                        <ToggleButton.Content>
+                            <TextBlock Text="&#xE72D;" Foreground="{StaticResource ObsidianTextSecondary}"/>
+                        </ToggleButton.Content>
+                    </ToggleButton>
                 </StackPanel>
 
                 <!-- RIGHT: Window Controls (HI DOG style — compact, dark circles) -->
                 <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,10,0">
-                    <Border Width="1" Height="18" Background="#3D3D3D" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <Border Width="1" Height="18" Background="{StaticResource ObsidianBorder}" Margin="0,0,10,0" VerticalAlignment="Center"/>
                     <Button x:Name="BtnTitleMinimize" ToolTip="Свернуть"
                             Width="30" Height="30" Margin="0,0,4,0"
                             Background="Transparent" BorderThickness="0" Cursor="Hand"
                             WindowChrome.IsHitTestVisibleInChrome="True"
                             Click="BtnTitleMinimize_Click" Style="{StaticResource FlatButton}">
-                        <TextBlock Text="—" FontSize="13" Foreground="#999999" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                        <TextBlock Text="—" FontSize="13" Foreground="{StaticResource ObsidianTextSecondary}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
                     </Button>
                     <Button x:Name="BtnTitleMaximize" ToolTip="Развернуть"
                             Width="30" Height="30" Margin="0,0,4,0"
                             Background="Transparent" BorderThickness="0" Cursor="Hand"
                             WindowChrome.IsHitTestVisibleInChrome="True"
                             Click="BtnTitleMaximize_Click" Style="{StaticResource FlatButton}">
-                        <TextBlock Text="◻" FontSize="12" Foreground="#999999" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Text="◻" FontSize="12" Foreground="{StaticResource ObsidianTextSecondary}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Button>
                     <Button x:Name="BtnTitleClose" ToolTip="Закрыть"
                             Width="30" Height="30"
                             Background="Transparent" BorderThickness="0" Cursor="Hand"
                             WindowChrome.IsHitTestVisibleInChrome="True"
                             Click="BtnTitleClose_Click" Style="{StaticResource FlatButton}">
-                        <TextBlock Text="✕" FontSize="12" Foreground="#999999" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Text="✕" FontSize="12" Foreground="{StaticResource ObsidianTextSecondary}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Button>
                 </StackPanel>
             </Grid>
@@ -827,7 +683,7 @@
                 <StackPanel Margin="0">
 
                     <!-- === NAVIGATION SECTION === -->
-                    <TextBlock x:Name="TxtNavLabel" Text="НАВИГАЦИЯ" Foreground="#555555" FontSize="9" FontWeight="Bold" 
+                    <TextBlock x:Name="TxtNavLabel" Text="НАВИГАЦИЯ" Foreground="{StaticResource ObsidianTextMuted}" FontSize="9" FontWeight="Bold" 
                                Margin="16,14,0,6"/>
 
                     <Button x:Name="NavBtnSetup" Tag="SETUP" Height="38"
@@ -868,8 +724,8 @@
                     </Button>
 
                     <!-- === GAME STATS (compact row) === -->
-                    <Border Height="1" Background="#3D3D3D" Margin="12,10,12,6"/>
-                    <TextBlock x:Name="TxtStatsLabel" Text="СТАТИСТИКА" Foreground="#555555" FontSize="9" FontWeight="Bold" 
+                    <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="12,10,12,6"/>
+                    <TextBlock x:Name="TxtStatsLabel" Text="СТАТИСТИКА" Foreground="{StaticResource ObsidianTextMuted}" FontSize="9" FontWeight="Bold" 
                                Margin="16,0,0,6"/>
 
                     <Border Background="#2D2D2D" CornerRadius="8" Padding="10,8" Margin="10,0,10,4" BorderBrush="#3D3D3D" BorderThickness="1">
@@ -882,19 +738,19 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                                    <TextBlock x:Name="TxtBankLabel" Text="БАНК" Foreground="#555555" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
-                                    <TextBlock x:Name="TxtCurrentBank_Side" Text="0" Foreground="#FFA657" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="TxtBankLabel" Text="БАНК" Foreground="{StaticResource ObsidianTextMuted}" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtCurrentBank_Side" Text="0" Foreground="{StaticResource ColorWarning}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                                    <TextBlock x:Name="TxtTotalLabel" Text="ОБЩИЙ" Foreground="#555555" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
-                                    <TextBlock x:Name="TxtTotalBank_Side" Text="0" Foreground="#3FB950" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="TxtTotalLabel" Text="ОБЩИЙ" Foreground="{StaticResource ObsidianTextMuted}" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtTotalBank_Side" Text="0" Foreground="{StaticResource ColorSuccess}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="2" HorizontalAlignment="Center">
-                                    <TextBlock x:Name="TxtTimeLabel" Text="ВРЕМЯ" Foreground="#555555" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
-                                    <TextBlock x:Name="TxtTimer_Side" Text="00:00" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="TxtTimeLabel" Text="ВРЕМЯ" Foreground="{StaticResource ObsidianTextMuted}" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtTimer_Side" Text="00:00" Foreground="{StaticResource ObsidianTextPrimary}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Grid>
-                            <Border Height="1" Background="#3D3D3D" Margin="4,0,4,6"/>
+                            <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="4,0,4,6"/>
                             <!-- Row 2: Round / Question -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -902,62 +758,68 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                                    <TextBlock x:Name="TxtRoundLabel" Text="РАУНД" Foreground="#555555" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
-                                    <TextBlock x:Name="TxtRoundNumber_Side" Text="—" Foreground="#58A6FF" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="TxtRoundLabel" Text="РАУНД" Foreground="{StaticResource ObsidianTextMuted}" FontSize="{DynamicResource FontSizeXXSmall}" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtRoundNumber_Side" Text="—" Foreground="{StaticResource ColorInfo}" FontSize="{DynamicResource FontSizeHeader}" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                                    <TextBlock x:Name="TxtQuestionLabel" Text="ВОПРОС" Foreground="#555555" FontSize="8" HorizontalAlignment="Center" FontWeight="Bold"/>
-                                    <TextBlock x:Name="TxtQuestionCount_Side" Text="0/0" Foreground="#FFA657" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="TxtQuestionLabel" Text="ВОПРОС" Foreground="{StaticResource ObsidianTextMuted}" FontSize="{DynamicResource FontSizeXXSmall}" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtQuestionCount_Side" Text="0/0" Foreground="{StaticResource ColorWarning}" FontSize="{DynamicResource FontSizeHeader}" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
                     </Border>
 
                     <!-- === ROUND STATUS ICONS === -->
-                    <Border Height="1" Background="#3D3D3D" Margin="12,8,12,6"/>
-                    <TextBlock x:Name="TxtRoundStatusLabel" Text="РАУНДЫ" Foreground="#555555" FontSize="9" FontWeight="Bold" 
-                               Margin="16,0,0,6"/>
+                    <Border Height="{DynamicResource LineThicknessThin}" Background="{StaticResource ObsidianBorder}" Margin="{DynamicResource MarginStandard}"/>
+                    <TextBlock x:Name="TxtRoundStatusLabel" Text="РАУНДЫ" Foreground="{StaticResource ObsidianTextMuted}" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold" 
+                               Margin="{DynamicResource MarginSection}"/>
                     <StackPanel x:Name="RoundStatusIcons" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
-                        <Border x:Name="RoundIcon1" Width="24" Height="24" CornerRadius="12" Background="#2D2D2D" 
-                                BorderBrush="#3B82F6" BorderThickness="2" Margin="2,0">
-                            <TextBlock Text="1" Foreground="#717171" FontSize="10" FontWeight="Bold" 
+                        <Border x:Name="RoundIcon1" Width="{DynamicResource RoundIconSize}" Height="{DynamicResource RoundIconSize}" 
+                                CornerRadius="{DynamicResource RoundIconBorderRadius}" Background="{StaticResource ObsidianCard}" 
+                                BorderBrush="{StaticResource ColorInfo}" BorderThickness="{DynamicResource RoundIconBorderThickness}" 
+                                Margin="2,0">
+                            <TextBlock Text="1" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="{DynamicResource FontSizeXSmall}" FontWeight="Bold" 
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <Border x:Name="RoundIcon2" Width="24" Height="24" CornerRadius="12" Background="#2D2D2D" 
-                                BorderBrush="#3D3D3D" BorderThickness="2" Margin="2,0">
-                            <TextBlock Text="2" Foreground="#717171" FontSize="10" FontWeight="Bold" 
+                        <Border x:Name="RoundIcon2" Width="{DynamicResource RoundIconSize}" Height="{DynamicResource RoundIconSize}" 
+                                CornerRadius="{DynamicResource RoundIconBorderRadius}" Background="{StaticResource ObsidianCard}" 
+                                BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="{DynamicResource RoundIconBorderThickness}" 
+                                Margin="2,0">
+                            <TextBlock Text="2" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="{DynamicResource FontSizeXSmall}" FontWeight="Bold" 
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <Border x:Name="RoundIcon3" Width="24" Height="24" CornerRadius="12" Background="#2D2D2D" 
-                                BorderBrush="#3D3D3D" BorderThickness="2" Margin="2,0">
-                            <TextBlock Text="3" Foreground="#717171" FontSize="10" FontWeight="Bold" 
+                        <Border x:Name="RoundIcon3" Width="{DynamicResource RoundIconSize}" Height="{DynamicResource RoundIconSize}" 
+                                CornerRadius="{DynamicResource RoundIconBorderRadius}" Background="{StaticResource ObsidianCard}" 
+                                BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="{DynamicResource RoundIconBorderThickness}" 
+                                Margin="2,0">
+                            <TextBlock Text="3" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="{DynamicResource FontSizeXSmall}" FontWeight="Bold" 
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <Border x:Name="RoundIcon4" Width="24" Height="24" CornerRadius="12" Background="#2D2D2D" 
-                                BorderBrush="#3D3D3D" BorderThickness="2" Margin="2,0">
-                            <TextBlock Text="4" Foreground="#717171" FontSize="10" FontWeight="Bold" 
+                        <Border x:Name="RoundIcon4" Width="24" Height="24" CornerRadius="12" Background="{StaticResource ObsidianCard}" 
+                                BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="4" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="10" FontWeight="Bold" 
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <Border x:Name="RoundIcon5" Width="24" Height="24" CornerRadius="12" Background="#2D2D2D" 
-                                BorderBrush="#3D3D3D" BorderThickness="2" Margin="2,0">
-                            <TextBlock Text="5" Foreground="#717171" FontSize="10" FontWeight="Bold" 
+                        <Border x:Name="RoundIcon5" Width="24" Height="24" CornerRadius="12" Background="{StaticResource ObsidianCard}" 
+                                BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="5" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="10" FontWeight="Bold" 
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <Border x:Name="RoundIcon6" Width="24" Height="24" CornerRadius="12" Background="#2D2D2D" 
-                                BorderBrush="#3D3D3D" BorderThickness="2" Margin="2,0">
-                            <TextBlock Text="6" Foreground="#717171" FontSize="10" FontWeight="Bold" 
+                        <Border x:Name="RoundIcon6" Width="24" Height="24" CornerRadius="12" Background="{StaticResource ObsidianCard}" 
+                                BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="6" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="10" FontWeight="Bold" 
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <Border x:Name="RoundIcon7" Width="24" Height="24" CornerRadius="12" Background="#2D2D2D" 
-                                BorderBrush="#3D3D3D" BorderThickness="2" Margin="2,0">
-                            <TextBlock Text="7" Foreground="#717171" FontSize="10" FontWeight="Bold" 
+                        <Border x:Name="RoundIcon7" Width="24" Height="24" CornerRadius="12" Background="{StaticResource ObsidianCard}" 
+                                BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="2" Margin="2,0">
+                            <TextBlock Text="7" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="10" FontWeight="Bold" 
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </StackPanel>
 
                     <!-- === PLAYERS LIST === -->
-                    <Border Height="1" Background="#3D3D3D" Margin="12,8,12,6"/>
-                    <TextBlock x:Name="TxtPlayerListLabel" Text="ИГРОКИ" Foreground="#555555" FontSize="9" FontWeight="Bold" 
+                    <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="12,8,12,6"/>
+                    <TextBlock x:Name="TxtPlayerListLabel" Text="ИГРОКИ" Foreground="{StaticResource ObsidianTextMuted}" FontSize="9" FontWeight="Bold" 
                                Margin="16,0,0,4"/>
                     <ItemsControl x:Name="PlayerListItems">
                         <ItemsControl.ItemTemplate>
@@ -1073,6 +935,23 @@
                                         BorderBrush="Transparent" BorderThickness="2"
                                         Click="BtnOpenAudience_Click" Style="{StaticResource FlatButton}"/>
                             </UniformGrid>
+
+                            <!-- Выбор цвета хромакея -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,2,0,8">
+                                <TextBlock Text="CHROMA:" Foreground="#666" FontSize="9" VerticalAlignment="Center" Margin="0,0,6,0" FontWeight="Bold"/>
+                                <Button Width="18" Height="18" Background="#00B140" Margin="2" Click="BtnChromaColor_Click" Tag="#00B140" ToolTip="Green (Classic)">
+                                    <Button.Template><ControlTemplate TargetType="Button"><Border CornerRadius="9" Background="{TemplateBinding Background}" BorderBrush="#44FFFFFF" BorderThickness="1"/></ControlTemplate></Button.Template>
+                                </Button>
+                                <Button Width="18" Height="18" Background="#0033CC" Margin="2" Click="BtnChromaColor_Click" Tag="#0033CC" ToolTip="Blue">
+                                    <Button.Template><ControlTemplate TargetType="Button"><Border CornerRadius="9" Background="{TemplateBinding Background}" BorderBrush="#44FFFFFF" BorderThickness="1"/></ControlTemplate></Button.Template>
+                                </Button>
+                                <Button Width="18" Height="18" Background="#FF00FF" Margin="2" Click="BtnChromaColor_Click" Tag="#FF00FF" ToolTip="Magenta">
+                                    <Button.Template><ControlTemplate TargetType="Button"><Border CornerRadius="9" Background="{TemplateBinding Background}" BorderBrush="#44FFFFFF" BorderThickness="1"/></ControlTemplate></Button.Template>
+                                </Button>
+                                <Button Width="18" Height="18" Background="#000000" Margin="2" Click="BtnChromaColor_Click" Tag="#000000" ToolTip="Black">
+                                    <Button.Template><ControlTemplate TargetType="Button"><Border CornerRadius="9" Background="{TemplateBinding Background}" BorderBrush="#44FFFFFF" BorderThickness="1"/></ControlTemplate></Button.Template>
+                                </Button>
+                            </StackPanel>
                             <Button Content="ANALYTICS" Height="24" Margin="0,0,0,3" FontSize="9"
                                     Background="#3D3D3D" Foreground="#E8E8E8" 
                                     Click="BtnAnalytics_Click" Style="{StaticResource FlatButton}"/>
@@ -1133,6 +1012,9 @@
                             <Button Content="🎬 ТЕСТ ФИНАЛА" x:Name="BtnDebugTestFinal" Height="26" FontSize="10" 
                                     Background="#EF4444" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
                                     Click="BtnDebugTestFinal_Click" Style="{StaticResource FlatButton}"/>
+                            <Button Content="⏱ ТЕСТ РАУНД 7" x:Name="BtnDebugTestRound7" Height="26" FontSize="10" 
+                                    Background="#D97706" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
+                                    Click="BtnDebugTestRound7_Click" Style="{StaticResource FlatButton}"/>
                             
                             <!-- === ТЕСТОВАЯ ИГРА === -->
                             <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
@@ -1760,37 +1642,25 @@
                                 <!-- Кнопки действий 2x2 -->
                                 <UniformGrid Grid.Row="1" Columns="2" Margin="10,5,10,10">
                                     <Button x:Name="BtnCorrect" Content="✓ ВЕРНО" Height="65" Margin="4" FontSize="22" FontWeight="ExtraBold"
-                                            Background="#22C55E" Foreground="White"
-                                            Click="BtnCorrect_Click" Style="{StaticResource GameButtonPressStyle}">
-                                        <Button.Effect>
-                                            <DropShadowEffect Color="#22C55E" BlurRadius="8" ShadowDepth="0" Opacity="0.3"/>
-                                        </Button.Effect>
-                                    </Button>
+                                            Background="{StaticResource AccentSuccess}" Foreground="White"
+                                            Click="BtnCorrect_Click" Style="{StaticResource GameButtonPressStyle}"/>
                                     <Button x:Name="BtnBank" Content="₽ БАНК" Height="65" Margin="4" FontSize="22" FontWeight="ExtraBold"
-                                            Background="#F59E0B" Foreground="#111318"
-                                            Click="BtnBank_Click" Style="{StaticResource GameButtonPressStyle}">
-                                        <Button.Effect>
-                                            <DropShadowEffect Color="#F59E0B" BlurRadius="8" ShadowDepth="0" Opacity="0.3"/>
-                                        </Button.Effect>
-                                    </Button>
+                                            Background="{StaticResource AccentWarning}" Foreground="#111318"
+                                            Click="BtnBank_Click" Style="{StaticResource GameButtonPressStyle}"/>
                                     <Button x:Name="BtnWrong" Content="✗ НЕВЕРНО" Height="65" Margin="4" FontSize="22" FontWeight="ExtraBold"
-                                            Background="#EF4444" Foreground="White"
-                                            Click="BtnWrong_Click" Style="{StaticResource GameButtonPressStyle}">
-                                        <Button.Effect>
-                                            <DropShadowEffect Color="#EF4444" BlurRadius="8" ShadowDepth="0" Opacity="0.3"/>
-                                        </Button.Effect>
-                                    </Button>
+                                            Background="{StaticResource AccentDanger}" Foreground="White"
+                                            Click="BtnWrong_Click" Style="{StaticResource GameButtonPressStyle}"/>
                                     <Button x:Name="BtnPass" Content="» ПАСС" Height="65" Margin="4" FontSize="22" FontWeight="ExtraBold"
-                                            Background="#64748B" Foreground="White"
+                                            Background="{StaticResource ObsidianBorder}" Foreground="White"
                                             Click="BtnPass_Click" Style="{StaticResource GameButtonPressStyle}"/>
                                 </UniformGrid>
 
                                 <!-- START O'CLOCK -->
-                                <Button Grid.Row="2" x:Name="BtnGamePlayPlay" Content="► START O'CLOCK" 
-                                        Height="46" FontSize="20" FontWeight="ExtraBold" 
-                                        Background="#292929" Foreground="#333" 
-                                        BorderBrush="Transparent" BorderThickness="0" 
-                                        Margin="14,0,14,14" 
+                                <Button Grid.Row="2" x:Name="BtnGamePlayPlay" Content="► START O'CLOCK"
+                                        Height="46" FontSize="20" FontWeight="ExtraBold"
+                                        Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianText}"
+                                        BorderBrush="Transparent" BorderThickness="0"
+                                        Margin="14,0,14,14"
                                         Click="BtnPlay_Click" Style="{StaticResource GameButtonPressStyle}"/>
                             </Grid>
                         </Border>

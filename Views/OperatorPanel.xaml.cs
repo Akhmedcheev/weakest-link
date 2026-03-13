@@ -31,34 +31,49 @@ namespace WeakestLink.Views
 {
     public partial class OperatorPanel : Window
     {
-        /// Длительность отбивки в начале раундового трека (мс).
-        /// Таймер игры стартует ПОСЛЕ этой задержки.
-        /// Подстройка: если гонг приходит позже нуля — увеличить, раньше — уменьшить.
-        private int TRACK_INTRO_BEAT_MS = 100;
+        /// Задержка (мс) до первого клика метронома для каждого раунда.
+        /// Таймер раунда стартует после этой задержки, чтобы совпасть с первым тиком.
+        /// ─────────────────────────────────────────────────────────────────
+        /// R1 (230): 505мс — измерено librosa onset detection.
+        /// R2 (220): 505мс — NAudio: энергопрофиль идентичен R1.
+        /// R3–R7 (210/200/150/140/130): 505мс — та же продакшн-серия,
+        ///   BPM ~117.5, intro-структура и метроном одинаковы.
+        /// ─────────────────────────────────────────────────────────────────
+        private static readonly Dictionary<int, int> MetronomeOffsetMs = new()
+        {
+            [1] = 505,  // Round_bed_(230).mp3
+            [2] = 505,  // Round_bed_(220).mp3
+            [3] = 505,  // Round_bed_(210).mp3
+            [4] = 505,  // Round_bed_(200).mp3
+            [5] = 505,  // Round_bed_(150).mp3
+            [6] = 505,  // Round_bed_(140).mp3
+            [7] = 505,  // Round_bed_(130).mp3
+        };
 
         // Цветовые подсказки для UpdateButtonStates (UI Hygiene)
-        private static readonly SolidColorBrush BrushActiveGreen = new SolidColorBrush(Color.FromRgb(0x4C, 0xAF, 0x50));
-        private static readonly SolidColorBrush BrushActiveRed = new SolidColorBrush(Color.FromRgb(0xD3, 0x2F, 0x2F));
-        private static readonly SolidColorBrush BrushBankOrange = new SolidColorBrush(Color.FromRgb(0xCC, 0x88, 0x00));
+        // Теперь используют Color Bible из ColorResourceHelper
+        private static readonly SolidColorBrush BrushActiveGreen = ColorResourceHelper.ColorSuccess;
+        private static readonly SolidColorBrush BrushActiveRed = ColorResourceHelper.ColorDanger;
+        private static readonly SolidColorBrush BrushBankOrange = ColorResourceHelper.ColorWarning;
 
-        // Timer Hub adaptive color brushes (Segmented Fill Style)
-        private static readonly Color HubColorNormal   = Color.FromRgb(0x00, 0x4D, 0x60);  // Deep stee-blue
-        private static readonly Color HubColorGlow     = Color.FromRgb(0x00, 0xAE, 0xEF);  // Bright Cyan Glow
-        private static readonly Color HubColorCritical = Color.FromRgb(0x8B, 0x00, 0x00);  // Deep red
-        private static readonly Color HubDotBorder     = Color.FromRgb(0x1A, 0x1A, 0x1A);  // Thin gunmetal
+        // Timer Hub adaptive color brushes (из Color Bible)
+        private static readonly Color HubColorNormal   = Color.FromRgb(0x4F, 0x6B, 0xED);  // Blurple (Info)
+        private static readonly Color HubColorGlow     = Color.FromRgb(0x58, 0xA6, 0xFF);  // Bright Cyan (Info bright)
+        private static readonly Color HubColorCritical = Color.FromRgb(0xEF, 0x44, 0x44);  // Red (Danger)
+        private static readonly Color HubDotBorder     = Color.FromRgb(0x1A, 0x1A, 0x1A);  // ObsidianBg
         private static readonly SolidColorBrush TimerBrushNormal   = new(HubColorGlow);
         private static readonly SolidColorBrush TimerBrushCritical = new(HubColorCritical);
         private bool _timerPulseRunning = false;
         private readonly List<System.Windows.Controls.Border> _hubDots = new();
         private int _hubTotalDots = 0;
         private int _hubRoundDuration = 0;
-        private static readonly SolidColorBrush BrushPassNeutral = new SolidColorBrush(Color.FromRgb(0x60, 0x7D, 0x8B));
-        private static readonly SolidColorBrush BrushPlayBlue = new SolidColorBrush(Color.FromRgb(0x21, 0x96, 0xF3));
-        private static readonly SolidColorBrush BrushStartClock = new SolidColorBrush(Color.FromRgb(0x00, 0x88, 0x00));
-        private static readonly SolidColorBrush BrushStartClockFg = new SolidColorBrush(Color.FromRgb(0x00, 0xFF, 0x00));
-        // Отключённые кнопки: неактивно-серый фон и серый текст (никакого белого)
-        private static readonly SolidColorBrush BrushDisabledGray = new SolidColorBrush(Color.FromRgb(0x40, 0x40, 0x40));
-        private static readonly SolidColorBrush BrushDisabledForeground = new SolidColorBrush(Color.FromRgb(0x70, 0x70, 0x70));
+        private static readonly SolidColorBrush BrushPassNeutral = ColorResourceHelper.ObsidianTextSecondary;
+        private static readonly SolidColorBrush BrushPlayBlue = ColorResourceHelper.ColorInfo;
+        private static readonly SolidColorBrush BrushStartClock = ColorResourceHelper.ColorSuccess;
+        private static readonly SolidColorBrush BrushStartClockFg = ColorResourceHelper.ColorSuccess;
+        // Отключённые кнопки: используют Color Bible
+        private static readonly SolidColorBrush BrushDisabledGray = ColorResourceHelper.ObsidianSurface;
+        private static readonly SolidColorBrush BrushDisabledForeground = ColorResourceHelper.ObsidianTextDisabled;
 
         private GameEngine _engine;
         private QuestionProvider _questionProvider;
@@ -1761,8 +1776,7 @@ namespace WeakestLink.Views
                 if (test30)
                 {
                     int fullRoundDuration = _engine.GetRoundDuration();
-                    double introSec = TRACK_INTRO_BEAT_MS / 1000.0;
-                    double skipSeconds = (fullRoundDuration - 30) + introSec;
+                    double skipSeconds = fullRoundDuration - 30;
                     if (skipSeconds < 0) skipSeconds = 0;
                     _audioManager.Play($"Assets/Audio/{fileName}", startFromSeconds: skipSeconds);
                 }
@@ -1770,11 +1784,15 @@ namespace WeakestLink.Views
                 {
                     _audioManager.Play($"Assets/Audio/{fileName}");
                 }
-                await Task.Delay(TRACK_INTRO_BEAT_MS);
+
+                // Ждём первый клик метронома (синхронизация таймера с битом)
+                if (!test30 && MetronomeOffsetMs.TryGetValue(_engine.CurrentRound, out int offsetMs))
+                {
+                    await Task.Delay(offsetMs);
+                }
 
                 _engine.TransitionTo(GameState.Playing);
                 _roundTimer.Start();
-                // LoadNextQuestion() убрано, так как вопрос уже загружен при переходе в READY.
 
                 // Активация игровых кнопок (панели уже переключены в READY)
                 BtnCorrect.IsEnabled = true;
@@ -1783,7 +1801,7 @@ namespace WeakestLink.Views
                 if (BtnPass != null) BtnPass.IsEnabled = true;
                 BtnIncorrect.IsEnabled = true;
 
-                // 4. Перевод фокуса на кнопку БАНК (самая частая и быстрая кнопка)
+                // Перевод фокуса на кнопку БАНК (самая частая и быстрая кнопка)
                 BtnBank.Focus();
 
                 Log("РАУНД ЗАПУЩЕН. Время пошло.");
@@ -1808,9 +1826,9 @@ namespace WeakestLink.Views
                     {
                         if (newState == GameState.RoundReady)
                         {
-                            if ((_engine.ActivePlayers.Count <= 2 && _engine.CurrentRound > 0) || _engine.CurrentRound >= 7)
+                            if (_engine.ActivePlayers.Count < 2 || _engine.CurrentRound >= 7)
                             {
-                                DarkMessageBox.Show("Осталось 2 игрока! Обычные раунды больше недоступны. Используйте кнопку ТО FINAL для запуска финала.", "Достигнут финал", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                DarkMessageBox.Show("Раунд 7 завершён! Используйте кнопку TO FINAL для запуска финальной дуэли.", "Достигнут финал", MessageBoxButton.OK, MessageBoxImage.Warning);
                                 return;
                             }
 
@@ -2297,7 +2315,7 @@ namespace WeakestLink.Views
             }
         }
 
-        private async void BtnStartVoting_Click(object sender, RoutedEventArgs e)
+        private void BtnStartVoting_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -2327,8 +2345,7 @@ namespace WeakestLink.Views
                 _votingTimeLeft = votingDuration;
                 UpdateVotingTimerDisplay();
 
-                await Task.Delay(1000);
-
+                // Таймер голосования запускается сразу, без привязки к треку
                 StartVotingCountdown();
                 Log($"Голосование запущено. Таймер: {votingDuration}с, обратный отсчёт начат.");
             }
@@ -4108,6 +4125,16 @@ namespace WeakestLink.Views
             }
         }
 
+        private void BtnChromaColor_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is string color)
+            {
+                _server.Broadcast($"CHROMAKEY|{color}");
+                _broadcastWindow?.SetChromakeyColor(color);
+                Log($"ОБОЛОЧКА: Цвет хромакея BROADCAST изменен на {color}");
+            }
+        }
+
         private void BtnOpenAudience_Click(object sender, RoutedEventArgs e)
         {
             if (_audienceScreen == null || !_audienceScreen.IsLoaded)
@@ -4909,6 +4936,96 @@ namespace WeakestLink.Views
             });
         }
 
+        private void BtnDebugTestRound7_Click(object sender, RoutedEventArgs e)
+        {
+            // ═══════════════════════════════════════════════════════
+            //  DEBUG: Полноценный тест Раунда 7 (Префинальный)
+            //  2 игрока, таймер 90с (или 30с), без голосования,
+            //  банк после раунда удваивается.
+            // ═══════════════════════════════════════════════════════
+
+            // 1. Сброс и подготовка движка
+            _engine.ResetGame();
+            TxtTimer.Foreground = TimerBrushNormal;
+            ApplyTimerGlow(HubColorNormal);
+            StopTimerPulse();
+            _engine.ActivePlayers.Clear();
+            _engine.ActivePlayers.Add("Алексей");
+            _engine.ActivePlayers.Add("Борис");
+
+            // 2. Промотка до раунда 7 (6 NextRound → currentRound=7 после FinalizeRoundSetup)
+            _engine.ResetRoundCounter();
+            for (int i = 0; i < 6; i++) _engine.NextRound();
+
+            // 3. UI: показываем игровую панель, скрываем финал
+            SetCentralContext("PLAY");
+            GamePlayPanel.Visibility = Visibility.Visible;
+            HeadToHeadPanel.Visibility = Visibility.Collapsed;
+            WinnerPanel.Visibility = Visibility.Collapsed;
+            SetFinalDuelUIState(false);
+
+            // 4. Деактивируем кнопки до START O'CLOCK
+            BtnCorrect.IsEnabled = false;
+            BtnWrong.IsEnabled = false;
+            BtnBank.IsEnabled = false;
+            if (BtnPass != null) BtnPass.IsEnabled = false;
+            BtnIncorrect.IsEnabled = false;
+
+            // 5. Финализация раунда и настройка таймера
+            _engine.FinalizeRoundSetup();
+            bool use30Sec = (ChkTestLast30Sec != null && ChkTestLast30Sec.IsChecked == true);
+            int timeSeconds = use30Sec ? 30 : 90; // Раунд 7 = 90 секунд
+            _timeLeftSeconds = timeSeconds;
+            UpdateTimerDisplay();
+            _server.Broadcast($"UPDATE_TIMER|{_timeLeftSeconds}");
+
+            // 6. Загрузка первого вопроса
+            _server.Broadcast("CLEAR_ELIMINATION");
+            _server.Broadcast($"CURRENT_PLAYER|{_engine.CurrentPlayerTurn}");
+            _currentQuestion = _questionProvider.GetRandomQuestion();
+            _questionCount = 1;
+            if (_currentQuestion != null)
+            {
+                TxtCurrentQuestion.Text = _currentQuestion.Text;
+                TxtCurrentAnswer.Text = $"ОТВЕТ: {_currentQuestion.Answer}";
+            }
+            else
+            {
+                TxtCurrentQuestion.Text = "ВОПРОСЫ ЗАКОНЧИЛИСЬ";
+                TxtCurrentAnswer.Text = "ОТВЕТ: —";
+            }
+
+            // 7. Включаем бот-контролы
+            BtnBotTurn.Visibility = Visibility.Visible;
+            TglAutoBot.Visibility = Visibility.Visible;
+
+            // 8. Раунд 7 — без голосования
+            VotingBorder.Visibility = Visibility.Collapsed;
+            BtnToFinal.Visibility = Visibility.Collapsed;
+
+            // 9. Переход в RoundReady
+            _engine.TransitionTo(GameState.RoundReady);
+
+            // 10. Метаданные теста
+            _currentTestModeLabel = use30Sec ? "Раунд 7 (Префинал, 30 сек)" : "Раунд 7 (Префинал, 90 сек)";
+            UpdateTestModeBadge();
+            UpdateBankChainUI();
+            UpdateStatsTable();
+
+            // 11. Открыть BroadcastWindow
+            if (_broadcastWindow == null || !_broadcastWindow.IsLoaded)
+            {
+                _broadcastWindow = new BroadcastWindow(_engine);
+                _broadcastWindow.Show();
+            }
+
+            _audioManager.Play("Assets/Audio/general_bed.mp3", loop: true);
+
+            string starter = _engine.GetStartingPlayerForRound(7);
+            StartingPlayerTextBlock.Text = $"Начинает раунд: {starter}";
+            Log($"DEBUG: Раунд 7 (Префинал) загружен! 2 игрока: Алексей, Борис. Таймер: {timeSeconds}с. Начинает: {starter}. Жми START O'CLOCK.");
+        }
+
         private void BtnEndShow_Click(object sender, RoutedEventArgs e)
         {
             SetOperatorAction("Шоу завершено");
@@ -4949,6 +5066,23 @@ namespace WeakestLink.Views
                 SetCentralContext(_isSessionStarted ? "PLAY" : "SETUP");
             else
                 SetCentralContext("SETTINGS");
+        }
+
+        // === EXTENDED MODE TOGGLE ===
+        private bool _isExtendedMode = false;
+
+        private void TglExtendedMode_Click(object sender, RoutedEventArgs e)
+        {
+            _isExtendedMode = TglExtendedMode.IsChecked == true;
+            
+            // Показываем/скрываем второстепенные панели
+            if (LogContainer != null)
+                LogContainer.Visibility = _isExtendedMode ? Visibility.Visible : Visibility.Collapsed;
+            
+            // Обновляем иконку кнопки
+            TglExtendedMode.ToolTip = _isExtendedMode 
+                ? "Обычный режим (скрыть панели)" 
+                : "Расширенный режим (показать все панели)";
         }
 
         // === VOTING MODE ===
@@ -5848,21 +5982,7 @@ namespace WeakestLink.Views
                 {
                     _timeLeftSeconds = jumpToSeconds;
                     UpdateTimerDisplay();
-
-                    var (position, duration) = _audioManager.GetAudioPosition();
-
-                    if (duration > TimeSpan.Zero)
-                    {
-                        // Структура трека: [отбивка TRACK_INTRO_BEAT_MS] + [roundDuration сек игры] + [долгий фейд-аут]
-                        // НЕ ориентируемся на duration файла — после гонга идёт длинный фейдинг.
-                        // Позиция трека когда таймер = N: (roundDuration - N) + introBeat
-                        int fullRoundDuration = _engine.GetRoundDuration();
-                        double introSec = TRACK_INTRO_BEAT_MS / 1000.0;
-                        double targetSec = (fullRoundDuration - jumpToSeconds) + introSec;
-
-                        _audioManager.SetAudioPosition(TimeSpan.FromSeconds(targetSec));
-                        Log($"[DEBUG] Аудио: {targetSec:F1}s (раунд {fullRoundDuration}с, отбивка {introSec:F1}с, таймер → {jumpToSeconds}с).");
-                    }
+                    Log($"[DEBUG] Таймер перемотан → {jumpToSeconds}с.");
                 }
             }
             else

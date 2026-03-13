@@ -1,0 +1,108 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         UI CONSTANTS — Размеры, отступы и типографика
+         ═══════════════════════════════════════════════════════════════ -->
+
+    <!-- ═══ WINDOW SIZES ═══ -->
+    <sys:Double x:Key="WindowDefaultWidth">1400</sys:Double>
+    <sys:Double x:Key="WindowDefaultHeight">1000</sys:Double>
+
+    <!-- ═══ HD/BROADCAST SIZES ═══ -->
+    <sys:Double x:Key="WindowHDWidth">1920</sys:Double>
+    <sys:Double x:Key="WindowHDHeight">1080</sys:Double>
+    <sys:Double x:Key="MoneyTreeColumnWidth">280</sys:Double>
+
+    <!-- ═══ LAYOUT SIZES ═══ -->
+    <sys:Double x:Key="SidebarWidth">220</sys:Double>
+    <sys:Double x:Key="TitleBarHeight">42</sys:Double>
+    <sys:Double x:Key="StatusBarHeight">24</sys:Double>
+
+    <!-- ═══ BATTLE COCKPIT (Game Card) ═══ -->
+    <sys:Double x:Key="BattleCockpitWidth">750</sys:Double>
+    <sys:Double x:Key="BattleCockpitHeight">420</sys:Double>
+
+    <!-- ═══ MONEY CHAIN ═══ -->
+    <sys:Double x:Key="ChainStepHeight">95</sys:Double>
+    <sys:Double x:Key="ChainStepWidth">180</sys:Double>
+    <sys:Double x:Key="ChainStackOverlap">25</sys:Double>
+    <sys:Double x:Key="ChainBorderThickness">3</sys:Double>
+
+    <!-- ═══ ROUND ICONS ═══ -->
+    <sys:Double x:Key="RoundIconSize">24</sys:Double>
+    <CornerRadius x:Key="RoundIconBorderRadius">12</CornerRadius>
+    <Thickness x:Key="RoundIconBorderThickness">2</Thickness>
+
+    <!-- ═══ BUTTONS ═══ -->
+    <sys:Double x:Key="ButtonCornerRadius">4</sys:Double>
+    <sys:Double x:Key="ButtonPaddingH">12</sys:Double>
+    <sys:Double x:Key="ButtonPaddingV">6</sys:Double>
+    <sys:Double x:Key="ButtonMinHeight">32</sys:Double>
+
+    <!-- ═══ FIRE BUTTONS (Game) ═══ -->
+    <sys:Double x:Key="FireButtonWidth">120</sys:Double>
+    <sys:Double x:Key="FireButtonHeight">60</sys:Double>
+    <sys:Double x:Key="FireButtonFontSize">24</sys:Double>
+
+    <!-- ═══ TYPOGRAPHY — Font Sizes ═══ -->
+    <sys:Double x:Key="FontSizeQuestionBig">88</sys:Double>  <!-- Главный вопрос -->
+    <sys:Double x:Key="FontSizeQuestion">64</sys:Double>    <!-- Вопрос (альт) -->
+    <sys:Double x:Key="FontSizeAnswerOption">36</sys:Double> <!-- Варианты ответов -->
+    <sys:Double x:Key="FontSizeTitle">24</sys:Double>       <!-- Заголовки секций -->
+    <sys:Double x:Key="FontSizeHeader">18</sys:Double>      <!-- Подзаголовки -->
+    <sys:Double x:Key="FontSizeSubheader">14</sys:Double>   <!-- Label/Hint -->
+    <sys:Double x:Key="FontSizeBody">13</sys:Double>        <!-- Основной текст -->
+    <sys:Double x:Key="FontSizeSmall">12</sys:Double>       <!-- Мелкий текст -->
+    <sys:Double x:Key="FontSizeXSmall">10</sys:Double>      <!-- Очень мелкий -->
+    <sys:Double x:Key="FontSizeXXSmall">8</sys:Double>      <!-- Микро (labels) -->
+    <sys:Double x:Key="FontSizeXXXSmall">9</sys:Double>     <!-- Микро (section headers) -->
+
+    <!-- ═══ SPACING/MARGINS ═══ -->
+    <!-- Standard spacing scale (8px base unit) -->
+    <sys:Double x:Key="SpacingXXS">2</sys:Double>   <!-- 2px -->
+    <sys:Double x:Key="SpacingXS">4</sys:Double>    <!-- 4px -->
+    <sys:Double x:Key="SpacingS">8</sys:Double>     <!-- 8px -->
+    <sys:Double x:Key="SpacingM">12</sys:Double>    <!-- 12px -->
+    <sys:Double x:Key="SpacingL">16</sys:Double>    <!-- 16px -->
+    <sys:Double x:Key="SpacingXL">20</sys:Double>   <!-- 20px -->
+    <sys:Double x:Key="SpacingXXL">24</sys:Double>  <!-- 24px -->
+    <sys:Double x:Key="Spacing3XL">32</sys:Double>  <!-- 32px -->
+    <sys:Double x:Key="Spacing4XL">40</sys:Double>  <!-- 40px -->
+
+    <!-- Common margins -->
+    <Thickness x:Key="MarginStandard">12,8,12,6</Thickness>
+    <Thickness x:Key="MarginSection">16,14,0,6</Thickness>
+    <Thickness x:Key="MarginContent">10,0,10,4</Thickness>
+    <Thickness x:Key="PaddingStandard">12,8</Thickness>
+    <Thickness x:Key="PaddingContent">10,8</Thickness>
+
+    <!-- ═══ CORNER RADIUS ═══ -->
+    <CornerRadius x:Key="CornerRadiusSmall">2</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusStandard">4</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusMedium">6</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusLarge">8</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusXLarge">10</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusRound">12</CornerRadius>
+
+    <!-- ═══ BORDER THICKNESS (для BorderThickness property) ═══ -->
+    <Thickness x:Key="BorderThin">1</Thickness>
+    <Thickness x:Key="BorderStandard">1</Thickness>
+    <Thickness x:Key="BorderMedium">2</Thickness>
+    <Thickness x:Key="BorderThick">3</Thickness>
+    <Thickness x:Key="BorderVeryThick">4</Thickness>
+
+    <!-- ═══ LINE THICKNESS (для Height в Border линиях) ═══ -->
+    <sys:Double x:Key="LineThicknessThin">1</sys:Double>
+    <sys:Double x:Key="LineThicknessStandard">1</sys:Double>
+    <sys:Double x:Key="LineThicknessMedium">2</sys:Double>
+    <sys:Double x:Key="LineThicknessThick">3</sys:Double>
+
+    <!-- ═══ OPACITY ═══ -->
+    <sys:Double x:Key="OpacityHover">0.9</sys:Double>
+    <sys:Double x:Key="OpacityActive">1.0</sys:Double>
+    <sys:Double x:Key="OpacityDisabled">0.4</sys:Double>
+    <sys:Double x:Key="OpacityOverlay">0.1</sys:Double>
+
+</ResourceDictionary>
