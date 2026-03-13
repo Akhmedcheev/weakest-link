@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Weakest Link - Host Screen (Modern)" Height="1080" Width="1920"
-        Background="#000000" Foreground="White"
+        Background="Black" Foreground="White"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -26,7 +26,7 @@
     </Window.Resources>
 
     <Viewbox Stretch="Uniform">
-        <Grid Width="1920" Height="1080" Background="#000000">
+        <Grid Width="1920" Height="1080" Background="Black">
             <Grid.RowDefinitions>
                 <RowDefinition Height="60"/>
                 <RowDefinition Height="*"/>
@@ -34,7 +34,7 @@
             </Grid.RowDefinitions>
 
             <!-- ===== ВЕРХНЯЯ ПАНЕЛЬ (TopBar) ===== -->
-            <Grid Grid.Row="0" Background="#0A0A0A" Margin="0,0,0,0">
+            <Grid Grid.Row="0" Background="{StaticResource TVSafeSubtle}" Margin="0,0,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -44,22 +44,22 @@
                 <!-- Левая часть: Имя игрока + Таймер -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="30,0,0,0">
                     <TextBlock x:Name="TxtCurrentPlayerName" Text="ARG" Style="{StaticResource TopBarValue}" 
-                               Foreground="#00CCCC" Margin="0,0,20,0"/>
-                    <Border Background="#1A1A1A" CornerRadius="4" Padding="12,4">
-                        <TextBlock x:Name="TxtHostTimer" Text="0:00" Style="{StaticResource TopBarValue}" Foreground="#FFFFFF"/>
+                               Foreground="{StaticResource TVSafeCyan}" Margin="0,0,20,0"/>
+                    <Border Background="{StaticResource TVSafeDark}" CornerRadius="{DynamicResource CornerRadiusStandard}" Padding="12,4">
+                        <TextBlock x:Name="TxtHostTimer" Text="0:00" Style="{StaticResource TopBarValue}" Foreground="White"/>
                     </Border>
                 </StackPanel>
 
                 <!-- Центр: Банк раунда -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="БАНК" Style="{StaticResource TopBarLabel}" Margin="0,0,10,0"/>
-                    <TextBlock x:Name="TxtHostBanked" Text="0" Style="{StaticResource TopBarValue}" Foreground="#FFAA00"/>
+                    <TextBlock x:Name="TxtHostBanked" Text="0" Style="{StaticResource TopBarValue}" Foreground="{StaticResource ColorWarning}"/>
                 </StackPanel>
 
                 <!-- Правая часть: Playing for / Общий банк -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,30,0">
                     <TextBlock Text="ИГРАЕМ НА" Style="{StaticResource TopBarLabel}" Margin="0,0,10,0"/>
-                    <TextBlock x:Name="TxtPlayingFor" Text="₽1 000" Style="{StaticResource TopBarValue}" Foreground="#00CC00"/>
+                    <TextBlock x:Name="TxtPlayingFor" Text="₽1 000" Style="{StaticResource TopBarValue}" Foreground="{StaticResource ColorSuccess}"/>
                 </StackPanel>
             </Grid>
 
@@ -68,7 +68,7 @@
                 <!-- Вопрос -->
                 <TextBlock x:Name="TxtQuestion" 
                            Text="ОЖИДАНИЕ ВОПРОСА ДЛЯ ВЕДУЩЕГО..." 
-                           FontSize="52" FontWeight="Normal" Foreground="#EEEEEE" 
+                           FontSize="{DynamicResource FontSizeBroadcastRules}" FontWeight="Normal" Foreground="{StaticResource ObsidianText}" 
                            TextWrapping="Wrap" VerticalAlignment="Center"
                            FontFamily="Georgia" LineHeight="72"
                            Padding="20"/>
@@ -76,7 +76,7 @@
                 <!-- Оверлей: Информация о раунде (при подготовке) -->
                 <TextBlock x:Name="TxtHostQuestionInfo" 
                            Text="" 
-                           FontSize="36" FontWeight="SemiBold" Foreground="#666666" 
+                           FontSize="{DynamicResource FontSizeAnswerOption}" FontWeight="SemiBold" Foreground="{StaticResource ObsidianTextMuted}" 
                            VerticalAlignment="Top" HorizontalAlignment="Left"
                            FontFamily="Segoe UI" Margin="20,0,0,0"/>
             </Grid>
@@ -87,7 +87,7 @@
                 <Border x:Name="GreenBar" Background="#00CC00" MinHeight="52">
                     <TextBlock x:Name="TxtAnswer" 
                                Text="" 
-                               FontSize="32" FontWeight="Bold" Foreground="White" 
+                               FontSize="{DynamicResource FontSizeDisplay}" FontWeight="Bold" Foreground="White" 
                                TextWrapping="Wrap" VerticalAlignment="Center"
                                FontFamily="Segoe UI" Margin="30,8,30,8"/>
                 </Border>
@@ -96,23 +96,23 @@
                 <Border x:Name="YellowBar" Background="#CCCC00" MinHeight="44">
                     <TextBlock x:Name="TxtAnswerAlt" 
                                Text="" 
-                               FontSize="26" FontWeight="SemiBold" Foreground="#1A1A00" 
+                               FontSize="{DynamicResource FontSizeGameStat}" FontWeight="SemiBold" Foreground="#1A1A00" 
                                TextWrapping="Wrap" VerticalAlignment="Center"
                                FontFamily="Segoe UI" Margin="30,6,30,6"/>
                 </Border>
 
                 <!-- Красная полоса: Системное / Финал -->
-                <Border x:Name="RedBar" Background="#CC0000" MinHeight="40">
+                <Border x:Name="RedBar" Background="{StaticResource TVSafeAnswer}" MinHeight="40">
                     <TextBlock x:Name="TxtSystemLine" 
                                Text="" 
-                               FontSize="24" FontWeight="Bold" Foreground="White" 
+                               FontSize="{DynamicResource FontSizeTitle}" FontWeight="Bold" Foreground="White" 
                                TextWrapping="Wrap" VerticalAlignment="Center"
                                FontFamily="Segoe UI" Margin="30,6,30,6"/>
                 </Border>
             </StackPanel>
 
             <!-- ===== ПАНЕЛЬ ФИНАЛЬНОЙ ДУЭЛИ (оверлей поверх MainArea) ===== -->
-            <Grid x:Name="FinalDuelPanel" Grid.Row="1" Background="#000000" Visibility="Collapsed">
+            <Grid x:Name="FinalDuelPanel" Grid.Row="1" Background="Black" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -120,39 +120,39 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock x:Name="TxtFinalist1Name" Text="ФИНАЛИСТ 1" FontSize="48" FontWeight="Bold" 
+                    <TextBlock x:Name="TxtFinalist1Name" Text="ФИНАЛИСТ 1" FontSize="{DynamicResource FontSizeBroadcastTimer}" FontWeight="Bold" 
                                Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"
                                FontFamily="Segoe UI"/>
                     <StackPanel x:Name="StackP1Indicators" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Ellipse x:Name="P1_I1" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
-                        <Ellipse x:Name="P1_I2" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
-                        <Ellipse x:Name="P1_I3" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
-                        <Ellipse x:Name="P1_I4" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
-                        <Ellipse x:Name="P1_I5" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P1_I1" Width="30" Height="30" Fill="{StaticResource TVSafeDark}" Stroke="{StaticResource TVSafeGrayMid}" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P1_I2" Width="30" Height="30" Fill="{StaticResource TVSafeDark}" Stroke="{StaticResource TVSafeGrayMid}" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P1_I3" Width="30" Height="30" Fill="{StaticResource TVSafeDark}" Stroke="{StaticResource TVSafeGrayMid}" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P1_I4" Width="30" Height="30" Fill="{StaticResource TVSafeDark}" Stroke="{StaticResource TVSafeGrayMid}" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P1_I5" Width="30" Height="30" Fill="{StaticResource TVSafeDark}" Stroke="{StaticResource TVSafeGrayMid}" StrokeThickness="1" Margin="6"/>
                     </StackPanel>
                 </StackPanel>
 
-                <TextBlock Grid.Column="1" Text="VS" FontSize="56" FontWeight="Black" Foreground="#333333" 
+                <TextBlock Grid.Column="1" Text="VS" FontSize="{DynamicResource FontSizeHero}" FontWeight="Black" Foreground="{StaticResource TVSafeGrayMid}" 
                            VerticalAlignment="Center" Margin="60,0" FontFamily="Segoe UI"/>
 
                 <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock x:Name="TxtFinalist2Name" Text="ФИНАЛИСТ 2" FontSize="48" FontWeight="Bold" 
+                    <TextBlock x:Name="TxtFinalist2Name" Text="ФИНАЛИСТ 2" FontSize="{DynamicResource FontSizeBroadcastTimer}" FontWeight="Bold" 
                                Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"
                                FontFamily="Segoe UI"/>
                     <StackPanel x:Name="StackP2Indicators" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Ellipse x:Name="P2_I1" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
-                        <Ellipse x:Name="P2_I2" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
-                        <Ellipse x:Name="P2_I3" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
-                        <Ellipse x:Name="P2_I4" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
-                        <Ellipse x:Name="P2_I5" Width="30" Height="30" Fill="#1A1A1A" Stroke="#333" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P2_I1" Width="30" Height="30" Fill="{StaticResource TVSafeDark}" Stroke="{StaticResource TVSafeGrayMid}" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P2_I2" Width="30" Height="30" Fill="{StaticResource TVSafeDark}" Stroke="{StaticResource TVSafeGrayMid}" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P2_I3" Width="30" Height="30" Fill="{StaticResource TVSafeDark}" Stroke="{StaticResource TVSafeGrayMid}" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P2_I4" Width="30" Height="30" Fill="{StaticResource TVSafeDark}" Stroke="{StaticResource TVSafeGrayMid}" StrokeThickness="1" Margin="6"/>
+                        <Ellipse x:Name="P2_I5" Width="30" Height="30" Fill="{StaticResource TVSafeDark}" Stroke="{StaticResource TVSafeGrayMid}" StrokeThickness="1" Margin="6"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>
 
             <!-- ===== СУФЛЁР / ПРАВИЛА — полупрозрачная подложка ===== -->
             <Grid x:Name="HostRulesOverlay" Grid.RowSpan="3" Background="#CC000000" Visibility="Collapsed">
-                <Border Background="#BB0A0A1A" Margin="80,40" CornerRadius="24" Padding="50" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="1400">
-                    <TextBlock x:Name="TxtHostRules" Text="" FontSize="46" LineHeight="70" 
+                <Border Background="#BB0A0A1A" Margin="80,40" CornerRadius="{DynamicResource CornerRadiusBroadcast}" Padding="50" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="1400">
+                    <TextBlock x:Name="TxtHostRules" Text="" FontSize="{DynamicResource FontSizeBroadcastCaption}" LineHeight="70" 
                                Foreground="White" TextWrapping="Wrap" TextAlignment="Center" 
                                FontFamily="Segoe UI" FontWeight="SemiBold"/>
                 </Border>
@@ -165,13 +165,13 @@
             </Grid>
 
             <!-- ===== ОВЕРЛЕЙ ВЫБЫВАНИЯ ===== -->
-            <Grid x:Name="EliminationOverlay" Grid.RowSpan="3" Background="#000000" Visibility="Collapsed">
+            <Grid x:Name="EliminationOverlay" Grid.RowSpan="3" Background="Black" Visibility="Collapsed">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock Text="ВЫБЫВАЕТ" FontSize="64" Foreground="#CC0000" FontWeight="Bold" 
+                    <TextBlock Text="ВЫБЫВАЕТ" FontSize="{DynamicResource FontSizeQuestion}" Foreground="{StaticResource TVSafeAnswer}" FontWeight="Bold" 
                                HorizontalAlignment="Center" Margin="0,0,0,30" FontFamily="Segoe UI"/>
-                    <TextBlock x:Name="TxtEliminatedName" Text="PLAYER" FontSize="180" Foreground="White" 
+                    <TextBlock x:Name="TxtEliminatedName" Text="PLAYER" FontSize="{DynamicResource FontSizeBroadcastHuge}" Foreground="White" 
                                FontWeight="ExtraBold" HorizontalAlignment="Center" FontFamily="Segoe UI"/>
-                    <TextBlock Text="ВЫ САМОЕ СЛАБОЕ ЗВЕНО. ПРОЩАЙТЕ!" FontSize="38" Foreground="#444444" 
+                    <TextBlock Text="ВЫ САМОЕ СЛАБОЕ ЗВЕНО. ПРОЩАЙТЕ!" FontSize="{DynamicResource FontSizeBroadcastInfo}" Foreground="{StaticResource ObsidianBorderStrong}" 
                                FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,60,0,0" FontFamily="Segoe UI"/>
                 </StackPanel>
             </Grid>

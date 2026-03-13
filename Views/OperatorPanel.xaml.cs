@@ -103,14 +103,14 @@ namespace WeakestLink.Views
             public bool IsActive { get; set; }
             public int Index { get; set; }
             public string ValueDisplay => Value.ToString("N0") + " ₽";
-            public string Background => IsActive ? "#FFD700" : "#1e1f22";
-            public string TextColor => IsActive ? "#1a1a1a" : "White";
+            public string Background => IsActive ? ColorResourceHelper.ColorGold.Color.ToString() : ColorResourceHelper.ObsidianBg.Color.ToString();
+            public string TextColor => IsActive ? ColorResourceHelper.ObsidianBg.Color.ToString() : "White";
         }
         
         public class EliminationComboItem
         {
             public string Name { get; set; } = "";
-            public string TextColor { get; set; } = "#dbdee1";
+            public string TextColor { get; set; } = "White";
         }
 
         // Smart Roster: карточка игрока с разделением игровых и эфирных данных
@@ -812,7 +812,7 @@ namespace WeakestLink.Views
                         var items = sortedPlayers.Select(p => new EliminationComboItem 
                         { 
                             Name = p,
-                            TextColor = (p == predictedElimination) ? "#da373c" : "#dbdee1"
+                            TextColor = (p == predictedElimination) ? ColorResourceHelper.ColorRed.Color.ToString() : ColorResourceHelper.ObsidianTextPrimary.Color.ToString()
                         }).ToList();
                         
                         EliminationComboBox.ItemsSource = items;
@@ -1098,46 +1098,48 @@ namespace WeakestLink.Views
             UpdateStateBadge(state);
         }
 
+        private static System.Windows.Media.SolidColorBrush HexBrush(string hex) =>
+            new((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(hex));
+
         private void UpdateStateBadge(GameState state)
         {
             if (GameStateBadge == null || TxtGameStateBadge == null) return;
             string text;
-            string bgHex;
-            string fgHex;
+            System.Windows.Media.Brush bg;
+            System.Windows.Media.Brush fg;
             switch (state)
             {
                 case GameState.Idle:
-                    text = "⏸ ОЖИДАНИЕ"; bgHex = "#1E293B"; fgHex = "#999999"; break;
+                    text = "⏸ ОЖИДАНИЕ"; bg = HexBrush("#1E293B"); fg = ColorResourceHelper.ObsidianTextSecondary; break;
                 case GameState.IntroOpening:
-                    text = "🎬 ВСТУПЛЕНИЕ"; bgHex = "#2D1B4E"; fgHex = "#A78BFA"; break;
+                    text = "🎬 ВСТУПЛЕНИЕ"; bg = HexBrush("#2D1B4E"); fg = HexBrush("#A78BFA"); break;
                 case GameState.IntroNarrative:
-                    text = "🎤 РАССКАЗ"; bgHex = "#2D1B4E"; fgHex = "#A78BFA"; break;
+                    text = "🎤 РАССКАЗ"; bg = HexBrush("#2D1B4E"); fg = HexBrush("#A78BFA"); break;
                 case GameState.PlayerIntro:
-                    text = "👥 ПРЕДСТАВЛЕНИЕ"; bgHex = "#1E3A5F"; fgHex = "#60A5FA"; break;
+                    text = "👥 ПРЕДСТАВЛЕНИЕ"; bg = HexBrush("#1E3A5F"); fg = HexBrush("#60A5FA"); break;
                 case GameState.RulesExplanation:
-                    text = "📋 ПРАВИЛА"; bgHex = "#1E3A5F"; fgHex = "#60A5FA"; break;
+                    text = "📋 ПРАВИЛА"; bg = HexBrush("#1E3A5F"); fg = HexBrush("#60A5FA"); break;
                 case GameState.RoundReady:
-                    text = "⏳ ГОТОВНОСТЬ"; bgHex = "#1A3320"; fgHex = "#4ADE80"; break;
+                    text = "⏳ ГОТОВНОСТЬ"; bg = HexBrush("#1A3320"); fg = HexBrush("#4ADE80"); break;
                 case GameState.Playing:
-                    text = "🔥 ИДЁТ РАУНД"; bgHex = "#14532D"; fgHex = "#22C55E"; break;
+                    text = "🔥 ИДЁТ РАУНД"; bg = HexBrush("#14532D"); fg = ColorResourceHelper.ColorSuccess; break;
                 case GameState.RoundSummary:
-                    text = "📊 ИТОГИ"; bgHex = "#1C1917"; fgHex = "#D4AA40"; break;
+                    text = "📊 ИТОГИ"; bg = HexBrush("#1C1917"); fg = HexBrush("#D4AA40"); break;
                 case GameState.Voting:
-                    text = "🗳 ГОЛОСОВАНИЕ"; bgHex = "#422006"; fgHex = "#F59E0B"; break;
+                    text = "🗳 ГОЛОСОВАНИЕ"; bg = HexBrush("#422006"); fg = ColorResourceHelper.ColorWarning; break;
                 case GameState.Discussion:
-                    text = "💬 ОБСУЖДЕНИЕ"; bgHex = "#422006"; fgHex = "#FB923C"; break;
+                    text = "💬 ОБСУЖДЕНИЕ"; bg = HexBrush("#422006"); fg = HexBrush("#FB923C"); break;
                 case GameState.Reveal:
-                    text = "🔓 ВСКРЫТИЕ"; bgHex = "#422006"; fgHex = "#FB923C"; break;
+                    text = "🔓 ВСКРЫТИЕ"; bg = HexBrush("#422006"); fg = HexBrush("#FB923C"); break;
                 case GameState.Elimination:
-                    text = "❌ ВЫБЫВАНИЕ"; bgHex = "#450A0A"; fgHex = "#EF4444"; break;
+                    text = "❌ ВЫБЫВАНИЕ"; bg = HexBrush("#450A0A"); fg = ColorResourceHelper.ColorDanger; break;
                 case GameState.FinalDuel:
-                    text = "⚔ ФИНАЛЬНАЯ ДУЭЛЬ"; bgHex = "#450A0A"; fgHex = "#F87171"; break;
+                    text = "⚔ ФИНАЛЬНАЯ ДУЭЛЬ"; bg = HexBrush("#450A0A"); fg = HexBrush("#F87171"); break;
                 default:
-                    text = state.ToString(); bgHex = "#1E293B"; fgHex = "#999999"; break;
+                    text = state.ToString(); bg = HexBrush("#1E293B"); fg = ColorResourceHelper.ObsidianTextSecondary; break;
             }
-            var converter = new System.Windows.Media.BrushConverter();
-            GameStateBadge.Background = (System.Windows.Media.Brush)converter.ConvertFromString(bgHex);
-            TxtGameStateBadge.Foreground = (System.Windows.Media.Brush)converter.ConvertFromString(fgHex);
+            GameStateBadge.Background = bg;
+            TxtGameStateBadge.Foreground = fg;
             TxtGameStateBadge.Text = text;
         }
 
@@ -5095,12 +5097,12 @@ namespace WeakestLink.Views
         {
             _isExpressVoting = express;
             var activeBg = new System.Windows.Media.SolidColorBrush(
-                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#6264A7"));
+                ColorResourceHelper.ColorTeams.Color);
             var inactiveBg = new System.Windows.Media.SolidColorBrush(
-                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#333333"));
+                ColorResourceHelper.ObsidianRaised.Color);
             var activeFg = System.Windows.Media.Brushes.White;
             var inactiveFg = new System.Windows.Media.SolidColorBrush(
-                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#999999"));
+                ColorResourceHelper.ObsidianTextSecondary.Color);
 
             BtnVoteModeExpress.Background = express ? activeBg : inactiveBg;
             BtnVoteModeExpress.Foreground = express ? activeFg : inactiveFg;
@@ -5156,7 +5158,7 @@ namespace WeakestLink.Views
                 {
                     Text = "→",
                     Foreground = new System.Windows.Media.SolidColorBrush(
-                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#717171")),
+                        ColorResourceHelper.ObsidianTextDisabled.Color),
                     FontSize = 10,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
@@ -5169,10 +5171,10 @@ namespace WeakestLink.Views
                     FontSize = 10,
                     Background = System.Windows.Media.Brushes.Transparent,
                     Foreground = new System.Windows.Media.SolidColorBrush(
-                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#E8E8E8")),
+                        ColorResourceHelper.ObsidianText.Color),
                     BorderThickness = new Thickness(1),
                     BorderBrush = new System.Windows.Media.SolidColorBrush(
-                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3D3D3D")),
+                        ColorResourceHelper.ObsidianBorderStrong.Color),
                     Tag = player
                 };
 
@@ -5222,8 +5224,7 @@ namespace WeakestLink.Views
             if (!allFilled || votes.Count == 0)
             {
                 Log("⚠ Не все голоса заполнены!");
-                BtnConfirmVotes.Background = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#DC2626"));
+                BtnConfirmVotes.Background = ColorResourceHelper.TintRedAccent;
                 BtnConfirmVotes.Content = "⚠ Заполните все!";
                 return;
             }
@@ -5264,8 +5265,7 @@ namespace WeakestLink.Views
             }
 
             // Visual feedback — green success
-            BtnConfirmVotes.Background = new System.Windows.Media.SolidColorBrush(
-                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#16A34A"));
+            BtnConfirmVotes.Background = ColorResourceHelper.TintGreenAccent;
             BtnConfirmVotes.Content = "✓ Голоса приняты!";
         }
 
@@ -5345,12 +5345,12 @@ namespace WeakestLink.Views
             try
             {
                 var activeBg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#6264A7"));
+                    ColorResourceHelper.ColorTeams.Color);
                 var inactiveBg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#333333"));
+                    ColorResourceHelper.ObsidianRaised.Color);
                 var activeFg = System.Windows.Media.Brushes.White;
                 var inactiveFg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#999999"));
+                    ColorResourceHelper.ObsidianTextSecondary.Color);
 
                 bool isEn = _currentLanguage == "EN";
                 BtnSettingsLangRU.Background = !isEn ? activeBg : inactiveBg;
@@ -5574,8 +5574,8 @@ namespace WeakestLink.Views
             SaveSettings();
 
             // Update button visuals
-            var accentBrush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#4F6BED"));
-            var mutedBrush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#717171"));
+            var accentBrush = new System.Windows.Media.SolidColorBrush(ColorResourceHelper.ColorInfo.Color);
+            var mutedBrush = new System.Windows.Media.SolidColorBrush(ColorResourceHelper.ObsidianTextDisabled.Color);
             BtnLangRU.Background = lang == "RU" ? accentBrush : System.Windows.Media.Brushes.Transparent;
             BtnLangRU.Foreground = lang == "RU" ? System.Windows.Media.Brushes.White : mutedBrush;
             BtnLangEN.Background = lang == "EN" ? accentBrush : System.Windows.Media.Brushes.Transparent;
@@ -6004,10 +6004,10 @@ namespace WeakestLink.Views
             try
             {
                 var pillBg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#6264A7"));
+                    ColorResourceHelper.ColorTeams.Color);
                 var activeFg = System.Windows.Media.Brushes.White;
                 var inactiveFg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#999999"));
+                    ColorResourceHelper.ObsidianTextSecondary.Color);
 
                 var navButtons = new[] { NavBtnSetup, NavBtnPlay, NavBtnStats, NavBtnEditor };
                 var tags = new[] { "SETUP", "PLAY", "STATS", "EDIT" };
@@ -6099,9 +6099,9 @@ namespace WeakestLink.Views
 
                 // Update pills visual
                 var accentBrush = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#4F6BED"));
+                    ColorResourceHelper.ColorInfo.Color);
                 var mutedBrush = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#717171"));
+                    ColorResourceHelper.ObsidianTextDisabled.Color);
 
                 foreach (var child in RoundFilterButtons.Children)
                 {
@@ -6243,16 +6243,11 @@ namespace WeakestLink.Views
                     allPlayers = _engine.ActivePlayers.ToList();
 
                 var items = new List<PlayerListItem>();
-                var greenBrush = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3FB950"));
-                var redBrush = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#F85149"));
-                var mutedBrush = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#717171"));
-                var darkGreenBg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0D2818"));
-                var darkRedBg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#2D0F0F"));
+                var greenBrush = ColorResourceHelper.TintGreenBright;
+                var redBrush = ColorResourceHelper.TintRedBright;
+                var mutedBrush = ColorResourceHelper.ObsidianTextDisabled;
+                var darkGreenBg = ColorResourceHelper.TintGreenDark;
+                var darkRedBg = ColorResourceHelper.TintRedDark;
 
                 foreach (var player in allPlayers)
                 {
@@ -6282,18 +6277,12 @@ namespace WeakestLink.Views
                 if (_roundIcons == null)
                     _roundIcons = new[] { RoundIcon1, RoundIcon2, RoundIcon3, RoundIcon4, RoundIcon5, RoundIcon6, RoundIcon7 };
 
-                var currentBrush = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#4F6BED"));
-                var doneBrush = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3FB950"));
-                var doneBg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0D2818"));
-                var futureBrush = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#3D3D3D"));
-                var defaultBg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#2D2D2D"));
-                var currentBg = new System.Windows.Media.SolidColorBrush(
-                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0D1B2A"));
+                var currentBrush = ColorResourceHelper.ColorInfo;
+                var doneBrush = ColorResourceHelper.TintGreenBright;
+                var doneBg = ColorResourceHelper.TintGreenDark;
+                var futureBrush = ColorResourceHelper.ObsidianBorderStrong;
+                var defaultBg = ColorResourceHelper.ObsidianCard;
+                var currentBg = ColorResourceHelper.TintBlueDark;
 
                 int current = _engine.CurrentRound;
 

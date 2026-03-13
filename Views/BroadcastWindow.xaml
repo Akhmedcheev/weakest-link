@@ -1,7 +1,7 @@
 <Window x:Class="WeakestLink.Views.BroadcastWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Broadcast" Background="#00B140"
+        Title="Broadcast" Background="{StaticResource TVSafeChroma}"
         Width="1920" Height="1080"
         WindowStyle="None" ResizeMode="NoResize"
         WindowState="Normal"
@@ -20,6 +20,19 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Storyboard x:Key="FadeInPlaque">
+            <DoubleAnimation Storyboard.TargetName="QuestionPlaque"
+                             Storyboard.TargetProperty="Opacity"
+                             From="0" To="1" Duration="0:0:0.5"/>
+            <ThicknessAnimation Storyboard.TargetName="QuestionPlaque"
+                                Storyboard.TargetProperty="Margin"
+                                From="320,0,320,50" To="320,0,320,100" Duration="0:0:0.5">
+                <ThicknessAnimation.EasingFunction>
+                    <PowerEase EasingMode="EaseOut" Power="3"/>
+                </ThicknessAnimation.EasingFunction>
+            </ThicknessAnimation>
+        </Storyboard>
     </Window.Resources>
 
     <Grid>
@@ -42,7 +55,7 @@
                     <Grid Width="220" Height="60" Margin="0,0,20,0">
                         <Image x:Name="ImgNameplate1" Stretch="Fill"/>
                         <TextBlock x:Name="TxtFinalPlayer1" Text=""
-                                   FontFamily="Arial Black" FontSize="22" FontWeight="ExtraBold"
+                                   FontFamily="Arial Black" FontSize="{DynamicResource FontSizeGameAction}" FontWeight="ExtraBold"
                                    Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock.Effect>
                                 <DropShadowEffect Color="Black" BlurRadius="4" ShadowDepth="1" Opacity="0.8"/>
@@ -59,7 +72,7 @@
                     <Grid Width="220" Height="60" Margin="0,0,20,0">
                         <Image x:Name="ImgNameplate2" Stretch="Fill"/>
                         <TextBlock x:Name="TxtFinalPlayer2" Text=""
-                                   FontFamily="Arial Black" FontSize="22" FontWeight="ExtraBold"
+                                   FontFamily="Arial Black" FontSize="{DynamicResource FontSizeGameAction}" FontWeight="ExtraBold"
                                    Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock.Effect>
                                 <DropShadowEffect Color="Black" BlurRadius="4" ShadowDepth="1" Opacity="0.8"/>
@@ -71,7 +84,7 @@
                 </StackPanel>
 
                 <!-- Внезапная смерть -->
-                <TextBlock x:Name="TxtSuddenDeath" Text="" FontFamily="Arial Black" FontSize="24"
+                <TextBlock x:Name="TxtSuddenDeath" Text="" FontFamily="Arial Black" FontSize="{DynamicResource FontSizeTitle}"
                            FontWeight="ExtraBold" Foreground="#FF4444"
                            HorizontalAlignment="Center" Margin="0,12,0,0"
                            Visibility="Collapsed">
@@ -87,7 +100,7 @@
               HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,-30">
             <Image x:Name="ImgBankOverlay" Stretch="Fill" Width="700" Height="200"/>
             <TextBlock x:Name="TxtBankOverlayAmount" Text="0"
-                       FontFamily="Arial Black" FontSize="56" FontWeight="ExtraBold"
+                       FontFamily="Arial Black" FontSize="{DynamicResource FontSizeHero}" FontWeight="ExtraBold"
                        Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"
                        Margin="0,-16,0,0">
                 <TextBlock.Effect>
@@ -106,13 +119,13 @@
             <Border Grid.Row="0" Background="#80000000" CornerRadius="0,0,16,16"
                     HorizontalAlignment="Center" Padding="30,12">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Name="TxtRoundInfo" Text="" FontFamily="Arial Black" FontSize="40"
-                               FontWeight="ExtraBold" Foreground="#FFD700">
+                    <TextBlock x:Name="TxtRoundInfo" Text="" FontFamily="Arial Black" FontSize="{DynamicResource FontSizeBroadcastAccent}"
+                               FontWeight="ExtraBold" Foreground="{StaticResource ColorGold}">
                         <TextBlock.Effect>
                             <DropShadowEffect Color="Black" BlurRadius="6" ShadowDepth="2" Opacity="0.8"/>
                         </TextBlock.Effect>
                     </TextBlock>
-                    <TextBlock x:Name="TxtBankInfo" Text="" FontFamily="Arial Black" FontSize="40"
+                    <TextBlock x:Name="TxtBankInfo" Text="" FontFamily="Arial Black" FontSize="{DynamicResource FontSizeBroadcastAccent}"
                                FontWeight="ExtraBold" Foreground="#00FF88" Margin="40,0,0,0">
                         <TextBlock.Effect>
                             <DropShadowEffect Color="Black" BlurRadius="6" ShadowDepth="2" Opacity="0.8"/>
@@ -120,10 +133,10 @@
                     </TextBlock>
                 </StackPanel>
             </Border>
-            <Border x:Name="QuestionBorder" Grid.Row="1" Background="#60000000" CornerRadius="12"
+            <Border x:Name="QuestionBorder" Grid.Row="1" Background="#60000000" CornerRadius="{DynamicResource CornerRadiusRound}"
                     Margin="30" Padding="30" VerticalAlignment="Center" HorizontalAlignment="Center"
                     MaxWidth="1100" Visibility="Collapsed">
-                <TextBlock x:Name="TxtQuestion" Text="" FontFamily="Arial" FontSize="38" FontWeight="Bold"
+                <TextBlock x:Name="TxtQuestion" Text="" FontFamily="Arial" FontSize="{DynamicResource FontSizeBroadcastInfo}" FontWeight="Bold"
                            Foreground="White" TextWrapping="Wrap" TextAlignment="Center">
                     <TextBlock.Effect>
                         <DropShadowEffect Color="Black" BlurRadius="8" ShadowDepth="3" Opacity="0.9"/>
@@ -133,9 +146,9 @@
             <Border Grid.Row="2" Background="#80000000" CornerRadius="16,16,0,0"
                     HorizontalAlignment="Center" Padding="30,12">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="ХОД ИГРОКА  " FontFamily="Arial" FontSize="22"
+                    <TextBlock Text="ХОД ИГРОКА  " FontFamily="Arial" FontSize="{DynamicResource FontSizeGameAction}"
                                Foreground="#AAAAAA" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="TxtCurrentPlayer" Text="" FontFamily="Arial Black" FontSize="30"
+                    <TextBlock x:Name="TxtCurrentPlayer" Text="" FontFamily="Arial Black" FontSize="{DynamicResource FontSizeBroadcastMicro}"
                                FontWeight="ExtraBold" Foreground="#00FFFF">
                         <TextBlock.Effect>
                             <DropShadowEffect Color="#0088FF" BlurRadius="12" ShadowDepth="0" Opacity="0.6"/>
@@ -155,7 +168,7 @@
             <Image x:Name="ImgTimerBg" Stretch="Fill"/>
             <!-- Текст по центру — точно как на плашках цепочки -->
             <TextBlock x:Name="TxtTimer" Text="2:30"
-                       FontFamily="Arial Black" FontSize="26" FontWeight="ExtraBold"
+                       FontFamily="Arial Black" FontSize="{DynamicResource FontSizeGameStat}" FontWeight="ExtraBold"
                        Foreground="White"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
@@ -167,7 +180,7 @@
         </Grid>
 
         <!-- ОВЕРЛЕЙ: Логотип -->
-        <Grid x:Name="LogoOverlay" Visibility="Collapsed" Background="#00B140">
+        <Grid x:Name="LogoOverlay" Visibility="Collapsed" Background="{StaticResource TVSafeChroma}">
             <Image x:Name="ImgLogo" Stretch="Uniform"
                    HorizontalAlignment="Center" VerticalAlignment="Center"
                    MaxWidth="1400" MaxHeight="900"/>
@@ -179,10 +192,10 @@
                 <SolidColorBrush Color="Black" Opacity="0.75"/>
             </Grid.Background>
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBlock Text="СЛАБОЕ ЗВЕНО:" FontFamily="Arial Black" FontSize="64"
-                           Foreground="#888" FontWeight="ExtraBold" HorizontalAlignment="Center"/>
+                <TextBlock Text="СЛАБОЕ ЗВЕНО:" FontFamily="Arial Black" FontSize="{DynamicResource FontSizeQuestion}"
+                           Foreground="{StaticResource ObsidianTextSecondary}" FontWeight="ExtraBold" HorizontalAlignment="Center"/>
                 <TextBlock x:Name="TxtEliminatedName" Text=""
-                           FontFamily="Arial Black" FontSize="120"
+                           FontFamily="Arial Black" FontSize="{DynamicResource FontSizeBroadcastWinner}"
                            Foreground="White" FontWeight="ExtraBold" HorizontalAlignment="Center">
                     <TextBlock.Effect>
                         <DropShadowEffect Color="#da373c" BlurRadius="30" ShadowDepth="0" Opacity="1"/>
@@ -191,13 +204,72 @@
             </StackPanel>
         </Grid>
 
+        <!-- ПЛАШКА ВОПРОСА (Нижняя) - Premium TV Style -->
+        <Border x:Name="QuestionPlaque"
+                Visibility="Collapsed"
+                Opacity="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="320,0,320,100"
+                MinWidth="800"
+                MaxWidth="1300">
+            <Grid>
+                <!-- Стекло (Glassmorphism) -->
+                <Border CornerRadius="{DynamicResource CornerRadiusXXLarge}" BorderBrush="#44FFFFFF" BorderThickness="1.5">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#F2121212" Offset="0"/>
+                            <GradientStop Color="#F2000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black" BlurRadius="40" ShadowDepth="0" Opacity="0.8"/>
+                    </Border.Effect>
+                </Border>
+
+                <!-- Содержимое -->
+                <Border Padding="40,20">
+                    <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <Border Background="#3300FFFF" HorizontalAlignment="Left" CornerRadius="{DynamicResource CornerRadiusStandard}" Padding="12,3" BorderBrush="#6600FFFF" BorderThickness="1">
+                            <TextBlock x:Name="TxtQuestionPlaquePlayer" 
+                                       Text="ИГРОК" 
+                                       FontFamily="Arial Black" 
+                                       FontSize="{DynamicResource FontSizeHeader}" 
+                                       FontWeight="ExtraBold" 
+                                       Foreground="#00FFFF">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect Color="#00FFFF" BlurRadius="8" ShadowDepth="0" Opacity="0.5"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
+                        </Border>
+                    </Grid>
+                    
+                    <TextBlock x:Name="TxtQuestionPlaqueText"
+                               Text=""
+                               FontFamily="Segoe UI"
+                               FontSize="{DynamicResource FontSizeBroadcastInfo}"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               TextWrapping="Wrap"
+                               TextAlignment="Left"
+                               LineHeight="48">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="2" Opacity="0.9"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+
         <!-- ОВЕРЛЕЙ: Статус -->
         <Grid x:Name="StatusOverlay" Visibility="Collapsed">
             <Grid.Background>
                 <SolidColorBrush Color="Black" Opacity="0.6"/>
             </Grid.Background>
             <TextBlock x:Name="TxtStatus" Text=""
-                       FontFamily="Arial Black" FontSize="96"
+                       FontFamily="Arial Black" FontSize="{DynamicResource FontSizeBroadcastQuestion}"
                        Foreground="White" FontWeight="ExtraBold"
                        HorizontalAlignment="Center" VerticalAlignment="Center"
                        TextAlignment="Center">

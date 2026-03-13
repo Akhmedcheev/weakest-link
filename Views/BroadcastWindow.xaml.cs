@@ -518,12 +518,43 @@ namespace WeakestLink.Views
 
         public void ShowQuestion(string text)
         {
-            Dispatcher.BeginInvoke(() => { TxtQuestion.Text = text; QuestionBorder.Visibility = string.IsNullOrWhiteSpace(text) ? Visibility.Collapsed : Visibility.Visible; });
+            Dispatcher.BeginInvoke(() =>
+            {
+                bool isEmpty = string.IsNullOrWhiteSpace(text);
+                
+                if (isEmpty)
+                {
+                    if (QuestionPlaque.Visibility == Visibility.Visible)
+                    {
+                        // Прячем мгновенно для четкости перехода состояний
+                        QuestionPlaque.Visibility = Visibility.Collapsed;
+                        QuestionPlaque.Opacity = 0;
+                    }
+                }
+                else
+                {
+                    TxtQuestionPlaqueText.Text = text;
+                    if (QuestionPlaque.Visibility != Visibility.Visible)
+                    {
+                        QuestionPlaque.Visibility = Visibility.Visible;
+                        var sb = (Storyboard)FindResource("FadeInPlaque");
+                        sb.Begin();
+                    }
+                }
+
+                TxtQuestion.Text = text;
+                QuestionBorder.Visibility = isEmpty ? Visibility.Collapsed : Visibility.Visible;
+            });
         }
 
         public void UpdateCurrentPlayer(string name)
         {
-            Dispatcher.BeginInvoke(() => TxtCurrentPlayer.Text = name?.ToUpper() ?? "");
+            Dispatcher.BeginInvoke(() =>
+            {
+                string upperName = name?.ToUpper() ?? "";
+                TxtCurrentPlayer.Text = upperName;
+                TxtQuestionPlaquePlayer.Text = upperName;
+            });
         }
 
         public void UpdateRoundInfo(int round, int bank)
@@ -614,13 +645,28 @@ namespace WeakestLink.Views
                 case GameState.Playing:
                     ClearStatus(); ClearElimination(); HideFinalDuel(); break;
                 default:
-                    ClearStatus(); break;
+                    ClearStatus(); ShowQuestion(""); break;
             }
         }
 
         // ════════════════════════════════════════════════════════════════════════
         // TCP
         // ════════════════════════════════════════════════════════════════════════
+
+        public void SetChromakeyColor(string colorHex)
+        {
+            Dispatcher.BeginInvoke(() =>
+            {
+                try
+                {
+                    var color = (Color)ColorConverter.ConvertFromString(colorHex);
+                    Background = new SolidColorBrush(color);
+                    // Если это логотипный оверлей, тоже меняем его фон (он обычно перекрывает всё)
+                    LogoOverlay.Background = new SolidColorBrush(color);
+                }
+                catch { /* ignore invalid hex */ }
+            });
+        }
 
         private void OnMessage(string msg)
         {
@@ -629,6 +675,8 @@ namespace WeakestLink.Views
 
             switch (parts[0])
             {
+                case "CHROMAKEY" when parts.Length >= 2:
+                    SetChromakeyColor(parts[1]); break;
                 case "UPDATE_BANK" when parts.Length >= 3:
                     if (int.TryParse(parts[1], out int ci) && int.TryParse(parts[2], out int ba)) UpdateBank(ci, ba);
                     break;

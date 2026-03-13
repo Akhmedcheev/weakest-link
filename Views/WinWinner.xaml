@@ -23,7 +23,7 @@
 
             <TextBlock Text="ПОБЕДИТЕЛЬ ПРОГРАММЫ" 
                        Foreground="Gold" 
-                       FontSize="24" 
+                       FontSize="{DynamicResource FontSizeTitle}" 
                        FontWeight="Light" 
                        HorizontalAlignment="Center" 
                        Margin="0,0,0,10">
@@ -35,7 +35,7 @@
             <TextBlock x:Name="TxtWinnerName" 
                        Text="АЛЕКСЕЙ" 
                        Foreground="White" 
-                       FontSize="120" 
+                       FontSize="{DynamicResource FontSizeBroadcastWinner}" 
                        FontWeight="ExtraBold" 
                        HorizontalAlignment="Center" 
                        Margin="0,0,0,10">
@@ -49,7 +49,7 @@
             <TextBlock x:Name="TxtWinnings" 
                        Text="150 000 ₽" 
                        Foreground="White" 
-                       FontSize="80" 
+                       FontSize="{DynamicResource FontSizeBroadcastXL}" 
                        FontWeight="Bold" 
                        HorizontalAlignment="Center" 
                        Margin="0,0,0,50">
@@ -63,9 +63,9 @@
                     Content="ВЫХОД В ПУЛЬТ [ESC]" 
                     Click="BtnClose_Click" 
                     Background="Transparent" 
-                    Foreground="#444" 
+                    Foreground="{StaticResource ObsidianBorderStrong}" 
                     BorderThickness="0" 
-                    FontSize="12" 
+                    FontSize="{DynamicResource FontSizeSmall}" 
                     HorizontalAlignment="Center"
                     Cursor="Hand"
                     Margin="0,100,0,0">
@@ -83,7 +83,7 @@
 
         <!-- TV Corner Logo Placeholder/Decoration -->
         <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="50">
-            <TextBlock Text="THE WEAKEST LINK" Foreground="Gold" FontSize="18" Opacity="0.3" FontWeight="Bold"/>
+            <TextBlock Text="THE WEAKEST LINK" Foreground="Gold" FontSize="{DynamicResource FontSizeHeader}" Opacity="0.3" FontWeight="Bold"/>
         </Border>
     </Grid>
 </Window>

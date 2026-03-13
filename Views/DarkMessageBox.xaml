@@ -5,7 +5,7 @@
         WindowStartupLocation="CenterOwner" SizeToContent="WidthAndHeight"
         MinWidth="400" MaxWidth="700" ResizeMode="NoResize"
         ShowInTaskbar="False">
-    <Border Background="#1E1E1E" BorderBrush="#555" BorderThickness="1" CornerRadius="4" Padding="0">
+    <Border Background="{StaticResource ObsidianBg}" BorderBrush="{StaticResource ObsidianTextMuted}" BorderThickness="1" CornerRadius="{DynamicResource CornerRadiusStandard}" Padding="0">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -14,13 +14,13 @@
             </Grid.RowDefinitions>
 
             <!-- Title Bar -->
-            <Border Grid.Row="0" Background="#2b2d31" Padding="15,10" MouseLeftButtonDown="TitleBar_MouseDown">
+            <Border Grid.Row="0" Background="{StaticResource ObsidianCard}" Padding="15,10" MouseLeftButtonDown="TitleBar_MouseDown">
                 <Grid>
                     <TextBlock x:Name="TxtTitle" Text="Уведомление" 
-                               Foreground="#dbdee1" FontSize="14" FontWeight="Bold"
+                               Foreground="{StaticResource ObsidianTextPrimary}" FontSize="{DynamicResource FontSizeSubheader}" FontWeight="Bold"
                                VerticalAlignment="Center"/>
                     <Button Content="✕" HorizontalAlignment="Right" VerticalAlignment="Center"
-                            Width="28" Height="28" FontSize="14" Foreground="#888" 
+                            Width="28" Height="28" FontSize="{DynamicResource FontSizeSubheader}" Foreground="{StaticResource ObsidianTextSecondary}" 
                             Background="Transparent" BorderThickness="0" Cursor="Hand"
                             Click="BtnClose_Click">
                         <Button.Style>
@@ -28,7 +28,7 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Button">
-                                            <Border x:Name="Bg" Background="Transparent" CornerRadius="3">
+                                            <Border x:Name="Bg" Background="Transparent" CornerRadius="{DynamicResource CornerRadiusMedium}">
                                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
                                                                   TextBlock.Foreground="{TemplateBinding Foreground}"/>
                                             </Border>
@@ -50,7 +50,7 @@
             <!-- Message Body -->
             <ScrollViewer Grid.Row="1" MaxHeight="400" VerticalScrollBarVisibility="Auto" Margin="20,15">
                 <TextBlock x:Name="TxtMessage" Text="" 
-                           Foreground="#dbdee1" FontSize="14" 
+                           Foreground="{StaticResource ObsidianTextPrimary}" FontSize="{DynamicResource FontSizeSubheader}" 
                            TextWrapping="Wrap" LineHeight="22"/>
             </ScrollViewer>
 
@@ -59,8 +59,8 @@
                         Margin="15,5,15,15">
                 <Button x:Name="BtnCancel" Content="CANCEL" Visibility="Collapsed"
                         MinWidth="100" Height="36" Margin="0,0,8,0"
-                        Background="#4e5058" Foreground="#dbdee1" 
-                        FontSize="13" FontWeight="Bold" Cursor="Hand"
+                        Background="{StaticResource ObsidianBorderLight}" Foreground="{StaticResource ObsidianTextPrimary}" 
+                        FontSize="{DynamicResource FontSizeBody}" FontWeight="Bold" Cursor="Hand"
                         Click="BtnCancel_Click">
                     <Button.Style>
                         <Style TargetType="Button">
@@ -68,7 +68,7 @@
                                 <Setter.Value>
                                     <ControlTemplate TargetType="Button">
                                         <Border x:Name="Bg" Background="{TemplateBinding Background}" 
-                                                CornerRadius="3" Padding="15,6" BorderBrush="#555" BorderThickness="1">
+                                                CornerRadius="{DynamicResource CornerRadiusMedium}" Padding="15,6" BorderBrush="{StaticResource ObsidianTextMuted}" BorderThickness="1">
                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
                                                               TextBlock.Foreground="{TemplateBinding Foreground}"
                                                               TextBlock.FontWeight="{TemplateBinding FontWeight}"/>
@@ -86,8 +86,8 @@
                 </Button>
                 <Button x:Name="BtnOk" Content="OK"
                         MinWidth="100" Height="36"
-                        Background="#5865F2" Foreground="White" 
-                        FontSize="13" FontWeight="Bold" Cursor="Hand"
+                        Background="{StaticResource ColorBlurple}" Foreground="White" 
+                        FontSize="{DynamicResource FontSizeBody}" FontWeight="Bold" Cursor="Hand"
                         Click="BtnOk_Click" IsDefault="True">
                     <Button.Style>
                         <Style TargetType="Button">
@@ -95,7 +95,7 @@
                                 <Setter.Value>
                                     <ControlTemplate TargetType="Button">
                                         <Border x:Name="Bg" Background="{TemplateBinding Background}" 
-                                                CornerRadius="3" Padding="15,6">
+                                                CornerRadius="{DynamicResource CornerRadiusMedium}" Padding="15,6">
                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
                                                               TextBlock.Foreground="{TemplateBinding Foreground}"
                                                               TextBlock.FontWeight="{TemplateBinding FontWeight}"/>

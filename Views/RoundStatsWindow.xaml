@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Round Analytics [Mission Control]" Height="700" Width="1000"
-        Background="#0D0D0D" Foreground="#E0E0E0"
+        Background="{StaticResource TVSafeSubtle}" Foreground="{StaticResource ObsidianTextPrimary}"
         WindowStartupLocation="CenterOwner"
         FontFamily="Segoe UI"
         WindowStyle="None"
@@ -10,99 +10,10 @@
         ResizeMode="CanMinimize">
         
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="40" ResizeBorderThickness="0" GlassFrameThickness="0" CornerRadius="0"/>
+        <WindowChrome CaptionHeight="40" ResizeBorderThickness="0" GlassFrameThickness="0" CornerRadius="{DynamicResource CornerRadiusNone}"/>
     </WindowChrome.WindowChrome>
 
-    <Window.Resources>
-        <!-- Flat, dark themes matching Obsidian -->
-        <Style x:Key="SurfaceCard" TargetType="Border">
-            <Setter Property="Background" Value="#161616"/>
-            <Setter Property="BorderBrush" Value="#262626"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="20"/>
-            <Setter Property="Margin" Value="10"/>
-        </Style>
-
-        <Style x:Key="MetricCard" TargetType="Border">
-            <Setter Property="Background" Value="#161616"/>
-            <Setter Property="BorderBrush" Value="#262626"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="15"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="MinWidth" Value="150"/>
-        </Style>
-        
-        <Style x:Key="FlatButton" TargetType="Button">
-            <Setter Property="Background" Value="#262626"/>
-            <Setter Property="Foreground" Value="#E0E0E0"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="15,10"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#333333"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="RedButton" TargetType="Button" BasedOn="{StaticResource FlatButton}">
-            <Setter Property="Background" Value="#da373c"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#ff4f54"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        
-        <Style x:Key="WindowControlButton" TargetType="Button">
-            <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#808080"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Width" Value="45"/>
-            <Setter Property="Height" Value="40"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Focusable" Value="False"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#262626"/>
-                    <Setter Property="Foreground" Value="#E0E0E0"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="WindowCloseButton" TargetType="Button" BasedOn="{StaticResource WindowControlButton}">
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#da373c"/>
-                    <Setter Property="Foreground" Value="White"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </Window.Resources>
-
-    <Border BorderBrush="#262626" BorderThickness="1" Background="#0D0D0D">
+    <Border BorderBrush="{StaticResource TVSafeBorder}" BorderThickness="1" Background="{StaticResource TVSafeSubtle}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
@@ -110,7 +21,7 @@
             </Grid.RowDefinitions>
 
             <!-- Custom Title Bar -->
-            <Border Grid.Row="0" Background="#161616" BorderBrush="#262626" BorderThickness="0,0,0,1" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+            <Border Grid.Row="0" Background="{StaticResource TVSafePanel}" BorderBrush="{StaticResource TVSafeBorder}" BorderThickness="0,0,0,1" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -118,7 +29,7 @@
                     </Grid.ColumnDefinitions>
                     
                     <TextBlock Grid.Column="0" Text="ROUND ANALYTICS [MISSION CONTROL]" 
-                               Foreground="#808080" FontSize="11" FontWeight="SemiBold" 
+                               Foreground="{StaticResource ObsidianTextDisabled}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold" 
                                VerticalAlignment="Center" Margin="15,0" />
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
@@ -138,14 +49,14 @@
                 </Grid.RowDefinitions>
 
         <!-- TOP: Prediction Card -->
-        <Border Grid.Row="0" Style="{StaticResource SurfaceCard}" BorderBrush="#da373c">
+        <Border Grid.Row="0" Style="{StaticResource SurfaceCard}" BorderBrush="{StaticResource ColorRed}">
             <StackPanel HorizontalAlignment="Center">
-                <TextBlock Text="ELIMINATION PREDICTOR" FontSize="11" Foreground="#808080" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                <TextBlock x:Name="PredictionText" Text="Прогноз: Ожидание..." FontSize="28" FontWeight="Bold" Foreground="#da373c" HorizontalAlignment="Center"/>
-                <TextBlock x:Name="ExplanationText" Text="Обоснование решения" FontSize="13" Foreground="#808080" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                <TextBlock Text="ELIMINATION PREDICTOR" FontSize="{DynamicResource FontSizeCaption}" Foreground="{StaticResource ObsidianTextDisabled}" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                <TextBlock x:Name="PredictionText" Text="Прогноз: Ожидание..." FontSize="{DynamicResource FontSizeGameQuestion}" FontWeight="Bold" Foreground="{StaticResource ColorRed}" HorizontalAlignment="Center"/>
+                <TextBlock x:Name="ExplanationText" Text="Обоснование решения" FontSize="{DynamicResource FontSizeBody}" Foreground="{StaticResource ObsidianTextDisabled}" HorizontalAlignment="Center" Margin="0,5,0,0"/>
                 
-                <Border x:Name="TieBanner" Background="#da373c" CornerRadius="4" Padding="10,4" Margin="0,10,0,0" Visibility="Collapsed">
-                    <TextBlock x:Name="TieBannerText" Text="НИЧЬЯ" FontSize="14" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                <Border x:Name="TieBanner" Background="{StaticResource ColorRed}" CornerRadius="{DynamicResource CornerRadiusStandard}" Padding="10,4" Margin="0,10,0,0" Visibility="Collapsed">
+                    <TextBlock x:Name="TieBannerText" Text="НИЧЬЯ" FontSize="{DynamicResource FontSizeSubheader}" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
                 </Border>
             </StackPanel>
         </Border>
@@ -163,8 +74,8 @@
                       BorderThickness="0"
                       RowBackground="Transparent"
                       RowHeaderWidth="0"
-                      Foreground="#E0E0E0"
-                      FontSize="14"
+                      Foreground="{StaticResource ObsidianTextPrimary}"
+                      FontSize="{DynamicResource FontSizeSubheader}"
                       LoadingRow="GridPlayerStats_LoadingRow">
                 
                 <DataGrid.ColumnHeaderStyle>
@@ -275,32 +186,32 @@
         <WrapPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
             <Border Style="{StaticResource MetricCard}">
                 <StackPanel>
-                    <TextBlock Text="В БАНК" FontSize="11" Foreground="#808080"/>
-                    <TextBlock x:Name="TotalBankedText" Text="0 ₽" FontSize="20" FontWeight="Bold" Foreground="#00DDFF" Margin="0,5,0,0"/>
+                    <TextBlock Text="В БАНК" FontSize="{DynamicResource FontSizeCaption}" Foreground="{StaticResource ObsidianTextDisabled}"/>
+                    <TextBlock x:Name="TotalBankedText" Text="0 ₽" FontSize="{DynamicResource FontSizeLarge}" FontWeight="Bold" Foreground="{StaticResource TVSafeCyan}" Margin="0,5,0,0"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource MetricCard}">
                 <StackPanel>
-                    <TextBlock Text="СГОРЕЛО" FontSize="11" Foreground="#808080"/>
-                    <TextBlock x:Name="TotalBurnedText" Text="0 ₽" FontSize="20" FontWeight="Bold" Foreground="#da373c" Margin="0,5,0,0"/>
+                    <TextBlock Text="СГОРЕЛО" FontSize="{DynamicResource FontSizeCaption}" Foreground="{StaticResource ObsidianTextDisabled}"/>
+                    <TextBlock x:Name="TotalBurnedText" Text="0 ₽" FontSize="{DynamicResource FontSizeLarge}" FontWeight="Bold" Foreground="{StaticResource ColorRed}" Margin="0,5,0,0"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource MetricCard}">
                 <StackPanel>
-                    <TextBlock Text="ЭФФЕКТИВНОСТЬ" FontSize="11" Foreground="#808080"/>
-                    <TextBlock x:Name="EfficiencyText" Text="0%" FontSize="20" FontWeight="Bold" Foreground="#FFD700" Margin="0,5,0,0"/>
+                    <TextBlock Text="ЭФФЕКТИВНОСТЬ" FontSize="{DynamicResource FontSizeCaption}" Foreground="{StaticResource ObsidianTextDisabled}"/>
+                    <TextBlock x:Name="EfficiencyText" Text="0%" FontSize="{DynamicResource FontSizeLarge}" FontWeight="Bold" Foreground="{StaticResource ColorGold}" Margin="0,5,0,0"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource MetricCard}">
                 <StackPanel>
-                    <TextBlock Text="СИЛЬНОЕ ЗВЕНО" FontSize="11" Foreground="#808080"/>
-                    <TextBlock x:Name="StrongestLinkText" Text="—" FontSize="20" FontWeight="Bold" Foreground="#00FF00" Margin="0,5,0,0"/>
+                    <TextBlock Text="СИЛЬНОЕ ЗВЕНО" FontSize="{DynamicResource FontSizeCaption}" Foreground="{StaticResource ObsidianTextDisabled}"/>
+                    <TextBlock x:Name="StrongestLinkText" Text="—" FontSize="{DynamicResource FontSizeLarge}" FontWeight="Bold" Foreground="{StaticResource ColorSuccess}" Margin="0,5,0,0"/>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource MetricCard}">
                 <StackPanel>
-                    <TextBlock Text="PANIC BANKER" FontSize="11" Foreground="#808080"/>
-                    <TextBlock x:Name="PanicBankerText" Text="—" FontSize="18" FontWeight="Bold" Foreground="#7a2ad1" Margin="0,5,0,0" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="PANIC BANKER" FontSize="{DynamicResource FontSizeCaption}" Foreground="{StaticResource ObsidianTextDisabled}"/>
+                    <TextBlock x:Name="PanicBankerText" Text="—" FontSize="{DynamicResource FontSizeHeader}" FontWeight="Bold" Foreground="{StaticResource ColorPurple}" Margin="0,5,0,0" TextTrimming="CharacterEllipsis"/>
                 </StackPanel>
             </Border>
         </WrapPanel>

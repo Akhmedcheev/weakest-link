@@ -1,0 +1,15 @@
+{
+    "exclude": [
+        "**/node_modules",
+        "**/__pycache__",
+        "bin",
+        "obj",
+        "Assets",
+        ".vs",
+        ".snapshots",
+        "OLDIES",
+        "Dist",
+        "Build",
+        "Build233"
+    ]
+}

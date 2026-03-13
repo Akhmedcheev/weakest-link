@@ -1,5 +1,5 @@
 {
   "language": "RU",
-  "expressVoting": false,
+  "expressVoting": true,
   "skipIntro": true
 }

@@ -61,7 +61,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- ЛЕВАЯ КОЛОНКА: ДЕНЕЖНОЕ ДЕРЕВО -->
-            <Border x:Name="MoneyTreeBorder" Grid.Column="0" Background="#99020208" BorderBrush="#222" BorderThickness="0,0,1,0">
+            <Border x:Name="MoneyTreeBorder" Grid.Column="0" Background="#99020208" BorderBrush="{StaticResource TVSafeMid}" BorderThickness="0,0,1,0">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="30" ShadowDepth="0" Color="Black" Opacity="0.5"/>
                 </Border.Effect>
@@ -72,7 +72,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="ЦЕПОЧКА" FontSize="18" FontWeight="SemiBold" Foreground="#444" 
+                    <TextBlock Text="ЦЕПОЧКА" FontSize="{DynamicResource FontSizeHeader}" FontWeight="SemiBold" Foreground="{StaticResource ObsidianBorderStrong}" 
                                HorizontalAlignment="Center" Margin="0,20,0,10"/>
 
                     <ItemsControl Grid.Row="1" x:Name="HostBankChainList" VerticalAlignment="Stretch">
@@ -111,9 +111,9 @@
 
                                     <TextBlock x:Name="HostChainText" 
                                                Text="{Binding Value, StringFormat={}{0:N0}}" 
-                                               FontSize="30" FontWeight="ExtraBold" 
+                                               FontSize="{DynamicResource FontSizeBroadcastMicro}" FontWeight="ExtraBold" 
                                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                               Foreground="#666">
+                                               Foreground="{StaticResource ObsidianTextMuted}">
                                         <TextBlock.Effect>
                                             <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.5"/>
                                         </TextBlock.Effect>
@@ -146,7 +146,7 @@
                     </ItemsControl>
                     
                     <StackPanel Grid.Row="2" VerticalAlignment="Top" Margin="0,10,0,40">
-                        <TextBlock Text="BANK" FontSize="18" FontWeight="Black" Foreground="#555" 
+                        <TextBlock Text="BANK" FontSize="{DynamicResource FontSizeHeader}" FontWeight="Black" Foreground="{StaticResource TVSafeGrayLight}" 
                                    HorizontalAlignment="Center" Margin="0,8,0,0"/>
                     </StackPanel>
                 </Grid>
@@ -164,11 +164,11 @@
                 <!-- 1. Верхняя строка: Инфо-блок -->
                 <TextBlock x:Name="TxtHostQuestionInfo" Grid.Row="0" 
                            Text="1000 ВОПРОС : 1" 
-                           FontSize="48" FontWeight="ExtraBold" Foreground="#FFFF00" Margin="0,0,0,15"
+                           FontSize="{DynamicResource FontSizeBroadcastTimer}" FontWeight="ExtraBold" Foreground="Yellow" Margin="0,0,0,15"
                            FontFamily="Segoe UI Semibold"/>
 
                 <!-- 2. Основной блок вопроса (PREMIUM GLASS LOOK) -->
-                <Border Grid.Row="1" CornerRadius="12" BorderThickness="1" Padding="45">
+                <Border Grid.Row="1" CornerRadius="{DynamicResource CornerRadiusRound}" BorderThickness="1" Padding="45">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                             <GradientStop Color="#20FFFFFF" Offset="0"/>
@@ -183,7 +183,7 @@
                     </Border.BorderBrush>
                     <TextBlock x:Name="TxtQuestion" 
                                Text="ОЖИДАНИЕ ВОПРОСА ДЛЯ ВЕДУЩЕГО..." 
-                               FontSize="88" FontWeight="Bold" Foreground="White" 
+                               FontSize="{DynamicResource FontSizeQuestionBig}" FontWeight="Bold" Foreground="White" 
                                TextWrapping="Wrap" VerticalAlignment="Center"
                                FontFamily="Segoe UI" LineHeight="105">
                         <TextBlock.RenderTransform>
@@ -196,7 +196,7 @@
                 </Border>
 
                 <!-- 3. Блок ответа (Rich Crimson Gradient) -->
-                <Border x:Name="AnswerBorder" Grid.Row="2" CornerRadius="8" Margin="0,15,0,0">
+                <Border x:Name="AnswerBorder" Grid.Row="2" CornerRadius="{DynamicResource CornerRadiusLarge}" Margin="0,15,0,0">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                             <GradientStop Color="#8E0000" Offset="0"/>
@@ -212,7 +212,7 @@
                     </Border.Effect>
                     <TextBlock x:Name="TxtAnswer" 
                                Text="ПРАВИЛЬНЫЙ ОТВЕТ" 
-                               FontSize="78" FontWeight="Bold" Foreground="White" 
+                               FontSize="{DynamicResource FontSizeBroadcastAnswer}" FontWeight="Bold" Foreground="White" 
                                TextWrapping="Wrap" FontFamily="Segoe UI"
                                Margin="40,20"/>
                 </Border>
@@ -231,39 +231,39 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- СТРОКА 1 -->
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="В БАНК" FontSize="36" FontWeight="SemiBold" Foreground="#888" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                    <Border Grid.Row="0" Grid.Column="1" CornerRadius="6" Background="#0000B8" Margin="5">
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="В БАНК" FontSize="{DynamicResource FontSizeAnswerOption}" FontWeight="SemiBold" Foreground="{StaticResource ObsidianTextSecondary}" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                    <Border Grid.Row="0" Grid.Column="1" CornerRadius="{DynamicResource CornerRadiusMedium}" Background="{StaticResource TVSafeBankNow}" Margin="5">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.3"/>
                         </Border.Effect>
-                        <TextBlock x:Name="TxtToBank" Text="1000" FontSize="72" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TxtToBank" Text="1000" FontSize="{DynamicResource FontSizeBroadcastStat}" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     
-                    <TextBlock Grid.Row="0" Grid.Column="2" Text="ИЛИ ИГРАЕМ" FontSize="36" FontWeight="SemiBold" Foreground="#888" VerticalAlignment="Center" Margin="50,0,20,0"/>
-                    <Border Grid.Row="0" Grid.Column="3" CornerRadius="6" Background="#800080" Margin="5">
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="ИЛИ ИГРАЕМ" FontSize="{DynamicResource FontSizeAnswerOption}" FontWeight="SemiBold" Foreground="{StaticResource ObsidianTextSecondary}" VerticalAlignment="Center" Margin="50,0,20,0"/>
+                    <Border Grid.Row="0" Grid.Column="3" CornerRadius="{DynamicResource CornerRadiusMedium}" Background="{StaticResource ColorPurple}" Margin="5">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.3"/>
                         </Border.Effect>
-                        <TextBlock x:Name="TxtNextSum" Text="2000" FontSize="72" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TxtNextSum" Text="2000" FontSize="{DynamicResource FontSizeBroadcastStat}" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     
                     <!-- СТРОКА 2 -->
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="ТАЙМЕР" FontSize="36" FontWeight="SemiBold" Foreground="#888" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                    <Border Grid.Row="1" Grid.Column="1" CornerRadius="6" Background="#006400" Margin="5">
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="ТАЙМЕР" FontSize="{DynamicResource FontSizeAnswerOption}" FontWeight="SemiBold" Foreground="{StaticResource ObsidianTextSecondary}" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                    <Border Grid.Row="1" Grid.Column="1" CornerRadius="{DynamicResource CornerRadiusMedium}" Background="{StaticResource TVSafeTimer}" Margin="5">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.3"/>
                         </Border.Effect>
                         <Viewbox MaxWidth="280" MaxHeight="100" StretchDirection="DownOnly" Margin="10">
-                            <TextBlock x:Name="TxtHostTimer" Text="2:30" FontSize="72" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtHostTimer" Text="2:30" FontSize="{DynamicResource FontSizeBroadcastStat}" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Viewbox>
                     </Border>
                     
-                    <TextBlock Grid.Row="1" Grid.Column="2" Text="В БАНКЕ" FontSize="36" FontWeight="SemiBold" Foreground="#888" VerticalAlignment="Center" Margin="50,0,20,0"/>
-                    <Border Grid.Row="1" Grid.Column="3" CornerRadius="6" Background="#4A0020" Margin="5">
+                    <TextBlock Grid.Row="1" Grid.Column="2" Text="В БАНКЕ" FontSize="{DynamicResource FontSizeAnswerOption}" FontWeight="SemiBold" Foreground="{StaticResource ObsidianTextSecondary}" VerticalAlignment="Center" Margin="50,0,20,0"/>
+                    <Border Grid.Row="1" Grid.Column="3" CornerRadius="{DynamicResource CornerRadiusMedium}" Background="{StaticResource TVSafeTotal}" Margin="5">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.3"/>
                         </Border.Effect>
-                        <TextBlock x:Name="TxtHostBanked" Text="0" FontSize="72" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TxtHostBanked" Text="0" FontSize="{DynamicResource FontSizeBroadcastStat}" FontWeight="ExtraBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                 </Grid>
 
@@ -275,30 +275,30 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     
-                    <Border Grid.Column="0" Background="#20FFFFFF" CornerRadius="12" BorderThickness="1" BorderBrush="#30FFFFFF" Padding="20">
+                    <Border Grid.Column="0" Background="#20FFFFFF" CornerRadius="{DynamicResource CornerRadiusRound}" BorderThickness="1" BorderBrush="#30FFFFFF" Padding="20">
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock x:Name="TxtFinalist1Name" Text="ФИНАЛИСТ 1" FontSize="50" FontWeight="Bold" Foreground="#00CCCC" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                            <TextBlock x:Name="TxtFinalist1Name" Text="ФИНАЛИСТ 1" FontSize="{DynamicResource FontSizeBroadcastName}" FontWeight="Bold" Foreground="{StaticResource TVSafeCyan}" HorizontalAlignment="Center" Margin="0,0,0,15"/>
                             <StackPanel x:Name="StackP1Indicators" Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Ellipse x:Name="P1_I1" Width="35" Height="35" Fill="#111" Stroke="#444" Margin="8"/>
-                                <Ellipse x:Name="P1_I2" Width="35" Height="35" Fill="#111" Stroke="#444" Margin="8"/>
-                                <Ellipse x:Name="P1_I3" Width="35" Height="35" Fill="#111" Stroke="#444" Margin="8"/>
-                                <Ellipse x:Name="P1_I4" Width="35" Height="35" Fill="#111" Stroke="#444" Margin="8"/>
-                                <Ellipse x:Name="P1_I5" Width="35" Height="35" Fill="#111" Stroke="#444" Margin="8"/>
+                                <Ellipse x:Name="P1_I1" Width="35" Height="35" Fill="{StaticResource TVSafeNear}" Stroke="{StaticResource TVSafeGray}" Margin="8"/>
+                                <Ellipse x:Name="P1_I2" Width="35" Height="35" Fill="{StaticResource TVSafeNear}" Stroke="{StaticResource TVSafeGray}" Margin="8"/>
+                                <Ellipse x:Name="P1_I3" Width="35" Height="35" Fill="{StaticResource TVSafeNear}" Stroke="{StaticResource TVSafeGray}" Margin="8"/>
+                                <Ellipse x:Name="P1_I4" Width="35" Height="35" Fill="{StaticResource TVSafeNear}" Stroke="{StaticResource TVSafeGray}" Margin="8"/>
+                                <Ellipse x:Name="P1_I5" Width="35" Height="35" Fill="{StaticResource TVSafeNear}" Stroke="{StaticResource TVSafeGray}" Margin="8"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
  
-                    <TextBlock Grid.Column="1" Text="VS" FontSize="60" FontWeight="Black" Foreground="#66FFFFFF" VerticalAlignment="Center" Margin="50,0"/>
+                    <TextBlock Grid.Column="1" Text="VS" FontSize="{DynamicResource FontSizeBroadcastVS}" FontWeight="Black" Foreground="#66FFFFFF" VerticalAlignment="Center" Margin="50,0"/>
  
-                    <Border Grid.Column="2" Background="#20FFFFFF" CornerRadius="12" BorderThickness="1" BorderBrush="#30FFFFFF" Padding="20">
+                    <Border Grid.Column="2" Background="#20FFFFFF" CornerRadius="{DynamicResource CornerRadiusRound}" BorderThickness="1" BorderBrush="#30FFFFFF" Padding="20">
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock x:Name="TxtFinalist2Name" Text="ФИНАЛИСТ 2" FontSize="50" FontWeight="Bold" Foreground="#00CCCC" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                            <TextBlock x:Name="TxtFinalist2Name" Text="ФИНАЛИСТ 2" FontSize="{DynamicResource FontSizeBroadcastName}" FontWeight="Bold" Foreground="{StaticResource TVSafeCyan}" HorizontalAlignment="Center" Margin="0,0,0,15"/>
                             <StackPanel x:Name="StackP2Indicators" Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Ellipse x:Name="P2_I1" Width="35" Height="35" Fill="#111" Stroke="#444" Margin="8"/>
-                                <Ellipse x:Name="P2_I2" Width="35" Height="35" Fill="#111" Stroke="#444" Margin="8"/>
-                                <Ellipse x:Name="P2_I3" Width="35" Height="35" Fill="#111" Stroke="#444" Margin="8"/>
-                                <Ellipse x:Name="P2_I4" Width="35" Height="35" Fill="#111" Stroke="#444" Margin="8"/>
-                                <Ellipse x:Name="P2_I5" Width="35" Height="35" Fill="#111" Stroke="#444" Margin="8"/>
+                                <Ellipse x:Name="P2_I1" Width="35" Height="35" Fill="{StaticResource TVSafeNear}" Stroke="{StaticResource TVSafeGray}" Margin="8"/>
+                                <Ellipse x:Name="P2_I2" Width="35" Height="35" Fill="{StaticResource TVSafeNear}" Stroke="{StaticResource TVSafeGray}" Margin="8"/>
+                                <Ellipse x:Name="P2_I3" Width="35" Height="35" Fill="{StaticResource TVSafeNear}" Stroke="{StaticResource TVSafeGray}" Margin="8"/>
+                                <Ellipse x:Name="P2_I4" Width="35" Height="35" Fill="{StaticResource TVSafeNear}" Stroke="{StaticResource TVSafeGray}" Margin="8"/>
+                                <Ellipse x:Name="P2_I5" Width="35" Height="35" Fill="{StaticResource TVSafeNear}" Stroke="{StaticResource TVSafeGray}" Margin="8"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -307,8 +307,8 @@
 
             <!-- СУФЛЁР / ПРАВИЛА — полупрозрачная подложка с крупным текстом по центру -->
             <Grid x:Name="HostRulesOverlay" Grid.ColumnSpan="2" Background="#CC000000" Visibility="Collapsed">
-                <Border Background="#BB0A0A1A" Margin="80" CornerRadius="30" Padding="60" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="1600">
-                    <TextBlock x:Name="TxtHostRules" Text="" FontSize="52" LineHeight="78" Foreground="White" TextWrapping="Wrap" TextAlignment="Center" FontFamily="Segoe UI" FontWeight="SemiBold"/>
+                <Border Background="#BB0A0A1A" Margin="80" CornerRadius="{DynamicResource CornerRadiusBroadcastXL}" Padding="60" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="1600">
+                    <TextBlock x:Name="TxtHostRules" Text="" FontSize="{DynamicResource FontSizeBroadcastRules}" LineHeight="78" Foreground="White" TextWrapping="Wrap" TextAlignment="Center" FontFamily="Segoe UI" FontWeight="SemiBold"/>
                 </Border>
             </Grid>
 
@@ -319,9 +319,9 @@
 
             <Grid x:Name="EliminationOverlay" Grid.ColumnSpan="2" Background="Black" Visibility="Collapsed">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock Text="ВЫБЫВАЕТ" FontSize="80" Foreground="#C10000" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,40"/>
-                    <TextBlock x:Name="TxtEliminatedName" Text="PLAYER" FontSize="220" Foreground="White" FontWeight="ExtraBold" HorizontalAlignment="Center"/>
-                    <TextBlock Text="ВЫ САМОЕ СЛАБОЕ ЗВЕНО. ПРОЩАЙТЕ!" FontSize="46" Foreground="#444" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,80,0,0"/>
+                    <TextBlock Text="ВЫБЫВАЕТ" FontSize="{DynamicResource FontSizeBroadcastXL}" Foreground="{StaticResource TVSafeAnswer}" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,40"/>
+                    <TextBlock x:Name="TxtEliminatedName" Text="PLAYER" FontSize="{DynamicResource FontSizeEliminated}" Foreground="White" FontWeight="ExtraBold" HorizontalAlignment="Center"/>
+                    <TextBlock Text="ВЫ САМОЕ СЛАБОЕ ЗВЕНО. ПРОЩАЙТЕ!" FontSize="{DynamicResource FontSizeBroadcastCaption}" Foreground="{StaticResource ObsidianBorderStrong}" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,80,0,0"/>
                 </StackPanel>
             </Grid>
         </Grid>

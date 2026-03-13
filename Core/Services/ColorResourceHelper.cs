@@ -64,6 +64,55 @@ public static class ColorResourceHelper
     /// <summary>Accent Teal (#2DD4BF)</summary>
     public static SolidColorBrush ColorTeal => GetBrush(nameof(ColorTeal));
 
+    /// <summary>Teams Purple (#6264A7)</summary>
+    public static SolidColorBrush ColorTeams => GetBrush(nameof(ColorTeams));
+
+    // ═══ EXTENDED NEUTRALS ═══
+
+    /// <summary>Глубокий фон секций (#1F1F1F)</summary>
+    public static SolidColorBrush ObsidianBase => GetBrush(nameof(ObsidianBase));
+
+    /// <summary>HUD / статус-бар фон (#292929)</summary>
+    public static SolidColorBrush ObsidianDeep => GetBrush(nameof(ObsidianDeep));
+
+    /// <summary>Приподнятая карточка (#2D2D2D)</summary>
+    public static SolidColorBrush ObsidianCard => GetBrush(nameof(ObsidianCard));
+
+    /// <summary>Контрастные границы (#3D3D3D)</summary>
+    public static SolidColorBrush ObsidianBorderStrong => GetBrush(nameof(ObsidianBorderStrong));
+
+    /// <summary>Тонкие границы (#363636)</summary>
+    public static SolidColorBrush ObsidianBorder => GetBrush(nameof(ObsidianBorder));
+
+    /// <summary>Светлая граница / hover (#4D4D4D)</summary>
+    public static SolidColorBrush ObsidianBorderLight => GetBrush(nameof(ObsidianBorderLight));
+
+    /// <summary>Альтернативный текст (#E8E8E8)</summary>
+    public static SolidColorBrush ObsidianText => GetBrush(nameof(ObsidianText));
+
+    // ═══ GAME TINT COLORS ═══
+
+    /// <summary>Тёмно-зелёный фон (#0D2818)</summary>
+    public static SolidColorBrush TintGreenDark => GetBrush(nameof(TintGreenDark));
+
+    /// <summary>Тёмно-красный фон (#2D0F0F)</summary>
+    public static SolidColorBrush TintRedDark => GetBrush(nameof(TintRedDark));
+
+    /// <summary>Тёмно-синий фон (#0D1B2A)</summary>
+    public static SolidColorBrush TintBlueDark => GetBrush(nameof(TintBlueDark));
+
+    /// <summary>Ярко-зелёный (#3FB950)</summary>
+    public static SolidColorBrush TintGreenBright => GetBrush(nameof(TintGreenBright));
+
+    /// <summary>Ярко-красный (#F85149)</summary>
+    public static SolidColorBrush TintRedBright => GetBrush(nameof(TintRedBright));
+
+    /// <summary>Акцентный красный (#DC2626)</summary>
+    public static SolidColorBrush TintRedAccent => GetBrush(nameof(TintRedAccent));
+
+    /// <summary>Акцентный зелёный (#16A34A)</summary>
+    public static SolidColorBrush TintGreenAccent => GetBrush(nameof(TintGreenAccent));
+
     // ═══ STATUS COLORS ═══
 
     /// <summary>Статус Online (зелёный)</summary>

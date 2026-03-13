@@ -15,20 +15,26 @@
     <Page Remove="WLINK AI TESTER 2\**\*" />
     <Compile Remove="WEAKEST_LINK_BUILD_NEW\**\*" />
     <Page Remove="WEAKEST_LINK_BUILD_NEW\**\*" />
+    <Compile Remove="Tools\**\*" />
+    <Page Remove="Tools\**\*" />
+    <None Remove="Tools\**\*" />
     <Compile Remove="Assets — копия\**\*" />
     <Compile Remove="MainWindow.xaml.cs" />
     <Page Remove="MainWindow.xaml" />
     <None Remove=".snapshots\**\*" />
   </ItemGroup>
   <PropertyGroup>
-    <OutputPath>$(MSBuildProjectDirectory)\Dist\</OutputPath>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <OutputPath>$(MSBuildProjectDirectory)\SuperDist\</OutputPath>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>app.ico</ApplicationIcon>
+    <NoWarn>CS8632</NoWarn>
   </PropertyGroup>
   <Target Name="BuildQuestionEditor" AfterTargets="Build" Condition="Exists('$(ProjectDir)QuestionEditor\WeakestLink.QuestionEditor.csproj')">
     <Exec Command="dotnet build &quot;$(ProjectDir)QuestionEditor\WeakestLink.QuestionEditor.csproj&quot; -c $(Configuration)" IgnoreExitCode="true" />

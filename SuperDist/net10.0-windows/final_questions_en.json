@@ -1,0 +1,22 @@
+[
+    {"Id": 1, "Text": "In what year did the French Revolution begin?", "Answer": "1789"},
+    {"Id": 2, "Text": "Who painted 'The Starry Night'?", "Answer": "Vincent van Gogh"},
+    {"Id": 3, "Text": "What chemical compound has the formula H2SO4?", "Answer": "Sulfuric acid"},
+    {"Id": 4, "Text": "Which planet in the Solar System is the largest?", "Answer": "Jupiter"},
+    {"Id": 5, "Text": "In which city is the headquarters of UNESCO located?", "Answer": "Paris"},
+    {"Id": 6, "Text": "What is the deepest lake in the world?", "Answer": "Lake Baikal"},
+    {"Id": 7, "Text": "Who wrote the novel '1984'?", "Answer": "George Orwell"},
+    {"Id": 8, "Text": "What is the smallest country in the world by area?", "Answer": "Vatican City"},
+    {"Id": 9, "Text": "In what year was the Berlin Wall torn down?", "Answer": "1989"},
+    {"Id": 10, "Text": "Who composed 'The Four Seasons'?", "Answer": "Antonio Vivaldi"},
+    {"Id": 11, "Text": "What is the chemical symbol for gold?", "Answer": "Au"},
+    {"Id": 12, "Text": "Which war lasted from 1337 to 1453?", "Answer": "The Hundred Years' War"},
+    {"Id": 13, "Text": "Who formulated the three laws of motion?", "Answer": "Isaac Newton"},
+    {"Id": 14, "Text": "What is the largest island in the world?", "Answer": "Greenland"},
+    {"Id": 15, "Text": "Who directed the film 'Schindler's List'?", "Answer": "Steven Spielberg"},
+    {"Id": 16, "Text": "What is the most abundant gas in Earth's atmosphere?", "Answer": "Nitrogen"},
+    {"Id": 17, "Text": "In what year did the Titanic sink?", "Answer": "1912"},
+    {"Id": 18, "Text": "Who wrote 'War and Peace'?", "Answer": "Leo Tolstoy"},
+    {"Id": 19, "Text": "What is the capital of New Zealand?", "Answer": "Wellington"},
+    {"Id": 20, "Text": "What does the abbreviation NATO stand for?", "Answer": "North Atlantic Treaty Organization"}
+]

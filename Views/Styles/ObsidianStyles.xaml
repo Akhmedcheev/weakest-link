@@ -6,12 +6,15 @@
          ═══════════════════════════════════════════════════════════════ -->
 
     <!-- ═══ NEUTRAL COLORS — Базовая схема (Obsidian) ═══ -->
-    <SolidColorBrush x:Key="ObsidianBg"            Color="#1E1E1E"/>  <!-- глубокий угольный фон -->
-    <SolidColorBrush x:Key="ObsidianSurface"       Color="#252525"/>  <!-- фон карточек и панелей -->
-    <SolidColorBrush x:Key="ObsidianCard"          Color="#2D2D2D"/>  <!-- приподнятая карточка -->
-    <SolidColorBrush x:Key="ObsidianRaised"        Color="#333333"/>  <!-- еще выше -->
-    <SolidColorBrush x:Key="ObsidianBorder"        Color="#363636"/>  <!-- тонкие границы -->
-    <SolidColorBrush x:Key="ObsidianBorderLight"   Color="#4D4D4D"/>  <!-- светлая граница (hover) -->
+    <SolidColorBrush x:Key="ObsidianBase"           Color="#1F1F1F"/>  <!-- глубокий фон секций -->
+    <SolidColorBrush x:Key="ObsidianBg"             Color="#1E1E1E"/>  <!-- глубокий угольный фон -->
+    <SolidColorBrush x:Key="ObsidianSurface"        Color="#252525"/>  <!-- фон карточек и панелей -->
+    <SolidColorBrush x:Key="ObsidianDeep"           Color="#292929"/>  <!-- статус-бар, HUD фон -->
+    <SolidColorBrush x:Key="ObsidianCard"           Color="#2D2D2D"/>  <!-- приподнятая карточка -->
+    <SolidColorBrush x:Key="ObsidianRaised"         Color="#333333"/>  <!-- еще выше -->
+    <SolidColorBrush x:Key="ObsidianBorder"         Color="#363636"/>  <!-- тонкие границы -->
+    <SolidColorBrush x:Key="ObsidianBorderStrong"   Color="#3D3D3D"/>  <!-- контрастные границы -->
+    <SolidColorBrush x:Key="ObsidianBorderLight"    Color="#4D4D4D"/>  <!-- светлая граница (hover) -->
 
     <!-- ═══ TEXT COLORS — Типографика ═══ -->
     <SolidColorBrush x:Key="ObsidianTextPrimary"   Color="#E0E0E0"/>  <!-- основной текст -->
@@ -34,14 +37,26 @@
     <SolidColorBrush x:Key="ColorOrange"           Color="#FF8C00"/>  <!-- Предупреждение (Restart) -->
     <SolidColorBrush x:Key="ColorPurple"           Color="#800080"/>  <!-- Debug / Tech -->
     <SolidColorBrush x:Key="ColorTeal"             Color="#2DD4BF"/>  <!-- Accent (checked states) -->
+    <SolidColorBrush x:Key="ColorTeams"            Color="#6264A7"/>  <!-- Teams Purple (навигация) -->
 
     <!-- ═══ TV-SAFE COLORS — Host Screen (из Color Bible) ═══ -->
     <SolidColorBrush x:Key="TVSafeBackground"      Color="#050510"/>  <!-- глубокий фон Host -->
-    <SolidColorBrush x:Key="TVSafeQuestionBg"      Color="#0A1128"/>  <!-- Navy Dark (вопрос) -->
-    <SolidColorBrush x:Key="TVSafeAnswer"          Color="#C10000"/>  <!-- Red (ответ) -->
-    <SolidColorBrush x:Key="TVSafeTimer"           Color="#006400"/>  <!-- Forest Green (таймер) -->
-    <SolidColorBrush x:Key="TVSafeBankNow"         Color="#0000B8"/>  <!-- Royal Blue -->
-    <SolidColorBrush x:Key="TVSafeTotal"           Color="#4A0020"/>  <!-- Burgundy -->
+    <SolidColorBrush x:Key="TVSafeDark"             Color="#1A1A1A"/>  <!-- тёмный фон broadcast -->
+    <SolidColorBrush x:Key="TVSafePanel"            Color="#161616"/>  <!-- панель broadcast -->
+    <SolidColorBrush x:Key="TVSafeBorder"           Color="#262626"/>  <!-- граница broadcast -->
+    <SolidColorBrush x:Key="TVSafeSubtle"           Color="#0D0D0D"/>  <!-- едва видимый фон -->
+    <SolidColorBrush x:Key="TVSafeNear"             Color="#111111"/>  <!-- почти чёрный -->
+    <SolidColorBrush x:Key="TVSafeMid"              Color="#222222"/>  <!-- средний тёмный -->
+    <SolidColorBrush x:Key="TVSafeGray"             Color="#444444"/>  <!-- серый broadcast -->
+    <SolidColorBrush x:Key="TVSafeGrayMid"          Color="#333333"/>  <!-- средний серый broadcast -->
+    <SolidColorBrush x:Key="TVSafeGrayLight"        Color="#555555"/>  <!-- светлый серый broadcast -->
+    <SolidColorBrush x:Key="TVSafeQuestionBg"       Color="#0A1128"/>  <!-- Navy Dark (вопрос) -->
+    <SolidColorBrush x:Key="TVSafeAnswer"           Color="#C10000"/>  <!-- Red (ответ) -->
+    <SolidColorBrush x:Key="TVSafeCyan"             Color="#00CCCC"/>  <!-- Cyan (финалисты) -->
+    <SolidColorBrush x:Key="TVSafeTimer"            Color="#006400"/>  <!-- Forest Green (таймер) -->
+    <SolidColorBrush x:Key="TVSafeBankNow"          Color="#0000B8"/>  <!-- Royal Blue -->
+    <SolidColorBrush x:Key="TVSafeTotal"            Color="#4A0020"/>  <!-- Burgundy -->
+    <SolidColorBrush x:Key="TVSafeChroma"           Color="#00B140"/>  <!-- Chromakey Green -->
 
     <!-- ═══ ALIASES — Для обратной совместимости ═══ -->
     <SolidColorBrush x:Key="AccentPrimary"         Color="#4F6BED"/>  <!-- синий -->
@@ -76,6 +91,15 @@
     <SolidColorBrush x:Key="StatusWarning"         Color="#F59E0B"/>  <!-- жёлтый (ждёт) -->
     <SolidColorBrush x:Key="StatusOffline"         Color="#717171"/>  <!-- серый (выбыл) -->
 
+    <!-- ═══ GAME TINT COLORS — Фоны карточек/статусов ═══ -->
+    <SolidColorBrush x:Key="TintGreenDark"         Color="#0D2818"/>  <!-- тёмно-зелёный фон (активный) -->
+    <SolidColorBrush x:Key="TintRedDark"           Color="#2D0F0F"/>  <!-- тёмно-красный фон (выбыл) -->
+    <SolidColorBrush x:Key="TintBlueDark"          Color="#0D1B2A"/>  <!-- тёмно-синий фон (текущий) -->
+    <SolidColorBrush x:Key="TintGreenBright"       Color="#3FB950"/>  <!-- ярко-зелёный (GitHub green) -->
+    <SolidColorBrush x:Key="TintRedBright"         Color="#F85149"/>  <!-- ярко-красный (GitHub red) -->
+    <SolidColorBrush x:Key="TintRedAccent"         Color="#DC2626"/>  <!-- акцентный красный -->
+    <SolidColorBrush x:Key="TintGreenAccent"       Color="#16A34A"/>  <!-- акцентный зелёный -->
+
     <!-- ═══ NAMED STYLES ONLY (default styles live in OperatorPanel.xaml) ═══ -->
 
     <!-- ObsidianTextBox: темный ввод с тонкой рамкой -->
@@ -93,7 +117,7 @@
                     <Border x:Name="border" Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="3" SnapsToDevicePixels="True">
+                            CornerRadius="{DynamicResource CornerRadiusMedium}" SnapsToDevicePixels="True">
                         <ScrollViewer x:Name="PART_ContentHost" Focusable="false"
                                       HorizontalScrollBarVisibility="Hidden"
                                       VerticalScrollBarVisibility="Hidden"/>
@@ -129,7 +153,7 @@
                     <Border x:Name="border" Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="3" SnapsToDevicePixels="True">
+                            CornerRadius="{DynamicResource CornerRadiusMedium}" SnapsToDevicePixels="True">
                         <ScrollViewer x:Name="PART_ContentHost" Focusable="false"
                                       HorizontalScrollBarVisibility="Hidden"
                                       VerticalScrollBarVisibility="Hidden"/>
@@ -158,13 +182,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Border x:Name="thumbBorder" Background="{StaticResource ObsidianSurface}" CornerRadius="4"/>
+                    <Border x:Name="thumbBorder" Background="{StaticResource ObsidianSurface}" CornerRadius="{DynamicResource CornerRadiusStandard}"/>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="thumbBorder" Property="Background" Value="{StaticResource ObsidianBorderLight}"/>
                         </Trigger>
                         <Trigger Property="IsDragging" Value="True">
-                            <Setter TargetName="thumbBorder" Property="Background" Value="#555555"/>
+                            <Setter TargetName="thumbBorder" Property="Background" Value="{StaticResource ObsidianTextMuted}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -189,12 +213,12 @@
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="btnBorder"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="4"
+                            CornerRadius="{DynamicResource CornerRadiusStandard}"
                             Padding="{TemplateBinding Padding}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid>
-                            <Border x:Name="hoverOverlay" Background="White" Opacity="0" CornerRadius="4"/>
+                            <Border x:Name="hoverOverlay" Background="White" Opacity="0" CornerRadius="{DynamicResource CornerRadiusStandard}"/>
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
                                               TextBlock.Foreground="{TemplateBinding Foreground}"
                                               TextBlock.FontSize="{TemplateBinding FontSize}"
@@ -217,7 +241,7 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="btnBorder" Property="Opacity" Value="0.45"/>
                             <Setter TargetName="hoverOverlay" Property="Opacity" Value="0"/>
-                            <Setter Property="Foreground" Value="#717171"/>
+                            <Setter Property="Foreground" Value="{StaticResource ObsidianTextDisabled}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -242,16 +266,16 @@
                                       ClickMode="Press">
                             <ToggleButton.Template>
                                 <ControlTemplate TargetType="ToggleButton">
-                                    <Border x:Name="TkBorder" Background="{StaticResource ObsidianSurface}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
-                                        <Path x:Name="Arrow" Fill="#999" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Data="M0,0 L4,4 L8,0 Z"/>
+                                    <Border x:Name="TkBorder" Background="{StaticResource ObsidianSurface}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{DynamicResource CornerRadiusMedium}">
+                                        <Path x:Name="Arrow" Fill="{StaticResource ObsidianTextSecondary}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Data="M0,0 L4,4 L8,0 Z"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="TkBorder" Property="BorderBrush" Value="#4D4D4D"/>
+                                            <Setter TargetName="TkBorder" Property="BorderBrush" Value="{StaticResource ObsidianBorderLight}"/>
                                         </Trigger>
                                         <Trigger Property="IsChecked" Value="True">
-                                            <Setter TargetName="TkBorder" Property="Background" Value="#333333"/>
-                                            <Setter TargetName="TkBorder" Property="BorderBrush" Value="#4D4D4D"/>
+                                            <Setter TargetName="TkBorder" Property="Background" Value="{StaticResource ObsidianRaised}"/>
+                                            <Setter TargetName="TkBorder" Property="BorderBrush" Value="{StaticResource ObsidianBorderLight}"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -303,7 +327,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="#222" BorderThickness="0,0,0,4" Padding="{TemplateBinding Padding}" CornerRadius="5">
+                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{StaticResource ObsidianBg}" BorderThickness="0,0,0,4" Padding="{TemplateBinding Padding}" CornerRadius="{DynamicResource CornerRadiusMediumSmall}">
                         <ContentPresenter x:Name="content" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" HorizontalAlignment="Center" VerticalAlignment="Center" TextBlock.Foreground="{TemplateBinding Foreground}"/>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -325,6 +349,32 @@
         </Setter>
     </Style>
 
+    <!-- ═══ FIRE BUTTON STYLES — Цветовые кнопки действий ═══ -->
+
+    <!-- FireCorrectButton: ВЕРНО — зелёный с hover/pressed -->
+    <Style x:Key="FireCorrectButton" TargetType="Button" BasedOn="{StaticResource GameButtonPressStyle}">
+        <Setter Property="Background" Value="{StaticResource FireButtonCorrect}"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!-- FireBankButton: БАНК — золотой с hover/pressed -->
+    <Style x:Key="FireBankButton" TargetType="Button" BasedOn="{StaticResource GameButtonPressStyle}">
+        <Setter Property="Background" Value="{StaticResource FireButtonBank}"/>
+        <Setter Property="Foreground" Value="Black"/>
+    </Style>
+
+    <!-- FireWrongButton: НЕВЕРНО — красный с hover/pressed -->
+    <Style x:Key="FireWrongButton" TargetType="Button" BasedOn="{StaticResource GameButtonPressStyle}">
+        <Setter Property="Background" Value="{StaticResource FireButtonWrong}"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!-- FirePassButton: ПАС — серый с hover/pressed -->
+    <Style x:Key="FirePassButton" TargetType="Button" BasedOn="{StaticResource GameButtonPressStyle}">
+        <Setter Property="Background" Value="{StaticResource FireButtonPass}"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
     <!-- Flat ToggleButton (без системных рамок) -->
     <Style x:Key="FlatToggleStyle" TargetType="ToggleButton">
         <Setter Property="Cursor" Value="Hand"/>
@@ -334,7 +384,7 @@
                 <ControlTemplate TargetType="ToggleButton">
                     <Border x:Name="tglBorder"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="10"
+                            CornerRadius="{DynamicResource CornerRadiusXLarge}"
                             Padding="{TemplateBinding Padding}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
@@ -372,11 +422,11 @@
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <Border x:Name="CheckBorder" Width="18" Height="18" CornerRadius="4"
+                        <Border x:Name="CheckBorder" Width="18" Height="18" CornerRadius="{DynamicResource CornerRadiusStandard}"
                                 Background="{StaticResource ObsidianRaised}" BorderBrush="{StaticResource ObsidianBorderLight}" BorderThickness="1.5"
                                 VerticalAlignment="Center" Margin="0,0,8,0">
                             <TextBlock x:Name="CheckMark" Text="&#xE73E;"
-                                       FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                       FontFamily="Segoe MDL2 Assets" FontSize="{DynamicResource FontSizeSmall}"
                                        Foreground="{StaticResource ObsidianTextPrimary}" HorizontalAlignment="Center"
                                        VerticalAlignment="Center" Visibility="Collapsed"/>
                         </Border>
@@ -389,7 +439,7 @@
                             <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="#64748B"/>
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{StaticResource ObsidianBorderLight}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -412,10 +462,10 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="4"
+                            CornerRadius="{DynamicResource CornerRadiusStandard}"
                             Padding="{TemplateBinding Padding}">
                         <Grid>
-                            <Border x:Name="HoverOverlay" Background="White" Opacity="0" CornerRadius="4"/>
+                            <Border x:Name="HoverOverlay" Background="White" Opacity="0" CornerRadius="{DynamicResource CornerRadiusStandard}"/>
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                               TextBlock.Foreground="{TemplateBinding Foreground}"
@@ -438,6 +488,142 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- ═══ WINDOW CHROME — Кнопки заголовка окна ═══ -->
+
+    <!-- WindowControlButton: минимизация/развернуть -->
+    <Style x:Key="WindowControlButton" TargetType="Button">
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource ObsidianTextDisabled}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Width" Value="45"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSizeSubheader}"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource TVSafeBorder}"/>
+                <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- WindowCloseButton: красный при hover -->
+    <Style x:Key="WindowCloseButton" TargetType="Button" BasedOn="{StaticResource WindowControlButton}">
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource ColorRed}"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- GhostButton: прозрачная кнопка с border -->
+    <Style x:Key="GhostButton" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource TVSafeBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSizeCaption}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{DynamicResource CornerRadiusStandard}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource TVSafeBorder}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource ObsidianBorderLight}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- DangerGhostButton: красный hover на основе GhostButton -->
+    <Style x:Key="DangerGhostButton" TargetType="Button" BasedOn="{StaticResource GhostButton}">
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#3d1619"/>
+                <Setter Property="BorderBrush" Value="{StaticResource ColorRed}"/>
+                <Setter Property="Foreground" Value="{StaticResource ColorRed}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- AccentButton: яркая кнопка действия -->
+    <Style x:Key="AccentButton" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource ColorRed}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="20,10"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSizeBody}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="{DynamicResource CornerRadiusLarge}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#ff4f54"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- RedButton: красная кнопка на основе FlatButton -->
+    <Style x:Key="RedButton" TargetType="Button" BasedOn="{StaticResource FlatButton}">
+        <Setter Property="Background" Value="{StaticResource ColorRed}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#ff4f54"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- SurfaceCard: карточка-поверхность -->
+    <Style x:Key="SurfaceCard" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource TVSafePanel}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource TVSafeBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusRound}"/>
+        <Setter Property="Padding" Value="20"/>
+        <Setter Property="Margin" Value="10"/>
+    </Style>
+
+    <!-- MetricCard: метрика-карточка -->
+    <Style x:Key="MetricCard" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource TVSafePanel}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource TVSafeBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusLarge}"/>
+        <Setter Property="Padding" Value="15"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="MinWidth" Value="150"/>
     </Style>
 
 </ResourceDictionary>
