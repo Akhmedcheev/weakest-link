@@ -29,7 +29,7 @@ namespace WeakestLink.Views
         private readonly List<ChainItem> chainItems = new List<ChainItem>();
         
         // Таймер
-        private DispatcherTimer _timer;
+        private DispatcherTimer _timer = null!;
         private int _secondsRemaining = 150; // По умолчанию 150 секунд для первого раунда
         
         // Текущий уровень
@@ -182,7 +182,7 @@ namespace WeakestLink.Views
         /// <summary>
         /// Загрузка изображения из ресурсов
         /// </summary>
-        private ImageSource LoadImage(string fileName)
+        private ImageSource? LoadImage(string fileName)
         {
             try
             {
@@ -216,13 +216,13 @@ namespace WeakestLink.Views
         /// <summary>
         /// Обработчик тика таймера
         /// </summary>
-        private void Timer_Tick(object sender, EventArgs e)
+        private void Timer_Tick(object? sender, EventArgs e)
         {
             if (_secondsRemaining > 0)
             {
                 _secondsRemaining--;
                 UpdateTimerDisplay();
-                
+
                 // Пульсация на последних 10 секундах
                 if (_secondsRemaining <= 10)
                 {
@@ -457,7 +457,6 @@ namespace WeakestLink.Views
         public void Dispose()
         {
             _timer?.Stop();
-            _timer = null;
         }
         
         #endregion

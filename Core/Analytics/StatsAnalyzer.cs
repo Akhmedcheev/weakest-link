@@ -11,7 +11,7 @@ namespace WeakestLink.Core.Analytics
     public class StatsAnalyzer
     {
         private readonly GameEngine _engine;
-        private RoundAnalytics _currentAnalytics;
+        private RoundAnalytics? _currentAnalytics;
 
         public StatsAnalyzer(GameEngine engine)
         {
@@ -123,11 +123,11 @@ namespace WeakestLink.Core.Analytics
                 playerRounds.TryGetValue(_engine.CurrentRound, out var roundStats))
             {
                 stats.CorrectAnswers = roundStats.CorrectAnswers;
-                stats.IncorrectAnswers = roundStats.IncorrectAnswers;
-                stats.Passes = roundStats.Passes;
+                stats.IncorrectAnswers = roundStats.IncorrectAnswers + roundStats.Passes; // Пасы объединены с неверными
+                stats.Passes = 0; // Пасы упразднены
                 stats.BankedMoney = roundStats.BankedMoney;
-                stats.BankPressCount = roundStats.BankPressCount; // Копируем количество банковских операций
-                stats.TotalQuestions = stats.CorrectAnswers + stats.IncorrectAnswers + stats.Passes;
+                stats.BankPressCount = roundStats.BankPressCount;
+                stats.TotalQuestions = stats.CorrectAnswers + stats.IncorrectAnswers;
                 stats.ChainBreaksLost = roundStats.BurnedByWrongAnswers;
                 stats.ExactDroppedMoney = roundStats.ExactDroppedMoney;
                 stats.AccuracyStandardDeviation = CalculateAccuracyStandardDeviation(playerName);

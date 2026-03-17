@@ -39,7 +39,7 @@ namespace WeakestLink.Views
         private double StackedOverlap => 30.0  * ScaleFactor;
         private double BottomMargin   => 30.0  * ScaleFactor;
         private const double LeftPadding = 6.0;
-        private double FontSize       => Math.Max(14, 26 * ScaleFactor);
+        private new double FontSize       => Math.Max(14, 26 * ScaleFactor);
 
         /// <summary>Динамический FutureGap: заполняет ~75% высоты окна.</summary>
         // Высота «слота» для каждой плашки выше стопки (активная + будущие).

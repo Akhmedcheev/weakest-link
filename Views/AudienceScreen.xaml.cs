@@ -30,7 +30,7 @@ namespace WeakestLink.Views
         private double StackedOverlap => 28.0  * ScaleFactor;
         private double BottomMargin   => 28.0  * ScaleFactor;
         private const double LeftPad  = 6.0;
-        private double FontSize       => Math.Max(12, 24 * ScaleFactor);
+        private new double FontSize       => Math.Max(12, 24 * ScaleFactor);
 
         // Высота «слота» для каждой плашки выше стопки (активная + будущие).
         private double CalcSlotHeight()

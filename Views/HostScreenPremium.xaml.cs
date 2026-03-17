@@ -11,11 +11,11 @@ namespace WeakestLink.Views
 {
     public partial class HostScreenPremium : Window
     {
-        private GameEngine _engine;
-        private GameClient _client;
+        private readonly GameEngine _engine = null!;
+        private readonly GameClient _client = null!;
         private int _lastQuestionNumber = 0;
-        private System.Windows.Shapes.Ellipse[] _p1Indicators;
-        private System.Windows.Shapes.Ellipse[] _p2Indicators;
+        private readonly System.Windows.Shapes.Ellipse[] _p1Indicators = null!;
+        private readonly System.Windows.Shapes.Ellipse[] _p2Indicators = null!;
 
         // Вспомогательный класс для отображения цепочки (аналогично OperatorPanel)
         public class BankChainItem

@@ -13,7 +13,7 @@
     <Viewbox Stretch="Uniform">
         <Grid Width="{DynamicResource WindowHDWidth}" Height="{DynamicResource WindowHDHeight}" Background="{StaticResource TVSafeBackground}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="MoneyTreeColumn" Width="{DynamicResource MoneyTreeColumnWidth}"/>
+                <ColumnDefinition x:Name="MoneyTreeColumn" Width="280"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 

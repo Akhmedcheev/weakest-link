@@ -147,13 +147,13 @@ namespace WeakestLink.Views
                 }
 
                 var sb = new StringBuilder();
-                sb.AppendLine("Имя;Верно;Неверно;Пасы;Ошибки;В банк;Средний банк;Успешность");
+                sb.AppendLine("Имя;Верно;Неверно;Ошибки;В банк;Средний банк;Успешность");
 
                 foreach (var p in players)
                 {
                     string avg = p.BankPressCount > 0 ? $"{p.AverageBankAmount:N0}" : "—";
                     string success = p.TotalQuestions > 0 ? $"{p.SuccessPercentage:F1}%" : "—";
-                    sb.AppendLine($"{p.Name};{p.CorrectAnswers};{p.IncorrectAnswers};{p.Passes};{p.TotalMistakes};{p.BankedMoney:N0} ₽;{avg} ₽;{success}");
+                    sb.AppendLine($"{p.Name};{p.CorrectAnswers};{p.IncorrectAnswers};{p.TotalMistakes};{p.BankedMoney:N0} ₽;{avg} ₽;{success}");
                 }
 
                 sb.AppendLine();

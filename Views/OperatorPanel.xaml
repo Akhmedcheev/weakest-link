@@ -13,7 +13,7 @@
         WindowState="Maximized"
         WindowStyle="None"
         AllowsTransparency="True"
-        KeyDown="Window_KeyDown">
+        PreviewKeyDown="Window_PreviewKeyDown">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="{DynamicResource TitleBarHeight}" ResizeBorderThickness="6" CornerRadius="{DynamicResource CornerRadiusNone}" GlassFrameThickness="0"/>
@@ -309,9 +309,9 @@
     <!-- Outer wrapper: Title bar + Content -->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="{DynamicResource TitleBarHeight}"/>
+            <RowDefinition Height="42"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="{DynamicResource StatusBarHeight}"/>
+            <RowDefinition Height="24"/>
         </Grid.RowDefinitions>
 
         <!-- Row 0: Onyx Title Bar (Teams-style flat) -->
@@ -410,7 +410,7 @@
         <!-- Row 1: App Content -->
         <Grid Grid.Row="1" x:Name="RootLayoutGrid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="{DynamicResource SidebarWidth}"/>
+            <ColumnDefinition Width="220"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
@@ -708,9 +708,7 @@
                                     <Button.Template><ControlTemplate TargetType="Button"><Border CornerRadius="{DynamicResource CornerRadiusCircleSmall}" Background="{TemplateBinding Background}" BorderBrush="#44FFFFFF" BorderThickness="1"/></ControlTemplate></Button.Template>
                                 </Button>
                             </StackPanel>
-                            <Button Content="ANALYTICS" Height="24" Margin="0,0,0,3" FontSize="{DynamicResource FontSizeXXXSmall}"
-                                    Background="{StaticResource ObsidianBorderStrong}" Foreground="{StaticResource ObsidianText}" 
-                                    Click="BtnAnalytics_Click" Style="{StaticResource FlatButton}"/>
+
 
                             <!-- Разделитель -->
                             <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,4,0,6"/>
@@ -732,10 +730,7 @@
                                     Click="BtnToggleAnalytics_Click" Style="{StaticResource FlatButton}"
                                     Background="{StaticResource ObsidianCard}" Foreground="{StaticResource ObsidianTextPrimary}" 
                                     BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="1" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"/>
-                            <Button Content="✓ VALIDATE JSON" x:Name="BtnValidateJson" Height="32" Margin="0,0,0,3" 
-                                    Click="BtnValidateJson_Click" Style="{StaticResource FlatButton}"
-                                    Background="{StaticResource ObsidianCard}" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="1" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"/>
+
                             <Button Content="🧪 SELF-TEST" x:Name="BtnSelfTest" Height="32" Margin="0,0,0,3" 
                                     Click="BtnSelfTest_Click" Style="{StaticResource FlatButton}"
                                     Background="{StaticResource ObsidianCard}" Foreground="{StaticResource ColorOrange}" 
@@ -744,74 +739,106 @@
                             <!-- Разделитель -->
                             <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
 
-                            <!-- === DEBUG СЕКЦИЯ === -->
-                            <TextBlock Text="DEBUG" Foreground="{StaticResource ObsidianAccentTeal}" FontSize="{DynamicResource FontSizeXSmall}" FontWeight="Bold" Margin="0,0,0,4"/>
-                            <TextBlock Text="Раунд теста:" Foreground="{StaticResource ObsidianTextSecondary}" FontSize="{DynamicResource FontSizeXSmall}" Margin="0,0,0,3"/>
-                            <ComboBox x:Name="TestRoundSelector" Height="25" FontSize="{DynamicResource FontSizeCaption}" SelectedIndex="0" Style="{StaticResource TestRoundSelectorStyle}" VerticalContentAlignment="Center" Margin="0,0,0,4">
-                                <ComboBoxItem Content="Раунд 1"/>
-                                <ComboBoxItem Content="Раунд 2"/>
-                                <ComboBoxItem Content="Раунд 3"/>
-                                <ComboBoxItem Content="Раунд 4"/>
-                                <ComboBoxItem Content="Раунд 5"/>
-                                <ComboBoxItem Content="Раунд 6"/>
-                                <ComboBoxItem Content="Раунд 7"/>
-                                <ComboBoxItem Content="ФИНАЛ"/>
-                            </ComboBox>
-                            <CheckBox x:Name="ChkTestLast30Sec" Content="30 сек раунд" Margin="0,3,0,0" Style="{StaticResource ObsidianCheckBox}"/>
-                            <CheckBox x:Name="ChkDebugEndRoundButton" Content="кнопка Раунд Завершен" Margin="0,3,0,4" Click="ChkDebugEndRoundButton_Click" Style="{StaticResource ObsidianCheckBox}"/>
-                            <Button Content="БЫСТРЫЙ СТАРТ" x:Name="BtnQuickStart" Height="26" FontSize="{DynamicResource FontSizeXSmall}"
-                                    Background="{StaticResource ColorInfo}" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
-                                    Click="BtnQuickStart_Click" Style="{StaticResource FlatButton}"/>
-                            <Button Content="ЗАПОЛНИТЬ СЛУЧАЙНЫМИ" x:Name="BtnFillRandom" Height="26" FontSize="{DynamicResource FontSizeXSmall}"
-                                    Background="{StaticResource ObsidianBorderStrong}" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
-                                    Click="BtnFillRandom_Click" Style="{StaticResource FlatButton}"/>
-                            <Button Content="🎬 ТЕСТ ФИНАЛА" x:Name="BtnDebugTestFinal" Height="26" FontSize="{DynamicResource FontSizeXSmall}"
-                                    Background="{StaticResource ColorDanger}" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
-                                    Click="BtnDebugTestFinal_Click" Style="{StaticResource FlatButton}"/>
-                            <Button Content="⏱ ТЕСТ РАУНД 7" x:Name="BtnDebugTestRound7" Height="26" FontSize="{DynamicResource FontSizeXSmall}"
-                                    Background="{StaticResource ColorWarning}" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
-                                    Click="BtnDebugTestRound7_Click" Style="{StaticResource FlatButton}"/>
+                            <!-- === DEBUG (сворачиваемый) === -->
+                            <Expander IsExpanded="False" Margin="0,0,0,4">
+                                <Expander.Style>
+                                    <Style TargetType="Expander">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Expander">
+                                                    <StackPanel>
+                                                        <ToggleButton x:Name="HeaderBtn" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                                                      Background="Transparent" BorderThickness="0" Cursor="Hand" HorizontalContentAlignment="Left" Padding="0,4">
+                                                            <ToggleButton.Template>
+                                                                <ControlTemplate TargetType="ToggleButton">
+                                                                    <Border Background="Transparent" Padding="0,4">
+                                                                        <StackPanel Orientation="Horizontal">
+                                                                            <TextBlock x:Name="Arrow" Text="▶" Foreground="{StaticResource ObsidianAccentTeal}" FontSize="{DynamicResource FontSizeXSmall}" FontWeight="Bold" Margin="0,0,6,0"/>
+                                                                            <TextBlock Text="DEBUG" Foreground="{StaticResource ObsidianAccentTeal}" FontSize="{DynamicResource FontSizeXSmall}" FontWeight="Bold"/>
+                                                                        </StackPanel>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsChecked" Value="True">
+                                                                            <Setter TargetName="Arrow" Property="Text" Value="▼"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </ToggleButton.Template>
+                                                        </ToggleButton>
+                                                        <ContentPresenter x:Name="Content" Visibility="Collapsed"/>
+                                                    </StackPanel>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsExpanded" Value="True">
+                                                            <Setter TargetName="Content" Property="Visibility" Value="Visible"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Expander.Style>
+                                <StackPanel>
+                                    <TextBlock Text="Раунд теста:" Foreground="{StaticResource ObsidianTextSecondary}" FontSize="{DynamicResource FontSizeXSmall}" Margin="0,0,0,3"/>
+                                    <ComboBox x:Name="TestRoundSelector" Height="25" FontSize="{DynamicResource FontSizeCaption}" SelectedIndex="0" Style="{StaticResource TestRoundSelectorStyle}" VerticalContentAlignment="Center" Margin="0,0,0,4">
+                                        <ComboBoxItem Content="Раунд 1"/>
+                                        <ComboBoxItem Content="Раунд 2"/>
+                                        <ComboBoxItem Content="Раунд 3"/>
+                                        <ComboBoxItem Content="Раунд 4"/>
+                                        <ComboBoxItem Content="Раунд 5"/>
+                                        <ComboBoxItem Content="Раунд 6"/>
+                                        <ComboBoxItem Content="Раунд 7"/>
+                                        <ComboBoxItem Content="ФИНАЛ"/>
+                                    </ComboBox>
+                                    <CheckBox x:Name="ChkTestLast30Sec" Content="30 сек раунд" Margin="0,3,0,0" Style="{StaticResource ObsidianCheckBox}"/>
+                                    <CheckBox x:Name="ChkDebugEndRoundButton" Content="кнопка Раунд Завершен" Margin="0,3,0,4" Click="ChkDebugEndRoundButton_Click" Style="{StaticResource ObsidianCheckBox}"/>
+                                    <Button Content="БЫСТРЫЙ СТАРТ" x:Name="BtnQuickStart" Height="26" FontSize="{DynamicResource FontSizeXSmall}"
+                                            Background="{StaticResource ColorInfo}" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
+                                            Click="BtnQuickStart_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button Content="ЗАПОЛНИТЬ СЛУЧАЙНЫМИ" x:Name="BtnFillRandom" Height="26" FontSize="{DynamicResource FontSizeXSmall}"
+                                            Background="{StaticResource ObsidianBorderStrong}" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
+                                            Click="BtnFillRandom_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button Content="🎬 ТЕСТ ФИНАЛА" x:Name="BtnDebugTestFinal" Height="26" FontSize="{DynamicResource FontSizeXSmall}"
+                                            Background="{StaticResource ColorDanger}" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
+                                            Click="BtnDebugTestFinal_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button Content="⏱ ТЕСТ РАУНД 7" x:Name="BtnDebugTestRound7" Height="26" FontSize="{DynamicResource FontSizeXSmall}"
+                                            Background="{StaticResource ColorWarning}" Foreground="White" Margin="0,0,0,3" Padding="8,0" 
+                                            Click="BtnDebugTestRound7_Click" Style="{StaticResource FlatButton}"/>
                             
-                            <!-- === ТЕСТОВАЯ ИГРА === -->
-                            <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
-                            <TextBlock Text="ТЕСТОВАЯ ИГРА" Foreground="{StaticResource ObsidianTextMuted}" FontSize="{DynamicResource FontSizeXSmall}" FontWeight="Bold" Margin="0,0,0,4"/>
-                            <Button Content="Загрузить команду..." Height="26" FontSize="{DynamicResource FontSizeXSmall}" Margin="0,0,0,3"
-                                    Background="{StaticResource ObsidianCard}" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="1"
-                                    Click="BtnTestTeam1_Click" Style="{StaticResource FlatButton}"/>
-                            <Button Content="AI Gemini Test" Height="26" FontSize="{DynamicResource FontSizeXSmall}" Margin="0,0,0,3"
-                                    Background="{StaticResource ObsidianCard}" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="1"
-                                    Click="BtnStartGeminiTest_Click" Style="{StaticResource FlatButton}"/>
+                                    <!-- ТЕСТОВАЯ ИГРА -->
+                                    <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
+                                    <TextBlock Text="ТЕСТОВАЯ ИГРА" Foreground="{StaticResource ObsidianTextMuted}" FontSize="{DynamicResource FontSizeXSmall}" FontWeight="Bold" Margin="0,0,0,4"/>
+                                    <Button Content="Загрузить команду..." Height="26" FontSize="{DynamicResource FontSizeXSmall}" Margin="0,0,0,3"
+                                            Background="{StaticResource ObsidianCard}" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                            BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="1"
+                                            Click="BtnTestTeam1_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button Content="AI Gemini Test" Height="26" FontSize="{DynamicResource FontSizeXSmall}" Margin="0,0,0,3"
+                                            Background="{StaticResource ObsidianCard}" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                            BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="1"
+                                            Click="BtnStartGeminiTest_Click" Style="{StaticResource FlatButton}"/>
+                                </StackPanel>
+                            </Expander>
 
                             <!-- === СЕРВИС === -->
                             <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
                             <TextBlock Text="СЕРВИС" Foreground="{StaticResource ObsidianTextMuted}" FontSize="{DynamicResource FontSizeXSmall}" FontWeight="Bold" Margin="0,0,0,4"/>
-                            <Button x:Name="BtnStopAudio" Height="32" Margin="0,0,0,3" Click="BtnStopAudio_Click" Style="{StaticResource FlatButton}"
-                                    Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" FontWeight="Bold" FontSize="{DynamicResource FontSizeCaption}"
-                                    HorizontalContentAlignment="Center">
-                                <TextBlock Text="🔇 STOP AUDIO" TextAlignment="Center"/>
-                            </Button>
-                            <Button x:Name="BtnRestartRound" Height="32" Margin="0,0,0,3" Click="BtnRestartRound_Click" Style="{StaticResource FlatButton}"
-                                    Background="#5B1A1A" Foreground="#FF9999" 
-                                    BorderBrush="#7B3333" BorderThickness="1" FontWeight="Bold" FontSize="{DynamicResource FontSizeCaption}"
-                                    HorizontalContentAlignment="Center">
-                                <TextBlock Text="🔄 RESTART ROUND" TextAlignment="Center"/>
-                            </Button>
-                            <Button x:Name="BtnCloseSession" Height="32" Margin="0,0,0,3" Click="BtnCloseSession_Click" Style="{StaticResource FlatButton}"
-                                    Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
-                                    BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" FontWeight="Bold" FontSize="{DynamicResource FontSizeCaption}"
-                                    HorizontalContentAlignment="Center">
-                                <TextBlock Text="🚪 CLOSE SESSION" TextAlignment="Center"/>
-                            </Button>
                             <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
-                            <Button x:Name="BtnBreakGame" Height="36" Click="BtnBreakGame_Click" Style="{StaticResource FlatButton}"
-                                    Background="#991B1B" Foreground="White" 
-                                    BorderBrush="#AA3333" BorderThickness="1" FontWeight="Black" FontSize="{DynamicResource FontSizeCaption}"
-                                    HorizontalContentAlignment="Center">
-                                <TextBlock Text="⚠ BREAK GAME" TextAlignment="Center"/>
-                            </Button>
+                            <CheckBox x:Name="ChkAiHost" Content="🎙️ AI-ведущая (Мария)"
+                                      Margin="0,0,0,4" Style="{StaticResource ObsidianCheckBox}"
+                                      Checked="ChkAiHost_Changed"
+                                      Unchecked="ChkAiHost_Changed"/>
+
+
+                            <!-- === ЭКСПОРТ === -->
+                            <Border Height="1" Background="{StaticResource ObsidianBorder}" Margin="0,6,0,6"/>
+                            <TextBlock Text="ЭКСПОРТ" Foreground="{StaticResource ObsidianTextMuted}" FontSize="{DynamicResource FontSizeXSmall}" FontWeight="Bold" Margin="0,0,0,4"/>
+                            <UniformGrid Columns="2" Margin="0,0,0,3">
+                                <Button x:Name="BtnExportCSV2" Content="📊 CSV" Background="{StaticResource ObsidianCard}" Foreground="{StaticResource ObsidianText}" 
+                                        Height="32" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold" Margin="0,0,2,0" 
+                                        Click="BtnExportCSV_Click" Style="{StaticResource FlatButton}"/>
+                                <Button x:Name="BtnExportHTML2" Content="📄 HTML" Background="{StaticResource ObsidianCard}" Foreground="{StaticResource ObsidianText}" 
+                                        Height="32" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold" Margin="2,0,0,0"
+                                        Click="BtnExportHTML_Click" Style="{StaticResource FlatButton}"/>
+                            </UniformGrid>
                         </StackPanel>
                         </ScrollViewer>
                     </DockPanel>
@@ -884,52 +911,50 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
                         <!-- Col 0: ТЕКУЩИЙ БАНК -->
                         <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="16,0,10,0">
                             <TextBlock Text="💰 ТЕКУЩИЙ БАНК" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold" HorizontalAlignment="Center"/>
-                            <TextBlock x:Name="TxtCurrentBank" Text="0" Foreground="{StaticResource ColorGold}" FontSize="{DynamicResource FontSizeGameStat}" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
-                                <TextBlock.Effect>
-                                    <DropShadowEffect Color="#D4AA40" BlurRadius="8" ShadowDepth="0" Opacity="0.4"/>
-                                </TextBlock.Effect>
-                            </TextBlock>
+                            <TextBlock x:Name="TxtCurrentBank" Text="0" Foreground="{StaticResource ColorGold}" FontSize="{DynamicResource FontSizeGameStat}" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center"/>
                         </StackPanel>
+
+                        <!-- Separator -->
+                        <Border Grid.Column="1" Width="1" Background="{StaticResource ObsidianBorder}" Margin="4,8" VerticalAlignment="Stretch"/>
 
                         <!-- Col 1: ОБЩИЙ БАНК -->
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="4,0,8,0">
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="10,0,8,0">
                             <TextBlock Text="🏦 ОБЩИЙ БАНК" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold" HorizontalAlignment="Center"/>
-                            <TextBlock x:Name="TxtTotalBank" Text="0" Foreground="{StaticResource ColorSuccess}" FontSize="{DynamicResource FontSizeGameStat}" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
-                                <TextBlock.Effect>
-                                    <DropShadowEffect Color="#22C55E" BlurRadius="8" ShadowDepth="0" Opacity="0.4"/>
-                                </TextBlock.Effect>
-                            </TextBlock>
+                            <TextBlock x:Name="TxtTotalBank" Text="0" Foreground="{StaticResource ColorSuccess}" FontSize="{DynamicResource FontSizeGameStat}" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center"/>
                         </StackPanel>
 
-                        <!-- Col 2: Game State Badge -->
-                        <Border x:Name="GameStateBadge" Grid.Column="2" Background="#1E293B" CornerRadius="{DynamicResource CornerRadiusRound}" Padding="12,4" Margin="8,0,0,0" VerticalAlignment="Center">
-                            <TextBlock x:Name="TxtGameStateBadge" Text="⏸ ОЖИДАНИЕ" Foreground="{StaticResource ObsidianTextSecondary}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <!-- Separator -->
+                        <Border Grid.Column="3" Width="1" Background="{StaticResource ObsidianBorder}" Margin="4,8" HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
+
+                        <!-- Col 3: GAME STATE — центральная интегрированная секция -->
+                        <Border x:Name="GameStateBadge" Grid.Column="3" Background="{StaticResource ObsidianBase}" Margin="12,4" CornerRadius="{DynamicResource CornerRadiusStandard}" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1">
+                            <TextBlock x:Name="TxtGameStateBadge" Text="⏸  ОЖИДАНИЕ" 
+                                       Foreground="{StaticResource ObsidianTextSecondary}" FontSize="{DynamicResource FontSizeSubheader}" 
+                                       FontWeight="Bold" FontFamily="JetBrains Mono, Consolas"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
 
-                        <!-- Col 3: Spacer for floating badge -->
-                        <Grid Grid.Column="3" />
+                        <!-- Separator -->
+                        <Border Grid.Column="4" Width="1" Background="{StaticResource ObsidianBorder}" Margin="4,8" VerticalAlignment="Stretch"/>
 
-                        <!-- Col 4: ВОПРОС -->
-                        <StackPanel Grid.Column="4" VerticalAlignment="Center" Margin="4,0,16,0">
+                        <!-- Col 5: ВОПРОС -->
+                        <StackPanel Grid.Column="5" VerticalAlignment="Center" Margin="10,0,16,0">
                             <TextBlock Text="❓ ВОПРОС" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold" HorizontalAlignment="Center"/>
-                            <TextBlock x:Name="TxtQuestionCount" Text="0/0" Foreground="{StaticResource ColorWarning}" FontSize="{DynamicResource FontSizeGameStat}" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center">
-                                <TextBlock.Effect>
-                                    <DropShadowEffect Color="#F59E0B" BlurRadius="8" ShadowDepth="0" Opacity="0.4"/>
-                                </TextBlock.Effect>
-                            </TextBlock>
+                            <TextBlock x:Name="TxtQuestionCount" Text="0/0" Foreground="{StaticResource ObsidianAccentTeal}" FontSize="{DynamicResource FontSizeGameStat}" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
                 </Border>
 
-                <!-- 1B: Round Number (floating center badge) -->
+                <!-- 1B: Round Number (floating center badge) — СКРЫТ -->
                 <Border x:Name="TimerArchBorder" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,-20"
                         CornerRadius="{DynamicResource CornerRadiusXLarge}" Background="{StaticResource ObsidianDeep}" BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="1"
-                        Padding="20,4" Panel.ZIndex="10">
+                        Padding="20,4" Panel.ZIndex="10" Visibility="Collapsed">
                     <StackPanel HorizontalAlignment="Center">
                         <TextBlock x:Name="TxtRoundNumberCenter" Text="1" Foreground="{StaticResource ColorInfo}" 
                                    FontSize="{DynamicResource FontSizeDisplay}" FontWeight="Bold" FontFamily="JetBrains Mono, Consolas"
@@ -1214,14 +1239,50 @@
 
                 <!-- ЦЕНТР: Парящая карточка Mission Control -->
                 <Grid Grid.Column="1" ClipToBounds="True">
-                    <Border x:Name="CentralSlot" Width="800" Height="500" 
-                            VerticalAlignment="Center" HorizontalAlignment="Center"
+                    <Border x:Name="CentralSlot" Margin="15"
+                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                             Background="{StaticResource ObsidianDeep}" CornerRadius="{DynamicResource CornerRadiusRound}" 
                             BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="1">
-                        <Grid ClipToBounds="True">
+                        <Border CornerRadius="{DynamicResource CornerRadiusRound}" ClipToBounds="True">
+                        <Grid>
                     <!-- 0. SETUP CONTEXT - Лобби / формирование команды -->
                     <Grid x:Name="SetupContext" Visibility="Visible">
                         <Border x:Name="SetupPanel" Background="Transparent" Padding="10,6,10,6" CornerRadius="{DynamicResource CornerRadiusRound}">
+                            <Border.ContextMenu>
+                                <ContextMenu>
+                                    <ContextMenu.Template>
+                                        <ControlTemplate TargetType="ContextMenu">
+                                            <Border Background="#1a1a24" BorderBrush="#333340" BorderThickness="1" CornerRadius="6" Padding="4">
+                                                <Border.Effect>
+                                                    <DropShadowEffect Color="Black" BlurRadius="16" ShadowDepth="4" Opacity="0.6"/>
+                                                </Border.Effect>
+                                                <StackPanel IsItemsHost="True"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </ContextMenu.Template>
+                                    <MenuItem Header="🎲 ЗАПОЛНИТЬ СЛУЧАЙНЫМИ" Click="BtnFillRandom_Click" FontWeight="Bold"
+                                              Foreground="White" FontSize="{DynamicResource FontSizeSmall}">
+                                        <MenuItem.Style>
+                                            <Style TargetType="MenuItem">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="MenuItem">
+                                                            <Border x:Name="bg" Background="Transparent" Padding="14,8" CornerRadius="4" Cursor="Hand">
+                                                                <ContentPresenter ContentSource="Header"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsHighlighted" Value="True">
+                                                                    <Setter TargetName="bg" Property="Background" Value="#2a2a38"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </MenuItem.Style>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </Border.ContextMenu>
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -1395,25 +1456,91 @@
                                     </Grid>
                                 </Border>
 
-                                <!-- Кнопки действий 2x2 -->
-                                <UniformGrid Grid.Row="1" Columns="2" Margin="10,5,10,10">
-                                    <Button x:Name="BtnCorrect" Content="✓ ВЕРНО" Height="65" Margin="4" FontSize="{DynamicResource FontSizeGameAction}" FontWeight="ExtraBold"
-                                            Click="BtnCorrect_Click" Style="{StaticResource FireCorrectButton}"/>
-                                    <Button x:Name="BtnBank" Content="₽ БАНК" Height="65" Margin="4" FontSize="{DynamicResource FontSizeGameAction}" FontWeight="ExtraBold"
-                                            Click="BtnBank_Click" Style="{StaticResource FireBankButton}"/>
-                                    <Button x:Name="BtnWrong" Content="✗ НЕВЕРНО" Height="65" Margin="4" FontSize="{DynamicResource FontSizeGameAction}" FontWeight="ExtraBold"
-                                            Click="BtnWrong_Click" Style="{StaticResource FireWrongButton}"/>
-                                    <Button x:Name="BtnPass" Content="» ПАСС" Height="65" Margin="4" FontSize="{DynamicResource FontSizeGameAction}" FontWeight="ExtraBold"
-                                            Click="BtnPass_Click" Style="{StaticResource FirePassButton}"/>
-                                </UniformGrid>
+                                <Grid Grid.Row="1" Margin="10,5,10,5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
 
-                                <!-- START O'CLOCK -->
-                                <Button Grid.Row="2" x:Name="BtnGamePlayPlay" Content="► START O'CLOCK"
-                                        Height="46" FontSize="{DynamicResource FontSizeLarge}" FontWeight="ExtraBold"
-                                        Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianText}"
-                                        BorderBrush="Transparent" BorderThickness="0"
-                                        Margin="14,0,14,14"
-                                        Click="BtnPlay_Click" Style="{StaticResource GameButtonPressStyle}"/>
+                                    <!-- START — маленькая жёлтая кнопка справа сверху (как на пульте) -->
+                                    <Button Grid.Row="0" x:Name="BtnGamePlayPlay"
+                                            Width="100" Height="38" HorizontalAlignment="Right"
+                                            Background="#E6A817" Foreground="White"
+                                            BorderBrush="Transparent" BorderThickness="0"
+                                            Margin="0,0,8,6"
+                                            Click="BtnPlay_Click" Style="{StaticResource GameButtonPressStyle}">
+                                        <Grid>
+                                            <TextBlock Text="Start" FontSize="{DynamicResource FontSizeBody}" FontWeight="ExtraBold"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Button>
+
+                                    <!-- ПОЛОСА: ТЕКУЩИЙ ИГРОК + ПОСЛЕДНИЙ РЕЗУЛЬТАТ -->
+                                    <Grid Grid.Row="1" Margin="4,0,4,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Текущий игрок (кому задаётся вопрос) -->
+                                        <Border Grid.Column="0" Background="#0A0A1A" CornerRadius="8,0,0,8"
+                                                BorderBrush="#1E1E3A" BorderThickness="1,1,0,1" Padding="10,7">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock Text="&#127908;" FontSize="13" Margin="0,0,7,0" VerticalAlignment="Center"/>
+                                                <StackPanel>
+                                                    <TextBlock Text="ВОПРОС К:" Foreground="#444466"
+                                                               FontSize="7" FontWeight="Bold" Margin="0,0,0,1"/>
+                                                    <TextBlock x:Name="TxtCurrentPlayerInfo"
+                                                               Text="—" Foreground="#8B8BFF"
+                                                               FontSize="13" FontWeight="Bold"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Последний результат -->
+                                        <Border x:Name="TxtLastResultBorder" Grid.Column="1"
+                                                Background="#111118" CornerRadius="0,8,8,0"
+                                                BorderBrush="#222233" BorderThickness="1,1,1,1"
+                                                MinWidth="130" Padding="10,7">
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="ПОСЛЕДНЕЕ:" Foreground="#333344"
+                                                           FontSize="7" FontWeight="Bold" Margin="0,0,0,1"/>
+                                                <TextBlock x:Name="TxtLastResultInfo"
+                                                           Text="—" Foreground="#555566"
+                                                           FontSize="11" FontWeight="Bold"
+                                                           TextWrapping="NoWrap"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Wrong | BANK | Correct — основной ряд кнопок -->
+                                    <Grid Grid.Row="2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="1.4*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <!-- Wrong [B] -->
+                                        <Button x:Name="BtnWrong" Grid.Column="0" Height="80" Margin="4"
+                                                Click="BtnWrong_Click" Style="{StaticResource FireWrongButton}">
+                                            <TextBlock Text="Wrong" FontSize="{DynamicResource FontSizeGameAction}" FontWeight="ExtraBold"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Button>
+                                        <!-- BANK [C] -->
+                                        <Button x:Name="BtnBank" Grid.Column="1" Height="90" Margin="4"
+                                                Click="BtnBank_Click" Style="{StaticResource FireBankButton}">
+                                            <TextBlock Text="BANK" FontSize="{DynamicResource FontSizeGameAction}" FontWeight="ExtraBold"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Button>
+                                        <!-- Correct [A] -->
+                                        <Button x:Name="BtnCorrect" Grid.Column="2" Height="80" Margin="4"
+                                                Click="BtnCorrect_Click" Style="{StaticResource FireCorrectButton}">
+                                            <TextBlock Text="Correct" FontSize="{DynamicResource FontSizeGameAction}" FontWeight="ExtraBold"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Button>
+                                    </Grid>
+                                </Grid>
                             </Grid>
                         </Border>
                     </Grid>
@@ -1676,15 +1803,7 @@
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="ПАССЫ" Width="65" Binding="{Binding PassCount}">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="#a0a0a0"/>
-                                                <Setter Property="FontWeight" Value="Bold"/>
-                                                <Setter Property="TextAlignment" Value="Center"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
+
                                     <DataGridTextColumn Header="БАНК" Width="80" Binding="{Binding BankedAmount}">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
@@ -1708,7 +1827,7 @@
                         </Border>
 
                         <!-- Decision Hub -->
-                        <Border Grid.Row="4" Background="{StaticResource ObsidianBase}" BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="0,1,0,0" Padding="10,6">
+                        <Border Grid.Row="4" Background="{StaticResource ObsidianBase}" BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="0,1,0,0" Padding="10,6,10,10" CornerRadius="0,0,12,12">
                             <StackPanel>
                                 <!-- === EXPRESS VOTING PANEL === -->
                                 <StackPanel x:Name="ExpressVotingPanel">
@@ -1872,9 +1991,114 @@
                                     </Grid>
                                 </Border>
 
-                                <!-- === MUSIC CONTROL PANEL === -->
+                                <!-- ========== СЪЁМОЧНОЕ ГОЛОСОВАНИЕ (Film-Style Voting) ========== -->
+                                <Border x:Name="FilmVotingPanel" Background="#0D0D12" CornerRadius="{DynamicResource CornerRadiusMediumSmall}" 
+                                        Margin="0,2" Padding="10,8" Visibility="Collapsed" BorderBrush="#2a2a40" BorderThickness="1">
+                                    <StackPanel>
+                                        <!-- Header -->
+                                        <Grid Margin="0,0,0,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock x:Name="TxtFilmVotePhase" Text="🎬 ГОЛОСОВАНИЕ (СЪЁМКА)" 
+                                                       Foreground="{StaticResource ColorGold}" FontSize="{DynamicResource FontSizeSmall}" FontWeight="Bold"/>
+                                            <TextBlock x:Name="TxtFilmVoteStep" Text="ШАГ 1/4" Grid.Column="1"
+                                                       Foreground="{StaticResource ObsidianTextDisabled}" FontSize="{DynamicResource FontSizeCaption}"/>
+                                        </Grid>
+
+                                        <!-- Step 1: ОТБИВКА (Sting) -->
+                                        <Button x:Name="BtnFilmSting" Content="🔔 ОТБИВКА  →  СТОП МОТОР" Height="32" Margin="0,2"
+                                                Background="#1a1a30" Foreground="{StaticResource ColorInfo}" FontWeight="Bold" 
+                                                FontSize="{DynamicResource FontSizeCaption}" BorderBrush="#3a3a60" BorderThickness="1"
+                                                Click="BtnFilmSting_Click" Style="{StaticResource FlatButton}"/>
+
+                                        <!-- Step 2: Сбор голосов (vote collection grid) -->
+                                        <Border x:Name="FilmVoteCollectionPanel" Background="#101018" CornerRadius="4" 
+                                                Margin="0,2" Padding="6,4" Visibility="Collapsed">
+                                            <StackPanel>
+                                                <TextBlock Text="📋 СБОР ГОЛОСОВ" Foreground="{StaticResource ColorWarning}" 
+                                                           FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold" Margin="0,0,0,4"/>
+                                                <ItemsControl x:Name="FilmVoteGrid">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Grid Margin="0,3">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="120"/>
+                                                                    <ColumnDefinition Width="14"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock Text="{Binding VoterName}" Foreground="White" FontWeight="Bold" 
+                                                                           FontSize="{DynamicResource FontSizeSmall}" VerticalAlignment="Center"/>
+                                                                <TextBlock Text="→" Foreground="#666" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                                <ComboBox Grid.Column="2" Height="28" FontSize="{DynamicResource FontSizeXSmall}"
+                                                                          ItemsSource="{Binding Candidates}" SelectedItem="{Binding VotedFor, Mode=TwoWay}"
+                                                                          Background="{StaticResource ObsidianBase}" Foreground="{StaticResource ObsidianText}" 
+                                                                          BorderThickness="1" BorderBrush="#333"/>
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                                <!-- МОТОР button -->
+                                                <Button x:Name="BtnFilmMotor" Content="🎬 МОТОР  →  ПОДНЯТЬ ТАБЛИЧКИ" Height="32" Margin="0,6,0,0"
+                                                        Background="#0a2a0a" Foreground="{StaticResource ColorSuccess}" FontWeight="Bold"
+                                                        FontSize="{DynamicResource FontSizeCaption}" BorderBrush="#1a4a1a" BorderThickness="1"
+                                                        Click="BtnFilmMotor_Click" Style="{StaticResource FlatButton}"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Vote Results Summary -->
+                                        <Border x:Name="FilmVoteResultsPanel" Background="#0a0a14" CornerRadius="4" 
+                                                Margin="0,2" Padding="6,4" Visibility="Collapsed" BorderBrush="#1a1a3a" BorderThickness="1">
+                                            <StackPanel>
+                                                <TextBlock Text="📊 ИТОГИ ГОЛОСОВАНИЯ" Foreground="{StaticResource ColorInfo}" 
+                                                           FontSize="{DynamicResource FontSizeXXSmall}" FontWeight="Bold" Margin="0,0,0,2"/>
+                                                <TextBlock x:Name="TxtFilmVoteResults" Foreground="{StaticResource ObsidianText}" 
+                                                           FontSize="{DynamicResource FontSizeXXSmall}" TextWrapping="Wrap" FontFamily="Consolas"/>
+                                                <TextBlock x:Name="TxtFilmVoteTally" Foreground="{StaticResource ColorGold}" 
+                                                           FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold" Margin="0,4,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Step 3: ОБСУЖДЕНИЕ -->
+                                        <Button x:Name="BtnFilmDiscussion" Content="🗣️ ОБСУЖДЕНИЕ" Height="32" Margin="0,2"
+                                                Background="#1a1a10" Foreground="{StaticResource ColorOrange}" FontWeight="Bold"
+                                                FontSize="{DynamicResource FontSizeCaption}" BorderBrush="#3a3a20" BorderThickness="1"
+                                                Click="BtnFilmDiscussion_Click" Style="{StaticResource FlatButton}" Visibility="Collapsed"/>
+
+                                        <!-- Step 4: ПРОЩАНИЕ + ELIMINATE -->
+                                        <StackPanel x:Name="FilmEliminatePanel" Margin="0,2" Visibility="Collapsed">
+                                            <!-- Tie info (hidden when no tie) -->
+                                            <Border x:Name="FilmTieInfoPanel" Background="#1a1a0a" CornerRadius="4" 
+                                                    Padding="6,4" Margin="0,0,0,4" Visibility="Collapsed" BorderBrush="#3a3a1a" BorderThickness="1">
+                                                <StackPanel>
+                                                    <TextBlock x:Name="TxtFilmTieInfo" Text="" 
+                                                               Foreground="{StaticResource ColorWarning}" FontWeight="Bold" 
+                                                               FontSize="{DynamicResource FontSizeCaption}" Margin="0,0,0,4"/>
+                                                    <ItemsControl x:Name="FilmTieCandidates"/>
+                                                </StackPanel>
+                                            </Border>
+                                            <!-- Normal eliminate row -->
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock x:Name="TxtFilmEliminateTarget" Text="ВЫБЫВАЕТ: —" 
+                                                           Foreground="{StaticResource ColorDanger}" FontWeight="Bold" 
+                                                           FontSize="{DynamicResource FontSizeCaption}" VerticalAlignment="Center"/>
+                                                <Button x:Name="BtnFilmEliminate" Grid.Column="1" Content="👋 ПРОЩАЙТЕ" Width="130" Height="32"
+                                                        Background="#2a0a0a" Foreground="{StaticResource ColorRed}" FontWeight="Bold"
+                                                        FontSize="{DynamicResource FontSizeCaption}" BorderBrush="#4a1a1a" BorderThickness="1"
+                                                        Click="BtnFilmEliminate_Click" Style="{StaticResource FlatButton}"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- === MUSIC CONTROL PANEL (скрыта — музыка автоматическая) === -->
                                 <Border Background="#141418" CornerRadius="{DynamicResource CornerRadiusStandard}" Margin="0,4,0,0" Padding="4,3"
-                                        BorderBrush="#2A2A30" BorderThickness="1">
+                                        BorderBrush="#2A2A30" BorderThickness="1" Visibility="Collapsed">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
@@ -1950,6 +2174,10 @@
                                            Background="Transparent" BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="1"
                                            Foreground="{StaticResource ObsidianTextSecondary}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"
                                            Click="BtnEditorSave_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnValidateJson" Content="✓ VALIDATE" Height="28" Padding="10,0" Margin="0,0,4,0"
+                                           Background="Transparent" BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="1"
+                                           Foreground="{StaticResource ColorSuccess}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"
+                                           Click="BtnValidateJson_Click" Style="{StaticResource FlatButton}"/>
                                     <TextBlock x:Name="TxtEditorSaveToast" Text="" Foreground="{StaticResource ColorSuccess}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"
                                                VerticalAlignment="Center" Margin="8,0,0,0" Opacity="0"/>
                                 </StackPanel>
@@ -2182,6 +2410,23 @@
                                     </StackPanel>
                                 </Border>
 
+                                <!-- Подзвучивать события раунда -->
+                                <Border Background="{StaticResource ObsidianCard}" CornerRadius="{DynamicResource CornerRadiusXLarge}" Padding="16" Margin="0,0,0,12" 
+                                        BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                            <TextBlock Text="Подзвучивать события раунда" Foreground="{StaticResource ObsidianText}" FontSize="{DynamicResource FontSizeSubheader}" FontWeight="SemiBold"/>
+                                            <TextBlock Text="Короткие звуки при нажатии Wrong, Bank, Correct" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="{DynamicResource FontSizeCaption}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <CheckBox x:Name="ChkRoundSfx" Grid.Column="1" VerticalAlignment="Center"
+                                                  Style="{StaticResource ObsidianCheckBox}"/>
+                                    </Grid>
+                                </Border>
+
                                 <!-- Номер пульта (info) -->
                                 <Border Background="{StaticResource ObsidianCard}" CornerRadius="{DynamicResource CornerRadiusXLarge}" Padding="16" Margin="0,0,0,12" 
                                         BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="1">
@@ -2203,26 +2448,14 @@
                     </Grid>
 
                         </Grid>
+                        </Border>
                     </Border>
                 </Grid>
 
                 <!-- ПРАВАЯ КОЛОНКА: Панель управления -->
                 <Border Grid.Column="2" Background="{StaticResource ObsidianSurface}" BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1,0,0,0" Margin="0" CornerRadius="12,0,0,0" Padding="15,20,15,20" Panel.ZIndex="10">
                     <DockPanel LastChildFill="True">
-                        <!-- Низ правой панели: Экспорт + Паника -->
-                        <StackPanel DockPanel.Dock="Bottom">
-                            <Border Height="1" Background="{StaticResource ObsidianBorderStrong}" Margin="4,0,4,6"/>
-                            <TextBlock x:Name="TxtExportLabel" Text="ЭКСПОРТ" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,4"/>
-                            <UniformGrid Columns="2" Margin="2,0,2,4">
-                                <Button x:Name="BtnExportCSV" Content="📊 CSV" Background="{StaticResource ObsidianCard}" Foreground="{StaticResource ObsidianText}" 
-                                        Height="32" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold" Margin="0,0,2,0" 
-                                        Click="BtnExportCSV_Click" Style="{StaticResource FlatButton}"/>
-                                <Button x:Name="BtnExportHTML" Content="📄 HTML" Background="{StaticResource ObsidianCard}" Foreground="{StaticResource ObsidianText}" 
-                                        Height="32" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold" Margin="2,0,0,0"
-                                        Click="BtnExportHTML_Click" Style="{StaticResource FlatButton}"/>
-                            </UniformGrid>
-                            <Button x:Name="BtnPanic" Content="! ПАНИКА !" Background="{StaticResource ColorDanger}" Foreground="White" Height="45" FontWeight="Black" Margin="2,4" Click="BtnPanic_Click" Style="{StaticResource FlatButton}"/>
-                        </StackPanel>
+                        <!-- Низ правой панели — перенесён в Инструменты -->
 
                         <!-- Основное содержимое правой панели (без скролла) -->
                         <StackPanel Margin="0">
@@ -2233,26 +2466,22 @@
                             <StackPanel>
                                 <TextBlock Text="▶ РАУНД" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="{DynamicResource FontSizeXSmall}" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
                                 <UniformGrid Columns="2">
-                                    <Button Content="READY" x:Name="BtnStartRound" Background="{StaticResource ColorSuccess}" Foreground="White" FontWeight="Bold" Height="40" Margin="2" Click="BtnReady_Click" Style="{StaticResource FlatButton}"/>
-                                    <Button Content="START O'CLOCK" x:Name="BtnPlay" Background="{StaticResource ColorInfo}" Foreground="White" FontWeight="Bold" Height="40" Margin="2" Click="BtnPlay_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnStartRound" Background="{StaticResource ColorSuccess}" Foreground="White" FontWeight="Bold" Height="40" Margin="2" Click="BtnReady_Click" Style="{StaticResource FlatButton}">
+                                        <Grid HorizontalAlignment="Stretch">
+                                            <TextBlock Text="READY" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Button>
+                                    <Button x:Name="BtnPlay" Background="{StaticResource ColorInfo}" Foreground="White" FontWeight="Bold" Height="40" Margin="2" Click="BtnPlay_Click" Style="{StaticResource FlatButton}">
+                                        <Grid HorizontalAlignment="Stretch">
+                                            <TextBlock Text="START O'CLOCK" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Button>
                                 </UniformGrid>
                                 <Button Content="CLOSE ROUND" x:Name="BtnNextRound" Background="{StaticResource ObsidianBorderStrong}" Foreground="{StaticResource ObsidianText}" Height="34" Margin="2,6,2,0" Click="BtnNextRound_Click" Style="{StaticResource FlatButton}"/>
                                 <Button Content="⏩ ЗАВЕРШИТЬ РАУНД" x:Name="BtnDebugEndRoundTimer" Background="{StaticResource ColorPurple}" Foreground="White" FontWeight="Bold" Height="34" Margin="2,4,2,0" Click="BtnDebugEndRoundTimer_Click" Style="{StaticResource FlatButton}" Visibility="Collapsed"/>
                             </StackPanel>
                         </Border>
                         
-                        <!-- PRE-GAME: Студийное вступление -->
-                        <Border x:Name="PreGameButtons" Background="{StaticResource ObsidianCard}" CornerRadius="{DynamicResource CornerRadiusXLarge}" Padding="10" Margin="0,0,0,8" Visibility="Collapsed">
-                            <StackPanel>
-                                <TextBlock Text="PRE-GAME" Foreground="{StaticResource ColorBlurple}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
-                                <UniformGrid Columns="2">
-                                    <Button x:Name="BtnOpeningUI" Content="OPENING" Background="{StaticResource ColorBlurple}" Foreground="White" Height="34" Margin="2" FontWeight="Bold" Click="BtnOpening_Click" Style="{StaticResource FlatButton}"/>
-                                    <Button x:Name="BtnIntro1UI" Content="INTRO 1" Background="{StaticResource ColorTeams}" Foreground="White" Height="34" Margin="2" FontWeight="Bold" IsEnabled="False" Click="BtnIntro1_Click" Style="{StaticResource FlatButton}"/>
-                                    <Button x:Name="BtnIntro2UI" Content="INTRO 2" Background="{StaticResource ColorTeams}" Foreground="White" Height="34" Margin="2" FontWeight="Bold" IsEnabled="False" Click="BtnIntro2_Click" Style="{StaticResource FlatButton}"/>
-                                    <Button x:Name="BtnRulesUI" Content="RULES" Background="{StaticResource ColorTeams}" Foreground="White" Height="34" Margin="2" FontWeight="Bold" IsEnabled="False" Click="BtnRulesIntro_Click" Style="{StaticResource FlatButton}"/>
-                                </UniformGrid>
-                            </StackPanel>
-                        </Border>
 
                         <!-- 📺 ГРАФИКА БРОДКАСТА -->
                         <Border Background="{StaticResource ObsidianCard}" CornerRadius="{DynamicResource CornerRadiusXLarge}" Padding="10" Margin="0,0,0,0">
@@ -2270,7 +2499,7 @@
                                     <Button x:Name="BtnStyleClassic" Content="🎨 CLASSIC" Height="26" Margin="2"
                                             Background="{StaticResource ObsidianBorderStrong}" Foreground="{StaticResource ObsidianText}" FontWeight="Bold" FontSize="{DynamicResource FontSizeXSmall}"
                                             Click="BtnBcStyleClassic_Click" Style="{StaticResource FlatButton}"/>
-                                    <Button x:Name="BtnStyleNew"
+                                    <Button x:Name="BtnStyleNew" Content="✨ ПРЕМИУМ"
                                             Background="{StaticResource ColorInfo}" Foreground="White" FontWeight="Bold" FontSize="{DynamicResource FontSizeXSmall}"
                                             Click="BtnBcStyleNew_Click" Style="{StaticResource FlatButton}"/>
                                 </UniformGrid>
@@ -2279,10 +2508,10 @@
                                     <ToggleButton x:Name="TglBcTimer" Content="⏱ ТАЙМЕР" Height="32" Margin="2"
                                                   Background="{StaticResource ObsidianRaised}" Foreground="{StaticResource ColorTeams}" FontWeight="Bold" FontSize="{DynamicResource FontSizeXSmall}"
                                                   Click="TglBcTimer_Click" Style="{StaticResource FlatToggleStyle}"/>
-                                    <ToggleButton x:Name="TglBcChain"
+                                    <ToggleButton x:Name="TglBcChain" Content="⛓ ЦЕПОЧКА" Height="32" Margin="2"
                                                   Background="{StaticResource ObsidianRaised}" Foreground="{StaticResource ColorTeams}" FontWeight="Bold" FontSize="{DynamicResource FontSizeXSmall}"
                                                   Click="TglBcChain_Click" Style="{StaticResource FlatToggleStyle}"/>
-                                    <ToggleButton x:Name="TglBcChainTimer"
+                                    <ToggleButton x:Name="TglBcChainTimer" Content="ОБА" Height="32" Margin="2"
                                                   Background="{StaticResource ObsidianRaised}" Foreground="{StaticResource ColorTeams}" FontWeight="Bold" FontSize="{DynamicResource FontSizeXSmall}"
                                                   Click="TglBcChainTimer_Click" Style="{StaticResource FlatToggleStyle}"/>
                                 </UniformGrid>
@@ -2291,10 +2520,49 @@
                                     <ToggleButton x:Name="TglBcBank" Content="💰 БАНК" Height="32" Margin="2"
                                                   Background="{StaticResource TintGreenDark}" Foreground="{StaticResource ColorSuccess}" FontWeight="Bold" FontSize="{DynamicResource FontSizeXSmall}"
                                                   Click="TglBcBank_Click" Style="{StaticResource FlatToggleStyle}"/>
-                                    <ToggleButton x:Name="TglBcDuel"
-                                                  Background="{StaticResource ColorPurple}" Foreground="{StaticResource ColorPurple}" FontWeight="Bold" FontSize="{DynamicResource FontSizeXSmall}"
+                                    <ToggleButton x:Name="TglBcDuel" Content="⚔ ДУЭЛЬ" Height="32" Margin="2"
+                                                  Background="{StaticResource ColorPurple}" Foreground="White" FontWeight="Bold" FontSize="{DynamicResource FontSizeXSmall}"
                                                   Click="TglBcDuel_Click" Style="{StaticResource FlatToggleStyle}"/>
                                 </UniformGrid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- PRE-GAME: Студийное вступление (всегда видна, disabled если нет вступления) -->
+                        <Border x:Name="PreGameButtons" Background="{StaticResource ObsidianCard}" CornerRadius="{DynamicResource CornerRadiusXLarge}" Padding="10" Margin="0,8,0,8" IsEnabled="False" Opacity="0.5">
+                            <StackPanel>
+                                <TextBlock Text="PRE-GAME" Foreground="{StaticResource ColorBlurple}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                <UniformGrid Columns="2">
+                                    <Button x:Name="BtnOpeningUI" Content="OPENING" Background="{StaticResource ColorBlurple}" Foreground="White" Height="34" Margin="2" FontWeight="Bold" Click="BtnOpening_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnIntro1UI" Content="INTRO 1" Background="{StaticResource ColorTeams}" Foreground="White" Height="34" Margin="2" FontWeight="Bold" Click="BtnIntro1_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnIntro2UI" Content="INTRO 2" Background="{StaticResource ColorTeams}" Foreground="White" Height="34" Margin="2" FontWeight="Bold" Click="BtnIntro2_Click" Style="{StaticResource FlatButton}"/>
+                                    <Button x:Name="BtnRulesUI" Content="RULES" Background="{StaticResource ColorTeams}" Foreground="White" Height="34" Margin="2" FontWeight="Bold" Click="BtnRulesIntro_Click" Style="{StaticResource FlatButton}"/>
+                                </UniformGrid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- СЕРВИС: Оперативные кнопки -->
+                        <Border Background="{StaticResource ObsidianCard}" CornerRadius="{DynamicResource CornerRadiusXLarge}" Padding="10" Margin="0,0,0,8">
+                            <StackPanel>
+                                <TextBlock Text="СЕРВИС" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                <Button x:Name="BtnStopAudio" Height="32" Margin="0,0,0,3" Click="BtnStopAudio_Click" Style="{StaticResource FlatButton}"
+                                        Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                        BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" FontWeight="Bold" FontSize="{DynamicResource FontSizeCaption}"
+                                        HorizontalContentAlignment="Center">
+                                    <TextBlock Text="🔇 STOP AUDIO" TextAlignment="Center"/>
+                                </Button>
+                                <Button x:Name="BtnRestartRound" Height="32" Margin="0,0,0,3" Click="BtnRestartRound_Click" Style="{StaticResource FlatButton}"
+                                        Background="#5B1A1A" Foreground="#FF9999" 
+                                        BorderBrush="#7B3333" BorderThickness="1" FontWeight="Bold" FontSize="{DynamicResource FontSizeCaption}"
+                                        HorizontalContentAlignment="Center">
+                                    <TextBlock Text="🔄 RESTART ROUND" TextAlignment="Center"/>
+                                </Button>
+                                <Button x:Name="BtnCloseSession" Height="32" Margin="0,0,0,3" Click="BtnCloseSession_Click" Style="{StaticResource FlatButton}"
+                                        Background="{StaticResource ObsidianSurface}" Foreground="{StaticResource ObsidianTextPrimary}" 
+                                        BorderBrush="{StaticResource ObsidianBorder}" BorderThickness="1" FontWeight="Bold" FontSize="{DynamicResource FontSizeCaption}"
+                                        HorizontalContentAlignment="Center">
+                                    <TextBlock Text="🚪 CLOSE SESSION" TextAlignment="Center"/>
+                                </Button>
+                                <Button x:Name="BtnPanic" Content="! ПАНИКА !" Background="{StaticResource ColorDanger}" Foreground="White" Height="38" FontWeight="Black" Margin="0,4,0,0" Click="BtnPanic_Click" Style="{StaticResource FlatButton}"/>
                             </StackPanel>
                         </Border>
                         </StackPanel>

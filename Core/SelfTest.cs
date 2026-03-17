@@ -27,7 +27,7 @@ namespace WeakestLink.Core
         /// <summary>
         /// Запуск всех тестов. Возвращает полный отчёт.
         /// </summary>
-        public List<TestResult> RunAll(string operatorPanelSourcePath = null)
+        public List<TestResult> RunAll(string? operatorPanelSourcePath = null)
         {
             _results.Clear();
 

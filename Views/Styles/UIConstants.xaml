@@ -17,6 +17,7 @@
 
     <!-- ═══ LAYOUT SIZES ═══ -->
     <sys:Double x:Key="SidebarWidth">220</sys:Double>
+    <GridLength x:Key="SidebarGridWidth">220</GridLength>
     <sys:Double x:Key="TitleBarHeight">42</sys:Double>
     <sys:Double x:Key="StatusBarHeight">24</sys:Double>
 

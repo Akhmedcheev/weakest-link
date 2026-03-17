@@ -56,6 +56,7 @@
     <Resource Include="Assets\Images\*" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="hidlibrary" Version="3.3.40" />
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="QRCoder" Version="1.7.0" />
   </ItemGroup>

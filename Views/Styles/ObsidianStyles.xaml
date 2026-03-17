@@ -70,9 +70,9 @@
     <SolidColorBrush x:Key="FireButtonCorrectHover" Color="#2db86b"/> <!-- ВЕРНО (hover) -->
     <SolidColorBrush x:Key="FireButtonCorrectPress" Color="#1a8a44"/> <!-- ВЕРНО (pressed) -->
 
-    <SolidColorBrush x:Key="FireButtonBank"        Color="#FFD700"/>  <!-- БАНК -->
-    <SolidColorBrush x:Key="FireButtonBankHover"   Color="#FFE033"/>  <!-- БАНК (hover) -->
-    <SolidColorBrush x:Key="FireButtonBankPress"   Color="#D4B400"/>  <!-- БАНК (pressed) -->
+    <SolidColorBrush x:Key="FireButtonBank"        Color="#1565C0"/>  <!-- БАНК (синий, как на пульте) -->
+    <SolidColorBrush x:Key="FireButtonBankHover"   Color="#1976D2"/>  <!-- БАНК (hover) -->
+    <SolidColorBrush x:Key="FireButtonBankPress"   Color="#0D47A1"/>  <!-- БАНК (pressed) -->
 
     <SolidColorBrush x:Key="FireButtonWrong"       Color="#da373c"/>  <!-- НЕВЕРНО -->
     <SolidColorBrush x:Key="FireButtonWrongHover"  Color="#e54e52"/>  <!-- НЕВЕРНО (hover) -->
@@ -357,10 +357,10 @@
         <Setter Property="Foreground" Value="White"/>
     </Style>
 
-    <!-- FireBankButton: БАНК — золотой с hover/pressed -->
+    <!-- FireBankButton: БАНК — синий (как на пульте РФ) с hover/pressed -->
     <Style x:Key="FireBankButton" TargetType="Button" BasedOn="{StaticResource GameButtonPressStyle}">
         <Setter Property="Background" Value="{StaticResource FireButtonBank}"/>
-        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Foreground" Value="White"/>
     </Style>
 
     <!-- FireWrongButton: НЕВЕРНО — красный с hover/pressed -->
@@ -463,10 +463,12 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{DynamicResource CornerRadiusStandard}"
-                            Padding="{TemplateBinding Padding}">
-                        <Grid>
-                            <Border x:Name="HoverOverlay" Background="White" Opacity="0" CornerRadius="{DynamicResource CornerRadiusStandard}"/>
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            Padding="{TemplateBinding Padding}"
+                            ClipToBounds="True">
+                        <Grid Margin="-12,-6">
+                            <Border x:Name="HoverOverlay" Background="#20FFFFFF" Opacity="0"/>
+                            <ContentPresenter Margin="12,6"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                               TextBlock.Foreground="{TemplateBinding Foreground}"
                                               TextBlock.FontSize="{TemplateBinding FontSize}"
@@ -475,14 +477,13 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="0.1"/>
+                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="1"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="0"/>
                             <Setter TargetName="RootBorder" Property="Opacity" Value="0.75"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="RootBorder" Property="Opacity" Value="0.4"/>
+                            <Setter TargetName="RootBorder" Property="Opacity" Value="0.75"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

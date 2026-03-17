@@ -32,6 +32,7 @@ namespace WeakestLink.Audio
         /// </summary>
         /// <param name="filePath">Путь к файлу относительно корня приложения.</param>
         /// <returns>Task, завершающийся когда трек доигран или произошла ошибка.</returns>
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
         public Task PlayOneShotAsync(string filePath)
         {
             var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -93,12 +94,13 @@ namespace WeakestLink.Audio
         /// <param name="filePath">Путь к файлу относительно корня приложения.</param>
         /// <param name="loop">Нужно ли зацикливать воспроизведение.</param>
         /// <param name="startFromSeconds">Если > 0, начинает воспроизведение с указанной секунды.</param>
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
         public void Play(string filePath, bool loop = false, double startFromSeconds = 0)
         {
             try
             {
-                string fullPath = Path.IsPathRooted(filePath) 
-                    ? filePath 
+                string fullPath = Path.IsPathRooted(filePath)
+                    ? filePath
                     : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filePath);
 
                 if (!File.Exists(fullPath)) return;
@@ -424,6 +426,39 @@ namespace WeakestLink.Audio
                 }
             }
             catch { }
+        }
+
+        /// <summary>
+        /// Воспроизводит короткий звуковой эффект (SFX) на отдельном канале,
+        /// не прерывая ни основное воспроизведение, ни one-shot.
+        /// Идеально для коротких feedback-звуков (wrong, correct, bank).
+        /// </summary>
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public void PlaySfx(string filePath)
+        {
+            try
+            {
+                string fullPath = Path.IsPathRooted(filePath)
+                    ? filePath
+                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filePath);
+
+                if (!File.Exists(fullPath)) return;
+
+                var device = new WaveOutEvent();
+                var reader = new AudioFileReader(fullPath);
+
+                device.PlaybackStopped += (s, e) =>
+                {
+                    try { device.Dispose(); reader.Dispose(); } catch { }
+                };
+
+                device.Init(reader);
+                device.Play();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"PlaySfx error: {ex.Message}");
+            }
         }
 
         /// <summary>

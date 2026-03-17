@@ -128,12 +128,12 @@ namespace WeakestLink.Core
         /// <summary>
         /// Событие, вызываемое при успешном переходе в новое состояние (State Machine).
         /// </summary>
-        public event EventHandler<StateChangedEventArgs> StateChanged;
+        public event EventHandler<StateChangedEventArgs>? StateChanged;
 
         /// <summary>
         /// Событие, вызываемое при изменении текущей цепочки или банков (Round/Total).
         /// </summary>
-        public event EventHandler<BankChangedEventArgs> BankChanged;
+        public event EventHandler<BankChangedEventArgs>? BankChanged;
 
         public int MaxRoundBank { get; } = 50000;
 

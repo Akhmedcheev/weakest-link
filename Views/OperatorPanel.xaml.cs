@@ -55,7 +55,7 @@ namespace WeakestLink.Views
         private static readonly SolidColorBrush BrushActiveGreen = ColorResourceHelper.ColorSuccess;
         private static readonly SolidColorBrush BrushActiveRed = ColorResourceHelper.ColorDanger;
         private static readonly SolidColorBrush BrushBankOrange = ColorResourceHelper.ColorWarning;
-
+        private static readonly SolidColorBrush BrushBankBlue = new SolidColorBrush(Color.FromRgb(0x15, 0x65, 0xC0));
         // Timer Hub adaptive color brushes (из Color Bible)
         private static readonly Color HubColorNormal   = Color.FromRgb(0x4F, 0x6B, 0xED);  // Blurple (Info)
         private static readonly Color HubColorGlow     = Color.FromRgb(0x58, 0xA6, 0xFF);  // Bright Cyan (Info bright)
@@ -69,8 +69,8 @@ namespace WeakestLink.Views
         private int _hubRoundDuration = 0;
         private static readonly SolidColorBrush BrushPassNeutral = ColorResourceHelper.ObsidianTextSecondary;
         private static readonly SolidColorBrush BrushPlayBlue = ColorResourceHelper.ColorInfo;
-        private static readonly SolidColorBrush BrushStartClock = ColorResourceHelper.ColorSuccess;
-        private static readonly SolidColorBrush BrushStartClockFg = ColorResourceHelper.ColorSuccess;
+        private static readonly SolidColorBrush BrushStartClock = new SolidColorBrush(Color.FromRgb(0xE6, 0xA8, 0x17));
+        private static readonly SolidColorBrush BrushStartClockFg = Brushes.White;
         // Отключённые кнопки: используют Color Bible
         private static readonly SolidColorBrush BrushDisabledGray = ColorResourceHelper.ObsidianSurface;
         private static readonly SolidColorBrush BrushDisabledForeground = ColorResourceHelper.ObsidianTextDisabled;
@@ -103,8 +103,8 @@ namespace WeakestLink.Views
             public bool IsActive { get; set; }
             public int Index { get; set; }
             public string ValueDisplay => Value.ToString("N0") + " ₽";
-            public string Background => IsActive ? ColorResourceHelper.ColorGold.Color.ToString() : ColorResourceHelper.ObsidianBg.Color.ToString();
-            public string TextColor => IsActive ? ColorResourceHelper.ObsidianBg.Color.ToString() : "White";
+            public string Background => IsActive ? "#D30000" : "#001E50"; // Красный (активный) и глубокий синий (неактивный)
+            public string TextColor => "White";
         }
         
         public class EliminationComboItem
@@ -275,6 +275,7 @@ namespace WeakestLink.Views
         private bool _isAutoTestRunning = false;
         private bool _isSessionStarted = false;
         private GeminiTestPlayer? _aiPlayer;
+        private AiHostService? _aiHost;
 
         public OperatorPanel()
         {
@@ -511,7 +512,7 @@ namespace WeakestLink.Views
                     break;
                 case "PASS":
                     if (PlayContext.Visibility == Visibility.Visible)
-                        BtnPass_Click(null, null);
+                        BtnWrong_Click(null, null);
                     break;
                 case "NEXT":
                     if (PlayContext.Visibility == Visibility.Visible)
@@ -886,22 +887,18 @@ namespace WeakestLink.Views
 
         private async void SimulateButtonPress(Button btn)
         {
-            var border = VisualTreeHelper.GetChild(btn, 0) as Border;
-            if (border == null) return;
-
-            var origThickness = border.BorderThickness;
-            var origMargin = border.Margin;
-            var origOpacity = border.Opacity;
-
-            border.BorderThickness = new Thickness(0, 2, 0, 0);
-            border.Margin = new Thickness(0, 3, 0, -3);
-            border.Opacity = 0.82;
-
-            await Task.Delay(120);
-
-            border.BorderThickness = origThickness;
-            border.Margin = origMargin;
-            border.Opacity = origOpacity;
+            if (btn == null || !btn.IsEnabled) return;
+            try
+            {
+                var method = typeof(System.Windows.Controls.Primitives.ButtonBase).GetMethod("set_IsPressed", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                if (method != null)
+                {
+                    method.Invoke(btn, new object[] { true });
+                    await Task.Delay(120);
+                    method.Invoke(btn, new object[] { false });
+                }
+            }
+            catch { }
         }
 
         private static readonly SolidColorBrush StatusBgDefault     = new(Color.FromRgb(0x2D, 0x2D, 0x2D));
@@ -1157,7 +1154,7 @@ namespace WeakestLink.Views
                 if (TxtRoundNumberCenter != null)
                 {
                     TxtRoundNumberCenter.Text = e.CurrentRound == 0 ? "—" : e.CurrentRound.ToString();
-                    TimerArchBorder.Visibility = e.CurrentRound > 0 ? Visibility.Visible : Visibility.Collapsed;
+                    // TimerArchBorder убран из UI
                 }
 
                 // Обновляем левый мини-сайдбар
@@ -1244,6 +1241,10 @@ namespace WeakestLink.Views
                             _hostModernPremiumScreen?.ShowFullBank(_lastRoundBankForSummary);
 
                             _engine.TransitionTo(GameState.RoundSummary);
+
+                            // AI-ведущая: полный банк досрочно
+                            if (_aiHost != null && _aiHost.IsEnabled)
+                                _ = _aiHost.OnFullBankAsync(_engine.TotalBank);
                         }
                     }
                 }
@@ -1269,7 +1270,7 @@ namespace WeakestLink.Views
                 _hostModernScreen?.UpdateQuestion(timeoutMessage, "—", _questionCount);
                 _hostPremiumScreen?.UpdateQuestion(timeoutMessage, "—", _questionCount);
                 _hostModernPremiumScreen?.UpdateQuestion(timeoutMessage, "—", _questionCount);
-                _server.Broadcast($"QUESTION|{timeoutMessage}|—|{_questionCount}");
+                // Не шлём через Broadcast — BroadcastWindow и AudienceScreen не должны видеть это сообщение
             }
 
             if (_timeLeftSeconds > 0)
@@ -1282,6 +1283,10 @@ namespace WeakestLink.Views
                 _roundTimer.Stop();
                 _isAutoTestRunning = false;
                 Log("ВРЕМЯ ВЫШЛО!");
+
+                // AI-ведущая: время вышло
+                if (_aiHost != null && _aiHost.IsEnabled)
+                    _ = _aiHost.OnTimeUpAsync();
                 
                 try 
                 {
@@ -1324,6 +1329,14 @@ namespace WeakestLink.Views
 
                             _audioManager.StartBedWithFadeIn("general_bed.mp3", 2.0);
                             _engine.TransitionTo(GameState.RoundSummary);
+
+                            // AI-ведущая: итоги раунда
+                            if (_aiHost != null && _aiHost.IsEnabled)
+                            {
+                                int maxPossible = _engine.BankChain != null && _engine.BankChain.Length > 0
+                                    ? _engine.BankChain[_engine.BankChain.Length - 1] : 0;
+                                _ = _aiHost.OnRoundResultAsync(_lastRoundBankForSummary, maxPossible, _engine.TotalBank);
+                            }
                         }
                     }
                 }
@@ -1529,19 +1542,34 @@ namespace WeakestLink.Views
 
         #region Обработчики кнопок
 
-        private void BtnCorrect_Click(object sender, RoutedEventArgs e)
+        private async void BtnCorrect_Click(object sender, RoutedEventArgs e)
         {
+            if (_engine.CurrentState != GameState.Playing) return;
             try
             {
+                // SFX feedback
+                if (ChkRoundSfx.IsChecked == true)
+                    _audioManager.PlaySfx(@"Assets\Audio\ROUND SFX\CORRECT.mp3");
+
+                // Небольшая задержка, чтобы WPF успел отрисовать визуальный эффект нажатия (IsPressed) перед зависанием потока
+                await Task.Delay(50);
+                
+                // Если мы кликнули мышью/USB, система залипает. Принудительный сброс стейта.
+                SimulateButtonPress(BtnCorrect);
+
                 string player = _engine.CurrentPlayerTurn;
                 _engine.CorrectAnswer();
                 SetOperatorAction($"Принято: ВЕРНО ({player})");
                 Log($"ВЕРНО! Игрок {player} (+1 к статистике). Теперь ход: {_engine.CurrentPlayerTurn}");
+                UpdateMacroPadStatus(player, "✓ ВЕРНО", "#4ADE80", "#0D2A1A", "#2E6644");
                 UpdateStatsTable();
                 UpdateBankChainUI();
                 TxtRoundBank.Text = _engine.RoundBank.ToString("N0");
                 TxtTotalBank.Text = _engine.TotalBank.ToString("N0");
                 
+                // AI-ведущая: верный ответ
+                _aiHost?.OnCorrectAnswer(player, _currentQuestion?.Text ?? "", _currentQuestion?.Answer ?? "", _engine.CurrentChainIndex);
+
                 // ПУЛЕМЕТНЫЙ ТЕМП: грузим следующий вопрос сразу
                 LoadNextQuestion();
             }
@@ -1551,20 +1579,34 @@ namespace WeakestLink.Views
             }
         }
 
-        private void BtnWrong_Click(object sender, RoutedEventArgs e)
+        private async void BtnWrong_Click(object sender, RoutedEventArgs e)
         {
+            if (_engine.CurrentState != GameState.Playing) return;
             try
             {
+                // SFX feedback
+                if (ChkRoundSfx.IsChecked == true)
+                    _audioManager.PlaySfx(@"Assets\Audio\ROUND SFX\WRONG.mp3");
+
+                // Небольшая задержка, чтобы WPF успел отрисовать визуальный эффект нажатия
+                await Task.Delay(50);
+                SimulateButtonPress(BtnWrong);
+
                 string player = _engine.CurrentPlayerTurn;
                 _engine.WrongAnswer();
                 SetOperatorAction($"Принято: НЕВЕРНО ({player})");
                 Log($"НЕВЕРНО! Цепочка сброшена ({player}). Теперь ход: {_engine.CurrentPlayerTurn}");
+                UpdateMacroPadStatus(player, "✗ НЕВЕРНО", "#F87171", "#2A0D0D", "#662E2E");
                 UpdateStatsTable();
                 UpdateBankChainUI();
                 TxtRoundBank.Text = _engine.RoundBank.ToString("N0");
                 TxtTotalBank.Text = _engine.TotalBank.ToString("N0");
 
-                // ПУЛЕМЕТНЫЙ ТЕМП: грузим следующий вопрос сразу
+                // AI-ведущая: неверный ответ — ждём пока договорит
+                if (_aiHost != null && _aiHost.IsEnabled)
+                    await _aiHost.OnWrongAnswerAsync(player, _currentQuestion?.Text ?? "", _currentQuestion?.Answer ?? "");
+
+                // Грузим следующий вопрос (после реплики ведущей)
                 LoadNextQuestion();
             }
             catch (Exception ex)
@@ -1575,24 +1617,8 @@ namespace WeakestLink.Views
 
         private void BtnPass_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                string player = _engine.CurrentPlayerTurn;
-                _engine.Pass();
-                SetOperatorAction($"Принято: ПАС ({player})");
-                Log($"ПАС! {player} передал ход. Цепочка сброшена.");
-                UpdateStatsTable();
-                UpdateBankChainUI();
-                TxtRoundBank.Text = _engine.RoundBank.ToString("N0");
-                TxtTotalBank.Text = _engine.TotalBank.ToString("N0");
-
-                // ПУЛЕМЕТНЫЙ ТЕМП: грузим следующий вопрос сразу
-                LoadNextQuestion();
-            }
-            catch (Exception ex)
-            {
-                Log("ОШИБКА: " + ex.Message);
-            }
+            // ПАС упразднён — теперь это эквивалент НЕВЕРНО
+            BtnWrong_Click(sender, e);
         }
 
         private void BtnBank_Click(object sender, RoutedEventArgs e)
@@ -1602,10 +1628,17 @@ namespace WeakestLink.Views
                 int indexBefore = _engine.CurrentChainIndex;
                 if (indexBefore > 0)
                 {
+                    // SFX feedback
+                    if (ChkRoundSfx.IsChecked == true)
+                        _audioManager.PlaySfx(@"Assets\Audio\ROUND SFX\BANK.mp3");
+
                     int value = _engine.BankChain[indexBefore - 1];
+                    string player = _engine.CurrentPlayerTurn;
                     _engine.Bank();
                     SetOperatorAction($"Принято: БАНК +{value:N0} ₽");
                     Log($"БАНК! +{value}. Всего в раунде: {_engine.RoundBank}");
+                    _aiHost?.OnBank(player, _engine.RoundBank);
+                    UpdateMacroPadStatus(player, $"💰 БАНК +{value:N0}₽", "#60A5FA", "#0D1A2A", "#2E5066");
                     UpdateStatsTable();
                     UpdateBankChainUI();
                     TxtRoundBank.Text = _engine.RoundBank.ToString("N0");
@@ -1623,7 +1656,8 @@ namespace WeakestLink.Views
             }
         }
 
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+
+        private async void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             // Ctrl+Q — скриншот в любом состоянии
             if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Q)
@@ -1633,23 +1667,60 @@ namespace WeakestLink.Views
                 return;
             }
 
+            // Обработка кнопки READY (S на макропаде = Start, стрелка ВВЕРХ, R на клавиатуре)
+            if (e.Key == Key.Up || e.Key == Key.R || e.Key == Key.S)
+            {
+                if (BtnStartRound.IsEnabled)
+                {
+                    e.Handled = true;
+                    SimulateButtonPress(BtnStartRound);
+                    await Task.Delay(30);
+                    BtnReady_Click(null!, null!);
+                    return;
+                }
+            }
+
+            // START O'CLOCK (S макропада если READY неактивен, Enter, F9)
+            if (e.Key == Key.S || e.Key == Key.Enter || e.Key == Key.E || e.Key == Key.F9)
+            {
+                if (BtnPlay.IsEnabled)
+                {
+                    e.Handled = true;
+                    SimulateButtonPress(BtnPlay);
+                    await Task.Delay(30);
+                    BtnPlay_Click(null!, null!);
+                    return;
+                }
+            }
+
             if (_engine.CurrentState != GameState.Playing) return;
 
             switch (e.Key)
             {
-                case Key.Right: // ВЕРНО
+                case Key.Right: // CORRECT (стрелка)
+                case Key.C:     // CORRECT (макропад — C)
+                    e.Handled = true;
+                    SimulateButtonPress(BtnCorrect);
+                    await Task.Delay(30);
                     BtnCorrect_Click(null, null);
                     break;
-                case Key.Left:  // НЕВЕРНО
+                case Key.Left:  // WRONG (стрелка)
+                case Key.Down:  // WRONG (стрелка вниз)
+                case Key.Back:  // WRONG (Backspace)
+                case Key.W:     // WRONG (макропад — W)
+                    e.Handled = true;
+                    SimulateButtonPress(BtnWrong);
+                    await Task.Delay(30);
                     BtnWrong_Click(null, null);
                     break;
-                case Key.Down:  // ПАС
-                case Key.Back:  // ПАС (BACKSPACE)
-                    BtnPass_Click(null, null);
-                    break;
-                case Key.Space: // БАНК! Самая большая клавиша для самого важного действия
+                case Key.Space: // BANK (пробел)
+                case Key.B:     // BANK (макропад — B)
+                    e.Handled = true;
+                    SimulateButtonPress(BtnBank);
+                    await Task.Delay(30);
                     BtnBank_Click(null, null);
                     break;
+                // Key.S = READY/START (обрабатывается выше)
             }
         }
 
@@ -1657,7 +1728,7 @@ namespace WeakestLink.Views
         {
             try
             {
-                if ((_engine.ActivePlayers.Count <= 2 && _engine.CurrentRound > 0) || _engine.CurrentRound >= 7)
+                if ((_engine.ActivePlayers.Count < 2 && _engine.CurrentRound > 0) || _engine.CurrentRound >= 7)
                 {
                     if (TglAutoBot != null && TglAutoBot.IsChecked == true)
                     {
@@ -1694,7 +1765,7 @@ namespace WeakestLink.Views
                 if (TxtRoundNumberCenter != null)
                 {
                     TxtRoundNumberCenter.Text = _engine.CurrentRound.ToString();
-                    TimerArchBorder.Visibility = _engine.CurrentRound > 0 ? Visibility.Visible : Visibility.Collapsed;
+                    // TimerArchBorder убран из UI
                 }
 
                 _audioManager.PlayBed("playgame_with_general_bed.mp3", loop: false);
@@ -1737,13 +1808,22 @@ namespace WeakestLink.Views
                 BtnIncorrect.IsEnabled = false;
                 BtnWrong.IsEnabled = false;
                 BtnBank.IsEnabled = false;
-                if (BtnPass != null) BtnPass.IsEnabled = false;
+                // BtnPass убран — пас объединён с неверным
 
                 BtnPlay.IsEnabled = true;
                 BtnGamePlayPlay.IsEnabled = true;
-                BtnPlay.Focus();
+                // Не уводим фокус с окна, чтобы клавиши макропада продолжали работать
 
                 Log($"Раунд {_engine.CurrentRound} готов к запуску. Жмите START O'CLOCK.");
+
+                // AI-ведущая: объявление начала раунда
+                if (_aiHost != null && _aiHost.IsEnabled)
+                {
+                    string firstP = _engine.CurrentPlayerTurn ?? "";
+                    int playersCount = _engine.ActivePlayers?.Count ?? 8;
+                    int duration = (ChkTestLast30Sec != null && ChkTestLast30Sec.IsChecked == true) ? 30 : _engine.GetNewRoundDuration();
+                    _ = _aiHost.OnRoundStartAsync(_engine.CurrentRound, duration, firstP, playersCount);
+                }
             }
             catch (Exception ex)
             {
@@ -1758,8 +1838,8 @@ namespace WeakestLink.Views
                 BtnPlay.IsEnabled = false;
                 SetButtonDisabled(BtnPlay);
                 BtnGamePlayPlay.IsEnabled = false;
-                BtnGamePlayPlay.Background = new SolidColorBrush(Color.FromRgb(0x22, 0x22, 0x22));
-                BtnGamePlayPlay.Foreground = new SolidColorBrush(Color.FromRgb(0x55, 0x55, 0x55));
+                // Кнопка остаётся жёлтой благодаря BrushStartClock, но меняет Opacity (в стиле)
+
 
                 SetOperatorAction("Таймер запущен (START O'CLOCK)");
                 _server.Broadcast("HOST_MESSAGE|CLEAR");
@@ -1800,7 +1880,6 @@ namespace WeakestLink.Views
                 BtnCorrect.IsEnabled = true;
                 BtnWrong.IsEnabled = true;
                 BtnBank.IsEnabled = true;
-                if (BtnPass != null) BtnPass.IsEnabled = true;
                 BtnIncorrect.IsEnabled = true;
 
                 // Перевод фокуса на кнопку БАНК (самая частая и быстрая кнопка)
@@ -2262,7 +2341,7 @@ namespace WeakestLink.Views
                 {
                     int nextRound = _engine.CurrentRound + 1;
                     TxtRoundNumberCenter.Text = nextRound.ToString();
-                    TimerArchBorder.Visibility = Visibility.Visible;
+                    // TimerArchBorder убран из UI
                 }
             }
             catch (Exception ex)
@@ -2610,6 +2689,10 @@ namespace WeakestLink.Views
                 _server.Broadcast($"ELIMINATE|{targetName}");
                 Log($"ИГРОК ВЫБЫЛ: {targetName}. Walk of Shame запущен.");
 
+                // AI-ведущая: исключение
+                if (_aiHost != null && _aiHost.IsEnabled)
+                    _ = _aiHost.OnPlayerEliminatedAsync(targetName);
+
                 UpdateStatsTable();
                 PlayersGrid.Items.Refresh();
 
@@ -2673,6 +2756,320 @@ namespace WeakestLink.Views
             _audioManager.Play("Assets/Audio/after_walk_of_shame_bed.mp3", loop: false);
             Log("Запущен фон после интервью (After Interview Bed).");
         }
+
+        #region ── Съёмочное голосование (Film-Style Voting) ──
+
+        private class VoteBallot : System.ComponentModel.INotifyPropertyChanged
+        {
+            public string VoterName { get; set; } = "";
+            public List<string> Candidates { get; set; } = new();
+            private string? _votedFor;
+            public string? VotedFor
+            {
+                get => _votedFor;
+                set { _votedFor = value; PropertyChanged?.Invoke(this, new(nameof(VotedFor))); }
+            }
+            public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+        }
+
+        private List<VoteBallot> _filmBallots = new();
+        private string _filmEliminateTarget = "";
+        private List<string> _filmTiedCandidates = new();
+        private string _filmStrongestLink = "";
+        private string _filmTieInfoText = "";
+
+        /// <summary>Opens the film-style voting panel after a round ends.</summary>
+        private void OpenFilmVoting()
+        {
+            // Build ballots
+            var players = _engine.ActivePlayers.ToList();
+            _filmBallots = players.Select(p => new VoteBallot
+            {
+                VoterName = p,
+                Candidates = players.Where(c => c != p).ToList()
+            }).ToList();
+
+            FilmVoteGrid.ItemsSource = _filmBallots;
+
+            // Reset UI states
+            BtnFilmSting.IsEnabled = true;
+            BtnFilmSting.Visibility = Visibility.Visible;
+            FilmVoteCollectionPanel.Visibility = Visibility.Collapsed;
+            BtnFilmDiscussion.Visibility = Visibility.Collapsed;
+            FilmEliminatePanel.Visibility = Visibility.Collapsed;
+            FilmVoteResultsPanel.Visibility = Visibility.Collapsed;
+            TxtFilmVoteStep.Text = "ШАГ 1/4";
+            TxtFilmVotePhase.Text = "🎬 ГОЛОСОВАНИЕ (СЪЁМКА)";
+            _filmTiedCandidates = new();
+            _filmStrongestLink = "";
+            _filmTieInfoText = "";
+
+            FilmVotingPanel.Visibility = Visibility.Visible;
+            // Скрыть старую систему чтобы освободить место
+            VotingBorder.Visibility = Visibility.Collapsed;
+            RevealProgressPanel.Visibility = Visibility.Collapsed;
+            ExpressVotingPanel.Visibility = Visibility.Collapsed;
+            Log("🎬 Съёмочное голосование открыто.");
+        }
+
+        // Step 1: ОТБИВКА → СТОП МОТОР
+        private void BtnFilmSting_Click(object sender, RoutedEventArgs e)
+        {
+            _audioManager.Stop();
+            _audioManager.Play("Assets/Audio/sting4.mp3", loop: false);
+            Log("🔔 ОТБИВКА → СТОП МОТОР. Оператор собирает голоса.");
+
+            BtnFilmSting.IsEnabled = false;
+            BtnFilmSting.Visibility = Visibility.Collapsed;
+            FilmVoteCollectionPanel.Visibility = Visibility.Visible;
+            TxtFilmVoteStep.Text = "ШАГ 2/4";
+            TxtFilmVotePhase.Text = "📋 СТОП МОТОР — СБОР ГОЛОСОВ";
+        }
+
+        // Step 2: МОТОР → поднять таблички
+        private void BtnFilmMotor_Click(object sender, RoutedEventArgs e)
+        {
+            // Tally votes
+            var voteCounts = new Dictionary<string, int>();
+            foreach (var ballot in _filmBallots)
+            {
+                if (!string.IsNullOrEmpty(ballot.VotedFor))
+                {
+                    voteCounts.TryGetValue(ballot.VotedFor, out int c);
+                    voteCounts[ballot.VotedFor] = c + 1;
+                }
+            }
+
+            if (voteCounts.Count == 0)
+            {
+                DarkMessageBox.Show("Заполните хотя бы один голос!", "Голоса не введены",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Find max votes
+            int maxVotes = voteCounts.Values.Max();
+            var topVoted = voteCounts.Where(kv => kv.Value == maxVotes).Select(kv => kv.Key).ToList();
+
+            if (topVoted.Count > 1)
+            {
+                // НИЧЬЯ — определяем сильное звено
+                string strongestLink = "";
+                try
+                {
+                    var analytics = _statsAnalyzer.AnalyzeRound(180); // ~3 min default
+                    strongestLink = analytics.StrongestLink;
+                }
+                catch { }
+
+                Log($"⚠️ Ничья: {string.Join(", ", topVoted)} (по {maxVotes} голосов).");
+                Log($"  💪 Сильное звено: {strongestLink}");
+
+                // Убираем сильное звено из кандидатов на вылет (себя выгнать нельзя)
+                var tiedWithoutStrongest = topVoted.Where(p => p != strongestLink).ToList();
+
+                if (tiedWithoutStrongest.Count == 1)
+                {
+                    // Ничья между сильным звеном и одним другим — автоматический вылет
+                    _filmEliminateTarget = tiedWithoutStrongest.First();
+                    _filmTieInfoText = $"⚠️ Ничья. Сильное звено ({strongestLink}) в ничьей — выбывает {_filmEliminateTarget} автоматически";
+                    Log($"  🎯 Автоматическое решение: {_filmEliminateTarget} (сильное звено не может выгнать себя).");
+                }
+                else if (tiedWithoutStrongest.Count > 1)
+                {
+                    // Сильное звено выбирает — покажем в панели обсуждения
+                    _filmTiedCandidates = tiedWithoutStrongest;
+                    _filmStrongestLink = strongestLink;
+                    _filmEliminateTarget = ""; // не решено пока
+                    _filmTieInfoText = maxVotes == 1
+                        ? $"⚠️ Нет единого мнения (все по 1 гол.). Решает сильное звено ({strongestLink})"
+                        : $"⚠️ Ничья (по {maxVotes} гол.). Решает сильное звено ({strongestLink})";
+                    Log($"  ❓ Сильное звено ({strongestLink}) выбирает из: {string.Join(", ", tiedWithoutStrongest)}");
+                }
+                else
+                {
+                    // Все в ничье = сильное звено (fallback)
+                    _filmEliminateTarget = topVoted.First();
+                    _filmTieInfoText = $"⚠️ Ничья. Все кандидаты — сильное звено.";
+                }
+            }
+            else
+            {
+                _filmEliminateTarget = topVoted.First();
+            }
+
+            // Log votes
+            foreach (var ballot in _filmBallots)
+                Log($"  📋 {ballot.VoterName} → {ballot.VotedFor ?? "—"}");
+            Log($"  🎯 Выбывает: {_filmEliminateTarget} ({maxVotes} голосов)");
+
+            // Play МОТОР music
+            _audioManager.Stop();
+            _audioManager.Play("Assets/Audio/Voting_over_with_general_bed.mp3", loop: false);
+
+            // Show votes on broadcast
+            foreach (var ballot in _filmBallots)
+                _server.Broadcast($"VOTE|{ballot.VoterName}|{ballot.VotedFor ?? "—"}");
+
+            // Advance UI
+            FilmVoteCollectionPanel.Visibility = Visibility.Collapsed;
+
+            // Show vote results
+            var voteLines = _filmBallots.Select(b => $"{b.VoterName} → {b.VotedFor ?? "—"}");
+            TxtFilmVoteResults.Text = string.Join("\n", voteLines);
+
+            var tallyLines = voteCounts.OrderByDescending(kv => kv.Value)
+                .Select(kv => $"{kv.Key}: {kv.Value} гол.");
+            string eliminateText = string.IsNullOrEmpty(_filmEliminateTarget) ? "❓" : _filmEliminateTarget;
+            string tallyText = $"🎯 {string.Join("  •  ", tallyLines)}  →  ВЫБЫВАЕТ: {eliminateText}";
+            if (!string.IsNullOrEmpty(_filmTieInfoText))
+                tallyText += $"\n{_filmTieInfoText}";
+            TxtFilmVoteTally.Text = tallyText;
+            FilmVoteResultsPanel.Visibility = Visibility.Visible;
+
+            BtnFilmDiscussion.Visibility = Visibility.Visible;
+            TxtFilmVoteStep.Text = "ШАГ 3/4";
+            TxtFilmVotePhase.Text = "🎬 МОТОР — ТАБЛИЧКИ ПОДНЯТЫ";
+            Log("🎬 МОТОР! Игроки поднимают таблички.");
+        }
+
+        // Step 3: ОБСУЖДЕНИЕ
+        private void BtnFilmDiscussion_Click(object sender, RoutedEventArgs e)
+        {
+            _audioManager.Stop();
+            _audioManager.Play("Assets/Audio/lets_play.mp3", loop: false);
+            // After lets_play ends, general_bed will need to be started manually or auto
+            // For now we start general_bed after a delay
+            Task.Delay(3000).ContinueWith(_ =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    _audioManager.PlayBed("general_bed.mp3", loop: true);
+                });
+            });
+
+            BtnFilmDiscussion.Visibility = Visibility.Collapsed;
+            FilmEliminatePanel.Visibility = Visibility.Visible;
+            TxtFilmVoteStep.Text = "ШАГ 4/4";
+            TxtFilmVotePhase.Text = "🗣️ ОБСУЖДЕНИЕ";
+            Log("🗣️ ОБСУЖДЕНИЕ. lets_play.mp3 → general_bed.mp3");
+
+            // Если ничья — показать кандидатов для выбора
+            if (_filmTiedCandidates.Count > 1 && string.IsNullOrEmpty(_filmEliminateTarget))
+            {
+                FilmTieInfoPanel.Visibility = Visibility.Visible;
+                TxtFilmTieInfo.Text = $"⚠️ Ничья. Решает сильное звено ({_filmStrongestLink})";
+                BtnFilmEliminate.Visibility = Visibility.Collapsed; // скрыть пока не выбран
+
+                // Создаём кнопки для каждого кандидата
+                var wrap = new WrapPanel { Orientation = Orientation.Horizontal };
+                foreach (var candidateName in _filmTiedCandidates)
+                {
+                    var btn = new Button
+                    {
+                        Content = $"❌ {candidateName}", Height = 28, Margin = new Thickness(0, 0, 4, 2),
+                        Padding = new Thickness(10, 2, 10, 2),
+                        Background = new System.Windows.Media.SolidColorBrush(
+                            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#2a0a0a")),
+                        Foreground = System.Windows.Media.Brushes.OrangeRed,
+                        FontWeight = FontWeights.Bold, FontSize = 12,
+                        BorderBrush = System.Windows.Media.Brushes.DarkRed, BorderThickness = new Thickness(1)
+                    };
+                    string cap = candidateName;
+                    btn.Click += (s, ev) =>
+                    {
+                        _filmEliminateTarget = cap;
+                        TxtFilmEliminateTarget.Text = $"ВЫБЫВАЕТ: {cap.ToUpper()}";
+                        BtnFilmEliminate.Visibility = Visibility.Visible;
+                        FilmTieInfoPanel.Visibility = Visibility.Collapsed;
+                        Log($"  🎯 Сильное звено выбрало: {cap}");
+                    };
+                    wrap.Children.Add(btn);
+                }
+                FilmTieCandidates.Items.Clear();
+                FilmTieCandidates.Items.Add(wrap);
+            }
+            else
+            {
+                // Нет ничьей — сразу показываем
+                FilmTieInfoPanel.Visibility = Visibility.Collapsed;
+                TxtFilmEliminateTarget.Text = $"ВЫБЫВАЕТ: {_filmEliminateTarget.ToUpper()}";
+                BtnFilmEliminate.Visibility = Visibility.Visible;
+            }
+        }
+
+        // Step 4: ПРОЩАНИЕ
+        private async void BtnFilmEliminate_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(_filmEliminateTarget))
+            {
+                Log("⚠️ Нет цели для исключения!");
+                return;
+            }
+
+            BtnFilmEliminate.IsEnabled = false;
+            string target = _filmEliminateTarget;
+            Log($"👋 ПРОЩАЙТЕ: {target}. Начинаем исключение...");
+
+            try
+            {
+                // AI host farewell
+                if (_aiHost != null && _aiHost.IsEnabled)
+                    _ = _aiHost.OnPlayerEliminatedAsync(target);
+            }
+            catch (Exception ex) { Log($"AI Host error: {ex.Message}"); }
+
+            try
+            {
+                // Переход в правильное состояние
+                var state = _engine.CurrentState;
+                if (state == GameState.RoundSummary)
+                    _engine.TransitionTo(GameState.Voting);
+                else if (state != GameState.Voting && state != GameState.Elimination)
+                    Log($"⚠️ Неожиданное состояние: {state}, пробуем продолжить...");
+
+                // Engine elimination (EliminatePlayer сам удаляет из ActivePlayers)
+                _engine.EliminatePlayer(target);
+                _eliminationPerformedThisRound = true;
+            }
+            catch (Exception ex)
+            {
+                Log($"⚠️ Ошибка engine: {ex.Message}. Удаляем вручную.");
+                _engine.ActivePlayers.Remove(target);
+                _eliminationPerformedThisRound = true;
+            }
+
+            _server.Broadcast($"ELIMINATE|{target}");
+
+            UpdateStatsTable();
+            PlayersGrid.Items.Refresh();
+
+            // Audio: walk_of_shame → crossfade → general_bed
+            try
+            {
+                _audioManager.Stop();
+                await _audioManager.PlayOneShotThenGeneralBedWithCrossfadeAsync(
+                    "updated_walk_of_shame_bed.mp3", "general_bed.mp3", 3.0);
+            }
+            catch (Exception ex) { Log($"Ошибка аудио: {ex.Message}"); }
+
+            // Cleanup
+            FilmVotingPanel.Visibility = Visibility.Collapsed;
+            ExpressVotingPanel.Visibility = Visibility.Visible;
+
+            try
+            {
+                if (_engine.CurrentState == GameState.Elimination)
+                    _engine.TransitionTo(GameState.Idle);
+            }
+            catch { }
+
+            Log($"✅ {target} исключён. Готов к следующему раунду.");
+            UpdateButtonStates();
+            UpdateOperationalHints();
+        }
+
+        #endregion
 
         private void BtnDebugTestRounds_Click(object sender, RoutedEventArgs e)
         {
@@ -2834,6 +3231,26 @@ namespace WeakestLink.Views
             }
         }
 
+        private void ChkAiHost_Changed(object sender, RoutedEventArgs e)
+        {
+            bool enabled = ChkAiHost.IsChecked == true;
+            if (enabled && _aiHost == null)
+            {
+                _aiHost = new AiHostService(
+                    elevenLabsApiKey: "sk_fcef470a232462c3f2385406dbb633ea20357ed4fe3d56c0",
+                    voiceId: "RsbYIGCOUK8Jb5VS0RZc",
+                    geminiApiKey: "AIzaSyA_6_70pufshcRrA9xAK79q6YL-fQXiy7Q");
+                _aiHost.LogCallback = msg => Dispatcher.Invoke(() => Log(msg));
+            }
+            if (_aiHost != null)
+            {
+                _aiHost.IsEnabled = enabled;
+                Log(enabled ? "🎙️ AI-ведущая Мария Киселёва ВКЛЮЧЕНА" : "🎙️ AI-ведущая ВЫКЛЮЧЕНА");
+            }
+        }
+
+
+
         private void BtnCloseSession_Click(object sender, RoutedEventArgs e)
         {
             var result = DarkMessageBox.Show(
@@ -2863,7 +3280,8 @@ namespace WeakestLink.Views
                 BtnStartSession.Content = "START SESSION";
                 SetCentralContext("SETUP");
                 PreGamePanel.Visibility = Visibility.Collapsed;
-                PreGameButtons.Visibility = Visibility.Collapsed;
+                PreGameButtons.IsEnabled = false;
+                PreGameButtons.Opacity = 0.5;
 
                 _nextRoundUsed = false;
 
@@ -3066,7 +3484,8 @@ namespace WeakestLink.Views
                 {
                     // Стандартный путь: показываем панель студийного вступления
                     PreGamePanel.Visibility = Visibility.Visible;
-                    PreGameButtons.Visibility = Visibility.Visible;
+                    PreGameButtons.IsEnabled = true;
+                    PreGameButtons.Opacity = 1.0;
                     BtnOpeningUI.IsEnabled = true;
                     BtnOpening.IsEnabled = true;
                     BtnStartRound.IsEnabled = false;
@@ -3128,6 +3547,13 @@ namespace WeakestLink.Views
                 BtnIntro2.Foreground = Brushes.White;
 
                 Log("PRE-GAME: Intro — intro_track_1st.mp3");
+
+                // AI-ведущая: интро шоу
+                if (_aiHost != null && _aiHost.IsEnabled)
+                {
+                    string[] names = _engine.ActivePlayers?.ToArray() ?? Array.Empty<string>();
+                    _ = _aiHost.OnGameIntroAsync(names, 400000);
+                }
             }
             catch (Exception ex) { Log($"Ошибка INTRO: {ex.Message}"); }
         }
@@ -3174,12 +3600,17 @@ namespace WeakestLink.Views
                 SetButtonDisabled(BtnRulesIntro);
                 BtnRulesUI.IsEnabled = false;
 
-                // Скрываем PRE-GAME панель — вступление завершено
-                PreGameButtons.Visibility = Visibility.Collapsed;
+                // Disable PRE-GAME панель — вступление завершено
+                PreGameButtons.IsEnabled = false;
+                PreGameButtons.Opacity = 0.5;
 
                 FinalizePregameAndPrepareRound();
 
                 Log($"PRE-GAME: Rules — intro_track_3rd.mp3. Раунд {_engine.CurrentRound} автоподготовлен. Жмите READY.");
+
+                // AI-ведущая: правила
+                if (_aiHost != null && _aiHost.IsEnabled)
+                    _ = _aiHost.OnRulesAsync();
             }
             catch (Exception ex) { Log($"Ошибка RULES: {ex.Message}"); }
         }
@@ -3195,7 +3626,7 @@ namespace WeakestLink.Views
             if (TxtRoundNumberCenter != null)
             {
                 TxtRoundNumberCenter.Text = _engine.CurrentRound.ToString();
-                TimerArchBorder.Visibility = _engine.CurrentRound > 0 ? Visibility.Visible : Visibility.Collapsed;
+                // TimerArchBorder убран из UI
             }
             int roundDuration = _engine.GetNewRoundDuration();
             _timeLeftSeconds = roundDuration;
@@ -3249,7 +3680,7 @@ namespace WeakestLink.Views
             BtnCorrect.IsEnabled = false;
             BtnWrong.IsEnabled = false;
             BtnBank.IsEnabled = false;
-            if (BtnPass != null) BtnPass.IsEnabled = false;
+            // BtnPass убран
             BtnIncorrect.IsEnabled = false;
 
             if (selectedIndex == 7) // ФИНАЛ
@@ -3710,8 +4141,8 @@ namespace WeakestLink.Views
 
                 case "pass":
                 default:
-                    SimulateButtonPress(BtnPass);
-                    BtnPass_Click(null, null);
+                    SimulateButtonPress(BtnWrong);
+                    BtnWrong_Click(null, null);
                     break;
             }
 
@@ -3840,9 +4271,8 @@ namespace WeakestLink.Views
             int action;
             switch (modeIndex)
             {
-                case 0: // Случайный: 60% Верно, 30% Неверно, 10% Пас
-                    int roll = rnd.Next(100);
-                    action = roll < 60 ? 0 : (roll < 90 ? 1 : 2);
+                case 0: // Случайный: 60% Верно, 40% Неверно
+                    action = rnd.Next(100) < 60 ? 0 : 1;
                     break;
                 case 1: // Трусливый: 80% Верно, 20% Неверно
                     action = rnd.Next(100) < 80 ? 0 : 1;
@@ -3850,14 +4280,13 @@ namespace WeakestLink.Views
                 case 2: // Идеальный: 100% Верно
                     action = 0;
                     break;
-                case 3: // Срез общества: IQ 1-100, <=75 Верно, 76-90 Неверно, >90 Пас
+                case 3: // Срез общества: IQ 1-100, <=75 Верно, >75 Неверно
                     int iq = rnd.Next(1, 101);
-                    action = iq <= 75 ? 0 : (iq <= 90 ? 1 : 2);
-                    Log($"БОТ (Срез общества): IQ={iq} -> {(action == 0 ? "ВЕРНО" : action == 1 ? "НЕВЕРНО" : "ПАС")}");
+                    action = iq <= 75 ? 0 : 1;
+                    Log($"БОТ (Срез общества): IQ={iq} -> {(action == 0 ? "CORRECT" : "WRONG")}");
                     break;
-                case 4: // Двоечники: 20% Верно, 60% Неверно, 20% Пас
-                    int r4 = rnd.Next(100);
-                    action = r4 < 20 ? 0 : (r4 < 80 ? 1 : 2);
+                case 4: // Двоечники: 20% Верно, 80% Неверно
+                    action = rnd.Next(100) < 20 ? 0 : 1;
                     break;
                 case 5: // Ботаники: 90% Верно, 10% Неверно
                     action = rnd.Next(100) < 90 ? 0 : 1;
@@ -3877,22 +4306,17 @@ namespace WeakestLink.Views
             }
 
             if (modeIndex != 3)
-                Log($"БОТ ({GetBotModeName(modeIndex)}): {(action == 0 ? "ВЕРНО" : action == 1 ? "НЕВЕРНО" : "ПАС")}");
+                Log($"БОТ ({GetBotModeName(modeIndex)}): {(action == 0 ? "CORRECT" : "WRONG")}");
 
             if (action == 0)
             {
                 SimulateButtonPress(BtnCorrect);
                 BtnCorrect_Click(null, null);
             }
-            else if (action == 1)
+            else
             {
                 SimulateButtonPress(BtnWrong);
                 BtnWrong_Click(null, null);
-            }
-            else
-            {
-                SimulateButtonPress(BtnPass);
-                BtnPass_Click(null, null);
             }
         }
 
@@ -4176,6 +4600,7 @@ namespace WeakestLink.Views
                     _questionCount++;
                     Log($"Вопрос #{_currentQuestion.Id} успешно получен (Всего задано: {_questionCount}).");
                     UpdateQuestionDisplay();
+                    UpdateMacroPadCurrentPlayer(); // показать имя следующего игрока
                 }
                 else
                 {
@@ -4287,6 +4712,44 @@ namespace WeakestLink.Views
         /// Блокировка кнопок и цветовая подсказка в зависимости от текущего состояния игры (UI Hygiene).
         /// Вызывается при инициализации и при каждой смене GameState.
         /// </summary>
+        /// <summary>
+        /// Обновляет центральный бейдж состояния: текст, цвет, свечение, фон.
+        /// </summary>
+        private void UpdateGameStateBadge(GameState state)
+        {
+            string text;
+            string colorHex;
+            string bgHex;
+
+            switch (state)
+            {
+                case GameState.Idle:
+                    text = "⏸  ОЖИДАНИЕ"; colorHex = "#F59E0B"; bgHex = "#14120a"; break;
+                case GameState.RoundReady:
+                    text = "🎯  ГОТОВ К РАУНДУ"; colorHex = "#38BDF8"; bgHex = "#0a1214"; break;
+                case GameState.Playing:
+                    text = "▶  И Г Р А"; colorHex = "#22C55E"; bgHex = "#0a140a"; break;
+                case GameState.Voting:
+                    text = "🗳  ГОЛОСОВАНИЕ"; colorHex = "#EF4444"; bgHex = "#140a0a"; break;
+                case GameState.RoundSummary:
+                    text = "📊  ИТОГИ РАУНДА"; colorHex = "#3B82F6"; bgHex = "#0a0e14"; break;
+                case GameState.Elimination:
+                    text = "👋  ПРОЩАНИЕ"; colorHex = "#A855F7"; bgHex = "#120a14"; break;
+                case GameState.FinalDuel:
+                    text = "⚔  ФИНАЛЬНАЯ ДУЭЛЬ"; colorHex = "#D4AA40"; bgHex = "#14120a"; break;
+                default:
+                    text = "⏸  ОЖИДАНИЕ"; colorHex = "#F59E0B"; bgHex = "#14120a"; break;
+            }
+
+            var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(colorHex);
+            TxtGameStateBadge.Text = text;
+            TxtGameStateBadge.Foreground = new SolidColorBrush(color);
+            GameStateBadge.Background = new SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(bgHex));
+            if (TxtGameStateBadge.Effect is DropShadowEffect glow)
+                glow.Color = color;
+        }
+
         private void UpdateButtonStates()
         {
             void SafeInvoke(Action action)
@@ -4304,6 +4767,9 @@ namespace WeakestLink.Views
                 var state = _engine.CurrentState;
                 var white = Brushes.White;
 
+                // Update game state badge colors
+                UpdateGameStateBadge(state);
+
                 switch (state)
                 {
                     case GameState.Playing:
@@ -4313,10 +4779,10 @@ namespace WeakestLink.Views
                         BtnWrong.IsEnabled = true;
                         BtnWrong.Background = BrushActiveRed;
                         BtnWrong.Foreground = white;
-                        if (BtnPass != null) { BtnPass.IsEnabled = true; BtnPass.Background = BrushPassNeutral; BtnPass.Foreground = white; }
+                        // BtnPass убран
                         BtnBank.IsEnabled = true;
-                        BtnBank.Background = BrushBankOrange;
-                        BtnBank.Foreground = Brushes.Black;
+                        BtnBank.Background = BrushBankBlue;
+                        BtnBank.Foreground = white;
                         BtnNextQuestion.IsEnabled = true;
                         BtnNextQuestion.Background = BrushPlayBlue;
                         BtnNextQuestion.Foreground = white;
@@ -4347,7 +4813,7 @@ namespace WeakestLink.Views
                     case GameState.RoundSummary:
                         SetButtonDisabled(BtnCorrect); BtnCorrect.IsEnabled = false;
                         SetButtonDisabled(BtnWrong); BtnWrong.IsEnabled = false;
-                        if (BtnPass != null) { SetButtonDisabled(BtnPass); BtnPass.IsEnabled = false; }
+                        // BtnPass убран
                         SetButtonDisabled(BtnBank); BtnBank.IsEnabled = false;
                         SetButtonDisabled(BtnNextQuestion); BtnNextQuestion.IsEnabled = false;
                         SetButtonDisabled(BtnStartRound); BtnStartRound.IsEnabled = false;
@@ -4358,7 +4824,14 @@ namespace WeakestLink.Views
                         SetButtonDisabled(BtnStartDuel); BtnStartDuel.IsEnabled = false;
                         SetButtonDisabled(BtnDuelCorrect); BtnDuelCorrect.IsEnabled = false;
                         SetButtonDisabled(BtnDuelWrong); BtnDuelWrong.IsEnabled = false;
-                        SetButtonDisabled(BtnToFinal); BtnToFinal.IsEnabled = false;
+                        
+                        bool canGoToFinalFromSummary = _engine.ActivePlayers.Count == 2 && _engine.CurrentRound >= 7;
+                        BtnToFinal.IsEnabled = canGoToFinalFromSummary;
+                        BtnToFinal.Background = canGoToFinalFromSummary ? BrushActiveGreen : BrushDisabledGray;
+                        BtnToFinal.Foreground = canGoToFinalFromSummary ? white : BrushDisabledForeground;
+                        BtnToFinal.Visibility = canGoToFinalFromSummary ? Visibility.Visible : Visibility.Collapsed;
+                        if (!canGoToFinalFromSummary) SetButtonDisabled(BtnToFinal);
+
                         SetButtonDisabled(BtnNextRound); BtnNextRound.IsEnabled = false;
                         BtnCloseRoundFromAnalytics.IsEnabled = false;
                         BtnCloseRoundFromAnalytics.Visibility = Visibility.Collapsed;
@@ -4372,7 +4845,7 @@ namespace WeakestLink.Views
                     case GameState.Elimination:
                         SetButtonDisabled(BtnCorrect); BtnCorrect.IsEnabled = false;
                         SetButtonDisabled(BtnWrong); BtnWrong.IsEnabled = false;
-                        if (BtnPass != null) { SetButtonDisabled(BtnPass); BtnPass.IsEnabled = false; }
+                        // BtnPass убран
                         SetButtonDisabled(BtnBank); BtnBank.IsEnabled = false;
                         SetButtonDisabled(BtnNextQuestion); BtnNextQuestion.IsEnabled = false;
                         SetButtonDisabled(BtnStartRound); BtnStartRound.IsEnabled = false;
@@ -4429,24 +4902,23 @@ namespace WeakestLink.Views
                         BtnCorrect.IsEnabled = false;
                         SetButtonDisabled(BtnWrong);
                         BtnWrong.IsEnabled = false;
-                        SetButtonDisabled(BtnPass);
-                        if (BtnPass != null) BtnPass.IsEnabled = false;
+                        // BtnPass убран
                         SetButtonDisabled(BtnBank);
                         BtnBank.IsEnabled = false;
                         BtnNextQuestion.IsEnabled = (state == GameState.RoundReady);
                         BtnNextQuestion.Background = (state == GameState.RoundReady) ? BrushPlayBlue : BrushDisabledGray;
                         BtnNextQuestion.Foreground = (state == GameState.RoundReady) ? white : BrushDisabledForeground;
-                        bool isFinalReachedForReady = (_engine.ActivePlayers.Count <= 2 && _engine.CurrentRound > 0) || _engine.CurrentRound >= 7;
-                        bool readyEnabled = _isSessionStarted && !isPreGame && !isFinalReachedForReady && ((state == GameState.Idle) || (state == GameState.RulesExplanation) || (state == GameState.RoundReady && BtnBotTurn.Visibility == Visibility.Visible));
+                        bool isFinalReachedForReady = _engine.ActivePlayers.Count < 2 || _engine.CurrentRound >= 7;
+                        bool readyEnabled = _isSessionStarted && !isPreGame && !isFinalReachedForReady && ((state == GameState.Idle) || (state == GameState.RulesExplanation));
                         BtnStartRound.IsEnabled = readyEnabled;
                         BtnStartRound.Background = readyEnabled ? BrushActiveGreen : BrushDisabledGray;
                         BtnStartRound.Foreground = readyEnabled ? white : BrushDisabledForeground;
                         BtnPlay.IsEnabled = (state == GameState.RoundReady);
-                        BtnPlay.Background = (state == GameState.RoundReady) ? BrushStartClock : BrushDisabledGray;
-                        BtnPlay.Foreground = (state == GameState.RoundReady) ? BrushStartClockFg : BrushDisabledForeground;
+                        BtnPlay.Background = BrushStartClock;
+                        BtnPlay.Foreground = BrushStartClockFg;
                         BtnGamePlayPlay.IsEnabled = (state == GameState.RoundReady);
-                        BtnGamePlayPlay.Background = (state == GameState.RoundReady) ? BrushStartClock : BrushDisabledGray;
-                        BtnGamePlayPlay.Foreground = (state == GameState.RoundReady) ? BrushStartClockFg : BrushDisabledForeground;
+                        BtnGamePlayPlay.Background = BrushStartClock;
+                        BtnGamePlayPlay.Foreground = BrushStartClockFg;
                         EliminationComboBox.IsEnabled = false;
                         SetButtonDisabled(BtnEliminate);
                         BtnEliminate.IsEnabled = false;
@@ -4456,10 +4928,14 @@ namespace WeakestLink.Views
                         BtnDuelCorrect.IsEnabled = false;
                         SetButtonDisabled(BtnDuelWrong);
                         BtnDuelWrong.IsEnabled = false;
-                        bool canGoToFinal = (state == GameState.RoundReady || state == GameState.Idle) && _engine.ActivePlayers.Count == 2;
+                        
+                        bool canGoToFinal = (state == GameState.RoundReady || state == GameState.Idle) && _engine.ActivePlayers.Count == 2 && _engine.CurrentRound >= 7;
                         BtnToFinal.IsEnabled = canGoToFinal;
                         BtnToFinal.Background = canGoToFinal ? BrushActiveGreen : BrushDisabledGray;
                         BtnToFinal.Foreground = canGoToFinal ? white : BrushDisabledForeground;
+                        BtnToFinal.Visibility = canGoToFinal ? Visibility.Visible : Visibility.Collapsed;
+                        if (!canGoToFinal) SetButtonDisabled(BtnToFinal);
+                        
                         bool canNextRound = (state == GameState.Idle) && _engine.CurrentRound > 0 && _engine.ActivePlayers.Count >= 2 && !_nextRoundUsed && _eliminationPerformedThisRound;
                         BtnNextRound.IsEnabled = canNextRound;
                         BtnNextRound.Background = canNextRound ? BrushActiveGreen : BrushDisabledGray;
@@ -4477,8 +4953,7 @@ namespace WeakestLink.Views
                         BtnCorrect.IsEnabled = false;
                         SetButtonDisabled(BtnWrong);
                         BtnWrong.IsEnabled = false;
-                        SetButtonDisabled(BtnPass);
-                        if (BtnPass != null) BtnPass.IsEnabled = false;
+                        // BtnPass убран
                         SetButtonDisabled(BtnBank);
                         BtnBank.IsEnabled = false;
                         SetButtonDisabled(BtnNextQuestion);
@@ -4516,8 +4991,7 @@ namespace WeakestLink.Views
                         BtnCorrect.IsEnabled = false;
                         SetButtonDisabled(BtnWrong);
                         BtnWrong.IsEnabled = false;
-                        SetButtonDisabled(BtnPass);
-                        if (BtnPass != null) BtnPass.IsEnabled = false;
+                        // BtnPass убран
                         SetButtonDisabled(BtnBank);
                         BtnBank.IsEnabled = false;
                         SetButtonDisabled(BtnNextQuestion);
@@ -4748,8 +5222,10 @@ namespace WeakestLink.Views
 
         private void BtnBcStyleClassic_Click(object sender, RoutedEventArgs e)
         {
-            if (_broadcastWindow == null || !_broadcastWindow.IsLoaded) return;
-            _broadcastWindow.SwitchStyle(false);
+            if (_broadcastWindow != null && _broadcastWindow.IsLoaded)
+            {
+                _broadcastWindow.SwitchStyle(false);
+            }
             BtnStyleClassic.Background = new SolidColorBrush(Color.FromRgb(0x58, 0x65, 0xF2));
             BtnStyleClassic.Foreground = Brushes.White;
             BtnStyleNew.Background = new SolidColorBrush(Color.FromRgb(0x4e, 0x50, 0x58));
@@ -4759,8 +5235,10 @@ namespace WeakestLink.Views
 
         private void BtnBcStyleNew_Click(object sender, RoutedEventArgs e)
         {
-            if (_broadcastWindow == null || !_broadcastWindow.IsLoaded) return;
-            _broadcastWindow.SwitchStyle(true);
+            if (_broadcastWindow != null && _broadcastWindow.IsLoaded)
+            {
+                _broadcastWindow.SwitchStyle(true);
+            }
             BtnStyleNew.Background = new SolidColorBrush(Color.FromRgb(0x58, 0x65, 0xF2));
             BtnStyleNew.Foreground = Brushes.White;
             BtnStyleClassic.Background = new SolidColorBrush(Color.FromRgb(0x4e, 0x50, 0x58));
@@ -4807,30 +5285,41 @@ namespace WeakestLink.Views
 
             switch (e.Key)
             {
-                case Key.Space:
+                case Key.Space: // BANK (пробел)
+                case Key.C:     // BANK (макропад кнопка 3)
                     BtnBank_Click(null, null);
                     break;
 
-                case Key.Right:
+                case Key.Right: // ВЕРНО (стрелка)
+                case Key.A:     // ВЕРНО (макропад кнопка 1)
                     if (HeadToHeadPanel.Visibility == Visibility.Visible)
                         BtnDuelCorrect_Click(null, null);
                     else
                         BtnCorrect_Click(null, null);
                     break;
 
-                case Key.Left:
+                case Key.Left:  // НЕВЕРНО (стрелка)
+                case Key.B:     // НЕВЕРНО (макропад кнопка 2)
                     if (HeadToHeadPanel.Visibility == Visibility.Visible)
                         BtnDuelWrong_Click(null, null);
                     else
                         BtnWrong_Click(null, null);
                     break;
 
-                case Key.Down:
-                    BtnPass_Click(null, null);
+                case Key.Down:  // НЕВЕРНО (стрелка вниз)
+                    BtnWrong_Click(null, null);
+                    break;
+
+                case Key.Up:    // READY (стрелка вверх)
+                case Key.D:     // READY (макропад кнопка 4)
+                    // READY обрабатывается в Window_PreviewKeyDown
+                    handled = false;
                     break;
 
                 case Key.Enter:
-                    if (HeadToHeadPanel.Visibility == Visibility.Visible && BtnStartDuel.Visibility == Visibility.Visible)
+                    if (_engine.CurrentState == GameState.RoundReady)
+                        BtnPlay_Click(null!, null!);
+                    else if (HeadToHeadPanel.Visibility == Visibility.Visible && BtnStartDuel.Visibility == Visibility.Visible)
                         BtnStartDuel_Click(null, null);
                     else
                         BtnNextQuestion_Click(null, null);
@@ -4970,7 +5459,7 @@ namespace WeakestLink.Views
             BtnCorrect.IsEnabled = false;
             BtnWrong.IsEnabled = false;
             BtnBank.IsEnabled = false;
-            if (BtnPass != null) BtnPass.IsEnabled = false;
+            // BtnPass убран
             BtnIncorrect.IsEnabled = false;
 
             // 5. Финализация раунда и настройка таймера
@@ -5457,6 +5946,14 @@ namespace WeakestLink.Views
 
             TransitionOverlay.Visibility = Visibility.Collapsed;
             SetCentralContext("STATS");
+
+            // AI-ведущая: голосование
+            if (_aiHost != null && _aiHost.IsEnabled)
+                _ = _aiHost.OnVotingStartAsync(_engine.CurrentRound);
+
+            // Открываем съёмочное голосование (если не префинал)
+            if (_engine.ActivePlayers.Count > 2)
+                OpenFilmVoting();
         }
         private void RefreshAnalytics() => UpdateAnalyticsData();
         private void CloseAnalytics() => SetCentralContext(_isSessionStarted ? "PLAY" : "SETUP");
@@ -5471,6 +5968,10 @@ namespace WeakestLink.Views
         {
             var handle = new WindowInteropHelper(this).Handle;
             HwndSource.FromHwnd(handle)?.AddHook(WndProc);
+
+            // Захватываем фокус клавиатуры сразу при открытии окна,
+            // чтобы макропад (A/B/C/D) работал без предварительного клика мышью.
+            this.Focus();
         }
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -5643,7 +6144,7 @@ namespace WeakestLink.Views
                 BtnPlay.Content = "START O'CLOCK";
                 BtnNextRound.Content = "CLOSE ROUND";
                 BtnPanic.Content = en ? "! PANIC !" : "! ПАНИКА !";
-                TxtExportLabel.Text = en ? "EXPORT" : "ЭКСПОРТ";
+                // TxtExportLabel перенесён в Инструменты
                 TxtBroadcastHeader.Text = en ? "BROADCAST CONTROL" : "УПРАВЛЕНИЕ ЭФИРОМ";
                 TxtRoundStatusLabel.Text = en ? "ROUNDS" : "РАУНДЫ";
                 TxtPlayerListLabel.Text = en ? "PLAYERS" : "ИГРОКИ";
@@ -5970,6 +6471,39 @@ namespace WeakestLink.Views
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
+
+
+        /// <summary>
+        /// Обновляет полосу статуса: кто сейчас отвечает и каков последний результат.
+        /// </summary>
+        private void UpdateMacroPadStatus(string playerName, string result, string resultColor, string resultBg, string resultBorder)
+        {
+            string nextPlayer = _engine.CurrentPlayerTurn ?? "—";
+            if (TxtCurrentPlayerInfo != null) TxtCurrentPlayerInfo.Text = nextPlayer;
+            if (TxtLastResultInfo != null)
+            {
+                TxtLastResultInfo.Text = $"{playerName}: {result}";
+                TxtLastResultInfo.Foreground = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(resultColor));
+            }
+            if (TxtLastResultBorder != null)
+            {
+                TxtLastResultBorder.Background = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(resultBg));
+                TxtLastResultBorder.BorderBrush = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(resultBorder));
+            }
+        }
+
+        /// <summary>
+        /// Обновляет только имя текущего игрока (без результата).
+        /// </summary>
+        private void UpdateMacroPadCurrentPlayer()
+        {
+            string player = _engine.CurrentPlayerTurn ?? "—";
+            if (TxtCurrentPlayerInfo != null) TxtCurrentPlayerInfo.Text = player;
+        }
+
 
 
         private void BtnDebugEndRoundTimer_Click(object sender, RoutedEventArgs e)
