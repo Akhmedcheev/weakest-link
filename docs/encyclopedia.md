@@ -1,984 +1,1535 @@
-# 📖 ЭНЦИКЛОПЕДИЯ ПРОЕКТА: Antigravity Broadcast Suite
-## «Слабое Звено» — Полная Техническая Документация
+# ЭНЦИКЛОПЕДИЯ ПРОЕКТА «СЛАБОЕ ЗВЕНО» (WEAKEST LINK)
 
-> [!NOTE]
-> Дата генерации: 13 марта 2026  
-> Платформа: .NET 10.0 · WPF · C# · NAudio 2.2.1 · QRCoder 1.7.0  
-> Путь проекта: `I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE`
+> Полная техническая документация проекта — архитектура, модули, API, игровой цикл, дизайн-система, сетевое взаимодействие, AI-интеграция, файловая структура.
 
 ---
 
-## 📑 Оглавление
+## ОГЛАВЛЕНИЕ
 
-1. [Обзор платформы](#1-обзор-платформы)
-2. [Архитектура системы](#2-архитектура-системы)
-3. [Структура файлов проекта](#3-структура-файлов-проекта)
-4. [Многоэкранная система](#4-многоэкранная-система)
-5. [Game Engine — Ядро игровой логики](#5-game-engine--ядро-игровой-логики)
-6. [Раунды и управление временем](#6-раунды-и-управление-временем)
-7. [Банковская цепочка (Money Chain)](#7-банковская-цепочка-money-chain)
-8. [Финальная дуэль (Head-to-Head)](#8-финальная-дуэль-head-to-head)
-9. [Sudden Death — Внезапная смерть](#9-sudden-death--внезапная-смерть)
-10. [Система управления вопросами](#10-система-управления-вопросами)
-11. [Статистика и аналитика игроков](#11-статистика-и-аналитика-игроков)
-12. [Сетевой протокол (TCP)](#12-сетевой-протокол-tcp)
-13. [Аудио-движок (NAudio)](#13-аудио-движок-naudio)
-14. [iPad Web Remote — Удалённый пульт](#14-ipad-web-remote--удалённый-пульт)
-15. [UI/UX Дизайн-система «Obsidian»](#15-uiux-дизайн-система-obsidian)
-16. [Broadcast-оверлеи (OBS Studio)](#16-broadcast-оверлеи-obs-studio)
-17. [Горячие клавиши оператора](#17-горячие-клавиши-оператора)
-18. [Экстренное управление (Panic Buttons)](#18-экстренное-управление-panic-buttons)
-19. [AI Bot — Автоматическое тестирование](#19-ai-bot--автоматическое-тестирование)
-20. [Инструменты разработчика](#20-инструменты-разработчика)
-21. [Паттерны проектирования (Каталог)](#21-паттерны-проектирования-каталог)
-22. [Цветовая палитра (Color Bible)](#22-цветовая-палитра-color-bible)
-23. [Troubleshooting — Решение проблем](#23-troubleshooting--решение-проблем)
-24. [Этапы развития (Milestones)](#24-этапы-развития-milestones)
-25. [Глоссарий терминов](#25-глоссарий-терминов)
-
----
-
-## 1. Обзор платформы
-
-**Antigravity Broadcast Suite** — унифицированная платформа для профессиональных C#/WPF симуляций телевизионных игровых шоу. Разработана для **одного оператора**, который управляет вопросами, банком, таймерами и звуком одновременно в условиях прямого эфира.
-
-### Философия проектирования
-
-```mermaid
-graph TD
-    A[Один оператор] --> B[Минимальная когнитивная нагрузка]
-    B --> C[Все данные в одном окне]
-    B --> D[Мышечная память кнопок]
-    B --> E[Слепое управление хоткеями]
-    A --> F[Broadcast-качество]
-    F --> G[Прозрачные OBS оверлеи]
-    F --> H[TV-Safe типографика]
-    F --> I[Профессиональные анимации]
-```
-
-### Ключевые характеристики
-
-| Параметр | Значение |
-|---|---|
-| **Фреймворк** | .NET 10.0-windows (WPF) |
-| **Язык** | C# (latest) |
-| **Аудио** | NAudio 2.2.1 (WaveOutEvent + AudioFileReader) |
-| **QR-коды** | QRCoder 1.7.0 |
-| **Сеть** | TCP (порт 8888) / HTTP (порт 8080/8081) |
-| **Целевое разрешение** | 1920×1080 (масштабируется через Viewbox) |
-| **Управление** | Один оператор + опциональный iPad Remote |
+1. [Обзор проекта](#1-обзор-проекта)
+2. [Файловая структура](#2-файловая-структура)
+3. [Технологический стек](#3-технологический-стек)
+4. [Архитектура приложения](#4-архитектура-приложения)
+5. [Игровой движок (GameEngine)](#5-игровой-движок-gameengine)
+6. [Конечный автомат состояний (GameState)](#6-конечный-автомат-состояний-gamestate)
+7. [Полный игровой цикл](#7-полный-игровой-цикл)
+8. [Операторская панель (OperatorPanel)](#8-операторская-панель-operatorpanel)
+9. [Система голосования](#9-система-голосования)
+10. [Финальная дуэль (Head-to-Head)](#10-финальная-дуэль-head-to-head)
+11. [Аналитика и статистика](#11-аналитика-и-статистика)
+12. [Экраны ведущего (Host Screens)](#12-экраны-ведущего-host-screens)
+13. [Экран зрителей (AudienceScreen)](#13-экран-зрителей-audiencescreen)
+14. [Трансляция (BroadcastScreen / BroadcastWindow)](#14-трансляция-broadcastscreen--broadcastwindow)
+15. [Аудио-система (AudioManager)](#15-аудио-система-audiomanager)
+16. [Сетевое взаимодействие](#16-сетевое-взаимодействие)
+17. [Web-пульт (WebRemoteController)](#17-web-пульт-webremotecontroller)
+18. [AI-интеграция](#18-ai-интеграция)
+19. [Дизайн-система Obsidian](#19-дизайн-система-obsidian)
+20. [Система вопросов](#20-система-вопросов)
+21. [Настройки и персистентность](#21-настройки-и-персистентность)
+22. [Тестирование и автотесты](#22-тестирование-и-автотесты)
+23. [Макропад](#23-макропад)
+24. [Утилиты и вспомогательные инструменты](#24-утилиты-и-вспомогательные-инструменты)
+25. [Сборка и деплой](#25-сборка-и-деплой)
+26. [Горячие клавиши](#26-горячие-клавиши)
+27. [Модели данных](#27-модели-данных)
+28. [Полный справочник API](#28-полный-справочник-api)
+29. [Известные особенности и решения](#29-известные-особенности-и-решения)
 
 ---
 
-## 2. Архитектура системы
+## 1. ОБЗОР ПРОЕКТА
 
-### Master-Slave модель
+**Weakest Link (Слабое звено)** — десктопное WPF-приложение для проведения телевизионной игры «Слабое звено» в реальном времени. Программа управляет всеми аспектами шоу: от ведения раундов и банка до голосования, исключения игроков и финальной дуэли.
 
-```mermaid
-graph LR
-    subgraph Master
-        OP[🎛️ OperatorPanel<br/>Командный центр]
-    end
-    subgraph Slaves
-        HS[📺 HostScreen<br/>Суфлёр ведущего]
-        BS[🎬 BroadcastScreen<br/>OBS оверлей]
-        AS[👥 AudienceScreen<br/>Экран аудитории]
-    end
-    subgraph External
-        WR[📱 iPad Remote<br/>HTTP сервер]
-        AI[🤖 AI Bot<br/>Gemini Tester]
-    end
+### Ключевые возможности
 
-    OP -->|TCP :8888| HS
-    OP -->|TCP :8888| BS
-    OP -->|TCP :8888| AS
-    WR -->|HTTP :8080| OP
-    AI -->|HTTP API| OP
+- **Операторская панель** — единый центр управления игрой с полным контролем над всеми этапами
+- **Экраны ведущего** — 4 варианта телесуфлёра (Classic, Modern, Premium, Modern Premium)
+- **Экран зрителей** — отображение денежной цепочки, таймера, банка
+- **Трансляция** — вывод для OBS/стриминга с хромакей-фоном
+- **TCP-сервер** — синхронизация всех экранов в реальном времени (порт 8888)
+- **Web-пульт** — управление с iPad/планшета через HTTP (порт 8080)
+- **AI-ведущая** — Gemini + ElevenLabs для озвучки и ведения
+- **AI-тестирование** — боты на базе OpenAI/Gemini для нагрузочного тестирования
+- **Аналитика** — статистика по раундам, прогноз выбывания, экспорт CSV/HTML
+- **Аудио-менеджер** — полное управление музыкой, SFX, кроссфейдами
+- **Двуязычность** — русский и английский интерфейс
+- **Редактор вопросов** — встроенный CRUD для базы вопросов
 
-    style OP fill:#5865F2,color:#fff
-    style HS fill:#006400,color:#fff
-    style BS fill:#0A1128,color:#fff
-    style WR fill:#CC8800,color:#000
-    style AI fill:#da373c,color:#fff
-```
+### Участники игры
 
-### Слои приложения
+- **8 игроков** в начале
+- **7 раундов** (от 150 до 90 секунд)
+- **Банковская цепочка**: 1 000 → 2 000 → 5 000 → 10 000 → 20 000 → 30 000 → 40 000 → 50 000
+- **Финальная дуэль** между 2 оставшимися
+
+---
+
+## 2. ФАЙЛОВАЯ СТРУКТУРА
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                    VIEWS (XAML + Code-Behind)        │
-│  OperatorPanel │ HostScreen │ BroadcastScreen │ ...  │
-├─────────────────────────────────────────────────────┤
-│                    CORE (Логика)                     │
-│  GameEngine │ GameState │ Models │ Analytics         │
-├─────────────────────────────────────────────────────┤
-│                   SERVICES                           │
-│  QuestionProvider │ StatsAnalyzer │ StatsExporter    │
-├─────────────────────────────────────────────────────┤
-│                   NETWORK                            │
-│  GameServer │ GameClient │ WebRemoteController       │
-│  AiBotTester │ GeminiBotClient │ GeminiTestPlayer    │
-├─────────────────────────────────────────────────────┤
-│                    AUDIO                             │
-│  AudioManager │ LoopStream                           │
-└─────────────────────────────────────────────────────┘
+WEAKEST LINK SOPFTWARE AI TESTERING FINALE/
+│
+├── App.xaml / App.xaml.cs              # Точка входа, глобальный обработчик ошибок
+├── WeakestLink.csproj                  # Конфигурация проекта (.NET 10, WPF)
+├── Animations.cs                       # Анимации UI
+├── app.ico / app.manifest              # Иконка и манифест
+│
+├── Core/                               # ═══ ЯДРО ИГРЫ ═══
+│   ├── GameEngine.cs                   # Игровой движок: банк, цепочка, раунды, дуэль
+│   ├── GameState.cs                    # Enum: 13 состояний конечного автомата
+│   ├── SelfTest.cs                     # Автотесты (state machine, bank, rounds, duel)
+│   │
+│   ├── Analytics/
+│   │   ├── StatsAnalyzer.cs            # Аналитика: strongest/weakest, прогноз, метрики
+│   │   └── StatsExporter.cs            # Экспорт в CSV и HTML
+│   │
+│   ├── Models/
+│   │   ├── QuestionData.cs             # Модель вопроса (Id, Text, Answer)
+│   │   ├── QuestionModel.cs            # Модель для редактора
+│   │   └── BotDecision.cs              # Решение AI-бота (Action, Text)
+│   │
+│   └── Services/
+│       ├── AiHostService.cs            # AI-ведущая (Gemini + ElevenLabs)
+│       ├── QuestionProvider.cs         # Загрузка и выдача вопросов
+│       ├── ColorResourceHelper.cs      # Доступ к цветам из XAML в code-behind
+│       └── MacroPadService.cs          # Интеграция с USB-макропадом
+│
+├── Network/                            # ═══ СЕТЕВОЙ СЛОЙ ═══
+│   ├── GameServer.cs                   # TCP-сервер (порт 8888–8892)
+│   ├── GameClient.cs                   # TCP-клиент
+│   ├── WebRemoteController.cs          # HTTP-сервер для iPad/планшета (8080)
+│   ├── AiBotTester.cs                  # AI-бот для нагрузочного тестирования
+│   ├── GeminiBotClient.cs             # Клиент Gemini API
+│   └── GeminiTestPlayer.cs            # AI-игрок на Gemini
+│
+├── Audio/                              # ═══ АУДИО ═══
+│   ├── AudioManager.cs                 # Менеджер аудио (NAudio): play, loop, crossfade
+│   └── LoopStream.cs                   # Бесконечный loop для NAudio
+│
+├── Views/                              # ═══ ИНТЕРФЕЙС ═══
+│   ├── OperatorPanel.xaml/.cs          # Главная операторская панель (~7300 строк)
+│   ├── HostScreen.xaml/.cs             # Экран ведущего (Classic)
+│   ├── HostScreenModern.xaml/.cs       # Экран ведущего (Modern)
+│   ├── HostScreenPremium.xaml/.cs      # Экран ведущего (Premium, с анимациями)
+│   ├── HostScreenModernPremium.xaml/.cs # Экран ведущего (Modern Premium)
+│   ├── AudienceScreen.xaml/.cs         # Экран зрителей (1920×1080)
+│   ├── BroadcastScreen.xaml/.cs        # Компонент трансляции (UserControl)
+│   ├── BroadcastWindow.xaml/.cs        # Окно трансляции (хромакей)
+│   ├── RoundStatsWindow.xaml/.cs       # Окно статистики раунда
+│   ├── WinWinner.xaml/.cs              # Оверлей победителя
+│   ├── QuestionEditorWindow.xaml/.cs   # Редактор вопросов
+│   ├── ServiceScreen.xaml/.cs          # Сервисный экран (макропад)
+│   ├── DarkMessageBox.xaml/.cs         # Кастомный MessageBox
+│   │
+│   └── Styles/
+│       ├── ObsidianStyles.xaml         # Цветовая палитра + стили (Obsidian Design System)
+│       └── UIConstants.xaml            # Размеры, типографика, отступы, скругления
+│
+├── Assets/
+│   ├── Images/                         # PNG: цепочка, таймер, банк, финал
+│   └── Audio/
+│       ├── ROUND SFX/                  # BANK.mp3, CORRECT.mp3, WRONG.mp3
+│       ├── VOTING TRACKS/              # 5 треков голосования
+│       ├── Round_bed_*.mp3             # Фоновая музыка раундов (130–230 BPM)
+│       ├── main_theme_full.mp3         # Главная тема
+│       ├── intro_track_*.mp3           # Треки вступления
+│       ├── general_bed*.mp3            # Общий фон
+│       ├── walk_of_shame.mp3           # Музыка исключения
+│       └── duel_winner.mp3             # Финал — победитель
+│
+├── docs/                               # Документация
+│   ├── encyclopedia.md                 # ← ЭТА ЭНЦИКЛОПЕДИЯ
+│   ├── ARCHITECTURE.md                 # Архитектура
+│   ├── ANALYTICS_DOCUMENTATION.md      # Система аналитики
+│   ├── VOTING_AND_STATS_SYSTEM.md      # Голосование и статистика
+│   ├── ИНСТРУКЦИЯ_ПОЛЬЗОВАТЕЛЯ.md     # Руководство пользователя
+│   └── ...                             # ~30 файлов документации
+│
+├── Tools/                              # Утилиты
+│   ├── analyze_sync.py                 # Анализ синхронизации
+│   ├── find_first_beat.py              # Поиск первого бита
+│   ├── layout_editor.html              # HTML-редактор раскладки
+│   └── MetroDetect/                    # Утилита определения метронома
+│
+├── macropad/                           # Конфигурации макропада
+│   ├── example-mapping.yaml
+│   └── weakest-link-macropad.yaml
+│
+├── questions.json                      # База вопросов (RU)
+├── questions_en.json                   # База вопросов (EN)
+├── final_questions.json                # Финальные вопросы (RU)
+├── final_questions_en.json             # Финальные вопросы (EN)
+│
+└── SuperDist/net10.0-windows/          # ═══ СБОРКА (OUTPUT) ═══
 ```
 
 ---
 
-## 3. Структура файлов проекта
+## 3. ТЕХНОЛОГИЧЕСКИЙ СТЕК
 
-### Директории
+| Компонент | Технология | Версия |
+|-----------|-----------|--------|
+| Платформа | .NET | 10.0 |
+| UI-фреймворк | WPF (Windows Presentation Foundation) | — |
+| Язык | C# | 13 |
+| Аудио | NAudio | 2.2.1 |
+| QR-коды | QRCoder | 1.7.0 |
+| USB HID | hidlibrary | 3.3.40 |
+| AI (ведущая) | Google Gemini API + ElevenLabs TTS | — |
+| AI (боты) | OpenAI-совместимый API | — |
+| Сетевой протокол | TCP (System.Net.Sockets) | — |
+| Web-пульт | HttpListener (System.Net) | — |
+| Сериализация | System.Text.Json | — |
+| Таргет ОС | Windows 10/11 | — |
 
-| Папка | Назначение | Ключевые файлы |
-|---|---|---|
-| `Views/` | WPF-окна (XAML + Code-Behind) | [OperatorPanel.xaml](file:///I:/WEAKEST%20LINK%20SOPFTWARE%20AI%20TESTERING%20FINALE/Views/OperatorPanel.xaml) (237KB!), HostScreen, BroadcastScreen |
-| `Core/` | Движок, состояния, модели | [GameEngine.cs](file:///I:/WEAKEST%20LINK%20SOPFTWARE%20AI%20TESTERING%20FINALE/Core/GameEngine.cs) (35KB), GameState.cs |
-| `Core/Models/` | DTO и модели данных | QuestionData.cs, QuestionModel.cs, BotDecision.cs |
-| `Core/Services/` | Сервисы бизнес-логики | QuestionProvider.cs |
-| `Core/Analytics/` | Аналитика и статистика | StatsAnalyzer.cs (17KB), StatsExporter.cs |
-| `Network/` | Сеть (TCP/HTTP/Bot) | GameServer.cs, GameClient.cs, WebRemoteController.cs (26KB) |
-| `Audio/` | Звуковой движок | AudioManager.cs (17KB), LoopStream.cs |
-| `Assets/` | Графика, звуки | Текстуры (BANK.png, TIMER.png, moneytree_*.png) |
-| `Assets/Images/` | Индикаторы (GOOD/BAD/NORMAL.png) | 31 файл, включая финальные текстуры |
-| `Tools/` | Python-утилиты | analyze_sync.py, find_first_beat.py, layout_editor.html |
-| `docs/` | Документация (35 файлов) | ARCHITECTURE.md, PROGRESS_WL.md, GEMINI_ONBOARDING.md |
+### NuGet-пакеты
 
-### Ключевые файлы данных
-
-| Файл | Назначение |
-|---|---|
-| `questions.json` (62KB) | Банк вопросов раундов (RU) |
-| `questions_en.json` | Банк вопросов раундов (EN) |
-| `final_questions.json` | Вопросы для финальной дуэли (RU) |
-| `final_questions_en.json` | Вопросы для финальной дуэли (EN) |
-
-### Размеры окон (по объёму кода)
-
-| Компонент | XAML | Code-Behind | Суммарно |
-|---|---|---|---|
-| **OperatorPanel** | 237 KB | 305 KB | **543 KB** 🏆 |
-| BroadcastWindow | 15 KB | 38 KB | 53 KB |
-| HostScreenPremium | 22 KB | 26 KB | 48 KB |
-| HostScreenModernPremium | 15 KB | 19 KB | 34 KB |
-| WebRemoteController | — | 26 KB | 26 KB |
+```xml
+<PackageReference Include="hidlibrary" Version="3.3.40" />
+<PackageReference Include="NAudio" Version="2.2.1" />
+<PackageReference Include="QRCoder" Version="1.7.0" />
+```
 
 ---
 
-## 4. Многоэкранная система
+## 4. АРХИТЕКТУРА ПРИЛОЖЕНИЯ
 
-### 4.1 Operator Panel — Командный центр
-
-> [!IMPORTANT]
-> Самый масштабный компонент (543 KB кода). Управляет **всей** игрой.
-
-**Функции:**
-- Настройка команды (добавление/удаление игроков)
-- Управление раундами (таймеры, вопросы, вердикты)
-- Банковская система (цепочка 8 уровней)
-- Финальная дуэль (Head-to-Head + Sudden Death)
-- Аналитика и статистика в реальном времени
-- Broadcast-управление (открытие/закрытие оверлеев)
-- Сервисные функции (Panic buttons, Reset, Close)
-
-**Интерфейс «Боевой Кокпит» (Battle Cockpit):**
 ```
-┌──────────────────────────────────────────┐
-│           │                              │
-│  ЦЕПОЧКА  │    В каком году была         │
-│           │    основана Москва?          │
-│   ₽1 000  │                              │
-│   ₽2 000  │    ОТВЕТ: 1147              │
-│   ₽5 000  │                              │
-│   ₽10 000 │ ──────────────────────────── │
-│   ₽20 000 │ [ВЕРНО][БАНК] [НЕВЕР][ПАСС]  │
-│   ₽30 000 │  ENTER SPACE    DEL   BACK   │
-│   ₽40 000 │                              │
-│   ₽50 000 │                              │
-└───────────┴──────────────────────────────┘
-   Col 0 (180px)        Col 1 (*)
+┌─────────────────────────────────────────────────────────────────┐
+│                        App.xaml (Entry Point)                    │
+│                    StartupUri → OperatorPanel.xaml               │
+│              Global Exception Handler → error_log.txt            │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │
+                ┌───────────▼───────────┐
+                │    OperatorPanel       │ ← Центр управления
+                │   (~7300 строк C#)    │
+                └───┬───┬───┬───┬───┬───┘
+                    │   │   │   │   │
+        ┌───────────┘   │   │   │   └───────────┐
+        ▼               ▼   │   ▼               ▼
+   GameEngine      AudioMgr │  GameServer   WebRemote
+   (Core logic)   (NAudio)  │  (TCP 8888)  (HTTP 8080)
+                            ▼
+                      AiHostService
+                    (Gemini+ElevenLabs)
+        ┌───────────────┼───────────────┐
+        ▼               ▼               ▼
+   HostScreen(s)   AudienceScreen  BroadcastWindow
+   (4 варианта)    (1920×1080)     (OBS/хромакей)
 ```
 
-### 4.2 Host Screen — Суфлёр ведущего
+### Слои
 
-Высококонтрастный TV-промптер с «холодно-синей» эстетикой:
+1. **Presentation** — XAML + code-behind (Views/)
+2. **Core** — игровой движок, state machine, аналитика (Core/)
+3. **Services** — AI, вопросы, цвета, макропад (Core/Services/)
+4. **Network** — TCP/HTTP серверы и клиенты (Network/)
+5. **Audio** — воспроизведение, loop, crossfade (Audio/)
 
-| Блок | Цвет | FontSize |
-|---|---|---|
-| Фон | Deep Space Blue `#050510` | — |
-| Вопрос | Navy Dark `#0A1128` | 88pt+ |
-| Ответ | Red `#C10000` | 88pt |
-| Таймер | Forest Green `#006400` | 72pt |
-| Bank Now | Royal Blue `#0000B8` | Bold |
-| Total Bank | Burgundy `#4A0020` | Bold |
+### Паттерны
 
-### 4.3 Broadcast Screen — OBS оверлей
-
-Прозрачное окно для захвата в OBS Studio:
-- `WindowStyle="None"`, `AllowsTransparency="True"`, `Background="Transparent"`
-- Разрешение-независимость через `Viewbox Stretch="Uniform"` (1920×1080)
-- Ассеты загружаются через `pack://siteoforigin:,,,/`
-
-### 4.4 Дополнительные экраны
-
-| Экран | Назначение |
-|---|---|
-| **AudienceScreen** | Экран для аудитории в студии |
-| **BroadcastWindow** | Расширенное окно broadcast |
-| **RoundStatsWindow** | Статистика раунда |
-| **WinWinner** | Финальная заставка победителя |
-| **QuestionEditorWindow** | Редактор вопросов |
-| **DarkMessageBox** | Кастомный MessageBox в стиле Obsidian |
+- **State Machine** — `GameState` enum + `TransitionTo()` с валидацией переходов
+- **Event-Driven** — `StateChanged`, `BankChanged`, `MaxBankReached`, `FinalDuelEnded`
+- **Observer** — TCP-сервер рассылает сообщения всем подключённым клиентам
+- **Code-Behind** — основная логика UI в `OperatorPanel.xaml.cs`
 
 ---
 
-## 5. Game Engine — Ядро игровой логики
+## 5. ИГРОВОЙ ДВИЖОК (GameEngine)
 
-### Конечный автомат (State Machine)
+### Основные свойства
 
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> RoundReady: NEXT ROUND
-    Idle --> FinalDuel: Debug Jump
-    RoundReady --> Playing: START O'CLOCK
-    Playing --> Voting: Timer Expired
-    Voting --> Elimination: Vote Cast
-    Elimination --> RoundReady: NEXT ROUND
-    Elimination --> FinalDuel: 2 Players Left
-    FinalDuel --> Idle: RESET / END SHOW
+| Свойство | Тип | Описание |
+|----------|-----|----------|
+| `CurrentState` | `GameState` | Текущее состояние автомата |
+| `CurrentRound` | `int` | Номер раунда (1–7) |
+| `CurrentChainIndex` | `int` | Позиция в цепочке (0–7) |
+| `RoundBank` | `int` | Банк текущего раунда |
+| `TotalBank` | `int` | Общий банк за игру |
+| `RoundBurned` | `int` | Сгоревшие деньги за раунд |
+| `ActivePlayers` | `List<string>` | Список активных игроков |
+| `CurrentPlayerTurn` | `string` | Чей сейчас ход |
+| `EliminatedPlayerName` | `string` | Последний исключённый |
+| `LastStrongestLinkName` | `string` | Сильнейшее звено прошлого раунда |
+| `PlayerStatistics` | `Dictionary<string, Dictionary<int, PlayerStats>>` | Статистика: [игрок][раунд] |
+
+### Денежная цепочка
+
+```
+Шаг 0: ────── (старт)
+Шаг 1: 1 000 ₽
+Шаг 2: 2 000 ₽
+Шаг 3: 5 000 ₽
+Шаг 4: 10 000 ₽
+Шаг 5: 20 000 ₽
+Шаг 6: 30 000 ₽
+Шаг 7: 40 000 ₽
+Шаг 8: 50 000 ₽  ← MAX BANK (автобанк)
 ```
 
-### Transition Validation Pattern
+### Длительность раундов
 
-Переходы валидируются через `TransitionTo(GameState)` — несанкционированные переходы выбрасывают `InvalidOperationException`. Специально разрешены Debug-переходы:
-- `Idle → FinalDuel` (для быстрого тестирования)
-- `FinalDuel → Idle` (для сброса)
+| Раунд | Длительность | Игроков |
+|-------|-------------|---------|
+| 1 | 150 сек | 8 |
+| 2 | 140 сек | 7 |
+| 3 | 130 сек | 6 |
+| 4 | 120 сек | 5 |
+| 5 | 110 сек | 4 |
+| 6 | 100 сек | 3 |
+| 7 (префинал) | 90 сек | 2 |
 
-### GameState перечисление
+### Ключевые методы
+
+| Метод | Описание |
+|-------|----------|
+| `CorrectAnswer()` | +1 шаг цепочки. При 8 шагах — автобанк 50 000, цепочка сбрасывается |
+| `WrongAnswer()` | Сброс цепочки, сумма сгорает (`RoundBurned += потеря`) |
+| `Pass()` | Сброс цепочки, деньги НЕ сгорают |
+| `Bank()` | Текущая сумма → `RoundBank`, цепочка сбрасывается |
+| `MoveToNextPlayer()` | Ход следующему по кругу (среди `ActivePlayers`) |
+| `PrepareNewRound()` | `NextRound()` + стартовый игрок + инициализация статистики |
+| `EliminatePlayer(name)` | Удаление из `ActivePlayers`, переход в `Elimination` |
+| `ApplyRoundBankToTotal()` | `TotalBank += RoundBank` (×2 при 2 игроках) |
+| `StartFinalDuel(p1First)` | Инициализация финальной дуэли |
+| `ProcessFinalAnswer(isCorrect)` | Обработка ответа в финале |
+| `ResetGame()` | Полный сброс всех полей |
+
+### Стартовый игрок раунда
+
+- **Раунд 1**: по алфавиту (первый по имени)
+- **Раунды 2+**: сильнейшее звено прошлого раунда (`LastStrongestLinkName`)
+
+### Статистика игрока (PlayerStats)
 
 ```csharp
-public enum GameState {
-    Idle,           // Ожидание настройки команды
-    RoundReady,     // Раунд подготовлен, ждём START
-    Playing,        // Активная игра (таймер тикает)
-    Voting,         // Голосование за Слабое Звено
-    Elimination,    // Показ выбывшего игрока
-    FinalDuel       // Финальная дуэль (Head-to-Head)
+public class PlayerStats
+{
+    int CorrectAnswers;        // Верные ответы
+    int IncorrectAnswers;      // Неверные ответы
+    int Passes;                // Пасы
+    int BankedMoney;           // Сколько положил в банк
+    int BankPressCount;        // Сколько раз нажал БАНК
+    int BurnedByWrongAnswers;  // Сгорело из-за неверных ответов
+    int ExactDroppedMoney;     // Точная сумма потерь
 }
 ```
 
+### События
+
+| Событие | Аргументы | Когда |
+|---------|-----------|-------|
+| `StateChanged` | `StateChangedEventArgs` | Любая смена состояния |
+| `BankChanged` | `BankChangedEventArgs` | Изменение банка/цепочки |
+| `MaxBankReached` | — | Достигнут MAX 50 000 |
+| `FinalDuelEnded` | — | Финальная дуэль завершена |
+
 ---
 
-## 6. Раунды и управление временем
+## 6. КОНЕЧНЫЙ АВТОМАТ СОСТОЯНИЙ (GameState)
 
-### Хронометраж
+### Все состояния
 
-| Раунд | Время | Игроков |
-|---|---|---|
-| Раунд 1 | 150 сек | 8 |
-| Раунд 2 | 140 сек | 7 |
-| Раунд 3 | 130 сек | 6 |
-| Раунд 4 | 120 сек | 5 |
-| Раунд 5 | 110 сек | 4 |
-| Раунд 6 | 100 сек | 3 |
-| **Пред-финальный** | **90 сек** | **2** (банк ×2) |
+| Состояние | Описание |
+|-----------|----------|
+| `Idle` | Начальное / ожидание |
+| `IntroOpening` | Вступление: логотип, главная тема |
+| `IntroNarrative` | Рассказ о шоу |
+| `PlayerIntro` | Представление игроков |
+| `RulesExplanation` | Объяснение правил |
+| `RoundReady` | Раунд подготовлен, ожидание PLAY |
+| `Playing` | Идёт раунд, таймер тикает |
+| `RoundSummary` | Итоги раунда |
+| `Voting` | Голосование (45 сек) |
+| `Discussion` | Обсуждение результатов |
+| `Reveal` | Вскрытие голосов |
+| `Elimination` | Исключение игрока |
+| `FinalDuel` | Финальная дуэль |
 
-### Automated Round Preparation (Команда «NEXT ROUND»)
+### Матрица допустимых переходов
 
-Единая команда выполняет 6 шагов:
-
-1. **UI Clearing** — очистка предыдущих вопросов/ответов
-2. **Engine Increment** — инкремент номера раунда, сброс статистики
-3. **Timer Initialization** — автоматическое уменьшение на 10 сек
-4. **Smart Start** — выбор стартового игрока (алгоритм ниже)
-5. **Network Sync** — синхронизация по TCP
-6. **Question Buffering** — предзагрузка первого вопроса
-
-### Smart Start — Алгоритм выбора стартового игрока
-
-```mermaid
-graph TD
-    A{Раунд 1?} -->|Да| B[Алфавитный порядок]
-    A -->|Нет| C{Strongest Link жив?}
-    C -->|Да| D[Strongest Link начинает]
-    C -->|Нет| E{Второй по силе жив?}
-    E -->|Да| F[Второй начинает]
-    E -->|Нет| G[Кумулятивно сильнейший или алфавитный]
-
-    D --> H{Tie-break?}
-    H -->|"Одинаковые ответы"| I[Больше денег банковал]
+```
+Idle ──────────→ RoundReady, FinalDuel, IntroOpening, RulesExplanation
+IntroOpening ──→ IntroNarrative, Idle
+IntroNarrative → PlayerIntro, Idle
+PlayerIntro ──→ RulesExplanation, Idle
+RulesExplanation → RoundReady, Idle
+RoundReady ───→ Playing, Idle
+Playing ──────→ RoundSummary, Voting, Idle
+RoundSummary ─→ Voting, Idle
+Voting ───────→ Discussion, Elimination, Idle
+Discussion ──→ Reveal, Elimination, Idle
+Reveal ──────→ Elimination, Discussion, Idle
+Elimination ─→ RoundReady, FinalDuel, Idle
+FinalDuel ───→ Idle
 ```
 
-### Пред-финальный раунд (2 игрока)
+### Визуальная диаграмма игрового цикла
 
-- Активируется динамически при `ActivePlayers.Count == 2`
-- Всегда 90 секунд
-- Банк раунда **удваивается** перед добавлением к TotalBank
-- Голосование пропускается → сразу `FinalDuel`
-
----
-
-## 7. Банковская цепочка (Money Chain)
-
-### 8 ступеней
-
-| Шаг | Сумма |
-|---|---|
-| 1 | ₽1 000 |
-| 2 | ₽2 000 |
-| 3 | ₽5 000 |
-| 4 | ₽10 000 |
-| 5 | ₽20 000 |
-| 6 | ₽30 000 |
-| 7 | ₽40 000 |
-| 8 | ₽50 000 |
-
-### Цветовой стандарт (Оператор)
-
-| Состояние | Цвет | Код |
-|---|---|---|
-| **Активный уровень** | Gold + Yellow border | `#CC8800` |
-| **Неактивный уровень** | Dark Gray | `#252525` / border `#444` |
-
-> [!WARNING]
-> **НИКОГДА** не использовать Green для цепочки — он зарезервирован для вердикта «Верно».
-
-### Auto-Banking
-
-При достижении 8-го шага банк автоматически фиксируется.
-
-### Host Screen — Look-Ahead
-
-- **Bank Now**: значение на `currentChainIndex - 1`
-- **Next Sum**: значение на `currentChainIndex`
-
-### Broadcast — Canvas-Based Engine
-
-Программная анимация через `DoubleAnimation` на `Canvas.BottomProperty`:
-- **Стандартный интервал**: 95px между ступенями
-- **Перекрытие в стеке**: 25px
-- **Easing**: QuadraticEase (EaseInOut) / ElasticEase (Oscillations=1)
+```
+    ┌─────────────────────────────────────────────────┐
+    │                     IDLE                         │
+    └──────┬──────────────────────────────────┬────────┘
+           │                                  │
+    ┌──────▼──────┐                    ┌──────▼──────┐
+    │IntroOpening │                    │ RoundReady  │◄─────────┐
+    └──────┬──────┘                    └──────┬──────┘          │
+    ┌──────▼──────┐                    ┌──────▼──────┐          │
+    │IntroNarrat. │                    │   Playing   │          │
+    └──────┬──────┘                    └──────┬──────┘          │
+    ┌──────▼──────┐                    ┌──────▼──────┐          │
+    │ PlayerIntro │                    │RoundSummary │          │
+    └──────┬──────┘                    └──────┬──────┘          │
+    ┌──────▼──────┐                    ┌──────▼──────┐          │
+    │Rules Explan.│───────────────────→│   Voting    │          │
+    └─────────────┘                    └──────┬──────┘          │
+                                       ┌──────▼──────┐          │
+                                       │ Discussion  │          │
+                                       └──────┬──────┘          │
+                                       ┌──────▼──────┐          │
+                                       │   Reveal    │          │
+                                       └──────┬──────┘          │
+                                       ┌──────▼──────┐          │
+                                       │ Elimination │──────────┘
+                                       └──────┬──────┘
+                                              │ (2 игрока)
+                                       ┌──────▼──────┐
+                                       │ FinalDuel   │
+                                       └─────────────┘
+```
 
 ---
 
-## 8. Финальная дуэль (Head-to-Head)
+## 7. ПОЛНЫЙ ИГРОВОЙ ЦИКЛ
+
+### Фаза 1: Подготовка
+
+1. Запуск `WeakestLink.exe` → `OperatorPanel` открывается
+2. TCP-сервер стартует на порту 8888
+3. Web-пульт стартует на порту 8080
+4. Оператор заполняет **Smart Roster** (8 игроков: имя на тумбе, полное имя, город, фото)
+5. Нажатие **УТВЕРДИТЬ** → состав заморожен, кнопка → «СПИСОК УТВЕРЖДЕН» (тусклая)
+6. Нажатие **START SESSION** → `_isSessionStarted = true`, `ResetRoundCounter()`
+
+### Фаза 2: PRE-GAME (вступление)
+
+Если FastTrack **выключен** (стандартный путь):
+
+| Шаг | Кнопка | Аудио | Состояние |
+|-----|--------|-------|-----------|
+| 1 | OPENING | `main_theme_full.mp3` | `IntroOpening` |
+| 2 | INTRO 1 | `intro_track_1st.mp3` | `IntroNarrative` |
+| 3 | INTRO 2 | `intro_track_2nd.mp3` | `PlayerIntro` |
+| 4 | RULES | `intro_track_3rd.mp3` | `RulesExplanation` |
+
+После RULES → `FinalizePregameAndPrepareRound()`:
+- `PrepareNewRound()` (CurrentRound → 1)
+- PRE-GAME панель скрывается
+- READY становится доступна
+
+Если FastTrack **включён**: сразу `RulesExplanation` → `FinalizePregameAndPrepareRound()`.
+
+### Фаза 3: Раунд (повторяется 6 раз)
+
+```
+READY → RoundReady
+  ↓
+PLAY → Playing (таймер запущен, Round Bed играет)
+  ↓
+Вопрос → CORRECT / WRONG / BANK
+  ↓ (таймер = 0 или все вопросы)
+RoundSummary → ApplyRoundBankToTotal()
+  ↓
+OpenRoundAnalytics() → Аналитика + Голосование
+```
+
+#### Действия во время раунда
+
+| Действие | Эффект |
+|----------|--------|
+| **CORRECT** | ChainIndex++ (если 8 → автобанк 50000, цепочка сбрасывается) |
+| **WRONG** | Потеря текущей суммы цепочки, ChainIndex = 0 |
+| **BANK** | Текущая сумма → RoundBank, ChainIndex = 0 |
+| **Таймер = 0** | Раунд завершается, переход в RoundSummary |
+
+### Фаза 4: Голосование (Film-Style, 5 шагов)
+
+| Шаг | Название | Аудио | Описание |
+|-----|----------|-------|----------|
+| 1 | ОТБИВКА → СТОП МОТОР | `1_sting4_motor_off.mp3` | Оператор собирает голоса в панели |
+| 2 | МОТОР ИДЁТ | `2_sting4_motor_on.mp3` | Камеры включены |
+| 3 | ПОДНЯТЬ ТАБЛИЧКИ | `3_voting_reveal.mp3` | Подсчёт голосов, определение жертвы |
+| 4 | ОБСУЖДЕНИЕ | `4_voting_discussion.mp3` | Ведущая обсуждает результаты |
+| 5 | ПРОЩАЙТЕ | `5_walkofshame+after.mp3` | Исключение игрока |
+
+### Фаза 5: Раунд 7 (Префинал)
+
+- Остаются 2 игрока
+- Банк за раунд **удваивается** (`ApplyRoundBankToTotal()` × 2)
+- Голосование **не проводится**
+- После раунда → кнопка «ПЕРЕЙТИ К ФИНАЛУ»
+
+### Фаза 6: Финальная дуэль
+
+- 5 пар вопросов, по очереди
+- Если ничья после 5 пар → **Sudden Death** (дополнительные пары)
+- Победитель определяется, когда один игрок не может быть догнан
+- Аудио: `duel_winner.mp3`
+- Оверлей `WinWinner` с именем победителя и суммой выигрыша
+
+---
+
+## 8. ОПЕРАТОРСКАЯ ПАНЕЛЬ (OperatorPanel)
+
+Главное окно приложения (~7300 строк C#, ~2500 строк XAML).
+
+### Навигация (Central Context)
+
+| Контекст | Описание |
+|----------|----------|
+| `SETUP` | Настройка состава (Smart Roster) |
+| `PLAY` | Игровой экран (вопросы, таймер, банк) |
+| `STATS` | Аналитика и голосование |
+| `EDITOR` | Редактор вопросов |
+| `SETTINGS` | Настройки приложения |
+
+### Левая панель (Sidebar)
+
+- **Навигация**: Лобби, Игра, Аналитика, Редактор
+- **Статистика**: БАНК, РАУНД, ВЕРНО, НЕВЕРНО, ВРЕМЯ, ВОПРОС
+- **Раунды**: иконки раундов (1–7)
+- **Игроки**: список с цветовой индикацией статуса
+
+### Правая панель (Управление эфиром)
+
+- **READY** / **START O'CLOCK** / **CLOSE ROUND** — управление раундом
+- **Логотипы**: Classic / Premium
+- **Раунд**: Таймер, Цепочка, Обе
+- **Ответы**: БАНК, ДУЭЛЬ
+- **PRE-GAME**: OPENING, INTRO 1, INTRO 2, RULES
+- **Сервис**: STOP AUDIO, RESTART ROUND, CLOSE SESSION, ПАНИКА
+
+### Центральная область
+
+Переключается между контекстами. В режиме STATS содержит:
+- Таблицу аналитики с фильтром по раундам (R1–R7)
+- Панель голосования «ГОЛОСУЕТ ЗА» с ComboBox для каждого игрока
+- Кнопку ПРИНЯТЬ для фиксации голосов
+
+### Ключевые приватные поля
+
+```csharp
+GameEngine _engine;                         // Игровой движок
+QuestionProvider _questionProvider;          // Провайдер вопросов
+GameServer _server;                         // TCP-сервер
+AudioManager _audioManager;                 // Аудио-менеджер
+WebRemoteController? _webRemote;            // Web-пульт
+AiHostService? _aiHost;                     // AI-ведущая
+StatsAnalyzer _statsAnalyzer;               // Анализатор статистики
+DispatcherTimer _roundTimer;                // Таймер раунда
+DispatcherTimer _autoBotTimer;              // Авто-бот
+bool _isSessionStarted;                     // Сессия запущена?
+bool _eliminationPerformedThisRound;        // Исключение выполнено?
+bool _nextRoundUsed;                        // CLOSE ROUND нажат?
+int _analyticsFilterRound;                  // Фильтр раунда в аналитике
+string _currentLanguage;                    // "RU" / "EN"
+bool _isExpressVoting;                      // Экспресс-голосование?
+bool _isLoadingSettings;                    // Загрузка настроек?
+bool _isUIReady;                            // UI инициализирован?
+```
+
+### Логика доступности кнопки READY
+
+```csharp
+bool closeRoundDone = _nextRoundUsed
+    || _engine.CurrentRound == 0
+    || (_engine.CurrentRound == 1 && !_eliminationPerformedThisRound);
+
+bool readyEnabled = _isSessionStarted
+    && !isPreGame
+    && !isFinalReachedForReady
+    && closeRoundDone
+    && (state == GameState.Idle || state == GameState.RulesExplanation);
+```
+
+- Доступна перед Раундом 1 (`CurrentRound == 0` или `CurrentRound == 1` до исключения)
+- Доступна после CLOSE ROUND (`_nextRoundUsed = true`)
+- Недоступна во время PRE-GAME, раунда, голосования
+- Приглушённый вид, если ожидает CLOSE ROUND (`readyPending`)
+
+---
+
+## 9. СИСТЕМА ГОЛОСОВАНИЯ
+
+### Film-Style (съёмочное) голосование
+
+Основной режим. Управляется через 5-шаговый процесс в `FilmVotingPanel`.
+
+#### Шаг 1: Отбивка → Стоп Мотор (`BtnFilmSting_Click`)
+- Аудио: `1_sting4_motor_off.mp3`
+- Оператор выбирает голоса в панели «ГОЛОСУЕТ ЗА»
+- Кнопка ПРИНЯТЬ фиксирует голоса
+
+#### Шаг 2: Мотор идёт (`BtnFilmMotor_Click`)
+- Аудио: `2_sting4_motor_on.mp3`
+
+#### Шаг 3: Поднять таблички (`BtnFilmReveal_Click`)
+- Аудио: `3_voting_reveal.mp3`
+- Подсчёт голосов: `voteCounts[target]++`
+- Определение максимума голосов
+- Обработка ничьей (сильнейшее звено решает)
+
+#### Шаг 4: Обсуждение (`BtnFilmDiscussion_Click`)
+- Аудио: `4_voting_discussion.mp3`
+- Показ панели исключения
+
+#### Шаг 5: Прощайте (`BtnFilmEliminate_Click`)
+- Аудио: `5_walkofshame+after.mp3`
+- `EliminatePlayer(target)`
+- Обновление UI, статистики, списка игроков
+
+### Express-голосование
+
+Альтернативный быстрый режим. Бот автоматически голосует за слабейшее звено.
+
+### Панель «ГОЛОСУЕТ ЗА»
+
+- `ItemsControl` (не DataGrid) — для надёжной кликабельности ComboBox
+- Каждый активный игрок видит список кандидатов (все кроме себя)
+- Кнопка **ПРИНЯТЬ** (`BtnAcceptVotes_Click`):
+  - Блокирует все ComboBox через `SetVotePanelComboBoxesEnabled(false)`
+  - Устанавливает `IsVoteLocked = true` для всех строк
+  - Меняет текст на «✓ Принято», opacity 0.8
+- При новом голосовании — всё сбрасывается в `OpenFilmVoting()`
+
+### Обработка ничьей
+
+Если два (или более) игрока набрали одинаковое количество голосов:
+1. Определяется **сильнейшее звено** раунда
+2. Сильнейшему звену предлагается выбрать из связанных кандидатов
+3. ComboBox с кандидатами появляется в панели исключения
+
+---
+
+## 10. ФИНАЛЬНАЯ ДУЭЛЬ (Head-to-Head)
+
+### Инициализация
+
+```csharp
+_engine.StartFinalDuel(player1StartsFirst: true);
+```
 
 ### Структура
 
-5 пар вопросов (по одному каждому игроку). Победитель — больше правильных ответов.
+- **5 пар** обычных вопросов (10 вопросов всего)
+- Игроки отвечают **по очереди**
+- После 5 пар: если ничья → **Sudden Death**
+- Sudden Death: пары продолжаются, пока один не ответит верно, а другой — неверно
 
-### Bulletproof Question Pattern
+### UI элементы
 
-- `_finalQuestions` — **static** (переживает пересоздание engine)
-- Извлечение через **Modulo Pattern**: `index % list.Count`
-- **Hardcoded Fallback**: 5 запасных вопросов если список пуст
+- `P1_C1..P1_C5` — кружочки игрока 1 (зелёный = верно, красный = неверно)
+- `P2_C1..P2_C5` — кружочки игрока 2
+- `BtnDuelCorrect` / `BtnDuelWrong` — кнопки ответов
+- `TxtDuelQuestion` — текст вопроса
+- `TxtPlayer1Name` / `TxtPlayer2Name` — имена финалистов
 
-### Static UI Reference Pattern (Индикаторы)
+### Подсчёт
 
 ```csharp
-// XAML: P1_C1, P1_C2, P1_C3, P1_C4, P1_C5
-private Ellipse[] _p1Circles;
+Player1FinalScores = [true, false, true, true, null]  // 3 верно
+Player2FinalScores = [true, true, false, true, null]   // 3 верно → Sudden Death
+```
 
-public OperatorPanel() {
-    InitializeComponent();
-    _p1Circles = new[] { P1_C1, P1_C2, P1_C3, P1_C4, P1_C5 };
-}
+### Завершение
 
-private void UpdateFinalCirclesUI() {
-    for (int i = 0; i < 5; i++) {
-        if (i < _engine.Player1FinalScores.Count) {
-            var score = _engine.Player1FinalScores[i];
-            _p1Circles[i].Fill = score == true ? Brushes.Green :
-                               (score == false ? Brushes.Red : Brushes.Transparent);
-        }
-    }
+- `FinalDuelEnded` → `OnFinalDuelEnded()`
+- Аудио: `duel_winner.mp3`
+- Оверлей `WinWinner` с золотым свечением
+
+---
+
+## 11. АНАЛИТИКА И СТАТИСТИКА
+
+### StatsAnalyzer
+
+Анализирует данные из `GameEngine.PlayerStatistics`.
+
+#### Метрики игрока за раунд (PlayerRoundStats)
+
+| Метрика | Описание |
+|---------|----------|
+| `CorrectAnswers` | Верные ответы |
+| `IncorrectAnswers` | Неверные ответы |
+| `Passes` | Пасы |
+| `BankedMoney` | Положено в банк |
+| `BankPressCount` | Количество нажатий БАНК |
+| `ExactDroppedMoney` | Точная сумма потерь |
+| `TotalQuestions` | Всего вопросов |
+| `SuccessPercentage` | % верных ответов |
+| `AverageBankAmount` | Средняя сумма банка |
+
+#### Определение ролей
+
+**Сильное звено** (StrongestLink):
+```
+Score = (CorrectAnswers - TotalMistakes) × 10000 + BankedMoney
+```
+Tiebreaker: CorrectAnswers → BankedMoney
+
+**Слабое звено** (WeakestLink):
+- Исключая StrongestLink
+- Приоритет: `ExactDroppedMoney ≥ 70% MaxPossibleBank` → `TotalMistakes` → меньше BankedMoney и CorrectAnswers
+
+**Паникёр** (PanicBanker): минимальный `AverageBankAmount` при `BankPressCount > 0`
+
+**Паразит** (Parasite): `ExactDroppedMoney > 0` и `BankedMoney - ExactDroppedMoney < 0`
+
+#### Прогноз выбывания
+
+`EliminationPrediction` = WeakestLink, если нет иммунитета (0 ошибок).
+
+### AnalyticsRow (модель таблицы)
+
+```csharp
+public class AnalyticsRow : INotifyPropertyChanged
+{
+    string Name;
+    int CorrectAnswers, WrongAnswers, MoneyLost, PassCount;
+    string BankedAmount, Prediction;
+    bool IsWeakest, IsStrongest, IsActivePlayer;
+    List<string> AvailableTargets;
+    string SelectedVote;
+    bool IsVoteLocked;
 }
 ```
 
-### Unified Refresh Pattern
+### Фильтр по раундам
 
-Весь UI финала обновляется через **единую точку** `RefreshFinalUI()`:
+- Кнопки R1–R7 в панели фильтра
+- При открытии голосования фильтр автоматически переключается на текущий раунд
+- `_analyticsFilterRound` определяет, какой раунд показывать
 
-```csharp
-private void BtnDuelCorrect_Click(object sender, RoutedEventArgs e) {
-    _engine.ProcessFinalAnswer(true);
-    RefreshFinalUI();  // Единственный вызов обновления
-}
+### Экспорт
 
-private void RefreshFinalUI() {
-    UpdateFinalCirclesUI();          // 1. Кружки
-    if (string.IsNullOrEmpty(_engine.FinalWinner))
-        _engine.GetNextFinalQuestion(); // 2. Вопрос
-    UpdateDuelUI();                  // 3. Текст + Host Sync
-}
+- **CSV**: `StatsExporter.ExportCSV(filePath)` — таблица с разделителями
+- **HTML**: `StatsExporter.ExportHTML(filePath)` — для печати в PDF
+
+---
+
+## 12. ЭКРАНЫ ВЕДУЩЕГО (Host Screens)
+
+4 варианта экрана-телесуфлёра для ведущей.
+
+### HostScreen (Classic)
+
+- Левая колонка: денежная цепочка (подсвечивается текущий шаг)
+- Правая колонка: вопрос + ответ
+- Нижняя панель: «в банке», «следующая сумма», таймер, «забанковано»
+
+### HostScreenModern
+
+- Верхняя панель: имя игрока, таймер, банк, «играют за»
+- Центр: вопрос и ответ
+
+### HostScreenPremium
+
+- Анимации входа/выхода (QuestionEntrance, BarEntrance)
+- Градиентный фон
+
+### HostScreenModernPremium
+
+- Комбинация Modern + Premium
+- Анимации + верхняя панель с контекстным меню
+
+### Синхронизация
+
+Все экраны получают данные через TCP:
+```
+UPDATE_QUESTION|текст
+UPDATE_ANSWER|ответ
+UPDATE_CHAIN|индекс
+UPDATE_TIMER|секунды
+UPDATE_BANK|раунд|общий
+SET_STATE|состояние
+HOST_MESSAGE|текст
 ```
 
 ---
 
-## 9. Sudden Death — Внезапная смерть
+## 13. ЭКРАН ЗРИТЕЛЕЙ (AudienceScreen)
 
-### Условие активации
+- Разрешение: 1920×1080 (fullscreen)
+- Левая часть: денежная цепочка (текстовый список)
+- Правая часть: таймер + текущий банк
+- Финальная дуэль: оверлей с двумя табличками имён и значками
 
-Оба игрока завершили 5 вопросов **И** набрали одинаковое количество очков.
+---
 
-### Визуальные признаки
+## 14. ТРАНСЛЯЦИЯ (BroadcastScreen / BroadcastWindow)
 
-- `TurnTextBlock.Foreground` → **Red**
-- Таблица индикаторов **скрывается** на Broadcast
-- Фоновая музыка меняется на `sudden_death_bed.mp3` (однократно через latch `_isSuddenDeathMusicPlayed`)
+### BroadcastWindow
 
-### Логические гарантии
+- Хромакей (зелёный фон `#00B140` / `TVSafeChroma`)
+- Левая колонка: Canvas с цепочкой
+- Финальная дуэль: оверлей
+- Оверлей банка
 
-```csharp
-// Count >= 5 Pattern — защита от преждевременного срабатывания
-bool isComplete = scores.All(r => r != null) && scores.Count >= 5;
+### BroadcastScreen (UserControl)
+
+- 3 колонки: цепочка, контент, таймер
+- Информация о раунде
+- Текст вопроса
+- Оверлей сообщений ведущей
+
+### TV-Safe цвета
+
+Специальная палитра для корректного отображения на телевизорах:
+```
+TVSafeBackground: #050510
+TVSafeDark:       #1A1A1A
+TVSafePanel:      #161616
+TVSafeQuestionBg: #0A1128
+TVSafeAnswer:     #C10000
+TVSafeCyan:       #00CCCC
+TVSafeTimer:      #006400
+TVSafeBankNow:    #0000B8
+TVSafeTotal:      #4A0020
+TVSafeChroma:     #00B140
 ```
 
 ---
 
-## 10. Система управления вопросами
+## 15. АУДИО-СИСТЕМА (AudioManager)
 
-### JSON формат
+### Класс AudioManager
+
+Основан на **NAudio**. Управляет фоновой музыкой и звуковыми эффектами.
+
+### Ключевые методы
+
+| Метод | Описание |
+|-------|----------|
+| `Play(path, loop)` | Воспроизведение файла (с опциональным зацикливанием) |
+| `Stop()` | Остановка воспроизведения |
+| `PlayOneShotThenGeneralBedWithCrossfadeAsync(shot, bed, fadeSeconds)` | Одноразовый трек → кроссфейд → фоновый трек |
+
+### Свойства
+
+| Свойство | Тип | Описание |
+|----------|-----|----------|
+| `MusicVolume` | `float` | Громкость музыки (0.0–1.0) |
+| `SfxVolume` | `float` | Громкость SFX (0.0–1.0) |
+| `OnMainPlaybackCompleted` | `Action?` | Callback по завершении трека |
+
+### LoopStream
+
+Обёртка `WaveStream` для бесконечного зацикливания аудио.
+
+### Аудио-файлы
+
+| Категория | Файлы |
+|-----------|-------|
+| **Главная тема** | `main_theme_full.mp3` |
+| **Вступление** | `intro_track_1st/2nd/3rd.mp3` |
+| **Раунды** | `Round_bed_(130–230).mp3` |
+| **Общий фон** | `general_bed.mp3` |
+| **Голосование** | `VOTING TRACKS/1–5_*.mp3` |
+| **SFX** | `ROUND SFX/BANK.mp3, CORRECT.mp3, WRONG.mp3` |
+| **Исключение** | `walk_of_shame.mp3`, `5_walkofshame+after.mp3` |
+| **Финал** | `final_round_*.mp3`, `duel_winner.mp3` |
+
+---
+
+## 16. СЕТЕВОЕ ВЗАИМОДЕЙСТВИЕ
+
+### TCP-сервер (GameServer)
+
+- Порты: 8888 (основной), fallback 8889–8892
+- Протокол: текстовые строки через TCP (UTF-8, разделитель `\n`)
+- Рассылка: `Broadcast(message)` → все подключённые клиенты
+
+### Протокол сообщений
+
+| Сообщение | Направление | Описание |
+|-----------|------------|----------|
+| `SET_STATE\|{state}` | Сервер → Клиент | Смена состояния игры |
+| `UPDATE_QUESTION\|{text}` | Сервер → Клиент | Новый вопрос |
+| `UPDATE_ANSWER\|{answer}` | Сервер → Клиент | Ответ на вопрос |
+| `UPDATE_CHAIN\|{index}` | Сервер → Клиент | Позиция в цепочке |
+| `UPDATE_TIMER\|{seconds}` | Сервер → Клиент | Оставшееся время |
+| `UPDATE_BANK\|{round}\|{total}` | Сервер → Клиент | Банк раунда и общий |
+| `UPDATE_ROUND\|{number}` | Сервер → Клиент | Номер раунда |
+| `HOST_MESSAGE\|{text}` | Сервер → Клиент | Сообщение ведущей |
+| `ELIMINATE\|{name}` | Сервер → Клиент | Исключение игрока |
+| `CLEAR_ELIMINATION` | Сервер → Клиент | Сброс исключения |
+| `CORRECT` | Клиент → Сервер | Правильный ответ (от пульта) |
+| `WRONG` | Клиент → Сервер | Неправильный ответ |
+| `BANK` | Клиент → Сервер | Банк |
+| `PASS` | Клиент → Сервер | Пас |
+| `NEXT` | Клиент → Сервер | Следующий вопрос |
+
+### TCP-клиент (GameClient)
+
+```csharp
+var client = new GameClient();
+client.MessageReceived += (msg) => { /* обработка */ };
+client.Connect("192.168.1.100", 8888);
+```
+
+---
+
+## 17. WEB-ПУЛЬТ (WebRemoteController)
+
+### HTTP-сервер
+
+- Порты: 8080 (основной), fallback 8081
+- Протокол: HTTP GET
+- Автогенерация QR-кода для подключения
+
+### Эндпоинты
+
+| URL | Метод | Описание |
+|-----|-------|----------|
+| `/` | GET | HTML-страница пульта (iPad UI) |
+| `/host` | GET | HTML-страница для ведущей |
+| `/api/state` | GET | JSON: текущее состояние игры |
+| `/api/host-state` | GET | JSON: данные для экрана ведущей |
+| `/api/command?action={cmd}` | GET | Выполнение команды (BANK, CORRECT, WRONG, PASS) |
+
+### Безопасность
+
+- Команды BANK/CORRECT/WRONG/PASS блокируются, если `isActive = false` (не в состоянии Playing)
+
+---
+
+## 18. AI-ИНТЕГРАЦИЯ
+
+### AiHostService (AI-ведущая «Мария Киселёва»)
+
+- **Генерация текста**: Google Gemini API
+- **Озвучка**: ElevenLabs TTS API
+- **Воспроизведение**: NAudio
+
+#### Игровые события
+
+| Метод | Когда вызывается |
+|-------|-----------------|
+| `OnGameIntroAsync()` | Начало шоу |
+| `OnRulesAsync()` | Правила игры |
+| `OnRoundStartAsync(round)` | Начало раунда |
+| `OnCorrectAnswer(player, chain)` | Верный ответ (при chain ≥ 8) |
+| `OnWrongAnswerAsync(player, answer)` | Неверный ответ |
+| `OnBank(player, amount)` | Банк |
+| `OnTimeUpAsync()` | Время раунда истекло |
+| `OnFullBankAsync()` | Достигнут MAX BANK (50 000) |
+| `OnRoundResultAsync(round, banked, burned)` | Итоги раунда |
+| `OnVotingStartAsync(round)` | Начало голосования |
+| `OnPlayerEliminatedAsync(name, round)` | Исключение игрока |
+| `ReadQuestionAsync(text)` | Чтение вопроса вслух |
+
+### AiBotTester (AI-бот)
+
+- Совместим с OpenAI API (ChatGPT, DeepSeek, LM Studio, Ollama)
+- Возвращает `BotDecision`: Action (`"answer"` / `"pass"` / `"bank"`), Text
+- Используется для нагрузочного тестирования
+
+### GeminiTestPlayer
+
+- AI-игрок на Gemini API
+- Автоматически отвечает на вопросы в режиме тестирования
+- Интегрирован с `AutoBotTimer` (3-секундный интервал)
+
+---
+
+## 19. ДИЗАЙН-СИСТЕМА OBSIDIAN
+
+### Философия
+
+Тёмная тема в стиле Discord/Obsidian. TV-safe палитра для трансляции.
+
+### Цветовая палитра
+
+#### Основные поверхности
+
+| Ресурс | Hex | Использование |
+|--------|-----|---------------|
+| `ObsidianBg` | `#1E1E1E` | Фон приложения |
+| `ObsidianBase` | `#1F1F1F` | Базовый фон |
+| `ObsidianSurface` | `#252525` | Поверхности |
+| `ObsidianDeep` | `#292929` | Глубокие слои |
+| `ObsidianCard` | `#2D2D2D` | Карточки |
+| `ObsidianRaised` | `#333333` | Приподнятые элементы |
+| `ObsidianBorder` | `#363636` | Границы |
+| `ObsidianBorderStrong` | `#3D3D3D` | Усиленные границы |
+| `ObsidianBorderLight` | `#4D4D4D` | Лёгкие границы |
+
+#### Текст
+
+| Ресурс | Hex | Использование |
+|--------|-----|---------------|
+| `ObsidianTextPrimary` | `#E0E0E0` | Основной текст |
+| `ObsidianText` | `#E8E8E8` | Светлый текст |
+| `ObsidianTextSecondary` | `#999999` | Вторичный текст |
+| `ObsidianTextMuted` | `#555555` | Приглушённый |
+| `ObsidianTextDisabled` | `#717171` | Отключённый |
+
+#### Семантические цвета
+
+| Ресурс | Hex | Значение |
+|--------|-----|----------|
+| `ColorSuccess` | `#22C55E` | Успех / зелёный |
+| `ColorDanger` | `#EF4444` | Опасность / красный |
+| `ColorWarning` | `#F59E0B` | Предупреждение / жёлтый |
+| `ColorInfo` | `#4F6BED` | Информация / синий |
+| `ColorGold` | `#FFD700` | Золотой |
+| `ColorBlurple` | `#5865F2` | Discord-стиль |
+| `ColorTeal` | `#2DD4BF` | Бирюзовый |
+
+#### Fire Buttons (игровые кнопки)
+
+| Ресурс | Hex | Действие |
+|--------|-----|----------|
+| `FireButtonCorrect` | `#23a559` | ВЕРНО |
+| `FireButtonBank` | `#1565C0` | БАНК |
+| `FireButtonWrong` | `#da373c` | НЕВЕРНО |
+| `FireButtonPass` | `#4e5058` | ПАС |
+
+### Типографика
+
+| Ресурс | Размер | Использование |
+|--------|--------|---------------|
+| `FontSizeBroadcastHuge` | 180 | Огромный текст трансляции |
+| `FontSizeBroadcastMax` | 130 | Максимальный |
+| `FontSizeBroadcastQuestion` | 96 | Вопрос на экране |
+| `FontSizeQuestion` | 64 | Вопрос в операторской |
+| `FontSizeDisplay` | 32 | Дисплейный |
+| `FontSizeTitle` | 24 | Заголовок |
+| `FontSizeBody` | 13 | Основной текст |
+| `FontSizeSmall` | 12 | Мелкий |
+| `FontSizeCaption` | 11 | Подпись |
+| `FontSizeXXXSmall` | 9 | Микротекст |
+
+### Отступы (Spacing)
+
+| Ресурс | Значение |
+|--------|----------|
+| `SpacingXXS` | 2 |
+| `SpacingXS` | 4 |
+| `SpacingS` | 8 |
+| `SpacingM` | 12 |
+| `SpacingL` | 16 |
+| `SpacingXL` | 20 |
+| `SpacingXXL` | 24 |
+| `Spacing3XL` | 32 |
+| `Spacing4XL` | 40 |
+
+### Скругления (CornerRadius)
+
+| Ресурс | Значение |
+|--------|----------|
+| `CornerRadiusNone` | 0 |
+| `CornerRadiusSmall` | 2 |
+| `CornerRadiusDefault` | 3 |
+| `CornerRadiusStandard` | 4 |
+| `CornerRadiusMediumSmall` | 5 |
+| `CornerRadiusMedium` | 6 |
+| `CornerRadiusLarge` | 8 |
+| `CornerRadiusXLarge` | 10 |
+| `CornerRadiusRound` | 12 |
+| `CornerRadiusPill` | 16 |
+| `CornerRadiusBroadcast` | 20 |
+| `CornerRadiusCircle` | 45 |
+
+### Именованные стили
+
+| Стиль | Описание |
+|-------|----------|
+| `FlatButton` | Плоская кнопка без рамки |
+| `GhostButton` | Прозрачная кнопка |
+| `DangerGhostButton` | Красная прозрачная кнопка |
+| `AccentButton` | Акцентная кнопка |
+| `RedButton` | Красная кнопка |
+| `ObsidianCheckBox` | Чекбокс в стиле Obsidian |
+| `ObsidianTextBox` | Текстовое поле |
+| `FlatToggleStyle` | Плоский переключатель |
+| `SurfaceCard` | Карточка-поверхность |
+| `MetricCard` | Карточка метрики |
+| `FireCorrectButton` | Кнопка ВЕРНО (зелёная, 120×60) |
+| `FireBankButton` | Кнопка БАНК (синяя) |
+| `FireWrongButton` | Кнопка НЕВЕРНО (красная) |
+| `FirePassButton` | Кнопка ПАС (серая) |
+| `WindowControlButton` | Кнопка окна (свернуть/развернуть) |
+| `WindowCloseButton` | Кнопка закрытия окна |
+
+---
+
+## 20. СИСТЕМА ВОПРОСОВ
+
+### QuestionProvider
+
+Загружает вопросы из JSON и выдаёт случайным образом без повторений.
+
+#### Методы
+
+| Метод | Описание |
+|-------|----------|
+| `LoadQuestions(filePath)` | Загрузка из JSON-файла |
+| `GetRandomQuestion()` | Случайный неиспользованный вопрос |
+| `ResetSession()` | Сброс использованных вопросов |
+| `ValidateDatabase()` | Проверка базы: пустые поля, раунды 1–8, мин. количество |
+
+### Формат questions.json
+
+```json
+[
+  {
+    "Id": 1,
+    "Text": "В каком году Юрий Гагарин полетел в космос?",
+    "Answer": "1961",
+    "AcceptableAnswers": "1961 год; шестьдесят первый"
+  },
+  {
+    "Id": 2,
+    "Text": "Столица Франции?",
+    "Answer": "Париж",
+    "AcceptableAnswers": ""
+  }
+]
+```
+
+### Формат final_questions.json
+
+```json
+[
+  {
+    "Id": 1,
+    "Text": "Какой химический элемент имеет символ Fe?",
+    "Answer": "Железо"
+  }
+]
+```
+
+### Языки
+
+- `questions.json` / `final_questions.json` — русский
+- `questions_en.json` / `final_questions_en.json` — английский
+
+### Редактор вопросов (QuestionEditorWindow)
+
+- CRUD-интерфейс для вопросов
+- Load/Save JSON
+- DataGrid с колонками: ID, Text, CorrectAnswer, AcceptableAnswers, Round
+- Кнопки: Добавить, Удалить, Очистить
+
+---
+
+## 21. НАСТРОЙКИ И ПЕРСИСТЕНТНОСТЬ
+
+### Файл настроек
+
+Путь: `{AppDomain.CurrentDomain.BaseDirectory}/app_settings.json`
+
+### Формат
 
 ```json
 {
-    "Question": "В каком году была основана Москва?",
-    "Answer": "1147",
-    "AcceptableAnswers": "1147, двенадцатый век"
+  "language": "RU",
+  "expressVoting": true,
+  "skipIntro": false,
+  "roundSfx": true,
+  "musicVolume": 100,
+  "sfxVolume": 87
 }
 ```
 
-### QuestionProvider.cs
+### Сохраняемые параметры
 
-- Загрузка из `questions.json` / `questions_en.json`
-- Десериализация с `PropertyNameCaseInsensitive = true`
-- CopyToOutputDirectory: `PreserveNewest`
+| Параметр | Тип | Описание |
+|----------|-----|----------|
+| `language` | string | "RU" или "EN" |
+| `expressVoting` | bool | Экспресс-голосование |
+| `skipIntro` | bool | FastTrack (пропуск вступления) |
+| `roundSfx` | bool | Короткие звуки (BANK, CORRECT, WRONG) |
+| `musicVolume` | int | Громкость музыки (0–100) |
+| `sfxVolume` | int | Громкость SFX (0–100) |
 
-### Expanded Decision Support (Финал)
+### Когда сохраняется
 
-Оператор видит **основной ответ** + **допустимые варианты**:
-> «Париж (франция, paris)»
+- При закрытии окна (`OnClosed`)
+- При уходе с экрана НАСТРОЙКИ (`SetCentralContext`)
+- При изменении слайдеров громкости
+- При изменении чекбоксов (FastTrack, RoundSfx)
 
----
+### Когда загружается
 
-## 11. Статистика и аналитика игроков
+- Событие `Loaded` окна (`OperatorPanel`)
+- Флаг `_isLoadingSettings` предотвращает рекурсивное сохранение
+- Флаг `_isUIReady` предотвращает крах при инициализации XAML
 
-### Метрики (PlayerStatView)
-
-| Метрика | Описание |
-|---|---|
-| **Correct** | Количество верных ответов |
-| **Incorrect** | Количество неверных ответов |
-| **Passes** | Количество пасов |
-| **Banked** | Сумма заработанных денег |
-
-### Аналитические компоненты
-
-| Файл | Размер | Функция |
-|---|---|---|
-| `StatsAnalyzer.cs` | 17 KB | Расчёт Strongest/Weakest Link |
-| `StatsExporter.cs` | 10 KB | Экспорт статистики |
-| `RoundStatsWindow` | 28 KB | Визуальное окно статистики |
-
----
-
-## 12. Сетевой протокол (TCP)
-
-### Порт: 8888
-
-### Формат сообщений
-
-Строка, завершённая `\n`. Поля разделены `|`.
-
-### Команды
-
-| Команда | Описание |
-|---|---|
-| `STATE\|{GameState}` | Изменение состояния игры |
-| `SET_STATE\|{GameState}` | Принудительная установка состояния |
-| `QUESTION\|{text}\|{answer}\|{number}` | Обновление вопроса |
-| `UPDATE_BANK\|{chainIndex}\|{banked}` | Синхронизация банка |
-| `DUEL_UPDATE\|{p1}\|{p2}\|{s1}\|{s2}` | Обновление дуэли |
-| `ELIMINATE\|{name}` | Показ выбывшего |
-| `CLEAR_ELIMINATION` | Скрытие экрана выбывания |
-| `WINNER\|{name}\|{amount}` | Финальная заставка |
-| `HOST_MESSAGE\|{text}` | Сообщение для ведущего |
-| `CLEAR_BROADCAST` | Очистка эфира |
-| `RESET_GAME` | Полный сброс |
-
-### CSV-формат очков дуэли
-
-`1,0,1,1,-1` где: `1`=Верно, `0`=Неверно, `-1`=Ещё нет
-
-### Sync-on-Demand Pattern
-
-При открытии Slave-окна Master немедленно пушит текущее состояние:
+### Защита от ошибок
 
 ```csharp
-var hostScreen = new HostScreen();
-hostScreen.Show();
-// Immediate State Push — нет "пустого экрана"
-hostScreen.UpdateQuestion(_engine.CurrentQuestion);
-hostScreen.UpdateTimer(FormatTime(_timeLeftSeconds));
-hostScreen.UpdateBank(_engine.ChainIndex, _engine.RoundBank);
-```
-
----
-
-## 13. Аудио-движок (NAudio)
-
-### AudioManager.cs (17 KB)
-
-| Принцип | Описание |
-|---|---|
-| **One Active Track** | Новый трек автоматически останавливает предыдущий |
-| **Continuous Bed** | Фоновая музыка НЕ прерывается кнопками Correct/Wrong |
-| **Stage-Only Transitions** | Музыка меняется только при смене состояния |
-| **Hardware** | WaveOutEvent + AudioFileReader для MP3 |
-
-### Continuous Audio Bed Pattern (Финал)
-
-```csharp
-// ❌ НЕПРАВИЛЬНО — прерывает фон при каждом клике
-private void BtnDuelCorrect_Click(...) {
-    _audioManager.StopAll();  // НЕТ!
-    _audioManager.Play("correct.mp3");
+private void SaveSettings()
+{
+    if (_isLoadingSettings || !_isUIReady) return;
+    // ...
 }
 
-// ✅ ПРАВИЛЬНО — фон играет непрерывно
-private void BtnDuelCorrect_Click(...) {
-    _engine.ProcessFinalAnswer(true);
-    RefreshFinalUI();  // Без аудио-логики
+private void SliderMusicVolume_ValueChanged(...)
+{
+    if (!_isUIReady) return;
+    // ...
 }
 ```
 
 ---
 
-## 14. iPad Web Remote — Удалённый пульт
+## 22. ТЕСТИРОВАНИЕ И АВТОТЕСТЫ
 
-### Архитектура
+### SelfTest
 
-```mermaid
-sequenceDiagram
-    participant iPad as 📱 iPad (Safari)
-    participant HTTP as 🌐 HttpListener (:8080)
-    participant UI as 🎛️ OperatorPanel (WPF)
+Автоматические тесты игрового движка.
 
-    iPad->>HTTP: GET /
-    HTTP-->>iPad: HTML Remote Interface
-    iPad->>HTTP: GET /api/command?action=BANK
-    HTTP->>UI: Dispatcher.Invoke(HandleCommand("BANK"))
-    UI-->>HTTP: 200 OK
-    HTTP-->>iPad: "OK"
-```
+#### Группы тестов
+
+| Группа | Тесты |
+|--------|-------|
+| **State Machine** | Допустимые переходы, intro-цикл, блокировка недопустимых, сброс в Idle |
+| **Bank Chain** | Рост цепочки, банк, WrongAnswer, Pass, RoundBurned |
+| **Round Sequence** | Длительности раундов 1–6 |
+| **Player Elimination** | EliminatePlayer, удаление из ActivePlayers |
+| **Final Duel** | Переход в FinalDuel, 5 слотов, победа P1 |
+| **QuestionProvider** | Загрузка questions.json, валидность вопросов |
+| **HostScreen Parity** | Проверка совпадения методов на 4 экранах ведущего |
+
+### Бот-тестирование
+
+#### Полу-авто (Semi-Auto)
+- 8 ботов: «Бот 1» – «Бот 8»
+- 30-секундный таймер
+- AutoBot включён (3 сек интервал)
+- Оператор управляет переходами вручную
+
+#### Полный автопилот (Auto)
+- Все 7 раундов + финал автоматически
+- Автоматическое исключение худшего
+- Финал между оставшимися
+
+### AI-тестирование (GeminiTestPlayer)
+
+- Подключается к Gemini API
+- Автоматически отвечает на вопросы
+- Имитирует реальную игру
+
+---
+
+## 23. МАКРОПАД
+
+### MacroPadService
+
+Интеграция с USB-макропадом для физических кнопок.
+
+### Раскладка
+
+| Кнопка | Действие |
+|--------|----------|
+| A | ВЕРНО (Correct) |
+| B | НЕВЕРНО (Wrong) |
+| C | БАНК (Bank) |
+| D | READY |
+| F | START |
 
 ### Конфигурация
 
-| Параметр | Значение |
-|---|---|
-| Порт | 8080 (fallback: 8081) |
-| Auth | `AuthenticationSchemes.Anonymous` |
-| Binding | Wildcard `http://+:{port}/` |
-| QR-код | QRCoder → BitmapImage (CacheOption.OnLoad) |
-
-### Кнопки Remote
-
-| Кнопка | Цвет | Действие |
-|---|---|---|
-| **БАНК!** | `#CC8800` (Gold) | `send("BANK")` |
-| **ВЕРНО** | `#006600` (Green) | `send("CORRECT")` |
-| **НЕВЕРНО** | `#AA0000` (Red) | `send("WRONG")` |
-| **ПАС** | `#444` (Gray) | `send("PASS")` |
-| **NEXT** | `#0055AA` (Blue) | `send("NEXT")` |
+Файлы: `macropad/weakest-link-macropad.yaml`, `macropad/example-mapping.yaml`
 
 ---
 
-## 15. UI/UX Дизайн-система «Obsidian»
+## 24. УТИЛИТЫ И ВСПОМОГАТЕЛЬНЫЕ ИНСТРУМЕНТЫ
 
-### Цветовые токены
-
-| Токен | Hex | Назначение |
-|---|---|---|
-| `ObsidianBg` | `#1E1E1E` | Глубокий угольный фон |
-| `ObsidianSurface` | `#252525` | Фон карточек и панелей |
-| `ObsidianBorder` | `#363636` | Тонкие границы |
-| `ObsidianTextPrimary` | `#E0E0E0` | Основной текст |
-| `ObsidianTextSecondary` | `#888888` | Вторичный/приглушённый текст |
-
-### Battle Cockpit — Карточка вопроса
-
-| Свойство | Значение |
-|---|---|
-| Размер | 750×420 (фиксированный) |
-| Z-Index | 200 |
-| Тень | `BlurRadius="25" ShadowDepth="10" Opacity="0.7"` |
-| Corner | `CornerRadius="8"` |
-| Кнопки | 120×90 с `CornerRadius="6"` |
-
-### Кнопки управления (Fire Buttons)
-
-| Кнопка | Цвет | Hover | Pressed | Hotkey |
-|---|---|---|---|---|
-| ВЕРНО | `#23a559` | `#2db86b` | `#1a8a44` | ENTER |
-| БАНК | `#FFD700` | `#FFE033` | `#D4B400` | SPACE |
-| НЕВЕРНО | `#da373c` | `#e54e52` | `#b82d31` | DEL |
-| ПАСС | `#4e5058` | `#5c5e66` | `#3e4046` | BACK |
-
-### Левая панель «СЕРВИС» (Service Sidebar)
-
-- **Тип**: Overlay (`Panel.ZIndex="100"`)
-- **Ширина**: 210px
-- **Visibility**: `Collapsed` по умолчанию
-- **Safe Zone**: Col 0 основной сетки = 210px
-
-### Status Bar (24px footer)
-
-Тонкая панель внизу окна с микро-кнопкой `[>_] Логи` для вызова терминала.
-
-### Главная сетка
-
-| Колонка | Ширина | Содержимое |
-|---|---|---|
-| Col 0 | 210px | Safe Zone для СЕРВИС |
-| Col 1 | `*` | Battle Cockpit / Setup |
-| Col 2 | 400px | Управление эфиром |
-
----
-
-## 16. Broadcast-оверлеи (OBS Studio)
-
-### Прозрачное окно
-
-```xml
-<Window WindowStyle="None"
-        AllowsTransparency="True"
-        Background="Transparent"
-        Topmost="True">
-```
-
-### Ассеты (siteoforigin)
-
-```csharp
-// Гарантированная загрузка с диска
-var img = new BitmapImage(
-    new Uri("pack://siteoforigin:,,,/Assets/Images/GOOD.png",
-            UriKind.Absolute));
-```
-
-### Текстуры индикаторов
-
-| Файл | Состояние |
-|---|---|
-| `NORMAL.png` | Нейтральное (серый круг) |
-| `GOOD.png` | Верно (зелёная галочка) |
-| `BAD.png` | Неверно (красный крест) |
-
-### Money Tree (Organic Stack)
-
-- Рунги: `moneytree_blue.png` (неактив) / `moneytree_red.png` (актив)
-- Inverted Z-Index: `InvertedIndex => 10 - Index`
-- Анимация: `ThicknessAnimation` на Margin
-
-### Adaptive Shield Pattern (Таймер/Банк)
-
-```xml
-<Grid>
-    <Image Source="TIMER.png" Stretch="Uniform"/>
-    <Viewbox MaxWidth="210" MaxHeight="40" StretchDirection="DownOnly">
-        <TextBlock Text="{Binding Time}" FontFamily="Courier New"
-                   FontSize="72" FontWeight="Bold" Foreground="White"/>
-    </Viewbox>
-</Grid>
-```
-
----
-
-## 17. Горячие клавиши оператора
-
-### Blind Operation Pattern
-
-| Клавиша | Действие | Контекст |
-|---|---|---|
-| **Space** | БАНК! | Раунд |
-| **→ Right** | ВЕРНО | Раунд / Дуэль |
-| **← Left** | НЕВЕРНО | Раунд / Дуэль |
-| **↓ Down** | ПАС | Раунд |
-| **Enter** | NEXT / START DUEL | Универсальный |
-| **Alt+S** | Скриншот «Selfie» | Любой момент |
-| **Escape** | Закрыть дочернее окно | WinWinner и др. |
-
-### Input Focus Guard
-
-```csharp
-private void Window_KeyDown(object sender, KeyEventArgs e) {
-    // Не перехватываем горячие клавиши при наборе текста
-    if (e.OriginalSource is TextBox) return;
-    // ... handle hotkeys ...
-    e.Handled = true;  // Блокируем пробег события дальше
-}
-```
-
----
-
-## 18. Экстренное управление (Panic Buttons)
-
-### Big Red Button Pattern
-
-| Кнопка | Цвет | Действие |
-|---|---|---|
-| **CLOSE SESSION** | `#8B0000` | Graceful shutdown всего приложения |
-| **RESTART ROUND** | `#FF8C00` | Сброс текущего раунда |
-| **LOGO** | `#444444` | Очистка broadcast (только логотип) |
-| **STOP AUDIO** | `#444444` | Немедленная тишина |
-| **BREAK GAME** | `#FF0000` + DropShadow | Полный экстренный сброс |
-
-### BREAK GAME — логика Panic Button
-
-```csharp
-// Двойное подтверждение → полный сброс
-_audioManager.StopAll();        // 1. Тишина
-_roundTimer.Stop();             // 2. Остановка таймера
-_engine.TransitionTo(Idle);     // 3. Движок в ноль
-_engine.RoundBank = 0;          // 4. Обнуление банка
-_broadcastScreen?.ClearScreen();// 5. Очистка эфира
-```
-
----
-
-## 19. AI Bot — Автоматическое тестирование
-
-### Архитектура
-
-| Компонент | Файл | Назначение |
-|---|---|---|
-| `GeminiTestPlayer.cs` | 6.8 KB | LLM Decision Engine |
-| `GeminiBotClient.cs` | 6.3 KB | HTTP-клиент Gemini API |
-| `AiBotTester.cs` | 7.2 KB | Оркестрация тест-сессии |
-
-### Rate Limiting
-
-- **Gemini Free Tier**: 15 RPM
-- **Безопасная задержка**: `await Task.Delay(6000)` (10 RPM)
-
-### Resilient Pass Pattern (HTTP 429)
-
-```csharp
-if ((int)response.StatusCode == 429) {
-    return new BotDecision {
-        Action = "pass",
-        Text = "HTTP 429 - Quota Exceeded"
-    };
-}
-```
-
----
-
-## 20. Инструменты разработчика
-
-### Selfie Screenshot Tool
-
-- **Хоткей**: `Alt+S` (или `Ctrl+Q`)
-- **Технология**: `RenderTargetBitmap` с DPI-коррекцией
-- **Выход**: `Screenshots/Selfie_{timestamp}.png`
-- **Обратная связь**: `SystemSounds.Beep`
-
-### Python-утилиты
+### Python-скрипты
 
 | Скрипт | Назначение |
-|---|---|
-| `add_questions.py` | Массовое добавление вопросов |
+|--------|-----------|
+| `gen_questions.py` | Генерация вопросов |
+| `gen_final_questions.py` | Генерация финальных вопросов |
+| `merge_questions.py` | Слияние баз вопросов |
+| `add_questions.py` | Добавление вопросов |
+
+### Tools/
+
+| Инструмент | Назначение |
+|-----------|-----------|
 | `analyze_sync.py` | Анализ синхронизации аудио |
-| `find_first_beat.py` | Определение первого бита метронома |
-| `layout_editor.html` | Визуальный редактор расположения |
+| `find_first_beat.py` | Поиск первого бита в аудио |
+| `layout_editor.html` | HTML-редактор раскладки экранов |
+| `MetroDetect/` | C#-утилита определения метронома |
 
-### Diagnostic Persistence
+### ColorResourceHelper
 
-| Файл | Содержимое |
-|---|---|
-| `crash_report.txt` | Fatal exceptions (AppDomain handler) |
-| `web_remote_error.txt` | Ошибки HTTP-сервера |
-| `web_remote_requests.txt` | Лог всех HTTP-запросов |
-| `web_remote_status.txt` | Статус привязки портов |
+Статический класс для доступа к XAML-ресурсам из code-behind:
 
----
+```csharp
+SolidColorBrush brush = ColorResourceHelper.ColorInfo;
+Color color = ColorResourceHelper.ColorInfo.Color;
+```
 
-## 21. Паттерны проектирования (Каталог)
-
-### Архитектурные паттерны
-
-| Паттерн | Описание |
-|---|---|
-| **Master-Slave TCP** | Оператор (Master) → Host/Broadcast (Slaves) |
-| **Direct Push Model** | Обход event-binding, прямое присвоение UI |
-| **Unified Refresh** | Единая точка обновления всего UI финала |
-| **Sync-on-Demand** | Немедленный state push при открытии окна |
-| **Transition Validation** | Guard-проверка переходов State Machine |
-| **Deterministic Command** | Кнопки → 2 строки: логика + refresh |
-
-### UI паттерны
-
-| Паттерн | Описание |
-|---|---|
-| **Battle Cockpit** | Всё в одной карточке (вопрос+банк+кнопки) |
-| **Fixed-Height Anchor** | Кнопки заякорены внизу (не прыгают) |
-| **Hider Pattern** | `Visibility=Collapsed` вместо удаления |
-| **Safe Zone Overlay** | Зарезервированная колонка для sidebar |
-| **Selective UI Isolation** | Dimming неактивных панелей (0.4 opacity) |
-| **Obsidian Token System** | Цвета через ResourceDictionary |
-
-### Broadcast паттерны
-
-| Паттерн | Описание |
-|---|---|
-| **Organic Stack** | Negative margins + inverted Z-Index |
-| **Shield Containment** | Viewbox + StretchDirection=DownOnly |
-| **Canvas Engine** | Программная анимация Canvas.Bottom |
-| **Texture Swap** | GOOD/BAD/NORMAL.png |
-| **siteoforigin** | Loose assets с диска |
-
-### Operational паттерны
-
-| Паттерн | Описание |
-|---|---|
-| **Continuous Audio Bed** | Фон не прерывается вердиктами |
-| **Blind Operation** | Управление без взгляда на экран |
-| **Resilient Pass** | Bot graceful fallback при 429 |
-| **Diagnostic Persistence** | Логи в файлы для offline-анализа |
-| **Visual Isolation** | Debug-контролы в отдельном Border |
+Доступные свойства: `ObsidianBg`, `ObsidianSurface`, `ObsidianCard`, `ObsidianBorder`, `ObsidianTextPrimary`, `ObsidianTextSecondary`, `ObsidianTextDisabled`, `ColorSuccess`, `ColorDanger`, `ColorWarning`, `ColorInfo`, `ColorGold`, `ColorRed`, `ColorBlurple`, `ColorOrange`, `ColorPurple`, `ColorTeal`.
 
 ---
 
-## 22. Цветовая палитра (Color Bible)
+## 25. СБОРКА И ДЕПЛОЙ
 
-### Semantic Colors
+### Команда сборки
 
-| Цвет | HEX | Семантика |
-|---|---|---|
-| 🟢 Green | `#23a559` | Верно / Успех / Добавить |
-| 🟡 Gold | `#FFD700` | Банк / Деньги / Победитель |
-| 🔴 Red | `#da373c` | Неверно / Опасно / Удалить |
-| 🔵 Blurple | `#5865F2` | Первичное действие (START) |
-| ⚫ Dark Gray | `#4e5058` | Вторичное / Пас |
-| 🟠 Orange | `#FF8C00` | Предупреждение (Restart) |
-| 🟣 Purple | `#800080` | Debug / Tech |
+```bash
+dotnet publish WeakestLink.csproj -c Release -o SuperDist/net10.0-windows
+```
 
-### Obsidian Palette
+### Выходная директория
 
-| Токен | HEX |
-|---|---|
-| ObsidianBg | `#1E1E1E` |
-| ObsidianSurface | `#252525` |
-| ObsidianBorder | `#363636` |
-| TextPrimary | `#E0E0E0` |
-| TextSecondary | `#888888` |
+`SuperDist/net10.0-windows/` — содержит:
+- `WeakestLink.exe` — исполняемый файл
+- `WeakestLink.dll` — основная сборка
+- `NAudio.dll` — аудио-библиотека
+- `QRCoder.dll` — генератор QR-кодов
+- `questions.json` — база вопросов
+- `final_questions.json` — финальные вопросы
+- `app_settings.json` — настройки (создаётся при первом запуске)
+- `error_log.txt` — лог ошибок
+- `Assets/` — аудио и изображения
 
-### Host Screen (TV Safe)
+### Обработка ошибок сборки
 
-| Элемент | HEX |
-|---|---|
-| Background | `#050510` |
-| Question Block | `#0A1128` |
-| Answer Highlight | `#C10000` |
-| Timer | `#006400` |
-| Bank Now | `#0000B8` |
-| Total | `#4A0020` |
-
----
-
-## 23. Troubleshooting — Решение проблем
-
-### Критические баги
-
-| Проблема | Причина | Решение |
-|---|---|---|
-| Кнопка START исчезла | Infinite Height + ScrollViewer | Fixed-Height Row для кнопки |
-| Зелёный артефакт в цепочке | Persistent animation leak | Убрать `RepeatBehavior=Forever` |
-| Ответ не отображается | Пробел в JSON ключе `" Answer"` | `[JsonPropertyName("Answer")]` |
-| Broadcast крешится | Relative URI не находит ассет | `pack://siteoforigin:,,,/` |
-| MSB3026 build lock | Zombie process | `taskkill /F /IM WeakestLink.exe` |
-| iPad просит логин | Missing Anonymous Auth | `AuthenticationSchemes.Anonymous` |
-| Bot всегда пасует | HTTP 429 rate limit | `Task.Delay(6000)` |
-| ComboBox белый flash | System Aero conflict | ControlTemplate override |
-
-### Диагностические команды
-
+Если `WeakestLink.exe` запущен, сборка не может перезаписать файл:
 ```powershell
-# Проверка порта
-netstat -ano | findstr ":8080"
-
-# Тест HTTP
-curl -I http://127.0.0.1:8080/
-
-# Убить зомби-процесс
 taskkill /F /IM WeakestLink.exe
-
-# Найти IP
-ipconfig | findstr "IPv4"
-
-# Firewall правило для iPad
-netsh advfirewall firewall add rule name="WL Remote" dir=in action=allow protocol=TCP localport=8080
-
-# Чистая пересборка
-dotnet clean; dotnet build
+dotnet publish WeakestLink.csproj -c Release -o SuperDist/net10.0-windows
 ```
 
 ---
 
-## 24. Этапы развития (Milestones)
+## 26. ГОРЯЧИЕ КЛАВИШИ
 
-| # | Milestone | Описание |
-|---|---|---|
-| 1 | Data-Driven | Разделение данных (JSON) от логики |
-| 2 | Adaptive Layout | Высокострессовый UI для оператора |
-| 3 | Resolution Independence | Viewbox + fixed-dimension контейнеры |
-| 4 | Live Edit | Drag & resize UI на лету |
-| 5 | Workflow Optimization | Автосброс сессий |
-| 6 | Final Duel Logic | Modulo-индексация, fallback вопросы |
-| 7 | Zero-Drift | Direct Push + Selective Isolation |
-| 8 | Crash-Proofing | Transition Validation |
-| 9 | Broadcast-Grade | WinWinner вместо MessageBox |
-| 10 | End Show Pattern | Единый workflow завершения |
-| 11 | Integrated Panels | In-place UI swapping |
-| 12 | Blind Operation | Hotkey mapping |
-| 13 | Web-Remote | HttpListener + iPad |
-| 14 | Senior Reliability | Port fallback, logging callbacks |
-| 15 | Zombie Mitigation | AssemblyName bypass |
-| 16 | Transparent Overlay | OBS-Ready windows |
-| 17 | Emergency Management | Panic buttons suite |
+Обрабатываются в `Window_PreviewKeyDown`:
+
+| Клавиша | Действие |
+|---------|----------|
+| `Up` / `R` / `S` | READY (если доступна) |
+| `Space` / `Enter` | PLAY / Следующий вопрос |
+| `Right` / `A` | ВЕРНО (Correct) |
+| `Left` / `D` | НЕВЕРНО (Wrong) |
+| `Down` / `B` | БАНК (Bank) |
 
 ---
 
-## 25. Глоссарий терминов
+## 27. МОДЕЛИ ДАННЫХ
 
-| Термин | Определение |
-|---|---|
-| **Battle Cockpit** | Фиксированная карточка 750×420 с вопросом, банком и кнопками |
-| **Blind Operation** | Управление только горячими клавишами без мыши |
-| **Continuous Bed** | Непрерывная фоновая музыка во время геймплея |
-| **Direct Push** | Прямое присвоение значений UI без binding |
-| **Fire Buttons** | 4 кнопки вердикта: ВЕРНО/БАНК/НЕВЕРНО/ПАСС |
-| **Hider Pattern** | `Collapsed` вместо удаления legacy-элементов |
-| **Modulo Pattern** | `index % count` для бесконечного цикла вопросов |
-| **Obsidian** | Название текущей дизайн-системы (Dark Mode) |
-| **Organic Stack** | Визуальный эффект «стопки карт» с перекрытием |
-| **Panic Button** | Экстренный сброс всех систем |
-| **Resilient Pass** | Бот пасует при ошибке API вместо краша |
-| **Safe Zone** | Зарезервированное место для overlay-панелей |
-| **Selfie** | Скриншот окна через RenderTargetBitmap |
-| **Shield** | PNG-текстура (TIMER/BANK) для Broadcast-чисел |
-| **siteoforigin** | Pack URI для загрузки loose-файлов с диска |
-| **Smart Start** | Алгоритм выбора стартового игрока раунда |
-| **Sudden Death** | Режим при ничье после 5 вопросов финала |
-| **Sync-on-Demand** | Немедленный push состояния при открытии окна |
-| **Unified Refresh** | Единственная функция обновления UI финала |
+### QuestionData
+
+```csharp
+public class QuestionData
+{
+    public int Id { get; set; }
+    public string Text { get; set; }
+    public string Answer { get; set; }
+    public string AcceptableAnswers { get; set; }
+    public int? Round { get; set; }
+}
+```
+
+### PlayerStats
+
+```csharp
+public class PlayerStats
+{
+    public int CorrectAnswers { get; set; }
+    public int IncorrectAnswers { get; set; }
+    public int Passes { get; set; }
+    public int BankedMoney { get; set; }
+    public int BankPressCount { get; set; }
+    public int BurnedByWrongAnswers { get; set; }
+    public int ExactDroppedMoney { get; set; }
+}
+```
+
+### BotDecision
+
+```csharp
+public class BotDecision
+{
+    public string Action { get; set; } = "pass";    // "answer" | "pass" | "bank"
+    public string Text { get; set; } = "";
+    public static BotDecision PassFallback => new() { Action = "pass", Text = "" };
+}
+```
+
+### PlayerSetupItem (Smart Roster)
+
+```csharp
+public class PlayerSetupItem
+{
+    public int ConsoleNumber { get; set; }     // Номер тумбы (1–8)
+    public string GameName { get; set; }       // Имя на тумбе
+    public string FullName { get; set; }       // Полное имя
+    public string CityDesc { get; set; }       // Город, описание
+    public bool IsLocked { get; set; }         // Заблокирован?
+    public string PhotoPath { get; set; }      // Путь к фото
+    public double CropX { get; set; }          // Обрезка фото X
+    public double CropY { get; set; }          // Обрезка фото Y
+    public int Age { get; set; }               // Возраст
+    public string Bio { get; set; }            // Биография
+    public string PrompterLine { get; set; }   // Строка для суфлёра
+}
+```
+
+### PlayerListItem (отображение в sidebar)
+
+```csharp
+public class PlayerListItem
+{
+    public string Name { get; set; }
+    public string Initials { get; set; }
+    public string StatusText { get; set; }
+    public Brush StatusColor { get; set; }
+    public Brush NameColor { get; set; }
+    public TextDecorationCollection NameDecoration { get; set; }
+    public Brush PillBackground { get; set; }
+    public Brush PillForeground { get; set; }
+}
+```
+
+### SettingsData (персистентность)
+
+```csharp
+private sealed class SettingsData
+{
+    public string Language { get; set; } = "RU";
+    public bool ExpressVoting { get; set; } = true;
+    public bool SkipIntro { get; set; }
+    public bool RoundSfx { get; set; }
+    public int MusicVolume { get; set; } = 100;
+    public int SfxVolume { get; set; } = 100;
+}
+```
 
 ---
 
-> [!TIP]
-> Для быстрого старта используйте `dotnet build` → `dotnet run` из корня проекта.  
-> Для iPad: отсканируйте QR-код, отображаемый на панели оператора.
+## 28. ПОЛНЫЙ СПРАВОЧНИК API
+
+### GameEngine — публичные методы
+
+| Метод | Сигнатура | Возврат |
+|-------|-----------|---------|
+| `TransitionTo` | `void TransitionTo(GameState newState)` | — |
+| `CorrectAnswer` | `void CorrectAnswer()` | — |
+| `WrongAnswer` | `void WrongAnswer()` | — |
+| `Pass` | `void Pass()` | — |
+| `Bank` | `void Bank()` | — |
+| `ResetChain` | `void ResetChain()` | — |
+| `ApplyRoundBankToTotal` | `void ApplyRoundBankToTotal()` | — |
+| `NextRound` | `void NextRound()` | — |
+| `PrepareNewRound` | `void PrepareNewRound()` | — |
+| `FinalizeRoundSetup` | `void FinalizeRoundSetup()` | — |
+| `GetNewRoundDuration` | `int GetNewRoundDuration()` | секунды |
+| `GetRoundDuration` | `int GetRoundDuration()` | секунды |
+| `EliminatePlayer` | `void EliminatePlayer(string name)` | — |
+| `MoveToNextPlayer` | `void MoveToNextPlayer()` | — |
+| `GetStartingPlayerForRound` | `string GetStartingPlayerForRound(int round)` | имя |
+| `LoadFinalQuestions` | `void LoadFinalQuestions(IEnumerable<QuestionData>)` | — |
+| `StartFinalDuel` | `void StartFinalDuel(bool player1StartsFirst)` | — |
+| `GetNextFinalQuestion` | `string GetNextFinalQuestion()` | текст вопроса |
+| `ProcessFinalAnswer` | `void ProcessFinalAnswer(bool isCorrect)` | — |
+| `ResetRoundCounter` | `void ResetRoundCounter()` | — |
+| `ResetGame` | `void ResetGame()` | — |
+
+### StatsAnalyzer — публичные методы
+
+| Метод | Сигнатура | Возврат |
+|-------|-----------|---------|
+| `AnalyzeRound` | `RoundAnalytics AnalyzeRound(int round)` | аналитика раунда |
+| `IsTieDetected` | `bool IsTieDetected(...)` | есть ли ничья |
+| `GetTiedPlayerNames` | `List<string> GetTiedPlayerNames(...)` | имена в ничьей |
+| `GetStrongestLinkName` | `string GetStrongestLinkName(int round)` | имя сильнейшего |
+| `GetSortedPlayersByPerformanceDesc` | `List<string> GetSortedPlayersByPerformanceDesc(int round)` | ранжирование |
+
+### QuestionProvider — публичные методы
+
+| Метод | Сигнатура | Возврат |
+|-------|-----------|---------|
+| `LoadQuestions` | `void LoadQuestions(string filePath)` | — |
+| `GetRandomQuestion` | `QuestionData? GetRandomQuestion()` | вопрос или null |
+| `ResetSession` | `void ResetSession()` | — |
+| `ValidateDatabase` | `List<string> ValidateDatabase()` | список ошибок |
+
+### AudioManager — публичные методы
+
+| Метод | Сигнатура | Описание |
+|-------|-----------|----------|
+| `Play` | `void Play(string path, bool loop)` | Воспроизвести файл |
+| `Stop` | `void Stop()` | Остановить |
+| `PlayOneShotThenGeneralBedWithCrossfadeAsync` | `Task PlayOneShotThenGeneralBedWithCrossfadeAsync(string shot, string bed, double fadeSeconds)` | Кроссфейд |
+
+### GameServer — публичные методы
+
+| Метод | Сигнатура | Описание |
+|-------|-----------|----------|
+| `Start` | `void Start()` | Запуск сервера |
+| `Stop` | `void Stop()` | Остановка |
+| `Broadcast` | `void Broadcast(string message)` | Рассылка всем клиентам |
+
+### WebRemoteController — публичные методы
+
+| Метод | Сигнатура | Описание |
+|-------|-----------|----------|
+| `Start` | `void Start()` | Запуск HTTP-сервера |
+| `Stop` | `void Stop()` | Остановка |
 
 ---
 
-*Энциклопедия сгенерирована автоматически на основе анализа 543+ KB исходного кода, 16 артефактов Knowledge Base и 35 файлов документации проекта.*
+## 29. ИЗВЕСТНЫЕ ОСОБЕННОСТИ И РЕШЕНИЯ
+
+### Проблема: ComboBox в DataGrid не кликается
+
+**Решение**: Голосование вынесено из `DataGrid` в отдельный `ItemsControl` (`VoteEntriesPanel`) рядом с таблицей. Это гарантирует надёжную кликабельность ComboBox.
+
+### Проблема: XAML TargetInvocationException при старте
+
+**Причина**: Обработчик `SliderMusicVolume_ValueChanged` вызывается во время `InitializeComponent()`, когда UI-элементы ещё не инициализированы. `SaveSettings()` → `Log()` → NullReferenceException.
+
+**Решение**: Флаг `_isUIReady`, устанавливаемый после `InitializeComponent()`. Все обработчики проверяют `if (!_isUIReady) return;`.
+
+### Проблема: READY недоступна после старта сессии
+
+**Причина**: `BtnStartRound.IsEnabled = false` устанавливается в `BtnStartSession_Click`, но `UpdateButtonStates()` не вызывается, и пересчёт `readyEnabled` не происходит.
+
+**Решение**: Добавлен вызов `UpdateButtonStates()` в конце `BtnStartSession_Click`.
+
+### Проблема: Процесс блокирует сборку
+
+**Причина**: `WeakestLink.exe` запущен и блокирует перезапись DLL/EXE.
+
+**Решение**: `taskkill /F /IM WeakestLink.exe` перед `dotnet publish`.
+
+### Проблема: Слабейшее звено не может голосовать
+
+**Причина**: ComboBox в DataGrid не получает фокус для строки с пометкой «СЛАБЕЙШИЙ».
+
+**Решение**: Переход на отдельный `ItemsControl` для голосования. Все игроки (включая слабейшего) могут голосовать.
+
+### Проблема: Настройки не сохраняются
+
+**Причина**: `LoadSettings()` вызывался в конструкторе до инициализации UI, `SaveSettings()` не включал все параметры.
+
+**Решение**: `LoadSettings()` перенесён в событие `Loaded`. Класс `SettingsData` включает все 6 параметров. Сохранение происходит при закрытии окна, уходе с экрана настроек и при изменении каждого элемента управления.
+
+---
+
+> **Версия энциклопедии**: 2.0  
+> **Дата**: 18 марта 2026  
+> **Платформа**: .NET 10.0 / WPF / Windows  
+> **Размер кодовой базы**: ~12 000 строк C# + ~4 000 строк XAML

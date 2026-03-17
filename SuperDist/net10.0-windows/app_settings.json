@@ -1,5 +1,8 @@
 {
   "language": "RU",
   "expressVoting": true,
-  "skipIntro": true
+  "skipIntro": false,
+  "roundSfx": false,
+  "musicVolume": 100,
+  "sfxVolume": 86
 }

@@ -520,30 +520,14 @@ namespace WeakestLink.Views
         {
             Dispatcher.BeginInvoke(() =>
             {
-                bool isEmpty = string.IsNullOrWhiteSpace(text);
-                
-                if (isEmpty)
-                {
-                    if (QuestionPlaque.Visibility == Visibility.Visible)
-                    {
-                        // Прячем мгновенно для четкости перехода состояний
-                        QuestionPlaque.Visibility = Visibility.Collapsed;
-                        QuestionPlaque.Opacity = 0;
-                    }
-                }
-                else
-                {
-                    TxtQuestionPlaqueText.Text = text;
-                    if (QuestionPlaque.Visibility != Visibility.Visible)
-                    {
-                        QuestionPlaque.Visibility = Visibility.Visible;
-                        var sb = (Storyboard)FindResource("FadeInPlaque");
-                        sb.Begin();
-                    }
-                }
+                // Плашки с вопросами отключены — не показываем ни QuestionPlaque, ни QuestionBorder
+                QuestionPlaque.Visibility = Visibility.Collapsed;
+                QuestionPlaque.Opacity = 0;
+                QuestionBorder.Visibility = Visibility.Collapsed;
 
-                TxtQuestion.Text = text;
-                QuestionBorder.Visibility = isEmpty ? Visibility.Collapsed : Visibility.Visible;
+                // Обновляем текст на случай, если элементы когда-то будут возвращены
+                TxtQuestion.Text = text ?? "";
+                TxtQuestionPlaqueText.Text = text ?? "";
             });
         }
 

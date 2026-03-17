@@ -1374,13 +1374,13 @@
                                     </Grid>
 
                                     <Button x:Name="BtnRosterConfirm" Content="✓  УТВЕРДИТЬ" 
-                                            Background="{StaticResource ObsidianBorderStrong}" Foreground="White" 
+                                            Background="{StaticResource ColorInfo}" Foreground="White" 
                                             FontSize="{DynamicResource FontSizeBody}" FontWeight="Bold" Height="42"
                                             Margin="0,0,0,6"
                                             Click="BtnRosterDone_Click" Style="{StaticResource FlatButton}"/>
 
                                     <Button x:Name="BtnStartSession" Content="▶  START SESSION" 
-                                            Background="{StaticResource ColorInfo}" Foreground="White" 
+                                            Background="{StaticResource ColorSuccess}" Foreground="White" 
                                             FontSize="{DynamicResource FontSizeBody}" FontWeight="Bold" Height="42"
                                             Click="BtnStartSession_Click"
                                             Style="{StaticResource FlatButton}"/>
@@ -1686,34 +1686,31 @@
                         </Border>
 
                         <!-- Фильтр по раундам -->
-                        <Border Grid.Row="1" Background="{StaticResource ObsidianBase}" Padding="8,6" BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="0,0,0,1">
+                        <Border Grid.Row="1" Background="{StaticResource ObsidianBase}" Padding="8,8" Margin="0,0,0,4" MinHeight="38" BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="0,0,0,1">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <TextBlock x:Name="TxtRoundFilterLabel" Text="РАУНД:" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold" 
                                            VerticalAlignment="Center" Margin="0,0,8,0"/>
                                 <Border x:Name="RoundFilterContainer" CornerRadius="{DynamicResource CornerRadiusMedium}" Background="{StaticResource ObsidianCard}" Padding="2">
                                     <StackPanel x:Name="RoundFilterButtons" Orientation="Horizontal">
-                                        <Button Content="ALL" Tag="0" Width="36" Height="22" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold"
+                                        <Button Content="R1" Tag="1" Width="38" Height="22" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold"
                                                 Background="{StaticResource ColorInfo}" Foreground="White" BorderThickness="0" Cursor="Hand"
                                                 Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
-                                        <Button Content="R1" Tag="1" Width="28" Height="22" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold"
+                                        <Button Content="R2" Tag="2" Width="38" Height="22" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold"
                                                 Background="Transparent" Foreground="{StaticResource ObsidianTextDisabled}" BorderThickness="0" Cursor="Hand"
                                                 Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
-                                        <Button Content="R2" Tag="2" Width="28" Height="22" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold"
+                                        <Button Content="R3" Tag="3" Width="38" Height="22" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold"
                                                 Background="Transparent" Foreground="{StaticResource ObsidianTextDisabled}" BorderThickness="0" Cursor="Hand"
                                                 Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
-                                        <Button Content="R3" Tag="3" Width="28" Height="22" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold"
+                                        <Button Content="R4" Tag="4" Width="38" Height="22" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold"
                                                 Background="Transparent" Foreground="{StaticResource ObsidianTextDisabled}" BorderThickness="0" Cursor="Hand"
                                                 Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
-                                        <Button Content="R4" Tag="4" Width="28" Height="22" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold"
+                                        <Button Content="R5" Tag="5" Width="38" Height="22" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold"
                                                 Background="Transparent" Foreground="{StaticResource ObsidianTextDisabled}" BorderThickness="0" Cursor="Hand"
                                                 Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
-                                        <Button Content="R5" Tag="5" Width="28" Height="22" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold"
+                                        <Button Content="R6" Tag="6" Width="38" Height="22" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold"
                                                 Background="Transparent" Foreground="{StaticResource ObsidianTextDisabled}" BorderThickness="0" Cursor="Hand"
                                                 Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
-                                        <Button Content="R6" Tag="6" Width="28" Height="22" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold"
-                                                Background="Transparent" Foreground="{StaticResource ObsidianTextDisabled}" BorderThickness="0" Cursor="Hand"
-                                                Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
-                                        <Button Content="R7" Tag="7" Width="28" Height="22" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold"
+                                        <Button Content="R7" Tag="7" Width="38" Height="22" FontSize="{DynamicResource FontSizeXXXSmall}" FontWeight="Bold"
                                                 Background="Transparent" Foreground="{StaticResource ObsidianTextDisabled}" BorderThickness="0" Cursor="Hand"
                                                 Click="BtnRoundFilter_Click" Style="{StaticResource FlatButton}"/>
                                     </StackPanel>
@@ -1749,9 +1746,15 @@
                             </Border>
                         </UniformGrid>
                         
-                        <!-- Таблица игроков (прозрачная) -->
+                        <!-- Таблица слева, голоса справа — в одну высоту, без скролла и обрезки -->
                         <Border Grid.Row="3" Background="Transparent" Margin="8,4,8,8" Padding="0">
-                            <DataGrid x:Name="AnalyticsPlayersGrid" 
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="200"/>
+                                </Grid.ColumnDefinitions>
+                            <DataGrid x:Name="AnalyticsPlayersGrid" Grid.Column="0" 
                                      Background="Transparent" 
                                      Foreground="{StaticResource ObsidianTextPrimary}"
                                      GridLinesVisibility="Horizontal" 
@@ -1764,7 +1767,8 @@
                                      SelectionMode="Single" IsReadOnly="True"
                                      AlternatingRowBackground="Transparent"
                                      RowBackground="Transparent"
-                                     BorderThickness="0">
+                                     BorderThickness="0"
+                                     RowHeight="26">
                                 <DataGrid.Resources>
                                     <Style TargetType="DataGridColumnHeader">
                                         <Setter Property="Background" Value="Transparent"/>
@@ -1789,8 +1793,8 @@
                                         <Setter Property="Background" Value="Transparent"/>
                                         <Setter Property="BorderBrush" Value="Transparent"/>
                                         <Setter Property="Foreground" Value="#dbdee1"/>
-                                        <Setter Property="FontSize" Value="13"/>
-                                        <Setter Property="Padding" Value="8,4"/>
+                                        <Setter Property="FontSize" Value="12"/>
+                                        <Setter Property="Padding" Value="6,2"/>
                                     </Style>
                                 </DataGrid.CellStyle>
                                 <DataGrid.Columns>
@@ -1850,19 +1854,35 @@
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTemplateColumn Header="ГОЛОСУЕТ ЗА" Width="*">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <ComboBox ItemsSource="{Binding AvailableTargets}" 
-                                                          SelectedItem="{Binding SelectedVote, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                          Height="24" FontSize="11"
-                                                          Background="#1a1a1a" Foreground="White" 
-                                                          BorderThickness="1" BorderBrush="#333"/>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
+                            <!-- Голоса справа — та же высота, что и таблица (скрывается в раунде 7) -->
+                            <Border x:Name="VotePanelBorder" Grid.Column="2" Background="{StaticResource ObsidianDeep}" CornerRadius="4" Padding="6,6" BorderBrush="#333" BorderThickness="1" VerticalAlignment="Stretch">
+                                <StackPanel>
+                                    <TextBlock Text="ГОЛОСУЕТ ЗА" Foreground="{StaticResource ObsidianTextMuted}" FontSize="11" FontWeight="Bold" Margin="0,0,0,4"/>
+                                    <ItemsControl x:Name="VoteEntriesPanel">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0,2" Height="26">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{Binding Name}" Foreground="{StaticResource ObsidianTextPrimary}" FontWeight="SemiBold" FontSize="12" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                    <ComboBox Grid.Column="1" ItemsSource="{Binding AvailableTargets}"
+                                                              SelectedItem="{Binding SelectedVote, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                              Height="22" FontSize="11" VerticalAlignment="Center"
+                                                              Background="#1a1a1a" Foreground="White" BorderThickness="1" BorderBrush="#444"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Button x:Name="BtnAcceptVotes" Content="ПРИНЯТЬ" Margin="0,8,0,0" Height="28" FontWeight="Bold" FontSize="11"
+                                            Click="BtnAcceptVotes_Click" Style="{StaticResource FlatButton}"
+                                            Background="#0d9488" Foreground="White"/>
+                                </StackPanel>
+                            </Border>
+                            </Grid>
                         </Border>
 
                         <!-- Decision Hub -->
@@ -2453,6 +2473,7 @@
                                             <TextBlock Text="Короткие звуки при нажатии Wrong, Bank, Correct" Foreground="{StaticResource ObsidianTextDisabled}" FontSize="{DynamicResource FontSizeCaption}" Margin="0,4,0,0" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <CheckBox x:Name="ChkRoundSfx" Grid.Column="1" VerticalAlignment="Center"
+                                                  Checked="ChkRoundSfx_Changed" Unchecked="ChkRoundSfx_Changed"
                                                   Style="{StaticResource ObsidianCheckBox}"/>
                                     </Grid>
                                 </Border>

@@ -1,0 +1,6 @@
+[18.03.2026 1:25:06] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 397

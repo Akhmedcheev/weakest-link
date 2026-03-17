@@ -13,11 +13,26 @@ public partial class App : Application
     {
         this.DispatcherUnhandledException += (s, e) =>
         {
-            string logMsg = $"[{DateTime.Now}] CRASH: {e.Exception.Message}\n{e.Exception.StackTrace}\n";
-            System.IO.File.AppendAllText("error_log.txt", logMsg);
+            var ex = e.Exception;
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine($"[{DateTime.Now}] CRASH: {ex.Message}");
+            sb.AppendLine(ex.StackTrace);
+            var inner = ex.InnerException;
+            while (inner != null)
+            {
+                sb.AppendLine($"--- Inner: {inner.GetType().FullName}: {inner.Message}");
+                sb.AppendLine(inner.StackTrace);
+                inner = inner.InnerException;
+            }
+            sb.AppendLine();
+            System.IO.File.AppendAllText("error_log.txt", sb.ToString());
 
-            WeakestLink.Views.DarkMessageBox.Show(
-                $"КРИТИЧЕСКАЯ ОШИБКА:\n{e.Exception.Message}\n\nСтек:\n{e.Exception.StackTrace}",
+            string display = $"КРИТИЧЕСКАЯ ОШИБКА:\n{ex.Message}";
+            if (ex.InnerException != null)
+                display += $"\n\nInner: {ex.InnerException.Message}";
+            display += $"\n\nСтек:\n{ex.StackTrace}";
+
+            WeakestLink.Views.DarkMessageBox.Show(display,
                 "Чёрный ящик", MessageBoxButton.OK, MessageBoxImage.Error);
 
             e.Handled = true;

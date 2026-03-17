@@ -26,6 +26,8 @@ using QRCoder;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
+using System.Windows.Data;
+using System.Globalization;
 
 namespace WeakestLink.Views
 {
@@ -280,8 +282,9 @@ namespace WeakestLink.Views
         public OperatorPanel()
         {
             InitializeComponent();
+            _isUIReady = true;
             SourceInitialized += OnSourceInitialized;
-            LoadSettings();
+            Loaded += (_, __) => LoadSettings();
             
             _engine = new GameEngine();
             _questionProvider = new QuestionProvider();
@@ -433,6 +436,9 @@ namespace WeakestLink.Views
             // Voting timers removed — voting system pending redesign
 
             _audioManager = new AudioManager();
+            // Применить загруженные громкости (настройки уже загружены в LoadSettings)
+            if (SliderMusicVolume != null) _audioManager.MusicVolume = (float)SliderMusicVolume.Value / 100f;
+            if (SliderSfxVolume != null) _audioManager.SfxVolume = (float)SliderSfxVolume.Value / 100f;
 
             // Начальная установка UI
             UpdateBankChainUI();
@@ -525,6 +531,7 @@ namespace WeakestLink.Views
 
         protected override void OnClosed(EventArgs e)
         {
+            SaveSettings(); // Сохранить настройки до следующего запуска
             _webRemote?.Stop();
             _server?.Stop();
             CloseAnalytics(); // Закрываем окно аналитики при закрытии программы
@@ -2418,9 +2425,9 @@ namespace WeakestLink.Views
                 BtnEndVoting.Foreground = Brushes.White;
 
                 _audioManager.Stop();
-                _audioManager.Play("Assets/Audio/new_voting_system v3START.mp3", loop: false);
+                _audioManager.Play("Assets/Audio/VOTING TRACKS/1_sting4_motor_off.mp3", loop: false);
 
-                Log("Аудио: new_voting_system v3START.mp3 запущен.");
+                Log("Аудио: 1_sting4_motor_off.mp3 запущен.");
 
                 _engine.TransitionTo(GameState.Voting);
 
@@ -2545,7 +2552,9 @@ namespace WeakestLink.Views
             if (_engine.CurrentState == GameState.Voting)
             {
                 SetOperatorAction("END VOTING: ручное завершение");
-                Log("Оператор завершил голосование вручную.");
+                _audioManager.Stop();
+                _audioManager.Play("Assets/Audio/VOTING TRACKS/2_sting4_motor_on.mp3", loop: false);
+                Log("Аудио: 2_sting4_motor_on.mp3 запущен.");
                 StopVotingTimerEarly();
             }
         }
@@ -2564,7 +2573,7 @@ namespace WeakestLink.Views
 
                 StopVotingTrackCrossfadeWatch();
                 _audioManager.Stop();
-                _audioManager.Play("Assets/Audio/new_voting_system_revealing.mp3", loop: false);
+                _audioManager.Play("Assets/Audio/VOTING TRACKS/3_voting_reveal.mp3", loop: false);
 
                 _audioManager.OnMainPlaybackCompleted = () =>
                     Dispatcher.BeginInvoke(() =>
@@ -2578,7 +2587,7 @@ namespace WeakestLink.Views
                 RevealProgressPanel.Visibility = Visibility.Visible;
                 StartRevealTracking();
 
-                Log("Вскрытие голосов: new_voting_system_revealing.mp3 запущен.");
+                Log("Вскрытие голосов: 3_voting_reveal.mp3 запущен.");
             }
             catch (Exception ex)
             {
@@ -2647,9 +2656,13 @@ namespace WeakestLink.Views
                 RevealProgressPanel.Visibility = Visibility.Collapsed;
 
                 _audioManager.Stop();
-                _audioManager.Play("Assets/Audio/new_voting_system_before_walkshame.mp3", loop: false);
+                _audioManager.Play("Assets/Audio/VOTING TRACKS/4_voting_discussion.mp3", loop: false);
 
-                Log("Hot Discussion: new_voting_system_before_walkshame.mp3 запущен.");
+                // Показать панель исключения
+                VotingBorder.Visibility = Visibility.Visible;
+                EliminationComboBox.Items.Refresh();
+
+                Log("Hot Discussion: 4_voting_discussion.mp3 запущен. Панель исключения показана.");
             }
             catch (Exception ex)
             {
@@ -2657,7 +2670,7 @@ namespace WeakestLink.Views
             }
         }
 
-        private async void BtnEliminate_Click(object sender, RoutedEventArgs e)
+        private void BtnEliminate_Click(object sender, RoutedEventArgs e)
         {
             // Support both old simple strings (for ties) and new EliminationComboItem (for normal voting)
             string targetName = "";
@@ -2696,17 +2709,10 @@ namespace WeakestLink.Views
 
                 UpdateStatsTable();
                 PlayersGrid.Items.Refresh();
-
-                try
-                {
-                    await _audioManager.PlayOneShotThenGeneralBedWithCrossfadeAsync(
-                        "updated_walk_of_shame_bed.mp3", "general_bed.mp3", 3.0);
-                    Log("Walk of shame завершён, general_bed.mp3 с кроссфейдом.");
-                }
-                catch (Exception audioEx)
-                {
-                    Log($"Ошибка аудио Walk of Shame: {audioEx.Message}");
-                }
+                UpdatePlayerList();
+                _audioManager.Stop();
+                _audioManager.Play("Assets/Audio/VOTING TRACKS/5_walkofshame+after.mp3", loop: false);
+                Log("Аудио: 5_walkofshame+after.mp3 запущен (general bed встроен в трек).");
 
                 Dispatcher.Invoke(() =>
                 {
@@ -2799,12 +2805,29 @@ namespace WeakestLink.Views
             FilmRevealPanel.Visibility = Visibility.Collapsed;
             BtnFilmDiscussion.Visibility = Visibility.Collapsed;
             FilmEliminatePanel.Visibility = Visibility.Collapsed;
+            BtnFilmEliminate.IsEnabled = true;
             FilmVoteResultsPanel.Visibility = Visibility.Collapsed;
             TxtFilmVoteStep.Text = "ШАГ 1/5";
             TxtFilmVotePhase.Text = "🎬 ГОЛОСОВАНИЕ (СЪЁМКА)";
             _filmTiedCandidates = new();
             _filmStrongestLink = "";
             _filmTieInfoText = "";
+
+            // Переключить фильтр раундов на текущий раунд и обновить аналитику
+            _analyticsFilterRound = _engine.CurrentRound;
+            UpdateAnalyticsData();
+            // Разблокировать голоса для нового раунда и кнопку «ПРИНЯТЬ»
+            if (VoteEntriesPanel?.ItemsSource is IEnumerable<AnalyticsRow> rows)
+            {
+                foreach (var r in rows) r.IsVoteLocked = false;
+            }
+            SetVotePanelComboBoxesEnabled(true);
+            if (BtnAcceptVotes != null)
+            {
+                BtnAcceptVotes.IsEnabled = true;
+                BtnAcceptVotes.Content = "ПРИНЯТЬ";
+                BtnAcceptVotes.Opacity = 1.0;
+            }
 
             FilmVotingPanel.Visibility = Visibility.Visible;
             // Скрыть старую систему чтобы освободить место
@@ -2828,6 +2851,42 @@ namespace WeakestLink.Views
             TxtFilmVotePhase.Text = "📋 СТОП МОТОР — СБОР ГОЛОСОВ";
         }
 
+        /// <summary>Зафиксировать голоса — после нажатия менять нельзя.</summary>
+        private void BtnAcceptVotes_Click(object sender, RoutedEventArgs e)
+        {
+            var rows = (VoteEntriesPanel?.ItemsSource as IEnumerable<AnalyticsRow>)?.ToList()
+                       ?? (AnalyticsPlayersGrid?.ItemsSource as IEnumerable<AnalyticsRow>)?.ToList();
+            if (rows != null && rows.Count > 0)
+            {
+                foreach (var r in rows)
+                    r.IsVoteLocked = true;
+                SetVotePanelComboBoxesEnabled(false);
+                BtnAcceptVotes.IsEnabled = false;
+                BtnAcceptVotes.Content = "✓ Принято";
+                BtnAcceptVotes.Opacity = 0.8;
+                Log("✓ Голоса приняты. Список зафиксирован, изменение заблокировано.");
+            }
+        }
+
+        private void SetVotePanelComboBoxesEnabled(bool enabled)
+        {
+            if (VoteEntriesPanel == null) return;
+            foreach (var child in FindVisualChildren<ComboBox>(VoteEntriesPanel))
+                child.IsEnabled = enabled;
+        }
+
+        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent) where T : DependencyObject
+        {
+            if (parent == null) yield break;
+            for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var ch = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+                if (ch is T t) yield return t;
+                foreach (var nested in FindVisualChildren<T>(ch))
+                    yield return nested;
+            }
+        }
+
         // Step 2: МОТОР ИДЁТ
         private void BtnFilmMotor_Click(object sender, RoutedEventArgs e)
         {
@@ -2844,6 +2903,7 @@ namespace WeakestLink.Views
         // Step 3: ПОДНЯТЬ ТАБЛИЧКИ
         private void BtnFilmReveal_Click(object sender, RoutedEventArgs e)
         {
+            // Учитываются голоса всех активных игроков, включая слабейшего (слабейший тоже голосует).
             // Tally votes from Analytics table (ГОЛОСУЕТ ЗА column)
             var voteCounts = new Dictionary<string, int>();
             var voteLog = new List<string>();
@@ -2992,6 +3052,7 @@ namespace WeakestLink.Views
                         _filmEliminateTarget = cap;
                         TxtFilmEliminateTarget.Text = $"ВЫБЫВАЕТ: {cap.ToUpper()}";
                         BtnFilmEliminate.Visibility = Visibility.Visible;
+                        BtnFilmEliminate.IsEnabled = true;
                         FilmTieInfoPanel.Visibility = Visibility.Collapsed;
                         Log($"  🎯 Сильное звено выбрало: {cap}");
                     };
@@ -3006,6 +3067,7 @@ namespace WeakestLink.Views
                 FilmTieInfoPanel.Visibility = Visibility.Collapsed;
                 TxtFilmEliminateTarget.Text = $"ВЫБЫВАЕТ: {_filmEliminateTarget.ToUpper()}";
                 BtnFilmEliminate.Visibility = Visibility.Visible;
+                BtnFilmEliminate.IsEnabled = true;
             }
         }
 
@@ -3039,7 +3101,8 @@ namespace WeakestLink.Views
                 else if (state != GameState.Voting && state != GameState.Elimination)
                     Log($"⚠️ Неожиданное состояние: {state}, пробуем продолжить...");
 
-                // Engine elimination (EliminatePlayer сам удаляет из ActivePlayers)
+                // Удаляем из ActivePlayers и регистрируем в движке
+                _engine.ActivePlayers.Remove(target);
                 _engine.EliminatePlayer(target);
                 _eliminationPerformedThisRound = true;
             }
@@ -3054,6 +3117,7 @@ namespace WeakestLink.Views
 
             UpdateStatsTable();
             PlayersGrid.Items.Refresh();
+            UpdatePlayerList();
 
             try
             {
@@ -3374,8 +3438,23 @@ namespace WeakestLink.Views
             foreach (var item in _rosterItems)
                 item.IsLocked = freeze;
 
-            BtnRosterConfirm.Visibility = freeze ? Visibility.Collapsed : Visibility.Visible;
-            TxtRosterConfirmed.Visibility = freeze ? Visibility.Visible : Visibility.Collapsed;
+            // Кнопка всегда синяя; при утверждении — тот же синий, но тусклее, текст «СПИСОК УТВЕРЖДЕН»
+            BtnRosterConfirm.Visibility = Visibility.Visible;
+            if (freeze)
+            {
+                BtnRosterConfirm.Content = _currentLanguage == "EN" ? "LIST APPROVED" : "СПИСОК УТВЕРЖДЕН";
+                BtnRosterConfirm.Background = (Brush)FindResource("ColorInfo");
+                BtnRosterConfirm.Opacity = 0.65;
+                BtnRosterConfirm.IsEnabled = false;
+            }
+            else
+            {
+                BtnRosterConfirm.Content = _currentLanguage == "EN" ? "✓  ACCEPT ROSTER" : "✓  УТВЕРДИТЬ";
+                BtnRosterConfirm.Background = (Brush)FindResource("ColorInfo");
+                BtnRosterConfirm.Opacity = 1.0;
+                BtnRosterConfirm.IsEnabled = true;
+            }
+            TxtRosterConfirmed.Visibility = Visibility.Collapsed;
             LstPlayers.IsEnabled = !freeze;
             LstPlayers.Opacity = freeze ? 0.7 : 1.0;
             SetupPanel.Background = freeze
@@ -3488,9 +3567,10 @@ namespace WeakestLink.Views
 
             try
             {
-                if (BtnRosterConfirm != null && BtnRosterConfirm.Visibility == Visibility.Visible)
+                // Состав утверждён, когда кнопка отключена (после нажатия «УТВЕРДИТЬ» показывается «СПИСОК УТВЕРЖДЕН»)
+                if (BtnRosterConfirm != null && BtnRosterConfirm.IsEnabled)
                 {
-                    DarkMessageBox.Show("Сначала подтвердите участников! Нажмите 'ПРИНЯТЬ СОСТАВ' перед запуском сессии.", "Состав не утвержден", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    DarkMessageBox.Show("Сначала подтвердите участников! Нажмите «УТВЕРДИТЬ» перед запуском сессии.", "Состав не утвержден", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -3547,10 +3627,9 @@ namespace WeakestLink.Views
                     PreGameButtons.Opacity = 1.0;
                     BtnOpeningUI.IsEnabled = true;
                     BtnOpening.IsEnabled = true;
-                    BtnStartRound.IsEnabled = false;
-                    SetButtonDisabled(BtnStartRound);
                     Log("Сессия запущена. Начинайте студийное вступление (OPENING).");
                 }
+                UpdateButtonStates();
             }
             catch (Exception ex)
             {
@@ -4968,10 +5047,21 @@ namespace WeakestLink.Views
                         BtnNextQuestion.Background = (state == GameState.RoundReady) ? BrushPlayBlue : BrushDisabledGray;
                         BtnNextQuestion.Foreground = (state == GameState.RoundReady) ? white : BrushDisabledForeground;
                         bool isFinalReachedForReady = _engine.ActivePlayers.Count < 2 || _engine.CurrentRound >= 7;
-                        bool readyEnabled = _isSessionStarted && !isPreGame && !isFinalReachedForReady && ((state == GameState.Idle) || (state == GameState.RulesExplanation));
+                        // READY доступна: до первого раунда (0 или 1 до исключения), либо после нажатия CLOSE ROUND. После RULES/FastTrack CurrentRound уже 1.
+                        bool closeRoundDone = _nextRoundUsed || _engine.CurrentRound == 0 || (_engine.CurrentRound == 1 && !_eliminationPerformedThisRound);
+                        bool readyEnabled = _isSessionStarted && !isPreGame && !isFinalReachedForReady && closeRoundDone && ((state == GameState.Idle) || (state == GameState.RulesExplanation));
+                        bool readyPending = _isSessionStarted && !isPreGame && !isFinalReachedForReady && !closeRoundDone && (state == GameState.Idle) && _eliminationPerformedThisRound;
                         BtnStartRound.IsEnabled = readyEnabled;
-                        BtnStartRound.Background = readyEnabled ? BrushActiveGreen : BrushDisabledGray;
-                        BtnStartRound.Foreground = readyEnabled ? white : BrushDisabledForeground;
+                        if (readyPending)
+                        {
+                            BtnStartRound.Background = new SolidColorBrush(Color.FromArgb(0x60, 0x2E, 0xCC, 0x71));
+                            BtnStartRound.Foreground = new SolidColorBrush(Color.FromArgb(0x80, 0xFF, 0xFF, 0xFF));
+                        }
+                        else
+                        {
+                            BtnStartRound.Background = readyEnabled ? BrushActiveGreen : BrushDisabledGray;
+                            BtnStartRound.Foreground = readyEnabled ? white : BrushDisabledForeground;
+                        }
                         BtnPlay.IsEnabled = (state == GameState.RoundReady);
                         BtnPlay.Background = BrushStartClock;
                         BtnPlay.Foreground = BrushStartClockFg;
@@ -5822,25 +5912,35 @@ namespace WeakestLink.Views
             BtnConfirmVotes.Content = "✓ Голоса приняты!";
         }
 
-        // === SETTINGS PERSISTENCE ===
-        private static readonly string SettingsFilePath = System.IO.Path.Combine(
-            AppDomain.CurrentDomain.BaseDirectory, "app_settings.json");
+        // === SETTINGS PERSISTENCE (до следующего запуска) ===
+        /// <summary>Файл рядом с exe — так настройки гарантированно сохраняются и загружаются.</summary>
+        private static string GetSettingsFilePath()
+        {
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            if (string.IsNullOrEmpty(baseDir)) baseDir = System.IO.Directory.GetCurrentDirectory();
+            return System.IO.Path.Combine(baseDir, "app_settings.json");
+        }
         private bool _isLoadingSettings = false;
+        private bool _isUIReady = false;
 
         private void SaveSettings()
         {
-            if (_isLoadingSettings) return;
+            if (_isLoadingSettings || !_isUIReady) return;
+            var path = GetSettingsFilePath();
             try
             {
-                var settings = new Dictionary<string, object>
+                var data = new SettingsData
                 {
-                    { "language", _currentLanguage },
-                    { "expressVoting", _isExpressVoting },
-                    { "skipIntro", ChkFastTrack?.IsChecked == true }
+                    Language = _currentLanguage ?? "RU",
+                    ExpressVoting = _isExpressVoting,
+                    SkipIntro = ChkFastTrack?.IsChecked == true,
+                    RoundSfx = ChkRoundSfx?.IsChecked == true,
+                    MusicVolume = SliderMusicVolume != null ? (int)SliderMusicVolume.Value : 100,
+                    SfxVolume = SliderSfxVolume != null ? (int)SliderSfxVolume.Value : 100
                 };
-                var json = System.Text.Json.JsonSerializer.Serialize(settings, 
-                    new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
-                System.IO.File.WriteAllText(SettingsFilePath, json);
+                var json = System.Text.Json.JsonSerializer.Serialize(data, JsonSettingsOptions);
+                System.IO.File.WriteAllText(path, json);
+                Log($"✅ Настройки сохранены: {path}");
             }
             catch (Exception ex)
             {
@@ -5848,27 +5948,46 @@ namespace WeakestLink.Views
             }
         }
 
+        private static readonly System.Text.Json.JsonSerializerOptions JsonSettingsOptions =
+            new System.Text.Json.JsonSerializerOptions
+            {
+                WriteIndented = true,
+                PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+                PropertyNameCaseInsensitive = true
+            };
+
+        private sealed class SettingsData
+        {
+            public string Language { get; set; } = "RU";
+            public bool ExpressVoting { get; set; } = true;
+            public bool SkipIntro { get; set; }
+            public bool RoundSfx { get; set; }
+            public int MusicVolume { get; set; } = 100;
+            public int SfxVolume { get; set; } = 100;
+        }
+
         private void LoadSettings()
         {
+            var path = GetSettingsFilePath();
+            if (!System.IO.File.Exists(path)) return;
             try
             {
-                if (!System.IO.File.Exists(SettingsFilePath)) return;
                 _isLoadingSettings = true;
-                var json = System.IO.File.ReadAllText(SettingsFilePath);
-                var doc = System.Text.Json.JsonDocument.Parse(json);
-                var root = doc.RootElement;
+                var json = System.IO.File.ReadAllText(path);
+                var data = System.Text.Json.JsonSerializer.Deserialize<SettingsData>(json);
+                if (data == null) return;
 
-                if (root.TryGetProperty("language", out var langEl))
-                {
-                    var lang = langEl.GetString() ?? "RU";
-                    if (lang != _currentLanguage) SwitchLanguage(lang);
-                }
-                if (root.TryGetProperty("expressVoting", out var voteEl))
-                    SetVoteMode(voteEl.GetBoolean());
-                if (root.TryGetProperty("skipIntro", out var skipEl) && ChkFastTrack != null)
-                    ChkFastTrack.IsChecked = skipEl.GetBoolean();
+                if (!string.IsNullOrEmpty(data.Language) && data.Language != _currentLanguage)
+                    SwitchLanguage(data.Language);
+                SetVoteMode(data.ExpressVoting);
+                if (ChkFastTrack != null) ChkFastTrack.IsChecked = data.SkipIntro;
+                if (ChkRoundSfx != null) ChkRoundSfx.IsChecked = data.RoundSfx;
+                int mv = Math.Clamp(data.MusicVolume, 0, 100);
+                if (SliderMusicVolume != null) { SliderMusicVolume.Value = mv; if (TxtMusicVol != null) TxtMusicVol.Text = mv.ToString(); }
+                int sv = Math.Clamp(data.SfxVolume, 0, 100);
+                if (SliderSfxVolume != null) { SliderSfxVolume.Value = sv; if (TxtSfxVol != null) TxtSfxVol.Text = sv.ToString(); }
 
-                Log("✅ Настройки загружены");
+                Log($"✅ Настройки загружены: {path}");
                 _isLoadingSettings = false;
             }
             catch (Exception ex)
@@ -5884,13 +6003,22 @@ namespace WeakestLink.Views
             SwitchLanguage("RU");
             SetVoteMode(true); // Express
             if (ChkFastTrack != null) ChkFastTrack.IsChecked = false;
+            if (ChkRoundSfx != null) ChkRoundSfx.IsChecked = false;
+            if (SliderMusicVolume != null) { SliderMusicVolume.Value = 100; if (TxtMusicVol != null) TxtMusicVol.Text = "100"; }
+            if (SliderSfxVolume != null) { SliderSfxVolume.Value = 100; if (TxtSfxVol != null) TxtSfxVol.Text = "100"; }
+            if (_audioManager != null) { _audioManager.MusicVolume = 1f; _audioManager.SfxVolume = 1f; }
             SaveSettings();
             Log("🔄 Настройки сброшены по умолчанию");
         }
 
+        private void ChkRoundSfx_Changed(object sender, RoutedEventArgs e)
+        {
+            if (!_isLoadingSettings) SaveSettings();
+        }
+
         private void ChkFastTrack_Changed(object sender, RoutedEventArgs e)
         {
-            SaveSettings();
+            if (!_isLoadingSettings) SaveSettings();
         }
 
         private void SyncSettingsLangButtons()
@@ -6011,13 +6139,19 @@ namespace WeakestLink.Views
             TransitionOverlay.Visibility = Visibility.Collapsed;
             SetCentralContext("STATS");
 
-            // AI-ведущая: голосование
-            if (_aiHost != null && _aiHost.IsEnabled)
-                _ = _aiHost.OnVotingStartAsync(_engine.CurrentRound);
+            bool isPrefinal = _engine.ActivePlayers.Count <= 2 || _engine.CurrentRound >= 7;
 
-            // Открываем съёмочное голосование (если не префинал)
-            if (_engine.ActivePlayers.Count > 2)
+            // Раунд 7 (префинал): скрыть голосование, показать только аналитику + кнопку «ПЕРЕЙТИ К ФИНАЛУ»
+            VotePanelBorder.Visibility = isPrefinal ? Visibility.Collapsed : Visibility.Visible;
+            FilmVotingPanel.Visibility = Visibility.Collapsed;
+            ExpressVotingPanel.Visibility = isPrefinal ? Visibility.Collapsed : Visibility.Visible;
+
+            if (!isPrefinal)
+            {
+                if (_aiHost != null && _aiHost.IsEnabled)
+                    _ = _aiHost.OnVotingStartAsync(_engine.CurrentRound);
                 OpenFilmVoting();
+            }
         }
         private void RefreshAnalytics() => UpdateAnalyticsData();
         private void CloseAnalytics() => SetCentralContext(_isSessionStarted ? "PLAY" : "SETUP");
@@ -6372,18 +6506,20 @@ namespace WeakestLink.Views
 
         private void SliderMusicVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (_audioManager == null) return;
+            if (!_isUIReady) return;
             int val = (int)e.NewValue;
-            _audioManager.MusicVolume = val / 100f;
+            if (_audioManager != null) _audioManager.MusicVolume = val / 100f;
             if (TxtMusicVol != null) TxtMusicVol.Text = val.ToString();
+            if (!_isLoadingSettings) SaveSettings();
         }
 
         private void SliderSfxVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (_audioManager == null) return;
+            if (!_isUIReady) return;
             int val = (int)e.NewValue;
-            _audioManager.SfxVolume = val / 100f;
+            if (_audioManager != null) _audioManager.SfxVolume = val / 100f;
             if (TxtSfxVol != null) TxtSfxVol.Text = val.ToString();
+            if (!_isLoadingSettings) SaveSettings();
         }
 
         private void PlayerCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -6650,6 +6786,10 @@ namespace WeakestLink.Views
         /// </summary>
         private void SetCentralContext(string mode)
         {
+            // При уходе с экрана настроек — сохранить, чтобы настройки не терялись
+            if (SettingsContext?.Visibility == Visibility.Visible && !string.Equals(mode, "SETTINGS", StringComparison.OrdinalIgnoreCase))
+                SaveSettings();
+
             UpdateNavButtonStates(mode);
             try
             {
@@ -6712,31 +6852,30 @@ namespace WeakestLink.Views
         /// <summary>
         /// Обновляет данные в аналитическом контексте
         /// </summary>
-        private int _analyticsFilterRound = 0; // 0 = ALL
+        private int _analyticsFilterRound = 1; // по умолчанию R1 (ALL удалён)
 
         private void BtnRoundFilter_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag != null)
             {
                 _analyticsFilterRound = int.Parse(btn.Tag.ToString());
-
-                // Update pills visual
-                var accentBrush = new System.Windows.Media.SolidColorBrush(
-                    ColorResourceHelper.ColorInfo.Color);
-                var mutedBrush = new System.Windows.Media.SolidColorBrush(
-                    ColorResourceHelper.ObsidianTextDisabled.Color);
-
-                foreach (var child in RoundFilterButtons.Children)
-                {
-                    if (child is Button filterBtn)
-                    {
-                        bool isActive = filterBtn.Tag?.ToString() == _analyticsFilterRound.ToString();
-                        filterBtn.Background = isActive ? accentBrush : System.Windows.Media.Brushes.Transparent;
-                        filterBtn.Foreground = isActive ? System.Windows.Media.Brushes.White : mutedBrush;
-                    }
-                }
-
+                ApplyRoundFilterVisuals();
                 UpdateAnalyticsData();
+            }
+        }
+
+        private void ApplyRoundFilterVisuals()
+        {
+            var accentBrush = new System.Windows.Media.SolidColorBrush(ColorResourceHelper.ColorInfo.Color);
+            var mutedBrush = new System.Windows.Media.SolidColorBrush(ColorResourceHelper.ObsidianTextDisabled.Color);
+            foreach (var child in RoundFilterButtons.Children)
+            {
+                if (child is Button filterBtn)
+                {
+                    bool isActive = filterBtn.Tag?.ToString() == _analyticsFilterRound.ToString();
+                    filterBtn.Background = isActive ? accentBrush : System.Windows.Media.Brushes.Transparent;
+                    filterBtn.Foreground = isActive ? System.Windows.Media.Brushes.White : mutedBrush;
+                }
             }
         }
 
@@ -6744,16 +6883,8 @@ namespace WeakestLink.Views
         {
             try
             {
-                if (_analyticsFilterRound == 0)
-                {
-                    // ALL — cumulative across all rounds
-                    UpdateAnalyticsCumulative();
-                }
-                else
-                {
-                    // Specific round
-                    UpdateAnalyticsForRound(_analyticsFilterRound);
-                }
+                ApplyRoundFilterVisuals();
+                UpdateAnalyticsForRound(_analyticsFilterRound);
             }
             catch (Exception ex)
             {
@@ -6803,17 +6934,21 @@ namespace WeakestLink.Views
                 });
             }
 
-            // Mark best/worst after calculating all
+            // Слабейший и сильнейший — только среди активных игроков (чтобы слабейший мог голосовать).
             if (rows.Count > 0)
             {
-                var best = rows.OrderByDescending(r => r.CorrectAnswers - r.WrongAnswers).First();
-                var worst = rows.OrderBy(r => r.CorrectAnswers - r.WrongAnswers).First();
-                best.IsStrongest = true;
-                best.Prediction = _currentLanguage == "EN" ? "STRONGEST" : "СИЛЬНОЕ ЗВЕНО";
-                if (worst.Name != best.Name)
+                var activeOnly = rows.Where(r => r.IsActivePlayer).ToList();
+                if (activeOnly.Count > 0)
                 {
-                    worst.IsWeakest = true;
-                    worst.Prediction = _currentLanguage == "EN" ? "WEAKEST" : "СЛАБЕЙШИЙ";
+                    var best = activeOnly.OrderByDescending(r => r.CorrectAnswers - r.WrongAnswers).First();
+                    var worst = activeOnly.OrderBy(r => r.CorrectAnswers - r.WrongAnswers).First();
+                    best.IsStrongest = true;
+                    best.Prediction = _currentLanguage == "EN" ? "STRONGEST" : "СИЛЬНОЕ ЗВЕНО";
+                    if (worst.Name != best.Name)
+                    {
+                        worst.IsWeakest = true;
+                        worst.Prediction = _currentLanguage == "EN" ? "WEAKEST" : "СЛАБЕЙШИЙ";
+                    }
                 }
             }
 
@@ -6822,7 +6957,9 @@ namespace WeakestLink.Views
             TxtAnalyticsBestPlayer.Text = bestPlayer;
             TxtAnalyticsPlayTime.Text = "—";
 
-            AnalyticsPlayersGrid.ItemsSource = rows;
+            var activeRows = rows.Where(r => r.IsActivePlayer).ToList();
+            AnalyticsPlayersGrid.ItemsSource = activeRows;
+            VoteEntriesPanel.ItemsSource = activeRows;
             AnalyticsPlayersGrid.LoadingRow -= AnalyticsGrid_LoadingRow;
             AnalyticsPlayersGrid.LoadingRow += AnalyticsGrid_LoadingRow;
         }
@@ -6863,7 +7000,9 @@ namespace WeakestLink.Views
                 };
             }).ToList();
 
-            AnalyticsPlayersGrid.ItemsSource = rows;
+            var activeRows = rows.Where(r => r.IsActivePlayer).ToList();
+            AnalyticsPlayersGrid.ItemsSource = activeRows;
+            VoteEntriesPanel.ItemsSource = activeRows;
             AnalyticsPlayersGrid.LoadingRow -= AnalyticsGrid_LoadingRow;
             AnalyticsPlayersGrid.LoadingRow += AnalyticsGrid_LoadingRow;
         }
@@ -7106,8 +7245,10 @@ namespace WeakestLink.Views
         #endregion
     }
 
-    public class AnalyticsRow
+    public class AnalyticsRow : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         public string Name { get; set; } = "";
         public int CorrectAnswers { get; set; }
         public int WrongAnswers { get; set; }
@@ -7120,6 +7261,14 @@ namespace WeakestLink.Views
         public bool IsActivePlayer { get; set; }
         public List<string> AvailableTargets { get; set; } = new();
         public string SelectedVote { get; set; } = "";
+
+        private bool _isVoteLocked;
+        /// <summary>После нажатия ACCEPT (ПРИНЯТЬ) голоса блокируются — менять нельзя.</summary>
+        public bool IsVoteLocked
+        {
+            get => _isVoteLocked;
+            set { if (_isVoteLocked == value) return; _isVoteLocked = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsVoteLocked))); }
+        }
     }
 
     public class PlayerListItem

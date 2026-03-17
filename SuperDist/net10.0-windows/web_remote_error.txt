@@ -958,3 +958,273 @@
    at System.Net.HttpListener.Start()
    at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
    at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[17.03.2026 22:12:46] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[17.03.2026 22:16:21] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[17.03.2026 22:17:59] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[17.03.2026 22:19:10] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[17.03.2026 22:21:12] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[17.03.2026 22:29:48] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[17.03.2026 22:39:46] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[17.03.2026 23:31:13] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[17.03.2026 23:38:34] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[17.03.2026 23:42:03] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[17.03.2026 23:44:32] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[17.03.2026 23:47:43] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[17.03.2026 23:51:39] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[17.03.2026 23:54:34] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[18.03.2026 0:03:47] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[18.03.2026 0:08:53] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[18.03.2026 0:17:50] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[18.03.2026 0:17:55] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[18.03.2026 0:22:28] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[18.03.2026 0:26:09] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[18.03.2026 0:27:15] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[18.03.2026 0:34:32] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[18.03.2026 0:39:52] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[18.03.2026 0:43:26] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[18.03.2026 0:48:45] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[18.03.2026 0:50:59] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 394
+[18.03.2026 0:56:34] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 396
+[18.03.2026 0:56:42] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 396
+[18.03.2026 0:56:50] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 396
+[18.03.2026 0:59:39] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 396
+[18.03.2026 1:01:44] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 396
+[18.03.2026 1:04:24] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 396
+[18.03.2026 1:05:28] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 396
+[18.03.2026 1:05:55] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 396
+[18.03.2026 1:08:42] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 396
+[18.03.2026 1:08:54] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 396
+[18.03.2026 1:11:07] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 396
+[18.03.2026 1:11:22] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 396
+[18.03.2026 1:25:38] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 397
+[18.03.2026 1:26:12] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 397
+[18.03.2026 1:26:24] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 397
+[18.03.2026 1:28:55] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 397
+[18.03.2026 1:31:49] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 397
+[18.03.2026 1:38:02] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 397
+[18.03.2026 1:42:37] Отказано в доступе.
+   at System.Net.HttpListener.AddPrefixCore(String registeredPrefix)
+   at System.Net.HttpListener.AddAllPrefixes()
+   at System.Net.HttpListener.Start()
+   at WeakestLink.Network.WebRemoteController.Start() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Network\WebRemoteController.cs:line 60
+   at WeakestLink.Views.OperatorPanel..ctor() in I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml.cs:line 397
