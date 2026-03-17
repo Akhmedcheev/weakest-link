@@ -1,0 +1,7 @@
+I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\Views\OperatorPanel.xaml(2641,57): error MC3072: свойство "Padding" не существует в пространстве имен XML "http://schemas.microsoft.com/winfx/2006/xaml/presentation". Строка 2641 позиция 57. [I:\WEAKEST LINK SOPFTWARE AI TESTERING FINALE\WeakestLink.csproj]
+
+Ошибка сборки.
+    Предупреждений: 0
+    Ошибок: 1
+
+Прошло времени 00:00:01.48

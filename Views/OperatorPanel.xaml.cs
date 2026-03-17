@@ -2122,6 +2122,7 @@ namespace WeakestLink.Views
 
             UpdateDuelUI();
             _broadcastWindow?.UpdateFinalDuel();
+            try { if (_audienceScreen != null && _audienceScreen.IsLoaded) _audienceScreen.UpdateFinalDuel(); } catch { }
         }
 
         private void SendDuelPrompterUpdate()
@@ -2789,16 +2790,17 @@ namespace WeakestLink.Views
                 Candidates = players.Where(c => c != p).ToList()
             }).ToList();
 
-            FilmVoteGrid.ItemsSource = _filmBallots;
+
 
             // Reset UI states
             BtnFilmSting.IsEnabled = true;
             BtnFilmSting.Visibility = Visibility.Visible;
             FilmVoteCollectionPanel.Visibility = Visibility.Collapsed;
+            FilmRevealPanel.Visibility = Visibility.Collapsed;
             BtnFilmDiscussion.Visibility = Visibility.Collapsed;
             FilmEliminatePanel.Visibility = Visibility.Collapsed;
             FilmVoteResultsPanel.Visibility = Visibility.Collapsed;
-            TxtFilmVoteStep.Text = "ШАГ 1/4";
+            TxtFilmVoteStep.Text = "ШАГ 1/5";
             TxtFilmVotePhase.Text = "🎬 ГОЛОСОВАНИЕ (СЪЁМКА)";
             _filmTiedCandidates = new();
             _filmStrongestLink = "";
@@ -2816,33 +2818,57 @@ namespace WeakestLink.Views
         private void BtnFilmSting_Click(object sender, RoutedEventArgs e)
         {
             _audioManager.Stop();
-            _audioManager.Play("Assets/Audio/sting4.mp3", loop: false);
+            _audioManager.Play("Assets/Audio/VOTING TRACKS/1_sting4_motor_off.mp3", loop: false);
             Log("🔔 ОТБИВКА → СТОП МОТОР. Оператор собирает голоса.");
 
             BtnFilmSting.IsEnabled = false;
             BtnFilmSting.Visibility = Visibility.Collapsed;
             FilmVoteCollectionPanel.Visibility = Visibility.Visible;
-            TxtFilmVoteStep.Text = "ШАГ 2/4";
+            TxtFilmVoteStep.Text = "ШАГ 2/5";
             TxtFilmVotePhase.Text = "📋 СТОП МОТОР — СБОР ГОЛОСОВ";
         }
 
-        // Step 2: МОТОР → поднять таблички
+        // Step 2: МОТОР ИДЁТ
         private void BtnFilmMotor_Click(object sender, RoutedEventArgs e)
         {
-            // Tally votes
+            _audioManager.Stop();
+            _audioManager.Play("Assets/Audio/VOTING TRACKS/2_sting4_motor_on.mp3", loop: false);
+            Log("🎬 МОТОР ИДЁТ! Трек запущен.");
+
+            FilmVoteCollectionPanel.Visibility = Visibility.Collapsed;
+            FilmRevealPanel.Visibility = Visibility.Visible;
+            TxtFilmVoteStep.Text = "ШАГ 3/5";
+            TxtFilmVotePhase.Text = "🎬 МОТОР ИДЁТ";
+        }
+
+        // Step 3: ПОДНЯТЬ ТАБЛИЧКИ
+        private void BtnFilmReveal_Click(object sender, RoutedEventArgs e)
+        {
+            // Tally votes from Analytics table (ГОЛОСУЕТ ЗА column)
             var voteCounts = new Dictionary<string, int>();
-            foreach (var ballot in _filmBallots)
+            var voteLog = new List<string>();
+            var analyticsRows = AnalyticsPlayersGrid.ItemsSource as IEnumerable<AnalyticsRow>;
+            if (analyticsRows != null)
             {
-                if (!string.IsNullOrEmpty(ballot.VotedFor))
+                foreach (var row in analyticsRows)
                 {
-                    voteCounts.TryGetValue(ballot.VotedFor, out int c);
-                    voteCounts[ballot.VotedFor] = c + 1;
+                    if (row.IsActivePlayer && !string.IsNullOrEmpty(row.SelectedVote))
+                    {
+                        if (!voteCounts.ContainsKey(row.SelectedVote))
+                            voteCounts[row.SelectedVote] = 0;
+                        voteCounts[row.SelectedVote]++;
+                        voteLog.Add($"{row.Name} → {row.SelectedVote}");
+                    }
+                    else
+                    {
+                        voteLog.Add($"{row.Name} → —");
+                    }
                 }
             }
 
             if (voteCounts.Count == 0)
             {
-                DarkMessageBox.Show("Заполните хотя бы один голос!", "Голоса не введены",
+                DarkMessageBox.Show("Заполните голоса в таблице ANALYTICS → колонка «ГОЛОСУЕТ ЗА»!", "Голоса не введены",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
@@ -2853,11 +2879,11 @@ namespace WeakestLink.Views
 
             if (topVoted.Count > 1)
             {
-                // НИЧЬЯ — определяем сильное звено
+                // НИЧЬЯ
                 string strongestLink = "";
                 try
                 {
-                    var analytics = _statsAnalyzer.AnalyzeRound(180); // ~3 min default
+                    var analytics = _statsAnalyzer.AnalyzeRound(180);
                     strongestLink = analytics.StrongestLink;
                 }
                 catch { }
@@ -2865,30 +2891,26 @@ namespace WeakestLink.Views
                 Log($"⚠️ Ничья: {string.Join(", ", topVoted)} (по {maxVotes} голосов).");
                 Log($"  💪 Сильное звено: {strongestLink}");
 
-                // Убираем сильное звено из кандидатов на вылет (себя выгнать нельзя)
                 var tiedWithoutStrongest = topVoted.Where(p => p != strongestLink).ToList();
 
                 if (tiedWithoutStrongest.Count == 1)
                 {
-                    // Ничья между сильным звеном и одним другим — автоматический вылет
                     _filmEliminateTarget = tiedWithoutStrongest.First();
                     _filmTieInfoText = $"⚠️ Ничья. Сильное звено ({strongestLink}) в ничьей — выбывает {_filmEliminateTarget} автоматически";
-                    Log($"  🎯 Автоматическое решение: {_filmEliminateTarget} (сильное звено не может выгнать себя).");
+                    Log($"  🎯 Автоматическое решение: {_filmEliminateTarget}");
                 }
                 else if (tiedWithoutStrongest.Count > 1)
                 {
-                    // Сильное звено выбирает — покажем в панели обсуждения
                     _filmTiedCandidates = tiedWithoutStrongest;
                     _filmStrongestLink = strongestLink;
-                    _filmEliminateTarget = ""; // не решено пока
+                    _filmEliminateTarget = "";
                     _filmTieInfoText = maxVotes == 1
-                        ? $"⚠️ Нет единого мнения (все по 1 гол.). Решает сильное звено ({strongestLink})"
+                        ? $"⚠️ Нет единого мнения. Решает сильное звено ({strongestLink})"
                         : $"⚠️ Ничья (по {maxVotes} гол.). Решает сильное звено ({strongestLink})";
                     Log($"  ❓ Сильное звено ({strongestLink}) выбирает из: {string.Join(", ", tiedWithoutStrongest)}");
                 }
                 else
                 {
-                    // Все в ничье = сильное звено (fallback)
                     _filmEliminateTarget = topVoted.First();
                     _filmTieInfoText = $"⚠️ Ничья. Все кандидаты — сильное звено.";
                 }
@@ -2899,24 +2921,21 @@ namespace WeakestLink.Views
             }
 
             // Log votes
-            foreach (var ballot in _filmBallots)
-                Log($"  📋 {ballot.VoterName} → {ballot.VotedFor ?? "—"}");
-            Log($"  🎯 Выбывает: {_filmEliminateTarget} ({maxVotes} голосов)");
+            foreach (var line in voteLog)
+                Log($"  📋 {line}");
+            Log($"  🎯 Промежуточный лидер на выход: {_filmEliminateTarget} ({maxVotes} голосов)");
 
-            // Play МОТОР music
             _audioManager.Stop();
-            _audioManager.Play("Assets/Audio/Voting_over_with_general_bed.mp3", loop: false);
+            _audioManager.Play("Assets/Audio/VOTING TRACKS/3_voting_reveal.mp3", loop: false);
 
-            // Show votes on broadcast
-            foreach (var ballot in _filmBallots)
-                _server.Broadcast($"VOTE|{ballot.VoterName}|{ballot.VotedFor ?? "—"}");
+            if (analyticsRows != null)
+                foreach (var row in analyticsRows)
+                    if (row.IsActivePlayer)
+                        _server.Broadcast($"VOTE|{row.Name}|{row.SelectedVote ?? "—"}");
 
-            // Advance UI
-            FilmVoteCollectionPanel.Visibility = Visibility.Collapsed;
+            FilmRevealPanel.Visibility = Visibility.Collapsed;
 
-            // Show vote results
-            var voteLines = _filmBallots.Select(b => $"{b.VoterName} → {b.VotedFor ?? "—"}");
-            TxtFilmVoteResults.Text = string.Join("\n", voteLines);
+            TxtFilmVoteResults.Text = string.Join("\n", voteLog);
 
             var tallyLines = voteCounts.OrderByDescending(kv => kv.Value)
                 .Select(kv => $"{kv.Key}: {kv.Value} гол.");
@@ -2924,35 +2943,27 @@ namespace WeakestLink.Views
             string tallyText = $"🎯 {string.Join("  •  ", tallyLines)}  →  ВЫБЫВАЕТ: {eliminateText}";
             if (!string.IsNullOrEmpty(_filmTieInfoText))
                 tallyText += $"\n{_filmTieInfoText}";
+            
             TxtFilmVoteTally.Text = tallyText;
             FilmVoteResultsPanel.Visibility = Visibility.Visible;
 
             BtnFilmDiscussion.Visibility = Visibility.Visible;
-            TxtFilmVoteStep.Text = "ШАГ 3/4";
-            TxtFilmVotePhase.Text = "🎬 МОТОР — ТАБЛИЧКИ ПОДНЯТЫ";
-            Log("🎬 МОТОР! Игроки поднимают таблички.");
+            TxtFilmVoteStep.Text = "ШАГ 4/5";
+            TxtFilmVotePhase.Text = "🎬 ТАБЛИЧКИ ПОДНЯТЫ";
+            Log("🎬 Таблички подняты! Озвучиваем голоса.");
         }
 
-        // Step 3: ОБСУЖДЕНИЕ
+        // Step 4: ОБСУЖДЕНИЕ
         private void BtnFilmDiscussion_Click(object sender, RoutedEventArgs e)
         {
             _audioManager.Stop();
-            _audioManager.Play("Assets/Audio/lets_play.mp3", loop: false);
-            // After lets_play ends, general_bed will need to be started manually or auto
-            // For now we start general_bed after a delay
-            Task.Delay(3000).ContinueWith(_ =>
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    _audioManager.PlayBed("general_bed.mp3", loop: true);
-                });
-            });
+            _audioManager.PlayBed("Assets/Audio/VOTING TRACKS/4_voting_discussion.mp3", loop: true);
 
             BtnFilmDiscussion.Visibility = Visibility.Collapsed;
             FilmEliminatePanel.Visibility = Visibility.Visible;
-            TxtFilmVoteStep.Text = "ШАГ 4/4";
+            TxtFilmVoteStep.Text = "ШАГ 5/5";
             TxtFilmVotePhase.Text = "🗣️ ОБСУЖДЕНИЕ";
-            Log("🗣️ ОБСУЖДЕНИЕ. lets_play.mp3 → general_bed.mp3");
+            Log("🗣️ ОБСУЖДЕНИЕ. Трек запущен.");
 
             // Если ничья — показать кандидатов для выбора
             if (_filmTiedCandidates.Count > 1 && string.IsNullOrEmpty(_filmEliminateTarget))
@@ -3044,12 +3055,10 @@ namespace WeakestLink.Views
             UpdateStatsTable();
             PlayersGrid.Items.Refresh();
 
-            // Audio: walk_of_shame → crossfade → general_bed
             try
             {
                 _audioManager.Stop();
-                await _audioManager.PlayOneShotThenGeneralBedWithCrossfadeAsync(
-                    "updated_walk_of_shame_bed.mp3", "general_bed.mp3", 3.0);
+                _audioManager.Play("Assets/Audio/VOTING TRACKS/5_walkofshame+after.mp3", loop: false);
             }
             catch (Exception ex) { Log($"Ошибка аудио: {ex.Message}"); }
 
@@ -3308,6 +3317,56 @@ namespace WeakestLink.Views
 
             FreezeRoster(true);
             Log($"Состав утверждён. Заполнено {filled} из 8 пультов.");
+        }
+
+        private void BtnSaveRoster_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new Microsoft.Win32.SaveFileDialog
+            {
+                Title = "Сохранить состав команды",
+                Filter = "JSON файлы (*.json)|*.json",
+                DefaultExt = ".json"
+            };
+            if (dlg.ShowDialog() == true)
+            {
+                try
+                {
+                    var json = System.Text.Json.JsonSerializer.Serialize(_rosterItems.ToList(),
+                        new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText(dlg.FileName, json);
+                    Log("💾 Состав команды сохранён: " + System.IO.Path.GetFileName(dlg.FileName));
+                }
+                catch (Exception ex)
+                {
+                    DarkMessageBox.Show("Ошибка при сохранении: " + ex.Message, "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void BtnLoadRoster_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = "Загрузить состав команды",
+                Filter = "JSON файлы (*.json)|*.json"
+            };
+            if (dlg.ShowDialog() != true) return;
+            try
+            {
+                var json = File.ReadAllText(dlg.FileName);
+                var list = System.Text.Json.JsonSerializer.Deserialize<List<PlayerSetupItem>>(json);
+                if (list == null) return;
+                _rosterItems.Clear();
+                foreach (var item in list)
+                    _rosterItems.Add(item);
+                Log("📂 Состав команды загружен: " + System.IO.Path.GetFileName(dlg.FileName));
+            }
+            catch (Exception ex)
+            {
+                DarkMessageBox.Show("Ошибка при загрузке: " + ex.Message, "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void FreezeRoster(bool freeze)
@@ -5214,9 +5273,13 @@ namespace WeakestLink.Views
                 string p1 = _engine.ActivePlayers.Count >= 1 ? _engine.ActivePlayers[0] : "";
                 string p2 = _engine.ActivePlayers.Count >= 2 ? _engine.ActivePlayers[1] : "";
                 _broadcastWindow.ShowFinalDuel(p1, p2);
+                try { if (_audienceScreen != null && _audienceScreen.IsLoaded) _audienceScreen.ShowFinalDuel(p1, p2); } catch { }
             }
             else
+            {
                 _broadcastWindow.HideFinalDuel();
+                try { if (_audienceScreen != null && _audienceScreen.IsLoaded) _audienceScreen.HideFinalDuel(); } catch { }
+            }
             Log($"Broadcast: Дуэль {(show ? "показана" : "скрыта")}.");
         }
 
@@ -5381,6 +5444,7 @@ namespace WeakestLink.Views
                 _engine.Player1FinalScores[_debugFinalStep] = p1Script[_debugFinalStep];
                 _engine.Player2FinalScores[_debugFinalStep] = p2Script[_debugFinalStep];
                 _broadcastWindow.UpdateFinalDuel();
+                try { if (_audienceScreen != null && _audienceScreen.IsLoaded) _audienceScreen.UpdateFinalDuel(); } catch { }
 
                 string r1 = p1Script[_debugFinalStep] == true ? "✓" : "✗";
                 string r2 = p2Script[_debugFinalStep] == true ? "✓" : "✗";
@@ -6297,6 +6361,31 @@ namespace WeakestLink.Views
         private System.Windows.Point _cropDragStart;
         private double _cropDragStartTX, _cropDragStartTY;
 
+        private void RosterTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                System.Windows.Input.Keyboard.ClearFocus();
+                e.Handled = true;
+            }
+        }
+
+        private void SliderMusicVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (_audioManager == null) return;
+            int val = (int)e.NewValue;
+            _audioManager.MusicVolume = val / 100f;
+            if (TxtMusicVol != null) TxtMusicVol.Text = val.ToString();
+        }
+
+        private void SliderSfxVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (_audioManager == null) return;
+            int val = (int)e.NewValue;
+            _audioManager.SfxVolume = val / 100f;
+            if (TxtSfxVol != null) TxtSfxVol.Text = val.ToString();
+        }
+
         private void PlayerCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (sender is FrameworkElement fe && fe.DataContext is PlayerSetupItem player)
@@ -6694,6 +6783,9 @@ namespace WeakestLink.Views
                 int score = (c - (w + p)) * 10000 + b;
                 if (score > bestScore) { bestScore = score; bestPlayer = player; }
 
+                bool isActive = _engine.ActivePlayers.Contains(player);
+                var targets = isActive ? _engine.ActivePlayers.Where(a => a != player).ToList() : new List<string>();
+
                 rows.Add(new AnalyticsRow
                 {
                     Name = player,
@@ -6704,7 +6796,10 @@ namespace WeakestLink.Views
                     BankedAmount = $"{b:N0}",
                     Prediction = "",
                     IsWeakest = false,
-                    IsStrongest = player == bestPlayer
+                    IsStrongest = player == bestPlayer,
+                    IsActivePlayer = isActive,
+                    AvailableTargets = targets,
+                    SelectedVote = ""
                 });
             }
 
@@ -6714,7 +6809,7 @@ namespace WeakestLink.Views
                 var best = rows.OrderByDescending(r => r.CorrectAnswers - r.WrongAnswers).First();
                 var worst = rows.OrderBy(r => r.CorrectAnswers - r.WrongAnswers).First();
                 best.IsStrongest = true;
-                best.Prediction = _currentLanguage == "EN" ? "MVP" : "MVP";
+                best.Prediction = _currentLanguage == "EN" ? "STRONGEST" : "СИЛЬНОЕ ЗВЕНО";
                 if (worst.Name != best.Name)
                 {
                     worst.IsWeakest = true;
@@ -6744,19 +6839,28 @@ namespace WeakestLink.Views
             TxtAnalyticsPlayTime.Text = $"{roundDuration / 60}:{roundDuration % 60:D2}";
 
             bool en = _currentLanguage == "EN";
-            var rows = analytics.PlayerStats.Select(p => new AnalyticsRow
+            var activePlayers = _engine.ActivePlayers;
+            var rows = analytics.PlayerStats.Select(p =>
             {
-                Name = p.Name,
-                CorrectAnswers = p.CorrectAnswers,
-                WrongAnswers = p.TotalMistakes,
-                MoneyLost = p.ChainBreaksLost,
-                PassCount = p.Passes,
-                BankedAmount = $"{p.BankedMoney:N0}",
-                Prediction = p.Name == analytics.WeakestLink ? (en ? "WEAKEST LINK" : "СЛАБОЕ ЗВЕНО")
-                           : p.Name == analytics.StrongestLink ? (en ? "STRONGEST" : "СИЛЬНОЕ ЗВЕНО")
-                           : "",
-                IsWeakest = p.Name == analytics.WeakestLink,
-                IsStrongest = p.Name == analytics.StrongestLink
+                bool isActive = activePlayers.Contains(p.Name);
+                var targets = isActive ? activePlayers.Where(a => a != p.Name).ToList() : new List<string>();
+                return new AnalyticsRow
+                {
+                    Name = p.Name,
+                    CorrectAnswers = p.CorrectAnswers,
+                    WrongAnswers = p.TotalMistakes,
+                    MoneyLost = p.ChainBreaksLost,
+                    PassCount = p.Passes,
+                    BankedAmount = $"{p.BankedMoney:N0}",
+                    Prediction = p.Name == analytics.WeakestLink ? (en ? "WEAKEST LINK" : "СЛАБОЕ ЗВЕНО")
+                               : p.Name == analytics.StrongestLink ? (en ? "STRONGEST" : "СИЛЬНОЕ ЗВЕНО")
+                               : "",
+                    IsWeakest = p.Name == analytics.WeakestLink,
+                    IsStrongest = p.Name == analytics.StrongestLink,
+                    IsActivePlayer = isActive,
+                    AvailableTargets = targets,
+                    SelectedVote = ""
+                };
             }).ToList();
 
             AnalyticsPlayersGrid.ItemsSource = rows;
@@ -7013,6 +7117,9 @@ namespace WeakestLink.Views
         public string Prediction { get; set; } = "";
         public bool IsWeakest { get; set; }
         public bool IsStrongest { get; set; }
+        public bool IsActivePlayer { get; set; }
+        public List<string> AvailableTargets { get; set; } = new();
+        public string SelectedVote { get; set; } = "";
     }
 
     public class PlayerListItem

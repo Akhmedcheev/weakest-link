@@ -1,62 +1,46 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using WeakestLink.Core;
 using WeakestLink.Network;
 
 namespace WeakestLink.Views
 {
     /// <summary>
-    /// AudienceScreen — экран для зала (проектор).
-    /// Показывает: раунд, банк, цепочку, имя текущего игрока, таймер, фазу игры.
-    /// Вопрос НЕ показывается (спойлер для игроков).
+    /// AudienceScreen — экран для игроков (проектор/телевизор в студии).
+    /// Показывает: цепочку сумм, таймер, банк, финальную дуэль.
+    /// Формат: российская версия "Слабое звено".
     /// </summary>
     public partial class AudienceScreen : Window
     {
         private static readonly string AssetDir =
             System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Images");
 
-        // ── Параметры цепочки (адаптивные к разрешению экрана) ─────────────────
-        // Эталон: 1080p. Все размеры масштабируются пропорционально высоте канваса.
-        private double ScaleFactor => Math.Max(0.5, ChainCanvas.ActualHeight / 1080.0);
-        private double PlankWidth     => 240.0 * ScaleFactor;
-        private double PlankHeight    => 70.0  * ScaleFactor;
-        private double BankHeight     => 115.0 * ScaleFactor;
-        private double StackedOverlap => 28.0  * ScaleFactor;
-        private double BottomMargin   => 28.0  * ScaleFactor;
-        private const double LeftPad  = 6.0;
-        private new double FontSize       => Math.Max(12, 24 * ScaleFactor);
-
-        // Высота «слота» для каждой плашки выше стопки (активная + будущие).
-        private double CalcSlotHeight()
-        {
-            double canvasH = ChainCanvas.ActualHeight;
-            if (canvasH < 100) canvasH = 1080;
-            double bankTop = BottomMargin + BankHeight + 8 * ScaleFactor;
-            int passedCount = Math.Max(0, _activeIndex - 1);
-            double stackTop = bankTop + passedCount * StackedOverlap;
-            int futureCount = Math.Max(0, _amounts.Length - 1 - _activeIndex);
-            int totalAboveStack = 1 + futureCount;
-            double topLimit = canvasH * 0.92;
-            double available = topLimit - stackTop;
-            double slot = available / Math.Max(1, totalAboveStack);
-            return Math.Clamp(slot, PlankHeight + 10 * ScaleFactor, PlankHeight * 1.6);
-        }
-
         private readonly int[] _amounts = { 0, 1000, 2000, 5000, 10000, 20000, 30000, 40000, 50000 };
         private int _activeIndex = 1;
         private int _bankedAmount = 0;
 
-        private readonly System.Collections.Generic.List<AudienceChainSlot> _slots = new();
+        private TextBlock[] _chainLabels = Array.Empty<TextBlock>();
 
         private readonly GameEngine _engine;
         private GameClient? _client;
 
+        // Бейджи финала
+        private ImageSource? _badgeBlue;
+        private ImageSource? _badgeGreen;
+        private ImageSource? _badgeRed;
+        private ImageSource? _nameplateImage;
+        private const double BadgeSize = 64.0;
+
+        // Для совместимости
+        private readonly List<AudienceChainSlot> _slots = new();
 
         public AudienceScreen(GameEngine engine)
         {
@@ -66,8 +50,7 @@ namespace WeakestLink.Views
             _engine.BankChanged  += (s, e) => Dispatcher.BeginInvoke(() => UpdateBank(e.CurrentChainIndex, e.RoundBank));
             _engine.StateChanged += (s, e) => Dispatcher.BeginInvoke(() => ApplyState(e.NewState));
 
-            Loaded      += (_, _) => BuildChain();
-            SizeChanged += (_, _) => LayoutChain();
+            Loaded += (_, _) => { BuildChain(); LoadFinalAssets(); };
 
             try
             {
@@ -81,127 +64,178 @@ namespace WeakestLink.Views
         }
 
         // ════════════════════════════════════════════════════════════════════════
-        // ЦЕПОЧКА
+        // ЗАГРУЗКА РЕСУРСОВ ДЛЯ ФИНАЛА
+        // ════════════════════════════════════════════════════════════════════════
+
+        private void LoadFinalAssets()
+        {
+            _badgeBlue      = LoadAsset("FIXED final_blue.png")  ?? LoadAsset("final_blue.png");
+            _badgeGreen     = LoadAsset("FIXED final_green.png") ?? LoadAsset("final_green.png");
+            _badgeRed       = LoadAsset("FIXED final_red.png")   ?? LoadAsset("final_red.png");
+            _nameplateImage = LoadAsset("FIXED_NEW_GREY_UNUSED.PNG") ?? LoadAsset("final_nameplate.png");
+        }
+
+        // ════════════════════════════════════════════════════════════════════════
+        // ЦЕПОЧКА — простые текстовые числа
         // ════════════════════════════════════════════════════════════════════════
 
         private void BuildChain()
         {
-            ChainCanvas.Children.Clear();
-            _slots.Clear();
+            ChainPanel.Children.Clear();
+            _chainLabels = new TextBlock[_amounts.Length];
 
-            for (int i = 0; i < _amounts.Length; i++)
+            for (int i = _amounts.Length - 1; i >= 0; i--)
             {
-                bool isBank = (i == 0);
-                double h = isBank ? BankHeight : PlankHeight;
-
-                var grid = new Grid { Width = PlankWidth, Height = h };
-
-                var img = new Image { Stretch = Stretch.Fill, Width = PlankWidth, Height = h };
-                grid.Children.Add(img);
-
                 var tb = new TextBlock
                 {
-                    FontFamily  = new FontFamily("Arial Black"),
-                    FontWeight  = FontWeights.ExtraBold,
-                    Foreground  = Brushes.White,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment   = VerticalAlignment.Center,
-                    TextAlignment       = TextAlignment.Center,
-                    FontSize = isBank ? 22 : 24,
-                    Effect = new DropShadowEffect { Color = Colors.Black, BlurRadius = 3, ShadowDepth = 1, Opacity = 0.9 }
+                    Text = FormatAmount(_amounts[i]),
+                    FontFamily = new FontFamily("Arial Black"),
+                    FontWeight = FontWeights.ExtraBold,
+                    FontSize = 80,
+                    Foreground = Brushes.White,
+                    Margin = new Thickness(0, 0, 0, 4),
+                    HorizontalAlignment = HorizontalAlignment.Right,
                 };
-                tb.Text = isBank ? "" : FormatAmount(_amounts[i]);
-                grid.Children.Add(tb);
 
-                Canvas.SetLeft(grid, LeftPad);
-                ChainCanvas.Children.Add(grid);
-
-                _slots.Add(new AudienceChainSlot { Index = i, Grid = grid, Image = img, Label = tb });
+                _chainLabels[i] = tb;
+                ChainPanel.Children.Add(tb);
             }
 
-            LayoutChain();
+            UpdateChainColors();
         }
 
-        private void LayoutChain()
+        private void UpdateChainColors()
         {
-            for (int i = 0; i < _slots.Count; i++)
+            if (_chainLabels.Length == 0) return;
+
+            for (int i = 0; i < _chainLabels.Length; i++)
             {
-                var slot = _slots[i];
-
-                bool isBank   = (i == 0);
-                bool isPassed = (i > 0 && i < _activeIndex);
-                bool isActive = (i == _activeIndex);
-
-                // Все плашки одного размера (без масштабирования)
-                double scaledW = PlankWidth;
-                double scaledH = isBank ? BankHeight : PlankHeight;
-
-                // Вертикальная позиция
-                double bottom;
-                string asset;
-
-                double bankTop = BottomMargin + BankHeight + 8 * ScaleFactor;
-                int passedCount = Math.Max(0, _activeIndex - 1);
-                double stackTop = bankTop + passedCount * StackedOverlap;
-                double slotH = CalcSlotHeight();
-
-                if (isBank)
-                {
-                    bottom = BottomMargin;
-                    asset  = "BANK.png";
-                    slot.Image.Opacity = 0.80;
-                    slot.Label.Text = _bankedAmount > 0 ? _bankedAmount.ToString() : "0";
-                }
-                else if (isPassed)
-                {
-                    bottom = bankTop + (i - 1) * StackedOverlap;
-                    asset  = "moneytree_blue.png";
-                    slot.Image.Opacity = 1.0;
-                }
-                else if (isActive)
-                {
-                    // Активная — первый слот над стопкой (slot 0)
-                    bottom = stackTop + (slotH - PlankHeight) * 0.5;
-                    asset  = "moneytree_red.png";
-                    slot.Image.Opacity = 1.0;
-                }
-                else
-                {
-                    // Будущие — слоты 1, 2, 3... над активной
-                    int slotIndex = i - _activeIndex;
-                    bottom = stackTop + slotIndex * slotH + (slotH - PlankHeight) * 0.5;
-                    asset  = "moneytree_blue.png";
-                    slot.Image.Opacity = 1.0;
-                }
-
-                // Применяем
-                slot.Grid.Width = scaledW;
-                slot.Grid.Height = scaledH;
-                slot.Image.Width = scaledW;
-                slot.Image.Height = scaledH;
-                slot.Image.Source = LoadAsset(asset);
-
-                Canvas.SetBottom(slot.Grid, bottom);
-                Canvas.SetLeft(slot.Grid, LeftPad);
-                Canvas.SetZIndex(slot.Grid, isActive ? 100 : (isPassed ? i + 1 : i + 50));
-
-                slot.Label.FontSize = FontSize;
-
-                slot.Grid.RenderTransformOrigin = new Point(0.5, 0.5);
-                if (isActive && _activeIndex > 0)
-                {
-                    var anim = new DoubleAnimation(1.0, 1.06, TimeSpan.FromMilliseconds(900))
-                        { AutoReverse = true, RepeatBehavior = RepeatBehavior.Forever };
-                    var st = new ScaleTransform(1, 1);
-                    slot.Grid.RenderTransform = st;
-                    st.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
-                    st.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
-                }
-                else
-                {
-                    slot.Grid.RenderTransform = new ScaleTransform(1, 1);
-                }
+                _chainLabels[i].Foreground = (i == _activeIndex)
+                    ? new SolidColorBrush(Color.FromRgb(0xFF, 0x22, 0x22))
+                    : Brushes.White;
             }
+        }
+
+        private string FormatAmount(int v)
+        {
+            if (v == 0) return "0";
+            return v.ToString("N0").Replace(",", " ");
+        }
+
+        // ════════════════════════════════════════════════════════════════════════
+        // ФИНАЛЬНАЯ ДУЭЛЬ
+        // ════════════════════════════════════════════════════════════════════════
+
+        public void ShowFinalDuel(string player1, string player2)
+        {
+            Dispatcher.BeginInvoke(() =>
+            {
+                TxtFinalPlayer1.Text = player1.ToUpper();
+                TxtFinalPlayer2.Text = player2.ToUpper();
+
+                if (_nameplateImage != null)
+                {
+                    ImgNameplate1.Source = _nameplateImage;
+                    ImgNameplate2.Source = _nameplateImage;
+                }
+
+                FinalDuelOverlay.Visibility = Visibility.Visible;
+                ChainPanel.Visibility = Visibility.Collapsed;
+                RoundInfoPanel.Visibility = Visibility.Collapsed;
+
+                RebuildFinalRow(FinalRow1, Enumerable.Repeat<bool?>(null, 5).ToList(), 0);
+                RebuildFinalRow(FinalRow2, Enumerable.Repeat<bool?>(null, 5).ToList(), 0);
+            });
+        }
+
+        public void UpdateFinalDuel()
+        {
+            Dispatcher.BeginInvoke(() =>
+            {
+                if (FinalDuelOverlay.Visibility != Visibility.Visible) return;
+
+                var p1 = _engine.Player1FinalScores;
+                var p2 = _engine.Player2FinalScores;
+
+                int maxCount = Math.Max(p1.Count, p2.Count);
+                int currentGroup = maxCount > 0 ? (maxCount - 1) / 5 : 0;
+                int groupStart = currentGroup * 5;
+
+                if (currentGroup > 0)
+                {
+                    bool allNullP1 = true, allNullP2 = true;
+                    for (int j = groupStart; j < p1.Count; j++)
+                        if (p1[j] != null) { allNullP1 = false; break; }
+                    for (int j = groupStart; j < p2.Count; j++)
+                        if (p2[j] != null) { allNullP2 = false; break; }
+                    if (allNullP1 && allNullP2)
+                        groupStart = (currentGroup - 1) * 5;
+                }
+
+                RebuildFinalRow(FinalRow1, p1, groupStart);
+                RebuildFinalRow(FinalRow2, p2, groupStart);
+            });
+        }
+
+        public void HideFinalDuel()
+        {
+            Dispatcher.BeginInvoke(() =>
+            {
+                FinalDuelOverlay.Visibility = Visibility.Collapsed;
+                ChainPanel.Visibility = Visibility.Visible;
+                RoundInfoPanel.Visibility = Visibility.Visible;
+            });
+        }
+
+        private void RebuildFinalRow(StackPanel row, List<bool?> scores, int groupStart)
+        {
+            row.Children.Clear();
+            for (int i = 0; i < 5; i++)
+            {
+                int idx = groupStart + i;
+                bool? val = idx < scores.Count ? scores[idx] : null;
+                row.Children.Add(CreateBadge(val, i));
+            }
+        }
+
+        private FrameworkElement CreateBadge(bool? correct, int badgeIndex)
+        {
+            var grid = new Grid { Width = BadgeSize, Height = BadgeSize, Margin = new Thickness(6, 6, 6, 0) };
+
+            ImageSource? src = correct == true  ? _badgeGreen
+                             : correct == false ? _badgeRed
+                             : _badgeBlue;
+
+            if (src != null)
+            {
+                grid.Children.Add(new Image { Source = src, Stretch = Stretch.Uniform });
+            }
+            else
+            {
+                Color c1, c2;
+                if (correct == true)       { c1 = Color.FromRgb(0x44, 0xFF, 0x44); c2 = Color.FromRgb(0x00, 0xAA, 0x00); }
+                else if (correct == false)  { c1 = Color.FromRgb(0xFF, 0x44, 0x44); c2 = Color.FromRgb(0xCC, 0x00, 0x00); }
+                else                        { c1 = Color.FromRgb(0x44, 0x88, 0xFF); c2 = Color.FromRgb(0x00, 0x44, 0xCC); }
+                grid.Children.Add(new Ellipse { Width = BadgeSize, Height = BadgeSize, Fill = new RadialGradientBrush(c1, c2) });
+            }
+
+            if (!correct.HasValue)
+            {
+                grid.Children.Add(new TextBlock
+                {
+                    Text = (badgeIndex + 1).ToString(),
+                    Foreground = Brushes.White,
+                    FontFamily = new FontFamily("Arial Black"),
+                    FontWeight = FontWeights.ExtraBold,
+                    FontSize = 22,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(0, -10, 0, 0),
+                    Effect = new DropShadowEffect { Color = Colors.Black, BlurRadius = 3, ShadowDepth = 1, Opacity = 0.6 }
+                });
+            }
+
+            return grid;
         }
 
         // ════════════════════════════════════════════════════════════════════════
@@ -214,8 +248,8 @@ namespace WeakestLink.Views
             {
                 _activeIndex = Math.Max(1, chainIndex);
                 _bankedAmount = bankedAmount;
-                TxtBank.Text = $"{bankedAmount:N0} ₽";
-                LayoutChain();
+                TxtBank.Text = bankedAmount.ToString("N0").Replace(",", " ");
+                UpdateChainColors();
             });
         }
 
@@ -236,13 +270,9 @@ namespace WeakestLink.Views
             Dispatcher.BeginInvoke(() =>
             {
                 if (string.IsNullOrWhiteSpace(name) || name == "-")
-                {
-                    TxtPlayerName.Text  = "—";
-                }
+                    TxtPlayerName.Text = "—";
                 else
-                {
-                    TxtPlayerName.Text  = name.ToUpper();
-                }
+                    TxtPlayerName.Text = name.ToUpper();
             });
         }
 
@@ -291,6 +321,16 @@ namespace WeakestLink.Views
 
         private void ApplyState(GameState state)
         {
+            if (state == GameState.FinalDuel)
+            {
+                if (_engine.ActivePlayers.Count >= 2)
+                    ShowFinalDuel(_engine.ActivePlayers[0], _engine.ActivePlayers[1]);
+            }
+            else if (state == GameState.Playing)
+            {
+                HideFinalDuel();
+            }
+
             string phase = state switch
             {
                 GameState.Playing      => $"РАУНД {_engine.CurrentRound}",
@@ -337,6 +377,15 @@ namespace WeakestLink.Views
                     if (Enum.TryParse<GameState>(parts[1], out var st))
                         Dispatcher.BeginInvoke(() => ApplyState(st));
                     break;
+                case "FINAL_UPDATE":
+                    UpdateFinalDuel();
+                    break;
+                case "FINAL_SHOW" when parts.Length >= 3:
+                    ShowFinalDuel(parts[1], parts[2]);
+                    break;
+                case "FINAL_HIDE":
+                    HideFinalDuel();
+                    break;
             }
         }
 
@@ -344,14 +393,11 @@ namespace WeakestLink.Views
         // ВСПОМОГАТЕЛЬНЫЕ
         // ════════════════════════════════════════════════════════════════════════
 
-        private System.Windows.Media.ImageSource? LoadAsset(string file)
+        private ImageSource? LoadAsset(string file)
         {
             var path = System.IO.Path.Combine(AssetDir, file);
             return System.IO.File.Exists(path) ? new BitmapImage(new Uri(path)) : null;
         }
-
-        private string FormatAmount(int v) =>
-            v.ToString();
 
         private void Window_MouseLeftButtonDown(object s, MouseButtonEventArgs e)
         {

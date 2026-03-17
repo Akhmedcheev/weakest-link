@@ -19,6 +19,32 @@ namespace WeakestLink.Audio
         private LoopStream? _crossfadeBedLoop;
         private readonly object _oneShotLock = new object();
         private bool _mainStopRequested;
+        private float _musicVolume = 1.0f;
+        private float _sfxVolume = 1.0f;
+
+        /// <summary>
+        /// Громкость саундтрека (0.0 — 1.0). Обновляет текущий трек на лету.
+        /// </summary>
+        public float MusicVolume
+        {
+            get => _musicVolume;
+            set
+            {
+                _musicVolume = Math.Clamp(value, 0f, 1f);
+                // Обновить громкость текущего воспроизведения на лету
+                try { if (_audioFile != null) _audioFile.Volume = _musicVolume; } catch { }
+                try { if (_crossfadeBedReader != null) _crossfadeBedReader.Volume = _musicVolume; } catch { }
+            }
+        }
+
+        /// <summary>
+        /// Громкость звуковых эффектов (0.0 — 1.0).
+        /// </summary>
+        public float SfxVolume
+        {
+            get => _sfxVolume;
+            set => _sfxVolume = Math.Clamp(value, 0f, 1f);
+        }
 
         /// <summary>
         /// Вызывается, когда основной канал доиграл до конца (не при Stop).
@@ -51,7 +77,7 @@ namespace WeakestLink.Audio
                 Stop();
 
                 var device = new WaveOutEvent();
-                var reader = new AudioFileReader(fullPath);
+                var reader = new AudioFileReader(fullPath) { Volume = _musicVolume };
 
                 lock (_oneShotLock)
                 {
@@ -108,7 +134,7 @@ namespace WeakestLink.Audio
                 Stop();
 
                 _outputDevice = new WaveOutEvent();
-                _audioFile = new AudioFileReader(fullPath);
+                _audioFile = new AudioFileReader(fullPath) { Volume = _musicVolume };
 
                 if (loop)
                 {
@@ -254,7 +280,7 @@ namespace WeakestLink.Audio
                 Stop();
 
                 var device = new WaveOutEvent();
-                var reader = new AudioFileReader(oneShotFullPath);
+                var reader = new AudioFileReader(oneShotFullPath) { Volume = _musicVolume };
                 double durationSeconds = reader.TotalTime.TotalSeconds;
                 double crossfadeStart = Math.Max(0, durationSeconds - crossfadeSeconds);
 
@@ -445,7 +471,7 @@ namespace WeakestLink.Audio
                 if (!File.Exists(fullPath)) return;
 
                 var device = new WaveOutEvent();
-                var reader = new AudioFileReader(fullPath);
+                var reader = new AudioFileReader(fullPath) { Volume = _sfxVolume };
 
                 device.PlaybackStopped += (s, e) =>
                 {
