@@ -3,7 +3,7 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <!-- ═══════════════════════════════════════════════════════════════
-         UI CONSTANTS — Размеры, отступы и типографика
+         UI CONSTANTS — Cursor IDE compact layout
          ═══════════════════════════════════════════════════════════════ -->
 
     <!-- ═══ WINDOW SIZES ═══ -->
@@ -16,134 +16,136 @@
     <sys:Double x:Key="MoneyTreeColumnWidth">280</sys:Double>
 
     <!-- ═══ LAYOUT SIZES ═══ -->
-    <sys:Double x:Key="SidebarWidth">220</sys:Double>
-    <GridLength x:Key="SidebarGridWidth">220</GridLength>
-    <sys:Double x:Key="TitleBarHeight">42</sys:Double>
-    <sys:Double x:Key="StatusBarHeight">24</sys:Double>
+    <sys:Double x:Key="SidebarWidth">48</sys:Double>
+    <GridLength x:Key="SidebarGridWidth">48</GridLength>
+    <sys:Double x:Key="TitleBarHeight">35</sys:Double>
+    <sys:Double x:Key="StatusBarHeight">22</sys:Double>
 
     <!-- ═══ BATTLE COCKPIT (Game Card) ═══ -->
     <sys:Double x:Key="BattleCockpitWidth">750</sys:Double>
     <sys:Double x:Key="BattleCockpitHeight">420</sys:Double>
 
     <!-- ═══ MONEY CHAIN ═══ -->
-    <sys:Double x:Key="ChainStepHeight">95</sys:Double>
-    <sys:Double x:Key="ChainStepWidth">180</sys:Double>
-    <sys:Double x:Key="ChainStackOverlap">25</sys:Double>
-    <sys:Double x:Key="ChainBorderThickness">3</sys:Double>
+    <sys:Double x:Key="ChainStepHeight">85</sys:Double>
+    <sys:Double x:Key="ChainStepWidth">160</sys:Double>
+    <sys:Double x:Key="ChainStackOverlap">22</sys:Double>
+    <sys:Double x:Key="ChainBorderThickness">2</sys:Double>
 
     <!-- ═══ ROUND ICONS ═══ -->
-    <sys:Double x:Key="RoundIconSize">24</sys:Double>
-    <CornerRadius x:Key="RoundIconBorderRadius">12</CornerRadius>
-    <Thickness x:Key="RoundIconBorderThickness">2</Thickness>
+    <sys:Double x:Key="RoundIconSize">22</sys:Double>
+    <CornerRadius x:Key="RoundIconBorderRadius">11</CornerRadius>
+    <Thickness x:Key="RoundIconBorderThickness">1.5</Thickness>
 
     <!-- ═══ BUTTONS ═══ -->
-    <sys:Double x:Key="ButtonCornerRadius">4</sys:Double>
-    <sys:Double x:Key="ButtonPaddingH">12</sys:Double>
+    <sys:Double x:Key="ButtonCornerRadius">8</sys:Double>
+    <sys:Double x:Key="ButtonPaddingH">14</sys:Double>
     <sys:Double x:Key="ButtonPaddingV">6</sys:Double>
     <sys:Double x:Key="ButtonMinHeight">32</sys:Double>
+    <sys:Double x:Key="ButtonPillRadius">14</sys:Double>
 
     <!-- ═══ FIRE BUTTONS (Game) ═══ -->
     <sys:Double x:Key="FireButtonWidth">120</sys:Double>
-    <sys:Double x:Key="FireButtonHeight">60</sys:Double>
-    <sys:Double x:Key="FireButtonFontSize">24</sys:Double>
+    <sys:Double x:Key="FireButtonHeight">55</sys:Double>
+    <sys:Double x:Key="FireButtonFontSize">22</sys:Double>
+    <sys:Double x:Key="FireButtonCornerRadius">10</sys:Double>
 
-    <!-- ═══ TYPOGRAPHY — Font Sizes (по убыванию) ═══ -->
-    <!-- Broadcast / HostScreen scales -->
-    <sys:Double x:Key="FontSizeEliminated">220</sys:Double>  <!-- Имя выбывшего (гигант) -->
-    <sys:Double x:Key="FontSizeBroadcastHuge">180</sys:Double> <!-- Банк финала (broadcast) -->
-    <sys:Double x:Key="FontSizeBroadcastMax">130</sys:Double> <!-- Макс. broadcast элемент -->
-    <sys:Double x:Key="FontSizeBroadcastWinner">120</sys:Double> <!-- Имя победителя (broadcast) -->
-    <sys:Double x:Key="FontSizeBroadcastQuestion">96</sys:Double> <!-- Вопрос (broadcast крупный) -->
-    <sys:Double x:Key="FontSizeQuestionBig">88</sys:Double>  <!-- Главный вопрос (broadcast) -->
-    <sys:Double x:Key="FontSizeBroadcastXL">80</sys:Double>  <!-- ВЫБЫВАЕТ заголовок -->
-    <sys:Double x:Key="FontSizeBroadcastAnswer">78</sys:Double> <!-- Ответ (broadcast) -->
-    <sys:Double x:Key="FontSizeBroadcastStat">72</sys:Double> <!-- Банк/Таймер (broadcast) -->
-    <sys:Double x:Key="FontSizeQuestion">64</sys:Double>     <!-- Вопрос (broadcast альт) -->
-    <sys:Double x:Key="FontSizeBroadcastVS">60</sys:Double>  <!-- VS (финал broadcast) -->
-    <sys:Double x:Key="FontSizeBroadcastLabel">58</sys:Double> <!-- Метка (broadcast) -->
-    <sys:Double x:Key="FontSizeHero">56</sys:Double>         <!-- Имя победителя -->
-    <sys:Double x:Key="FontSizeBroadcastRules">52</sys:Double> <!-- Правила (broadcast) -->
-    <sys:Double x:Key="FontSizeBroadcastName">50</sys:Double> <!-- Имя финалиста (broadcast) -->
-    <sys:Double x:Key="FontSizeBroadcastTimer">48</sys:Double> <!-- Таймер (broadcast центр) -->
-    <sys:Double x:Key="FontSizeBroadcastCaption">46</sys:Double> <!-- Подпись (broadcast) -->
-    <sys:Double x:Key="FontSizeBroadcastSubtitle">44</sys:Double> <!-- Подзаголовок (broadcast) -->
-    <sys:Double x:Key="FontSizeBroadcastAccent">40</sys:Double> <!-- Акцент (broadcast) -->
-    <sys:Double x:Key="FontSizeBroadcastInfo">38</sys:Double> <!-- Инфо (broadcast) -->
-    <sys:Double x:Key="FontSizeBroadcastSmall">34</sys:Double> <!-- Мелкий (broadcast) -->
-    <sys:Double x:Key="FontSizeBroadcastMicro">30</sys:Double> <!-- Микро (broadcast) -->
-    <!-- Operator / Game UI scales -->
-    <sys:Double x:Key="FontSizeAnswerOption">36</sys:Double>  <!-- Варианты ответов / Таймер -->
-    <sys:Double x:Key="FontSizeDisplay">32</sys:Double>      <!-- Крупные дисплейные цифры -->
-    <sys:Double x:Key="FontSizeGameQuestion">28</sys:Double>  <!-- Вопрос в карточке -->
-    <sys:Double x:Key="FontSizeGameStat">26</sys:Double>     <!-- Банк/счётчики в HUD -->
-    <sys:Double x:Key="FontSizeTitle">24</sys:Double>        <!-- Заголовки секций -->
-    <sys:Double x:Key="FontSizeGameAction">22</sys:Double>   <!-- Кнопки действий (ВЕРНО/НЕВЕРНО) -->
-    <sys:Double x:Key="FontSizeLarge">20</sys:Double>        <!-- Крупные метрики/кнопки -->
-    <sys:Double x:Key="FontSizeHeader">18</sys:Double>       <!-- Подзаголовки -->
-    <sys:Double x:Key="FontSizeMedium">16</sys:Double>       <!-- Средний (иконки, подзаголовки) -->
-    <sys:Double x:Key="FontSizeIcon">15</sys:Double>         <!-- Иконки (Segoe MDL2) -->
-    <sys:Double x:Key="FontSizeSubheader">14</sys:Double>    <!-- Label/Hint -->
-    <sys:Double x:Key="FontSizeBody">13</sys:Double>         <!-- Основной текст -->
-    <sys:Double x:Key="FontSizeSmall">12</sys:Double>        <!-- Мелкий текст -->
-    <sys:Double x:Key="FontSizeCaption">11</sys:Double>      <!-- Подписи, тулбары -->
-    <sys:Double x:Key="FontSizeXSmall">10</sys:Double>       <!-- Очень мелкий -->
-    <sys:Double x:Key="FontSizeXXXSmall">9</sys:Double>      <!-- Микро (section headers) -->
-    <sys:Double x:Key="FontSizeXXSmall">8</sys:Double>       <!-- Микро (labels) -->
+    <!-- ═══ TYPOGRAPHY — Font Sizes ═══ -->
+    <!-- Broadcast / HostScreen scales (kept for TV readability) -->
+    <sys:Double x:Key="FontSizeEliminated">220</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastHuge">180</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastMax">130</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastWinner">120</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastQuestion">96</sys:Double>
+    <sys:Double x:Key="FontSizeQuestionBig">88</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastXL">80</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastAnswer">78</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastStat">72</sys:Double>
+    <sys:Double x:Key="FontSizeQuestion">64</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastVS">60</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastLabel">58</sys:Double>
+    <sys:Double x:Key="FontSizeHero">56</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastRules">52</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastName">50</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastTimer">48</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastCaption">46</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastSubtitle">44</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastAccent">40</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastInfo">38</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastSmall">34</sys:Double>
+    <sys:Double x:Key="FontSizeBroadcastMicro">30</sys:Double>
+    <!-- Operator / Game UI scales (slightly tightened) -->
+    <sys:Double x:Key="FontSizeAnswerOption">34</sys:Double>
+    <sys:Double x:Key="FontSizeDisplay">30</sys:Double>
+    <sys:Double x:Key="FontSizeGameQuestion">26</sys:Double>
+    <sys:Double x:Key="FontSizeGameStat">24</sys:Double>
+    <sys:Double x:Key="FontSizeTitle">22</sys:Double>
+    <sys:Double x:Key="FontSizeGameAction">20</sys:Double>
+    <sys:Double x:Key="FontSizeLarge">18</sys:Double>
+    <sys:Double x:Key="FontSizeHeader">16</sys:Double>
+    <sys:Double x:Key="FontSizeMedium">14</sys:Double>
+    <sys:Double x:Key="FontSizeIcon">14</sys:Double>
+    <sys:Double x:Key="FontSizeSubheader">13</sys:Double>
+    <sys:Double x:Key="FontSizeBody">12</sys:Double>
+    <sys:Double x:Key="FontSizeSmall">11</sys:Double>
+    <sys:Double x:Key="FontSizeCaption">10</sys:Double>
+    <sys:Double x:Key="FontSizeXSmall">9</sys:Double>
+    <sys:Double x:Key="FontSizeXXXSmall">8</sys:Double>
+    <sys:Double x:Key="FontSizeXXSmall">7</sys:Double>
 
     <!-- ═══ SPACING/MARGINS ═══ -->
-    <!-- Standard spacing scale (8px base unit) -->
-    <sys:Double x:Key="SpacingXXS">2</sys:Double>   <!-- 2px -->
-    <sys:Double x:Key="SpacingXS">4</sys:Double>    <!-- 4px -->
-    <sys:Double x:Key="SpacingS">8</sys:Double>     <!-- 8px -->
-    <sys:Double x:Key="SpacingM">12</sys:Double>    <!-- 12px -->
-    <sys:Double x:Key="SpacingL">16</sys:Double>    <!-- 16px -->
-    <sys:Double x:Key="SpacingXL">20</sys:Double>   <!-- 20px -->
-    <sys:Double x:Key="SpacingXXL">24</sys:Double>  <!-- 24px -->
-    <sys:Double x:Key="Spacing3XL">32</sys:Double>  <!-- 32px -->
-    <sys:Double x:Key="Spacing4XL">40</sys:Double>  <!-- 40px -->
+    <sys:Double x:Key="SpacingXXS">2</sys:Double>
+    <sys:Double x:Key="SpacingXS">4</sys:Double>
+    <sys:Double x:Key="SpacingS">8</sys:Double>
+    <sys:Double x:Key="SpacingM">12</sys:Double>
+    <sys:Double x:Key="SpacingL">16</sys:Double>
+    <sys:Double x:Key="SpacingXL">20</sys:Double>
+    <sys:Double x:Key="SpacingXXL">24</sys:Double>
+    <sys:Double x:Key="Spacing3XL">32</sys:Double>
+    <sys:Double x:Key="Spacing4XL">40</sys:Double>
 
-    <!-- Common margins -->
-    <Thickness x:Key="MarginStandard">12,8,12,6</Thickness>
-    <Thickness x:Key="MarginSection">16,14,0,6</Thickness>
-    <Thickness x:Key="MarginContent">10,0,10,4</Thickness>
-    <Thickness x:Key="PaddingStandard">12,8</Thickness>
-    <Thickness x:Key="PaddingContent">10,8</Thickness>
+    <Thickness x:Key="MarginStandard">10,6,10,4</Thickness>
+    <Thickness x:Key="MarginSection">12,10,0,4</Thickness>
+    <Thickness x:Key="MarginContent">8,0,8,4</Thickness>
+    <Thickness x:Key="PaddingStandard">10,6</Thickness>
+    <Thickness x:Key="PaddingContent">8,6</Thickness>
 
     <!-- ═══ CORNER RADIUS ═══ -->
     <CornerRadius x:Key="CornerRadiusNone">0</CornerRadius>
     <CornerRadius x:Key="CornerRadiusSmall">2</CornerRadius>
     <CornerRadius x:Key="CornerRadiusDefault">3</CornerRadius>
-    <CornerRadius x:Key="CornerRadiusStandard">4</CornerRadius>
-    <CornerRadius x:Key="CornerRadiusMediumSmall">5</CornerRadius>
-    <CornerRadius x:Key="CornerRadiusMedium">6</CornerRadius>
-    <CornerRadius x:Key="CornerRadiusLarge">8</CornerRadius>
-    <CornerRadius x:Key="CornerRadiusCircleSmall">9</CornerRadius>
-    <CornerRadius x:Key="CornerRadiusXLarge">10</CornerRadius>
-    <CornerRadius x:Key="CornerRadiusRound">12</CornerRadius>
-    <CornerRadius x:Key="CornerRadiusPill">16</CornerRadius>
-    <CornerRadius x:Key="CornerRadiusXXLarge">20</CornerRadius>
-    <CornerRadius x:Key="CornerRadiusBroadcast">24</CornerRadius>
-    <CornerRadius x:Key="CornerRadiusBroadcastLg">28</CornerRadius>
-    <CornerRadius x:Key="CornerRadiusBroadcastXL">30</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusStandard">3</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusMediumSmall">3</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusMedium">4</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusLarge">6</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusCircleSmall">8</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusXLarge">8</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusRound">8</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusPill">12</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusBento">12</CornerRadius>  <!-- Bento card (DocPanel) -->
+    <CornerRadius x:Key="CornerRadiusBentoLg">16</CornerRadius>  <!-- Large Bento -->
+    <CornerRadius x:Key="CornerRadiusXXLarge">16</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusBroadcast">20</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusBroadcastLg">24</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusBroadcastXL">28</CornerRadius>
     <CornerRadius x:Key="CornerRadiusCircle">45</CornerRadius>
 
-    <!-- ═══ BORDER THICKNESS (для BorderThickness property) ═══ -->
+    <!-- ═══ BORDER THICKNESS ═══ -->
     <Thickness x:Key="BorderThin">1</Thickness>
     <Thickness x:Key="BorderStandard">1</Thickness>
-    <Thickness x:Key="BorderMedium">2</Thickness>
-    <Thickness x:Key="BorderThick">3</Thickness>
-    <Thickness x:Key="BorderVeryThick">4</Thickness>
+    <Thickness x:Key="BorderMedium">1.5</Thickness>
+    <Thickness x:Key="BorderThick">2</Thickness>
+    <Thickness x:Key="BorderVeryThick">3</Thickness>
 
-    <!-- ═══ LINE THICKNESS (для Height в Border линиях) ═══ -->
+    <!-- ═══ LINE THICKNESS ═══ -->
     <sys:Double x:Key="LineThicknessThin">1</sys:Double>
     <sys:Double x:Key="LineThicknessStandard">1</sys:Double>
-    <sys:Double x:Key="LineThicknessMedium">2</sys:Double>
-    <sys:Double x:Key="LineThicknessThick">3</sys:Double>
+    <sys:Double x:Key="LineThicknessMedium">1.5</sys:Double>
+    <sys:Double x:Key="LineThicknessThick">2</sys:Double>
 
     <!-- ═══ OPACITY ═══ -->
     <sys:Double x:Key="OpacityHover">0.9</sys:Double>
     <sys:Double x:Key="OpacityActive">1.0</sys:Double>
-    <sys:Double x:Key="OpacityDisabled">0.4</sys:Double>
-    <sys:Double x:Key="OpacityOverlay">0.1</sys:Double>
+    <sys:Double x:Key="OpacityDisabled">0.35</sys:Double>
+    <sys:Double x:Key="OpacityOverlay">0.06</sys:Double>
 
 </ResourceDictionary>

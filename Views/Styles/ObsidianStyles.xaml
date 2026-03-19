@@ -2,114 +2,131 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- ═══════════════════════════════════════════════════════════════
-         OBSIDIAN v3.0 COLOR BIBLE — Полная палитра из энциклопедии
+         CURSOR IDE THEME v1.0 — Monochrome dark palette
+         Based on VS Code / Cursor IDE design language
          ═══════════════════════════════════════════════════════════════ -->
 
-    <!-- ═══ NEUTRAL COLORS — Базовая схема (Obsidian) ═══ -->
-    <SolidColorBrush x:Key="ObsidianBase"           Color="#1F1F1F"/>  <!-- глубокий фон секций -->
-    <SolidColorBrush x:Key="ObsidianBg"             Color="#1E1E1E"/>  <!-- глубокий угольный фон -->
-    <SolidColorBrush x:Key="ObsidianSurface"        Color="#252525"/>  <!-- фон карточек и панелей -->
-    <SolidColorBrush x:Key="ObsidianDeep"           Color="#292929"/>  <!-- статус-бар, HUD фон -->
-    <SolidColorBrush x:Key="ObsidianCard"           Color="#2D2D2D"/>  <!-- приподнятая карточка -->
-    <SolidColorBrush x:Key="ObsidianRaised"         Color="#333333"/>  <!-- еще выше -->
-    <SolidColorBrush x:Key="ObsidianBorder"         Color="#363636"/>  <!-- тонкие границы -->
-    <SolidColorBrush x:Key="ObsidianBorderStrong"   Color="#3D3D3D"/>  <!-- контрастные границы -->
-    <SolidColorBrush x:Key="ObsidianBorderLight"    Color="#4D4D4D"/>  <!-- светлая граница (hover) -->
+    <!-- ═══ NEUTRAL COLORS — Core surfaces ═══ -->
+    <SolidColorBrush x:Key="ObsidianBase"           Color="#181818"/>  <!-- deepest bg (activity bar, title bar) -->
+    <SolidColorBrush x:Key="ObsidianAppBg"          Color="#0D0F13"/>  <!-- app window background (Bento dark) -->
+    <SolidColorBrush x:Key="ObsidianBg"             Color="#1E1E1E"/>  <!-- main editor background (legacy) -->
+    <SolidColorBrush x:Key="ObsidianSurface"        Color="#252526"/>  <!-- panels, cards, sidebars -->
+    <SolidColorBrush x:Key="ObsidianDeep"           Color="#181818"/>  <!-- status bar bg (inactive) -->
+    <SolidColorBrush x:Key="ObsidianCard"           Color="#2D2D2D"/>  <!-- raised card, input bg -->
+    <SolidColorBrush x:Key="ObsidianRaised"         Color="#333333"/>  <!-- highest elevation surface -->
+    <SolidColorBrush x:Key="ObsidianBorder"         Color="#2D2D2D"/>  <!-- default border -->
+    <SolidColorBrush x:Key="ObsidianBorderStrong"   Color="#3D3D3D"/>  <!-- stronger border (focus, hover) -->
+    <SolidColorBrush x:Key="ObsidianBorderLight"    Color="#4D4D4D"/>  <!-- hover highlight border -->
 
-    <!-- ═══ TEXT COLORS — Типографика ═══ -->
-    <SolidColorBrush x:Key="ObsidianTextPrimary"   Color="#E0E0E0"/>  <!-- основной текст -->
-    <SolidColorBrush x:Key="ObsidianText"          Color="#E8E8E8"/>  <!-- альтернатива (более светлый) -->
-    <SolidColorBrush x:Key="ObsidianTextSecondary" Color="#999999"/>  <!-- вторичный/приглушённый -->
-    <SolidColorBrush x:Key="ObsidianTextMuted"     Color="#555555"/>  <!-- ещё более приглушённый (labels) -->
-    <SolidColorBrush x:Key="ObsidianTextDisabled"  Color="#717171"/>  <!-- disabled state -->
+    <!-- ═══ TEXT COLORS — Typography hierarchy ═══ -->
+    <SolidColorBrush x:Key="ObsidianTextPrimary"   Color="#CCCCCC"/>  <!-- primary text -->
+    <SolidColorBrush x:Key="ObsidianText"          Color="#D4D4D4"/>  <!-- alt primary (slightly brighter) -->
+    <SolidColorBrush x:Key="ObsidianTextSecondary" Color="#858585"/>  <!-- secondary / labels -->
+    <SolidColorBrush x:Key="ObsidianTextMuted"     Color="#5A5A5A"/>  <!-- muted / placeholders -->
+    <SolidColorBrush x:Key="ObsidianTextDisabled"  Color="#4D4D4D"/>  <!-- disabled state -->
 
-    <!-- ═══ SEMANTIC COLORS — Успех/Ошибка/Предупреждение ═══ -->
-    <SolidColorBrush x:Key="ColorSuccess"          Color="#22C55E"/>  <!-- ✅ зелёный (Верно) -->
-    <SolidColorBrush x:Key="ColorDanger"           Color="#EF4444"/>  <!-- ❌ красный (Неверно) -->
-    <SolidColorBrush x:Key="ColorWarning"          Color="#F59E0B"/>  <!-- ⚠️ жёлтый (Банк/Предупреждение) -->
-    <SolidColorBrush x:Key="ColorInfo"             Color="#4F6BED"/>  <!-- ℹ️ синий (Информация) -->
+    <!-- ═══ ACCENT — Primary action color (VS Code blue) ═══ -->
+    <SolidColorBrush x:Key="AccentPrimary"         Color="#007ACC"/>  <!-- primary accent -->
+    <SolidColorBrush x:Key="AccentHover"           Color="#1177BB"/>  <!-- accent hover -->
+    <SolidColorBrush x:Key="AccentSelection"       Color="#264F78"/>  <!-- selection highlight -->
 
-    <!-- ═══ GAME COLORS — Игровые статусы (из Color Bible) ═══ -->
-    <SolidColorBrush x:Key="ColorGreen"            Color="#23a559"/>  <!-- Верно (оператор) -->
-    <SolidColorBrush x:Key="ColorGold"             Color="#FFD700"/>  <!-- Банк / Деньги / Победитель -->
-    <SolidColorBrush x:Key="ColorRed"              Color="#da373c"/>  <!-- Неверно / Опасно -->
-    <SolidColorBrush x:Key="ColorBlurple"          Color="#5865F2"/>  <!-- Первичное действие (START) -->
-    <SolidColorBrush x:Key="ColorOrange"           Color="#FF8C00"/>  <!-- Предупреждение (Restart) -->
-    <SolidColorBrush x:Key="ColorPurple"           Color="#800080"/>  <!-- Debug / Tech -->
-    <SolidColorBrush x:Key="ColorTeal"             Color="#2DD4BF"/>  <!-- Accent (checked states) -->
-    <SolidColorBrush x:Key="ColorTeams"            Color="#6264A7"/>  <!-- Teams Purple (навигация) -->
+    <!-- ═══ SEMANTIC COLORS — Status indicators ═══ -->
+    <SolidColorBrush x:Key="ColorSuccess"          Color="#4EC9B0"/>  <!-- success (teal-green, VS Code) -->
+    <SolidColorBrush x:Key="ColorDanger"           Color="#F14C4C"/>  <!-- error / danger -->
+    <SolidColorBrush x:Key="ColorWarning"          Color="#CCA700"/>  <!-- warning (muted gold) -->
+    <SolidColorBrush x:Key="ColorInfo"             Color="#007ACC"/>  <!-- info (accent blue) -->
 
-    <!-- ═══ TV-SAFE COLORS — Host Screen (из Color Bible) ═══ -->
-    <SolidColorBrush x:Key="TVSafeBackground"      Color="#050510"/>  <!-- глубокий фон Host -->
-    <SolidColorBrush x:Key="TVSafeDark"             Color="#1A1A1A"/>  <!-- тёмный фон broadcast -->
-    <SolidColorBrush x:Key="TVSafePanel"            Color="#161616"/>  <!-- панель broadcast -->
-    <SolidColorBrush x:Key="TVSafeBorder"           Color="#262626"/>  <!-- граница broadcast -->
-    <SolidColorBrush x:Key="TVSafeSubtle"           Color="#0D0D0D"/>  <!-- едва видимый фон -->
-    <SolidColorBrush x:Key="TVSafeNear"             Color="#111111"/>  <!-- почти чёрный -->
-    <SolidColorBrush x:Key="TVSafeMid"              Color="#222222"/>  <!-- средний тёмный -->
-    <SolidColorBrush x:Key="TVSafeGray"             Color="#444444"/>  <!-- серый broadcast -->
-    <SolidColorBrush x:Key="TVSafeGrayMid"          Color="#333333"/>  <!-- средний серый broadcast -->
-    <SolidColorBrush x:Key="TVSafeGrayLight"        Color="#555555"/>  <!-- светлый серый broadcast -->
-    <SolidColorBrush x:Key="TVSafeQuestionBg"       Color="#0A1128"/>  <!-- Navy Dark (вопрос) -->
-    <SolidColorBrush x:Key="TVSafeAnswer"           Color="#C10000"/>  <!-- Red (ответ) -->
-    <SolidColorBrush x:Key="TVSafeCyan"             Color="#00CCCC"/>  <!-- Cyan (финалисты) -->
-    <SolidColorBrush x:Key="TVSafeTimer"            Color="#006400"/>  <!-- Forest Green (таймер) -->
-    <SolidColorBrush x:Key="TVSafeBankNow"          Color="#0000B8"/>  <!-- Royal Blue -->
-    <SolidColorBrush x:Key="TVSafeTotal"            Color="#4A0020"/>  <!-- Burgundy -->
-    <SolidColorBrush x:Key="TVSafeChroma"           Color="#00B140"/>  <!-- Chromakey Green -->
+    <!-- ═══ GAME COLORS — Game-specific (kept functional) ═══ -->
+    <SolidColorBrush x:Key="ColorGreen"            Color="#4EC9B0"/>  <!-- correct answer -->
+    <SolidColorBrush x:Key="ColorGold"             Color="#CCA700"/>  <!-- bank / money -->
+    <SolidColorBrush x:Key="ColorRed"              Color="#F14C4C"/>  <!-- wrong / danger -->
+    <SolidColorBrush x:Key="ColorBlurple"          Color="#007ACC"/>  <!-- primary action (start) -->
+    <SolidColorBrush x:Key="ColorOrange"           Color="#CE9178"/>  <!-- warning (VS Code string color) -->
+    <SolidColorBrush x:Key="ColorPurple"           Color="#C586C0"/>  <!-- debug / tech (VS Code keyword) -->
+    <SolidColorBrush x:Key="ColorTeal"             Color="#4EC9B0"/>  <!-- accent checked states -->
+    <SolidColorBrush x:Key="ColorTeams"            Color="#007ACC"/>  <!-- navigation active (was Teams purple) -->
 
-    <!-- ═══ ALIASES — Для обратной совместимости ═══ -->
-    <SolidColorBrush x:Key="AccentPrimary"         Color="#4F6BED"/>  <!-- синий -->
-    <SolidColorBrush x:Key="AccentSuccess"         Color="#22C55E"/>  <!-- зелёный -->
-    <SolidColorBrush x:Key="AccentWarning"         Color="#F59E0B"/>  <!-- жёлтый -->
-    <SolidColorBrush x:Key="AccentDanger"          Color="#EF4444"/>  <!-- красный -->
-    <SolidColorBrush x:Key="ObsidianAccentTeal"    Color="#2DD4BF"/>  <!-- teal -->
+    <!-- ═══ TV-SAFE COLORS — Broadcast / Host screens ═══ -->
+    <SolidColorBrush x:Key="TVSafeBackground"      Color="#0A0A0A"/>  <!-- deepest broadcast bg -->
+    <SolidColorBrush x:Key="TVSafeDark"            Color="#141414"/>  <!-- dark broadcast area -->
+    <SolidColorBrush x:Key="TVSafePanel"           Color="#1A1A1A"/>  <!-- broadcast panel -->
+    <SolidColorBrush x:Key="TVSafeBorder"          Color="#2D2D2D"/>  <!-- broadcast border -->
+    <SolidColorBrush x:Key="TVSafeSubtle"          Color="#0D0D0D"/>  <!-- barely visible bg -->
+    <SolidColorBrush x:Key="TVSafeNear"            Color="#111111"/>  <!-- near-black -->
+    <SolidColorBrush x:Key="TVSafeMid"             Color="#1E1E1E"/>  <!-- mid dark -->
+    <SolidColorBrush x:Key="TVSafeGray"            Color="#3D3D3D"/>  <!-- broadcast gray -->
+    <SolidColorBrush x:Key="TVSafeGrayMid"         Color="#2D2D2D"/>  <!-- mid gray broadcast -->
+    <SolidColorBrush x:Key="TVSafeGrayLight"       Color="#4D4D4D"/>  <!-- light gray broadcast -->
+    <SolidColorBrush x:Key="TVSafeQuestionBg"      Color="#0A1628"/>  <!-- Navy Dark (question) -->
+    <SolidColorBrush x:Key="TVSafeAnswer"          Color="#F14C4C"/>  <!-- Red (answer) -->
+    <SolidColorBrush x:Key="TVSafeCyan"            Color="#4EC9B0"/>  <!-- Cyan/teal (finalists) -->
+    <SolidColorBrush x:Key="TVSafeTimer"           Color="#007ACC"/>  <!-- Timer (accent blue) -->
+    <SolidColorBrush x:Key="TVSafeBankNow"         Color="#264F78"/>  <!-- Bank now (selection blue) -->
+    <SolidColorBrush x:Key="TVSafeTotal"           Color="#3B1D4A"/>  <!-- Burgundy/purple -->
+    <SolidColorBrush x:Key="TVSafeChroma"          Color="#00B140"/>  <!-- Chromakey Green -->
 
-    <!-- ═══ BUTTON COLORS — Fire Buttons из Color Bible ═══ -->
-    <SolidColorBrush x:Key="FireButtonCorrect"     Color="#23a559"/>  <!-- ВЕРНО -->
-    <SolidColorBrush x:Key="FireButtonCorrectHover" Color="#2db86b"/> <!-- ВЕРНО (hover) -->
-    <SolidColorBrush x:Key="FireButtonCorrectPress" Color="#1a8a44"/> <!-- ВЕРНО (pressed) -->
+    <!-- ═══ ALIASES — Backward compatibility ═══ -->
+    <SolidColorBrush x:Key="AccentSuccess"         Color="#4EC9B0"/>
+    <SolidColorBrush x:Key="AccentWarning"         Color="#CCA700"/>
+    <SolidColorBrush x:Key="AccentDanger"          Color="#F14C4C"/>
+    <SolidColorBrush x:Key="ObsidianAccentTeal"    Color="#4EC9B0"/>
 
-    <SolidColorBrush x:Key="FireButtonBank"        Color="#1565C0"/>  <!-- БАНК (синий, как на пульте) -->
-    <SolidColorBrush x:Key="FireButtonBankHover"   Color="#1976D2"/>  <!-- БАНК (hover) -->
-    <SolidColorBrush x:Key="FireButtonBankPress"   Color="#0D47A1"/>  <!-- БАНК (pressed) -->
+    <!-- ═══ BUTTON COLORS — Fire Buttons (game-critical, kept vivid) ═══ -->
+    <SolidColorBrush x:Key="FireButtonCorrect"     Color="#16825D"/>  <!-- CORRECT (muted green) -->
+    <SolidColorBrush x:Key="FireButtonCorrectHover" Color="#1A9E6F"/>
+    <SolidColorBrush x:Key="FireButtonCorrectPress" Color="#12704F"/>
 
-    <SolidColorBrush x:Key="FireButtonWrong"       Color="#da373c"/>  <!-- НЕВЕРНО -->
-    <SolidColorBrush x:Key="FireButtonWrongHover"  Color="#e54e52"/>  <!-- НЕВЕРНО (hover) -->
-    <SolidColorBrush x:Key="FireButtonWrongPress"  Color="#b82d31"/>  <!-- НЕВЕРНО (pressed) -->
+    <SolidColorBrush x:Key="FireButtonBank"        Color="#0E639C"/>  <!-- BANK (VS Code button blue) -->
+    <SolidColorBrush x:Key="FireButtonBankHover"   Color="#1177BB"/>
+    <SolidColorBrush x:Key="FireButtonBankPress"   Color="#0A5181"/>
 
-    <SolidColorBrush x:Key="FireButtonPass"        Color="#4e5058"/>  <!-- ПАС -->
-    <SolidColorBrush x:Key="FireButtonPassHover"   Color="#5c5e66"/>  <!-- ПАС (hover) -->
-    <SolidColorBrush x:Key="FireButtonPassPress"   Color="#3e4046"/>  <!-- ПАС (pressed) -->
+    <SolidColorBrush x:Key="FireButtonWrong"       Color="#C72828"/>  <!-- WRONG (muted red) -->
+    <SolidColorBrush x:Key="FireButtonWrongHover"  Color="#DB3434"/>
+    <SolidColorBrush x:Key="FireButtonWrongPress"  Color="#A52020"/>
+
+    <SolidColorBrush x:Key="FireButtonPass"        Color="#3C3C3C"/>  <!-- PASS (neutral gray) -->
+    <SolidColorBrush x:Key="FireButtonPassHover"   Color="#4A4A4A"/>
+    <SolidColorBrush x:Key="FireButtonPassPress"   Color="#303030"/>
 
     <!-- ═══ MONEY CHAIN COLORS ═══ -->
-    <SolidColorBrush x:Key="ChainActive"           Color="#CC8800"/>  <!-- Gold + yellow border (активный уровень) -->
-    <SolidColorBrush x:Key="ChainInactive"         Color="#252525"/>  <!-- Dark gray (неактивный уровень) -->
+    <SolidColorBrush x:Key="ChainActive"           Color="#007ACC"/>  <!-- active level (accent blue) -->
+    <SolidColorBrush x:Key="ChainInactive"         Color="#252526"/>  <!-- inactive level -->
 
     <!-- ═══ STATUS COLORS ═══ -->
-    <SolidColorBrush x:Key="StatusOnline"          Color="#22C55E"/>  <!-- зелёный (играет) -->
-    <SolidColorBrush x:Key="StatusWarning"         Color="#F59E0B"/>  <!-- жёлтый (ждёт) -->
-    <SolidColorBrush x:Key="StatusOffline"         Color="#717171"/>  <!-- серый (выбыл) -->
+    <SolidColorBrush x:Key="StatusOnline"          Color="#4EC9B0"/>  <!-- online (teal) -->
+    <SolidColorBrush x:Key="StatusWarning"         Color="#CCA700"/>  <!-- waiting (gold) -->
+    <SolidColorBrush x:Key="StatusOffline"         Color="#4D4D4D"/>  <!-- eliminated (gray) -->
 
-    <!-- ═══ GAME TINT COLORS — Фоны карточек/статусов ═══ -->
-    <SolidColorBrush x:Key="TintGreenDark"         Color="#0D2818"/>  <!-- тёмно-зелёный фон (активный) -->
-    <SolidColorBrush x:Key="TintRedDark"           Color="#2D0F0F"/>  <!-- тёмно-красный фон (выбыл) -->
-    <SolidColorBrush x:Key="TintBlueDark"          Color="#0D1B2A"/>  <!-- тёмно-синий фон (текущий) -->
-    <SolidColorBrush x:Key="TintGreenBright"       Color="#3FB950"/>  <!-- ярко-зелёный (GitHub green) -->
-    <SolidColorBrush x:Key="TintRedBright"         Color="#F85149"/>  <!-- ярко-красный (GitHub red) -->
-    <SolidColorBrush x:Key="TintRedAccent"         Color="#DC2626"/>  <!-- акцентный красный -->
-    <SolidColorBrush x:Key="TintGreenAccent"       Color="#16A34A"/>  <!-- акцентный зелёный -->
+    <!-- ═══ GAME TINT COLORS — Card/status backgrounds ═══ -->
+    <SolidColorBrush x:Key="TintGreenDark"         Color="#0D2818"/>  <!-- dark green tint -->
+    <SolidColorBrush x:Key="TintRedDark"           Color="#2D0F0F"/>  <!-- dark red tint -->
+    <SolidColorBrush x:Key="TintBlueDark"          Color="#0D1B2A"/>  <!-- dark blue tint (current player) -->
+    <SolidColorBrush x:Key="TintGreenBright"       Color="#4EC9B0"/>  <!-- bright green -->
+    <SolidColorBrush x:Key="TintRedBright"         Color="#F14C4C"/>  <!-- bright red -->
+    <SolidColorBrush x:Key="TintRedAccent"         Color="#C72828"/>  <!-- accent red -->
+    <SolidColorBrush x:Key="TintGreenAccent"       Color="#16825D"/>  <!-- accent green -->
 
-    <!-- ═══ NAMED STYLES ONLY (default styles live in OperatorPanel.xaml) ═══ -->
+    <!-- ═══ ANALYTICS STUDIO VARIANT — Dark dashboards (breathing, elevation, teal) ═══ -->
+    <SolidColorBrush x:Key="StudioCardBg"          Color="#1A1D24"/>  <!-- card surface (lighter than Obsidian) -->
+    <SolidColorBrush x:Key="StudioCardBorder"       Color="#2D323E"/>  <!-- soft border -->
+    <SolidColorBrush x:Key="StudioAccent"           Color="#14B8A6"/>   <!-- teal primary (Hi Dog / docpanel style) -->
+    <SolidColorBrush x:Key="StudioBg"              Color="#0F1115"/>  <!-- inner panel bg -->
+    <SolidColorBrush x:Key="StudioTextMuted"       Color="#8B92A4"/>  <!-- labels -->
+    <DropShadowEffect x:Key="StudioCardShadow" BlurRadius="20" ShadowDepth="0" Opacity="0.15" Color="Black"/>
 
-    <!-- ObsidianTextBox: темный ввод с тонкой рамкой -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         COMPONENT STYLES — Cursor IDE look
+         ═══════════════════════════════════════════════════════════════ -->
+
+    <!-- ObsidianTextBox: minimal input with focus accent -->
     <Style x:Key="ObsidianTextBox" TargetType="TextBox">
-        <Setter Property="Background" Value="{StaticResource ObsidianCard}"/>
+        <Setter Property="Background" Value="#313131"/>
         <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource ObsidianBorder}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ObsidianBorderStrong}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="CaretBrush" Value="{StaticResource ObsidianTextPrimary}"/>
-        <Setter Property="Padding" Value="8,6"/>
+        <Setter Property="Padding" Value="8,5"/>
+        <Setter Property="FontSize" Value="13"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -117,15 +134,14 @@
                     <Border x:Name="border" Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{DynamicResource CornerRadiusMedium}" SnapsToDevicePixels="True">
+                            CornerRadius="6" SnapsToDevicePixels="True">
                         <ScrollViewer x:Name="PART_ContentHost" Focusable="false"
                                       HorizontalScrollBarVisibility="Hidden"
                                       VerticalScrollBarVisibility="Hidden"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ColorBlurple}"/>
-                            <Setter TargetName="border" Property="BorderThickness" Value="1.5"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource AccentPrimary}"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ObsidianBorderLight}"/>
@@ -136,15 +152,53 @@
         </Setter>
     </Style>
 
-    <!-- Стиль TextBox с красной подсветкой при фокусе для редактора -->
+    <!-- PremiumTextBox: DocPanel-style dark input with teal focus + blue glow (7b4ca548) -->
+    <Style x:Key="PremiumTextBox" TargetType="TextBox" BasedOn="{StaticResource ObsidianTextBox}">
+        <Setter Property="Background" Value="#16191F"/>
+        <Setter Property="BorderBrush" Value="#252A36"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="CaretBrush" Value="White"/>
+        <Setter Property="Padding" Value="10,8"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border x:Name="border" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8" SnapsToDevicePixels="True">
+                        <ScrollViewer x:Name="PART_ContentHost" Focusable="false"
+                                      HorizontalScrollBarVisibility="Hidden"
+                                      VerticalScrollBarVisibility="Hidden"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource StudioAccent}"/>
+                            <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            <Setter TargetName="border" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect Color="#007ACC" BlurRadius="12" ShadowDepth="0" Opacity="0.4"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="#2D323E"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Editor TextBox with red focus ring -->
     <Style x:Key="EditorTextBoxStyle" TargetType="TextBox">
-        <Setter Property="Background" Value="{StaticResource ObsidianCard}"/>
+        <Setter Property="Background" Value="#313131"/>
         <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource ObsidianBorder}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ObsidianBorderStrong}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="CaretBrush" Value="{StaticResource ObsidianTextPrimary}"/>
-        <Setter Property="SelectionBrush" Value="{StaticResource ColorPurple}"/>
-        <Setter Property="Padding" Value="8,2"/>
+        <Setter Property="SelectionBrush" Value="{StaticResource AccentSelection}"/>
+        <Setter Property="Padding" Value="6,2"/>
+        <Setter Property="FontSize" Value="13"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Template">
@@ -153,7 +207,7 @@
                     <Border x:Name="border" Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{DynamicResource CornerRadiusMedium}" SnapsToDevicePixels="True">
+                            CornerRadius="3" SnapsToDevicePixels="True">
                         <ScrollViewer x:Name="PART_ContentHost" Focusable="false"
                                       HorizontalScrollBarVisibility="Hidden"
                                       VerticalScrollBarVisibility="Hidden"/>
@@ -161,7 +215,6 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsKeyboardFocused" Value="True">
                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ColorDanger}"/>
-                            <Setter TargetName="border" Property="BorderThickness" Value="2"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ObsidianBorderLight}"/>
@@ -175,20 +228,20 @@
         </Setter>
     </Style>
 
-    <!-- Discord Scrollbar: Thumb -->
+    <!-- Thin scrollbar thumb (Cursor/VS Code style) -->
     <Style x:Key="DiscordScrollThumb" TargetType="Thumb">
         <Setter Property="OverridesDefaultStyle" Value="True"/>
         <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Border x:Name="thumbBorder" Background="{StaticResource ObsidianSurface}" CornerRadius="{DynamicResource CornerRadiusStandard}"/>
+                    <Border x:Name="thumbBorder" Background="#424242" CornerRadius="4" Margin="1"/>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="thumbBorder" Property="Background" Value="{StaticResource ObsidianBorderLight}"/>
+                            <Setter TargetName="thumbBorder" Property="Background" Value="#555555"/>
                         </Trigger>
                         <Trigger Property="IsDragging" Value="True">
-                            <Setter TargetName="thumbBorder" Property="Background" Value="{StaticResource ObsidianTextMuted}"/>
+                            <Setter TargetName="thumbBorder" Property="Background" Value="#686868"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -196,9 +249,9 @@
         </Setter>
     </Style>
 
-    <!-- Discord Button Style -->
+    <!-- Cursor-style flat button with subtle hover overlay -->
     <Style x:Key="DiscordButton" TargetType="Button">
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -213,12 +266,13 @@
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="btnBorder"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="{DynamicResource CornerRadiusStandard}"
+                            CornerRadius="8"
                             Padding="{TemplateBinding Padding}"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="True">
                         <Grid>
-                            <Border x:Name="hoverOverlay" Background="White" Opacity="0" CornerRadius="{DynamicResource CornerRadiusStandard}"/>
+                            <Border x:Name="hoverOverlay" Background="White" Opacity="0" CornerRadius="8"/>
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
                                               TextBlock.Foreground="{TemplateBinding Foreground}"
                                               TextBlock.FontSize="{TemplateBinding FontSize}"
@@ -227,19 +281,14 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.1"/>
+                            <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.06"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="hoverOverlay" Property="Opacity" Value="0.0"/>
-                            <Setter TargetName="btnBorder" Property="Opacity" Value="0.75"/>
-                            <Setter Property="RenderTransform">
-                                <Setter.Value>
-                                    <ScaleTransform ScaleX="0.98" ScaleY="0.97"/>
-                                </Setter.Value>
-                            </Setter>
+                            <Setter TargetName="btnBorder" Property="Opacity" Value="0.8"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="btnBorder" Property="Opacity" Value="0.45"/>
+                            <Setter TargetName="btnBorder" Property="Opacity" Value="0.4"/>
                             <Setter TargetName="hoverOverlay" Property="Opacity" Value="0"/>
                             <Setter Property="Foreground" Value="{StaticResource ObsidianTextDisabled}"/>
                         </Trigger>
@@ -249,14 +298,15 @@
         </Setter>
     </Style>
 
-    <!-- TestRoundSelector Style -->
+    <!-- TestRoundSelector ComboBox -->
     <Style x:Key="TestRoundSelectorStyle" TargetType="ComboBox">
-        <Setter Property="Background" Value="{StaticResource ObsidianSurface}"/>
+        <Setter Property="Background" Value="#16191F"/>
         <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource ObsidianBorder}"/>
+        <Setter Property="BorderBrush" Value="#252A36"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding" Value="5,0"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="ItemContainerStyle" Value="{StaticResource PremiumComboBoxItem}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBox">
@@ -266,7 +316,7 @@
                                       ClickMode="Press">
                             <ToggleButton.Template>
                                 <ControlTemplate TargetType="ToggleButton">
-                                    <Border x:Name="TkBorder" Background="{StaticResource ObsidianSurface}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{DynamicResource CornerRadiusMedium}">
+                                    <Border x:Name="TkBorder" Background="#16191F" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
                                         <Path x:Name="Arrow" Fill="{StaticResource ObsidianTextSecondary}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Data="M0,0 L4,4 L8,0 Z"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
@@ -275,7 +325,7 @@
                                         </Trigger>
                                         <Trigger Property="IsChecked" Value="True">
                                             <Setter TargetName="TkBorder" Property="Background" Value="{StaticResource ObsidianRaised}"/>
-                                            <Setter TargetName="TkBorder" Property="BorderBrush" Value="{StaticResource ObsidianBorderLight}"/>
+                                            <Setter TargetName="TkBorder" Property="BorderBrush" Value="{StaticResource AccentPrimary}"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -299,7 +349,7 @@
 
                         <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
                             <Grid x:Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                <Border x:Name="DropDownBorder" Background="{StaticResource ObsidianSurface}" BorderThickness="1" BorderBrush="{StaticResource ObsidianBorder}" CornerRadius="0,0,3,3" />
+                                <Border x:Name="DropDownBorder" Background="#16191F" BorderThickness="1" BorderBrush="#252A36" CornerRadius="0,0,8,8" Padding="2"/>
                                 <ScrollViewer Margin="1" SnapsToDevicePixels="True">
                                     <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
                                 </ScrollViewer>
@@ -311,10 +361,10 @@
         </Setter>
     </Style>
 
-    <!-- Алиас для обратной совместимости -->
+    <!-- Backward compat alias -->
     <Style x:Key="NoWhiteWhenDisabledButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"/>
 
-    <!-- Стиль игровых кнопок с эффектом физического нажатия -->
+    <!-- Game button with physical press effect (fire buttons) -->
     <Style x:Key="GameButtonPressStyle" TargetType="Button">
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -327,20 +377,28 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{StaticResource ObsidianBg}" BorderThickness="0,0,0,4" Padding="{TemplateBinding Padding}" CornerRadius="{DynamicResource CornerRadiusMediumSmall}">
+                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="#181818" BorderThickness="0,0,0,3" Padding="{TemplateBinding Padding}" CornerRadius="10" SnapsToDevicePixels="True">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="1" BlurRadius="6" Opacity="0.25" Color="#000000"/>
+                        </Border.Effect>
                         <ContentPresenter x:Name="content" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" HorizontalAlignment="Center" VerticalAlignment="Center" TextBlock.Foreground="{TemplateBinding Foreground}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="border" Property="BorderThickness" Value="0,2,0,0"/>
-                            <Setter TargetName="border" Property="Margin" Value="0,3,0,-3"/>
-                            <Setter TargetName="border" Property="Opacity" Value="0.82"/>
+                            <Setter TargetName="border" Property="Margin" Value="0,2,0,-2"/>
+                            <Setter TargetName="border" Property="Opacity" Value="0.85"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="border" Property="Opacity" Value="0.92"/>
+                            <Setter TargetName="border" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect ShadowDepth="1" BlurRadius="14" Opacity="0.35" Color="#000000"/>
+                                </Setter.Value>
+                            </Setter>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="border" Property="Opacity" Value="0.4"/>
+                            <Setter TargetName="border" Property="Opacity" Value="0.35"/>
                             <Setter TargetName="border" Property="BorderThickness" Value="0"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -349,63 +407,57 @@
         </Setter>
     </Style>
 
-    <!-- ═══ FIRE BUTTON STYLES — Цветовые кнопки действий ═══ -->
+    <!-- ═══ FIRE BUTTON STYLES ═══ -->
 
-    <!-- FireCorrectButton: ВЕРНО — зелёный с hover/pressed -->
     <Style x:Key="FireCorrectButton" TargetType="Button" BasedOn="{StaticResource GameButtonPressStyle}">
         <Setter Property="Background" Value="{StaticResource FireButtonCorrect}"/>
         <Setter Property="Foreground" Value="White"/>
     </Style>
 
-    <!-- FireBankButton: БАНК — синий (как на пульте РФ) с hover/pressed -->
     <Style x:Key="FireBankButton" TargetType="Button" BasedOn="{StaticResource GameButtonPressStyle}">
         <Setter Property="Background" Value="{StaticResource FireButtonBank}"/>
         <Setter Property="Foreground" Value="White"/>
     </Style>
 
-    <!-- FireWrongButton: НЕВЕРНО — красный с hover/pressed -->
     <Style x:Key="FireWrongButton" TargetType="Button" BasedOn="{StaticResource GameButtonPressStyle}">
         <Setter Property="Background" Value="{StaticResource FireButtonWrong}"/>
         <Setter Property="Foreground" Value="White"/>
     </Style>
 
-    <!-- FirePassButton: ПАС — серый с hover/pressed -->
     <Style x:Key="FirePassButton" TargetType="Button" BasedOn="{StaticResource GameButtonPressStyle}">
         <Setter Property="Background" Value="{StaticResource FireButtonPass}"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
     </Style>
 
-    <!-- Flat ToggleButton (без системных рамок) -->
-    <Style x:Key="FlatToggleStyle" TargetType="ToggleButton">
+    <!-- Segmented ToggleStyle — pill-табы как в DocPanel Case Details (активный = teal) -->
+    <Style x:Key="SegmentedToggleStyle" TargetType="ToggleButton">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource StudioTextMuted}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="12,0"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
-                    <Border x:Name="tglBorder"
-                            Background="{TemplateBinding Background}"
-                            CornerRadius="{DynamicResource CornerRadiusXLarge}"
-                            Padding="{TemplateBinding Padding}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
-                                          TextBlock.Foreground="{TemplateBinding Foreground}"
-                                          TextBlock.FontSize="{TemplateBinding FontSize}"
-                                          TextBlock.FontWeight="{TemplateBinding FontWeight}"/>
+                    <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6" SnapsToDevicePixels="True">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="tglBorder" Property="Opacity" Value="0.85"/>
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="tglBorder" Property="Opacity" Value="0.7"/>
+                            <Setter TargetName="bd" Property="Background" Value="#1AFFFFFF"/>
+                            <Setter Property="Foreground" Value="White"/>
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="tglBorder" Property="BorderBrush" Value="{StaticResource ObsidianAccentTeal}"/>
-                            <Setter TargetName="tglBorder" Property="BorderThickness" Value="2"/>
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="tglBorder" Property="Opacity" Value="0.4"/>
+                            <Setter TargetName="bd" Property="Background" Value="{StaticResource StudioAccent}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter TargetName="bd" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect ShadowDepth="0" BlurRadius="8" Opacity="0.2" Color="#14B8A6"/>
+                                </Setter.Value>
+                            </Setter>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -413,7 +465,58 @@
         </Setter>
     </Style>
 
-    <!-- ObsidianCheckBox: тёмный чекбокс в стиле Obsidian -->
+    <!-- Flat ToggleButton with premium solid shape -->
+    <Style x:Key="FlatToggleStyle" TargetType="ToggleButton">
+        <Setter Property="Background" Value="#21252D"/>
+        <Setter Property="Foreground" Value="#B4B9C9"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="#2A2F3A"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="tglBorder"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="8"
+                            Padding="{TemplateBinding Padding}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          TextBlock.Foreground="{TemplateBinding Foreground}"
+                                          TextBlock.FontSize="{TemplateBinding FontSize}"
+                                          TextBlock.FontWeight="{TemplateBinding FontWeight}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="tglBorder" Property="Background" Value="#2A303C"/>
+                            <Setter TargetName="tglBorder" Property="BorderBrush" Value="#353B47"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="tglBorder" Property="Opacity" Value="0.85"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="tglBorder" Property="Background" Value="{StaticResource AccentPrimary}"/>
+                            <Setter TargetName="tglBorder" Property="BorderBrush" Value="{StaticResource AccentPrimary}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter TargetName="tglBorder" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity="0.3" Color="#007ACC"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="tglBorder" Property="Opacity" Value="0.35"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Cursor-style checkbox -->
     <Style x:Key="ObsidianCheckBox" TargetType="CheckBox">
         <Setter Property="Foreground" Value="{StaticResource ObsidianTextSecondary}"/>
         <Setter Property="FontSize" Value="12"/>
@@ -422,20 +525,20 @@
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <Border x:Name="CheckBorder" Width="18" Height="18" CornerRadius="{DynamicResource CornerRadiusStandard}"
-                                Background="{StaticResource ObsidianRaised}" BorderBrush="{StaticResource ObsidianBorderLight}" BorderThickness="1.5"
+                        <Border x:Name="CheckBorder" Width="16" Height="16" CornerRadius="4"
+                                Background="#313131" BorderBrush="{StaticResource ObsidianBorderStrong}" BorderThickness="1"
                                 VerticalAlignment="Center" Margin="0,0,8,0">
                             <TextBlock x:Name="CheckMark" Text="&#xE73E;"
-                                       FontFamily="Segoe MDL2 Assets" FontSize="{DynamicResource FontSizeSmall}"
-                                       Foreground="{StaticResource ObsidianTextPrimary}" HorizontalAlignment="Center"
+                                       FontFamily="Segoe MDL2 Assets" FontSize="10"
+                                       Foreground="White" HorizontalAlignment="Center"
                                        VerticalAlignment="Center" Visibility="Collapsed"/>
                         </Border>
                         <ContentPresenter VerticalAlignment="Center"/>
                     </StackPanel>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="CheckBorder" Property="Background" Value="{StaticResource ColorTeal}"/>
-                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{StaticResource ColorTeal}"/>
+                            <Setter TargetName="CheckBorder" Property="Background" Value="{StaticResource AccentPrimary}"/>
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{StaticResource AccentPrimary}"/>
                             <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -447,11 +550,11 @@
         </Setter>
     </Style>
 
-    <!-- FlatButton: Teams-style flat button — Onyx -->
+    <!-- FlatButton: Modern rounded button with smooth hover -->
     <Style x:Key="FlatButton" TargetType="Button">
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="Padding" Value="14,6"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -462,12 +565,16 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{DynamicResource CornerRadiusStandard}"
+                            CornerRadius="8"
                             Padding="{TemplateBinding Padding}"
-                            ClipToBounds="True">
-                        <Grid Margin="-12,-6">
-                            <Border x:Name="HoverOverlay" Background="#20FFFFFF" Opacity="0"/>
-                            <ContentPresenter Margin="12,6"
+                            ClipToBounds="True"
+                            SnapsToDevicePixels="True">
+                        <Border.Effect>
+                            <DropShadowEffect x:Name="BtnShadow" ShadowDepth="0" BlurRadius="0" Opacity="0" Color="#000000"/>
+                        </Border.Effect>
+                        <Grid Margin="-14,-6">
+                            <Border x:Name="HoverOverlay" Background="#0CFFFFFF" Opacity="0" CornerRadius="8"/>
+                            <ContentPresenter Margin="14,6"
                                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                               TextBlock.Foreground="{TemplateBinding Foreground}"
@@ -478,12 +585,19 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="HoverOverlay" Property="Opacity" Value="1"/>
+                            <Setter TargetName="RootBorder" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect ShadowDepth="0" BlurRadius="8" Opacity="0.15" Color="#000000"/>
+                                </Setter.Value>
+                            </Setter>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="RootBorder" Property="Opacity" Value="0.75"/>
+                            <Setter TargetName="RootBorder" Property="Opacity" Value="0.8"/>
+                            <Setter TargetName="HoverOverlay" Property="Background" Value="#18FFFFFF"/>
+                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="1"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="RootBorder" Property="Opacity" Value="0.75"/>
+                            <Setter TargetName="RootBorder" Property="Opacity" Value="0.35"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -491,17 +605,16 @@
         </Setter>
     </Style>
 
-    <!-- ═══ WINDOW CHROME — Кнопки заголовка окна ═══ -->
+    <!-- ═══ WINDOW CHROME — Title bar buttons ═══ -->
 
-    <!-- WindowControlButton: минимизация/развернуть -->
     <Style x:Key="WindowControlButton" TargetType="Button">
         <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="{StaticResource ObsidianTextDisabled}"/>
+        <Setter Property="Foreground" Value="{StaticResource ObsidianTextMuted}"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Width" Value="45"/>
-        <Setter Property="Height" Value="40"/>
-        <Setter Property="FontSize" Value="{DynamicResource FontSizeSubheader}"/>
+        <Setter Property="Width" Value="46"/>
+        <Setter Property="Height" Value="35"/>
+        <Setter Property="FontSize" Value="13"/>
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -514,117 +627,607 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource TVSafeBorder}"/>
+                <Setter Property="Background" Value="#252A36"/>
                 <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
             </Trigger>
         </Style.Triggers>
     </Style>
 
-    <!-- WindowCloseButton: красный при hover -->
     <Style x:Key="WindowCloseButton" TargetType="Button" BasedOn="{StaticResource WindowControlButton}">
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource ColorRed}"/>
+                <Setter Property="Background" Value="#C42B1C"/>
                 <Setter Property="Foreground" Value="White"/>
             </Trigger>
         </Style.Triggers>
     </Style>
 
-    <!-- GhostButton: прозрачная кнопка с border -->
+    <!-- GhostButton / Secondary Button: premium dark fill (Bento) -->
     <Style x:Key="GhostButton" TargetType="Button">
+        <Setter Property="Background" Value="#16191F"/>
+        <Setter Property="Foreground" Value="#B4B9C9"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="#252A36"/>
+        <Setter Property="Padding" Value="14,8"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="GhostBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            CornerRadius="8"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          TextBlock.Foreground="{TemplateBinding Foreground}"
+                                          TextBlock.FontSize="{TemplateBinding FontSize}"
+                                          TextBlock.FontWeight="{TemplateBinding FontWeight}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="GhostBorder" Property="Background" Value="#252A36"/>
+                            <Setter TargetName="GhostBorder" Property="BorderBrush" Value="#2D323E"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="GhostBorder" Property="Background" Value="#1A1D24"/>
+                            <Setter TargetName="GhostBorder" Property="Opacity" Value="0.85"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="GhostBorder" Property="Opacity" Value="0.35"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- MenuItemStyle: пункт выпадающего/контекстного меню (DocPanel, Editor Tools) -->
+    <Style x:Key="MenuItemStyle" TargetType="Button">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource TVSafeBorder}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="12,10"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}"
+                            BorderThickness="0" Margin="2,1">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#252A36"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#1E2229"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- DangerGhostButton: red hover variant -->
+    <Style x:Key="DangerGhostButton" TargetType="Button" BasedOn="{StaticResource GhostButton}">
+        <Setter Property="BorderBrush" Value="#40F14C4C"/>
+        <Setter Property="Foreground" Value="{StaticResource ColorDanger}"/>
+    </Style>
+
+    <!-- AccentButton: premium blue with subtle gradient and inner border -->
+    <Style x:Key="AccentButton" TargetType="Button">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="18,8"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="AccentBg" CornerRadius="8" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True"
+                            BorderBrush="#33FFFFFF" BorderThickness="0,1,0,0">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#1A73E8" Offset="0"/>
+                                <GradientStop Color="#0D55B5" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="2" BlurRadius="6" Opacity="0.25" Color="#000000"/>
+                        </Border.Effect>
+                        <Grid>
+                            <Border x:Name="AccentHoverOverlay" Background="White" Opacity="0" CornerRadius="8" Margin="-1,-2,-1,-1"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              TextBlock.Foreground="{TemplateBinding Foreground}"
+                                              TextBlock.FontSize="{TemplateBinding FontSize}"
+                                              TextBlock.FontWeight="{TemplateBinding FontWeight}"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="AccentHoverOverlay" Property="Opacity" Value="0.1"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="AccentBg" Property="Opacity" Value="0.85"/>
+                            <Setter TargetName="AccentHoverOverlay" Property="Opacity" Value="0"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="AccentBg" Property="Opacity" Value="0.35"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- RedButton: premium solid red -->
+    <Style x:Key="RedButton" TargetType="Button">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="14,6"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="RedBg" CornerRadius="8" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True"
+                            BorderBrush="#33FFFFFF" BorderThickness="0,1,0,0">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#E54D4D" Offset="0"/>
+                                <GradientStop Color="#C13030" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="2" BlurRadius="6" Opacity="0.25" Color="#000000"/>
+                        </Border.Effect>
+                        <Grid>
+                            <Border x:Name="HoverOverlay" Background="White" Opacity="0" CornerRadius="8" Margin="-1,-2,-1,-1"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              TextBlock.Foreground="{TemplateBinding Foreground}"
+                                              TextBlock.FontSize="{TemplateBinding FontSize}"
+                                              TextBlock.FontWeight="{TemplateBinding FontWeight}"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="0.1"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="RedBg" Property="Opacity" Value="0.85"/>
+                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="0"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="RedBg" Property="Opacity" Value="0.35"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- SuccessButton: premium solid green -->
+    <Style x:Key="SuccessButton" TargetType="Button">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="14,6"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="SuccBg" CornerRadius="8" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True"
+                            BorderBrush="#33FFFFFF" BorderThickness="0,1,0,0">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#2EA043" Offset="0"/>
+                                <GradientStop Color="#238636" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="2" BlurRadius="6" Opacity="0.25" Color="#000000"/>
+                        </Border.Effect>
+                        <Grid>
+                            <Border x:Name="HoverOverlay" Background="White" Opacity="0" CornerRadius="8" Margin="-1,-2,-1,-1"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              TextBlock.Foreground="{TemplateBinding Foreground}"
+                                              TextBlock.FontSize="{TemplateBinding FontSize}"
+                                              TextBlock.FontWeight="{TemplateBinding FontWeight}"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="0.1"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="SuccBg" Property="Opacity" Value="0.85"/>
+                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="0"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="SuccBg" Property="Opacity" Value="0.35"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- WarningButton: clean solid orange -->
+    <Style x:Key="WarningButton" TargetType="Button">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="14,6"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="WarnBg" CornerRadius="8" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True"
+                            BorderBrush="#33FFFFFF" BorderThickness="0,1,0,0">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#E67E22" Offset="0"/>
+                                <GradientStop Color="#D83B01" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="2" BlurRadius="6" Opacity="0.25" Color="#000000"/>
+                        </Border.Effect>
+                        <Grid>
+                            <Border x:Name="HoverOverlay" Background="White" Opacity="0" CornerRadius="8" Margin="-1,-2,-1,-1"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              TextBlock.Foreground="{TemplateBinding Foreground}"
+                                              TextBlock.FontSize="{TemplateBinding FontSize}"
+                                              TextBlock.FontWeight="{TemplateBinding FontWeight}"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="0.1"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="WarnBg" Property="Opacity" Value="0.85"/>
+                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="0"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="WarnBg" Property="Opacity" Value="0.35"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- PillButtonCompact: compact filter/tab pill (neutral) -->
+    <Style x:Key="PillButtonCompact" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource ObsidianRaised}"/>
+        <Setter Property="Foreground" Value="{StaticResource ObsidianTextSecondary}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="12,6"/>
-        <Setter Property="FontSize" Value="{DynamicResource FontSizeCaption}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ObsidianBorder}"/>
+        <Setter Property="Padding" Value="12,4"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="PillBg"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="14"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          TextBlock.Foreground="{TemplateBinding Foreground}"
+                                          TextBlock.FontSize="{TemplateBinding FontSize}"
+                                          TextBlock.FontWeight="{TemplateBinding FontWeight}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="PillBg" Property="Background" Value="{StaticResource ObsidianCard}"/>
+                            <Setter TargetName="PillBg" Property="BorderBrush" Value="{StaticResource ObsidianBorderLight}"/>
+                            <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="PillBg" Property="Background" Value="{StaticResource AccentSelection}"/>
+                            <Setter TargetName="PillBg" Property="BorderBrush" Value="{StaticResource AccentPrimary}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="PillBg" Property="Opacity" Value="0.35"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- PurpleButton: premium solid purple -->
+    <Style x:Key="PurpleButton" TargetType="Button">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="14,6"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="PurpBg" CornerRadius="8" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True"
+                            BorderBrush="#33FFFFFF" BorderThickness="0,1,0,0">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#9B59B6" Offset="0"/>
+                                <GradientStop Color="#744EAA" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="2" BlurRadius="6" Opacity="0.25" Color="#000000"/>
+                        </Border.Effect>
+                        <Grid>
+                            <Border x:Name="HoverOverlay" Background="White" Opacity="0" CornerRadius="8" Margin="-1,-2,-1,-1"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              TextBlock.Foreground="{TemplateBinding Foreground}"
+                                              TextBlock.FontSize="{TemplateBinding FontSize}"
+                                              TextBlock.FontWeight="{TemplateBinding FontWeight}"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="0.1"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="PurpBg" Property="Opacity" Value="0.85"/>
+                            <Setter TargetName="HoverOverlay" Property="Opacity" Value="0"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="PurpBg" Property="Opacity" Value="0.35"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- SurfaceCard: panel card -->
+    <Style x:Key="SurfaceCard" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource ObsidianSurface}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ObsidianBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="16"/>
+        <Setter Property="Margin" Value="8"/>
+    </Style>
+
+    <!-- MetricCard: compact stat card -->
+    <Style x:Key="MetricCard" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource ObsidianSurface}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ObsidianBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="MinWidth" Value="120"/>
+    </Style>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         PREMIUM DARK — образцы I:\SAMPLES OF DARK UI UX
+         Чекбоксы, выпадающие списки, pill-кнопки, радиокнопки
+         ═══════════════════════════════════════════════════════════════ -->
+
+    <!-- Premium CheckBox: скруглённый квадрат, галочка teal (DocPanel/Captions) -->
+    <Style x:Key="PremiumCheckBox" TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border x:Name="CheckBorder" Width="18" Height="18" CornerRadius="5"
+                                Background="{StaticResource StudioBg}" BorderBrush="{StaticResource StudioCardBorder}" BorderThickness="1"
+                                VerticalAlignment="Center" Margin="0,0,10,0">
+                            <TextBlock x:Name="CheckMark" Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="11"
+                                       Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                        </Border>
+                        <ContentPresenter VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="CheckBorder" Property="Background" Value="{StaticResource StudioAccent}"/>
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{StaticResource StudioAccent}"/>
+                            <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="#3D424E"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Premium RadioButton: круг, выбран = teal точка (Captions/ScreenPal) -->
+    <Style x:Key="PremiumRadioButton" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border x:Name="OuterRing" Width="18" Height="18" CornerRadius="9"
+                                Background="Transparent" BorderBrush="{StaticResource StudioCardBorder}" BorderThickness="1"
+                                VerticalAlignment="Center" Margin="0,0,10,0">
+                            <Ellipse x:Name="InnerDot" Width="10" Height="10" Fill="{StaticResource StudioAccent}"
+                                     Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ContentPresenter VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="OuterRing" Property="BorderBrush" Value="{StaticResource StudioAccent}"/>
+                            <Setter TargetName="InnerDot" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="OuterRing" Property="BorderBrush" Value="#3D424E"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- PillButton: сильно скруглённая кнопка (DocPanel Apply / Fintech) -->
+    <Style x:Key="PillButton" TargetType="Button" BasedOn="{StaticResource AccentButton}">
+        <Setter Property="Padding" Value="24,10"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{DynamicResource CornerRadiusStandard}">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border x:Name="PillBorder" Background="{StaticResource StudioAccent}" CornerRadius="20"
+                            BorderThickness="0" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="0" BlurRadius="12" Opacity="0.2" Color="Black"/>
+                        </Border.Effect>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          TextBlock.Foreground="{TemplateBinding Foreground}"
+                                          TextBlock.FontSize="{TemplateBinding FontSize}"
+                                          TextBlock.FontWeight="{TemplateBinding FontWeight}"/>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="PillBorder" Property="Opacity" Value="0.92"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="PillBorder" Property="Opacity" Value="0.85"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="PillBorder" Property="Opacity" Value="0.4"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource TVSafeBorder}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource ObsidianBorderLight}"/>
-            </Trigger>
-        </Style.Triggers>
     </Style>
 
-    <!-- DangerGhostButton: красный hover на основе GhostButton -->
-    <Style x:Key="DangerGhostButton" TargetType="Button" BasedOn="{StaticResource GhostButton}">
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#3d1619"/>
-                <Setter Property="BorderBrush" Value="{StaticResource ColorRed}"/>
-                <Setter Property="Foreground" Value="{StaticResource ColorRed}"/>
-            </Trigger>
-        </Style.Triggers>
+    <!-- Premium ComboBoxItem: для выпадающих списков — hover и выбран с акцентом (DocPanel) -->
+    <Style x:Key="PremiumComboBoxItem" TargetType="ComboBoxItem">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource ObsidianTextPrimary}"/>
+        <Setter Property="Padding" Value="12,10"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}"
+                            BorderThickness="0" Margin="2,1">
+                        <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#252A36"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#1A2D2A"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource StudioAccent}"/>
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="2,0,0,0"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
-    <!-- AccentButton: яркая кнопка действия -->
-    <Style x:Key="AccentButton" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource ColorRed}"/>
-        <Setter Property="Foreground" Value="White"/>
+    <!-- ═══ NAV BUTTON (sidebar icon) — один стиль для всех, иконка в Content ═══ -->
+    <Style x:Key="NavButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource ObsidianTextMuted}"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Padding" Value="20,10"/>
-        <Setter Property="FontSize" Value="{DynamicResource FontSizeBody}"/>
-        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Width" Value="48"/>
+        <Setter Property="Height" Value="48"/>
+        <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}" CornerRadius="{DynamicResource CornerRadiusLarge}">
+                    <Grid>
+                        <Border x:Name="ActiveIndicator" Width="3" HorizontalAlignment="Left"
+                                Background="Transparent" CornerRadius="0,2,2,0" Margin="0,8"/>
+                        <Border x:Name="HoverBg" Background="White" Opacity="0" CornerRadius="6" Margin="6,4"/>
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="HoverBg" Property="Opacity" Value="0.06"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#ff4f54"/>
-            </Trigger>
-        </Style.Triggers>
     </Style>
 
-    <!-- RedButton: красная кнопка на основе FlatButton -->
-    <Style x:Key="RedButton" TargetType="Button" BasedOn="{StaticResource FlatButton}">
-        <Setter Property="Background" Value="{StaticResource ColorRed}"/>
+    <!-- Активная навигация (акцентная полоска слева) -->
+    <Style x:Key="NavButtonStyleActive" TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="FontWeight" Value="Bold"/>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#ff4f54"/>
-            </Trigger>
-        </Style.Triggers>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Border x:Name="ActiveIndicator" Width="3" HorizontalAlignment="Left"
+                                Background="{StaticResource AccentPrimary}" CornerRadius="0,2,2,0" Margin="0,8"/>
+                        <Border x:Name="HoverBg" Background="White" Opacity="0" CornerRadius="6" Margin="6,4"/>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="HoverBg" Property="Opacity" Value="0.06"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
-    <!-- SurfaceCard: карточка-поверхность -->
-    <Style x:Key="SurfaceCard" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource TVSafePanel}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource TVSafeBorder}"/>
+    <!-- ChromaColorButton: круглый выбор цвета (только Background задаётся на кнопке) -->
+    <Style x:Key="ChromaColorButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="18"/>
+        <Setter Property="Height" Value="18"/>
+        <Setter Property="BorderBrush" Value="#44FFFFFF"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusRound}"/>
-        <Setter Property="Padding" Value="20"/>
-        <Setter Property="Margin" Value="10"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border CornerRadius="{DynamicResource CornerRadiusCircleSmall}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
-    <!-- MetricCard: метрика-карточка -->
-    <Style x:Key="MetricCard" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource TVSafePanel}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource TVSafeBorder}"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="{DynamicResource CornerRadiusLarge}"/>
-        <Setter Property="Padding" Value="15"/>
-        <Setter Property="Margin" Value="5"/>
-        <Setter Property="MinWidth" Value="150"/>
-    </Style>
+    <!-- Стиль по умолчанию для всех кнопок: крутой тёмный Ghost -->
+    <Style TargetType="Button" BasedOn="{StaticResource GhostButton}"/>
 
 </ResourceDictionary>
